@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Development (samar-api.webority.dev) — served directly (not via Cloudflare proxy)
+         with a Let's Encrypt cert, same chain as staging. Pin the ISRG roots, not the leaf:
+         LE renews the leaf every ~60 days, so leaf/intermediate pins cause a hard outage
+         on every renewal. The roots are stable for years. -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">samar-api.webority.dev</domain>
+        <pin-set expiration="2027-06-01">
+            <!-- ISRG Root X2 (anchors LE ECDSA chain currently served) -->
+            <pin digest="SHA-256">diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=</pin>
+            <!-- ISRG Root X1 (backup for LE RSA chain) -->
+            <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+            <!-- ISRG Root YE. Let's Encrypt now serves leaf -> YE1/YE2 -> Root YE -> X2,
+                 so X2 is only reachable at the END of that chain. Once device trust
+                 stores carry Root YE directly, clients build a SHORTER path that ends
+                 at YE and X2 drops out of the verified chain — pinning X2 alone would
+                 then fail with no server-side fix. Verified served by both hosts
+                 20-Aug-2026. -->
+            <pin digest="SHA-256">sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!-- Staging environment (Let's Encrypt). Pin the ISRG roots, not the leaf: LE renews the
+         leaf every ~60 days and rotates intermediates, so leaf/intermediate pins cause a hard
+         outage on every renewal. The roots are stable for years. -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">samar-staging1.qci.org.in</domain>
+        <pin-set expiration="2027-06-01">
+            <!-- ISRG Root X2 (anchors LE ECDSA chain currently served) -->
+            <pin digest="SHA-256">diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=</pin>
+            <!-- ISRG Root X1 (backup for LE RSA chain) -->
+            <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+            <!-- ISRG Root YE. Let's Encrypt now serves leaf -> YE1/YE2 -> Root YE -> X2,
+                 so X2 is only reachable at the END of that chain. Once device trust
+                 stores carry Root YE directly, clients build a SHORTER path that ends
+                 at YE and X2 drops out of the verified chain — pinning X2 alone would
+                 then fail with no server-side fix. Verified served by both hosts
+                 20-Aug-2026. -->
+            <pin digest="SHA-256">sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!-- Production environment - TO BE ADDED when production domain is available -->
+    <!-- <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">PRODUCTION_DOMAIN</domain>
+        <pin-set expiration="2027-06-01">
+            <pin digest="SHA-256">PRODUCTION_LEAF_HASH</pin>
+            <pin digest="SHA-256">PRODUCTION_INTERMEDIATE_HASH</pin>
+        </pin-set>
+    </domain-config> -->
+
+    <!-- Allow cleartext for localhost/emulator (Metro bundler in debug) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

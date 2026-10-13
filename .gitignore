@@ -1,0 +1,10 @@
+# Secrets kept out of this repository (keep local copies / share out-of-band)
+*.pem
+*.jks
+!debug.keystore
+**/qci_samar
+
+# Dependencies & build output
+node_modules/
+vendor/
+.ccache/

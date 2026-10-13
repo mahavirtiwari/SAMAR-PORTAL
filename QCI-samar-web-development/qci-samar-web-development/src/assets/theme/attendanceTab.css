@@ -1,0 +1,230 @@
+.attendance-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.attendance-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #071437;
+  font-weight: 600;
+}
+
+.attendance-range {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.attendance-header .range-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+}
+
+img.at-icon-img {
+  margin-top: -3px;
+}
+
+.attendance-list {
+  border-top: 2px solid #eef2f6;
+  padding-top: 14px;
+}
+
+.at-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 0;
+}
+
+.at-left {
+  flex: 0 0 180px;
+  display: flex;
+  align-items: center;
+}
+
+.at-person {
+  display: flex;
+  align-items: center;
+  width: 74%;
+  position: relative;
+}
+
+.at-person:after {
+  position: absolute;
+  content: "";
+  background: #ebedf3;
+  width: 2px;
+  height: 30px;
+  right: 0;
+}
+
+.range-text {
+  color: #4b5675;
+  font-weight: 500;
+}
+
+/* .at-avatar {
+width: 44px;
+height: 44px;
+border-radius: 50%;
+background: #e6eef9;
+color: #0b5edd;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 700;
+margin-right: 12px;
+}
+
+.at-avatar {
+border: 2px solid #fff;
+box-shadow: 0 1px 0 rgba(16, 24, 40, 0.03)
+} */
+
+/* .at-check-info {
+margin-left: 10px;
+} */
+
+.at-person-meta .at-name {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.at-person-meta .at-role {
+  color: #78829d;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.at-mid {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.attendance-list .at-separator:last-child {
+  display: none;
+}
+
+.at-check-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.at-check-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.at-check-label.in {
+  color: var(--success-active);
+  margin-right: 10px;
+}
+
+.at-check-label.out {
+  color: var(--danger-active);
+  margin-right: 10px;
+}
+
+.at-connector {
+  width: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0px;
+}
+
+.at-connector .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ebedf3;
+}
+
+.at-connector .line {
+  width: 40px;
+  height: 2px;
+  border-top: 2px dashed #e6eef9;
+}
+
+.at-time {
+  font-weight: 600;
+  color: #252f4a;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.at-location {
+  color: #252f4a;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.at-coords {
+  color: #4b5675;
+  font-size: 12px;
+  font-weight: 500;
+  padding-left: 17px;
+}
+
+.at-separator {
+  height: 1px;
+  background: #ebedf3;
+  margin: 6px 0;
+}
+
+.avatar-initials {
+  font-family: "Inter-SemiBold" !important;
+}
+
+.attendance-day-label {
+  font-size: 16px;
+  color: #1b84ff;
+  font-weight: 600;
+  display: inline-block;
+  background: #f5f6fa;
+  height: 36px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: max-content;
+  border-radius: 10px;
+  position: relative;
+  top: 19px;
+}
+
+.attendance-day-label img {
+  width: 20px;
+  vertical-align: sub;
+  margin-right: 5px;
+}
+
+@media (max-width: 780px) {
+  .at-right,
+  .at-left {
+    flex: 0 0 140px;
+  }
+
+  .attendance-card {
+    padding: 12px;
+  }
+}

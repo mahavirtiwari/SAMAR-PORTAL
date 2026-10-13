@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "763992459108",
+    "project_id": "qci-samar",
+    "storage_bucket": "qci-samar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763992459108:android:ed710c153e05fefb1f9c71",
+        "android_client_info": {
+          "package_name": "org.qcin.samar.assessor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP2QRNRCzeGq6innZfbOv_ixm2YL85Ftc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763992459108:android:379c0afcedad558f1f9c71",
+        "android_client_info": {
+          "package_name": "org.qcin.samar.assessor.development"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP2QRNRCzeGq6innZfbOv_ixm2YL85Ftc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763992459108:android:26fe2fcd0874fb5a1f9c71",
+        "android_client_info": {
+          "package_name": "org.qcin.samar.assessor.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP2QRNRCzeGq6innZfbOv_ixm2YL85Ftc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

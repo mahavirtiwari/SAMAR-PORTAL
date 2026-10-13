@@ -1,0 +1,24 @@
+// Set up network monitoring
+const apiCalls2 = [];
+page.on('response', async (response) => {
+  const url = response.url();
+  if (url.includes('/api/')) {
+    const status = response.status();
+    let body = '';
+    try { body = await response.text(); } catch(e) {}
+    apiCalls2.push({ status, url, body: body.substring(0, 500) });
+    console.log(`API ${status}: ${url}`);
+    if (status >= 400) {
+      console.log('Error body:', body.substring(0, 500));
+    }
+  }
+});
+
+// Click Save & Next to retry
+console.log('Retrying Save & Next...');
+await page.click('text=Save & Next');
+await page.waitForLoadState('networkidle');
+await page.waitForTimeout(3000);
+
+console.log('After save, URL:', page.url());
+await page.screenshot({ path: 'e2e/screenshots/local-04-retry-save.png', fullPage: true });

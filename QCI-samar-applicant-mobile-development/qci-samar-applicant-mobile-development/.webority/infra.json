@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "$comment": "Mobile infra map (schema: ~/.claude/conventions/infra-map.md). Shared backend facts in qci-samar-backend/.webority/infra.json.",
+  "constellation": {
+    "repos": {
+      "backend": "Webority/qci-samar-backend",
+      "web": "Webority/qci-samar-web",
+      "assessor-mobile": "Webority/qci-samar-assessor-mobile",
+      "applicant-mobile": "Webority/qci-samar-applicant-mobile"
+    },
+    "sharedFactsIn": "qci-samar-backend"
+  },
+  "deployables": {
+    "applicant-app": {
+      "kind": "mobile-app",
+      "stack": "react-native-bare",
+      "mobile": {
+        "android": {
+          "applicationId": "org.qcin.samar.applicant",
+          "signingIn": "android/gradle.properties + android/app keystore"
+        },
+        "ios": {
+          "bundleId": "org.qcin.samar.applicant"
+        },
+        "versionIn": "appsettings.json (VERSION_DISPLAY 1.0.0 / VERSION_INTERNAL 1; applied by prebuild.js, which only patches native files when PLATFORM=android|ios is set)",
+        "build": {
+          "$comment": "package.json scripts; no CI, no Fastlane — built locally"
+        },
+        "distribution": "manual (no CI/Fastlane) — store submission in preparation as of 20-Aug-2026; runbook docs/40-release/store-release.md",
+        "reviewAccess": "Store review uses ONE shared applicant account on the staging DB (role enterprise_admin or unit_admin on an ACTIVE demo organisation, is_two_factor_enabled=false so the OTP step is skipped, samar_id set explicitly, at least one application on it). Credentials live in the store consoles, NOT in this repo. Provisioning + review-notes text: docs/40-release/store-release.md. Caveat: enforce_single_session=true for every role, so Apple and Google reviewers testing concurrently displace each other — stagger the submissions.",
+        "store": {
+          "playConsole": "FRESH LISTING PENDING under QCI's own Play Console account, package org.qcin.samar.applicant, from version 1.0.0. Never published under any id; the former com.qciapplicantapp was never listed (404 verified 20-Aug-2026).",
+          "appStoreConnect": "FRESH LISTING PENDING under QCI's own Apple Developer account, bundle org.qcin.samar.applicant, from version 1.0.0. Never published under any id."
+        },
+        "backend": {
+          "deployable": "samar-api",
+          "baseUrlIn": "appsettings.{Env}.json BASE_URL",
+          "tlsPinning": "NONE, deliberately (backend docs/10-architecture/D-008) — unlike the assessor app this client configures no pins and wires no pinning library; do not assume pinning protects it, and do not add pinning as a consistency cleanup",
+          "$comment": "STORE BUILDS RUN ON STAGING: appsettings.Production.json BASE_URL points at https://samar-staging1.qci.org.in/api/v1/ per backend docs/10-architecture/D-007. No production backend exists."
+        },
+        "firebase": "Project qci-samar (763992459108), shared with the assessor app. Apps org.qcin.samar.applicant{,.staging,.development} on ANDROID + IOS. Configs committed: android/app/google-services.json (this app's three variants only) and ios/qciapplicantapp/firebase/GoogleService-Info-{Production,Staging,Development}.plist, selected at build time by prebuild.js. Crashlytics only — no other Firebase product is wired.",
+        "security": "Security-grade tier (react-native.md): SecurityGuard.kt (Kotlin baseline + RootBeer, fail-closed) enforced from MainApplication.onCreate and MainActivity.onResume, Talsec, WebView debugging off, iOS anti-debug/jailbreak/Frida layer, TrustKit + network_security_config pinning on the ISRG roots. GUARD: SecurityGuard's RELEASE_CERT_SHA256/PLAY_CERT_SHA256 are UNSET until the fresh keystores exist (D-009) — while unset the SIGNATURE check is skipped (root/tamper detection still enforces). Filling them is a pre-submission gate. Never derive these at runtime: a re-signed APK satisfies its own derived hash."
+      },
+      "diagnostics": {
+        "logs": {
+          "type": "client",
+          "$comment": "LOGGING_ENABLED/LOG_LEVEL in appsettings"
+        },
+        "crashes": "Crashlytics via @react-native-firebase/crashlytics, consumed by Logger.recordError (src/utils/logger.js). NOT alerted on — crashes land in the console and nobody is paged."
+      }
+    }
+  },
+  "monitoring": {
+    "healthCheckPaths": {
+      "samar-api": "https://samar-staging1.qci.org.in/api/health (the API this client depends on; the app itself has no probeable endpoint)"
+    },
+    "alerts": [],
+    "escalation": "None, deliberately — see $comment.",
+    "gaps": [
+      "Crashlytics collects crashes but nothing alerts on them — deliberate (see $comment), not an oversight.",
+      "No force-update check (react-native.md `versionCheck.js`) — there is no way to push pilot users off a build, which D-007 step 5 (the production re-release) depends on.",
+      "No ErrorBoundary at the navigation root (react-native.md [Global]) — a render crash is a white screen in release, with no non-fatal recorded.",
+      "Force-update (useVersionCheck) only runs in Production and needs a published listing to compare against — untestable until the fresh listing is live, and it is what D-007's production re-release depends on."
+    ],
+    "$comment": "Alerting is DELIBERATELY NOT IMPLEMENTED for this estate (Navneet, 20-Aug-2026) — pre-production, D-007 pilot. Crashlytics collects; nothing pages anyone, by choice. Revisit at production provisioning."
+  },
+  "guards": [
+    "BEFORE THE FIRST STORE SUBMISSION read docs/40-release/store-release.md section 6 (Launch-day notes) — it carries the things that are wrong-by-default months later, not just the happy path.",
+    "TLS pins: RE-VERIFY THE LIVE CHAIN before shipping, never trust the pin set as written. On 20-Aug-2026 Let's Encrypt served leaf -> YE1/YE2 -> ISRG Root YE -> ISRG Root X2, so we pin THREE roots (X1, X2, Root YE). X2 sits at the END of that chain and stops matching once Root YE reaches device trust stores — an X1/X2-only pin set then validates nothing, unfixable server-side, needs a store release. Pins live in android/app/src/main/res/xml/network_security_config.xml and ios/qciapplicantapp/AppDelegate.swift (NOT appsettings).",
+    "SecurityGuard.kt PLAY_CERT_SHA256 is UNSET and the signature check is therefore SKIPPED. It cannot be filled before the Play listing exists (Play App Signing generates that key, and it re-signs distributed builds — enforcing with only our upload hash makes every Play install kill itself). Filling it is the last pre-submission gate.",
+    "SecurityGuard.isHardenedBuild() gates the KILL on FLAVOR == 'production', not on !BuildConfig.DEBUG. That looks like an oversight and is not: assembleStagingRelease/assembleDevelopmentRelease are release builds, and every Android emulator reports test-keys, SELinux permissive and ro.debuggable — the 'simplification' kills a tester's staging APK on launch. Same for enforceThrottled() on the network interceptor."
+  ],
+  "pending": [
+    {
+      "intent": "Fresh Play + App Store listings for org.qcin.samar.applicant under QCI's own developer accounts, from 1.0.0, then unpublish the old listing(s)",
+      "when": "QCI grants access to their Play Console and Apple Developer accounts",
+      "ref": "BUG-06301"
+    },
+    {
+      "intent": "Repoint appsettings.Production.json at the real production API and re-release both apps",
+      "when": "A production backend is provisioned (backend infra environments.production is no longer null)",
+      "ref": "BUG-06301"
+    }
+  ],
+  "log": [
+    {
+      "date": "2026-08-20",
+      "change": "App identity changed to org.qcin.samar.applicant and version reset to 1.0.0 — both apps relaunch as fresh store listings under QCI accounts",
+      "ref": "BUG-06301"
+    },
+    {
+      "date": "2026-08-20",
+      "change": "Production app config repointed from empty to the staging API for the pilot store release (D-007)",
+      "ref": "BUG-06301"
+    }
+  ]
+}

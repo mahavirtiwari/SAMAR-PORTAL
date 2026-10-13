@@ -1,0 +1,44 @@
+%%{init: {'theme': 'base', 'sequence': {'actorFontSize': 20, 'messageFontSize': 19, 'noteFontSize': 19, 'actorFontFamily': 'Josefin Sans, Verdana, sans-serif', 'messageFontFamily': 'Josefin Sans, Verdana, sans-serif', 'noteFontFamily': 'Josefin Sans, Verdana, sans-serif'}, 'fontFamily': 'Josefin Sans, Verdana, sans-serif', 'themeVariables': {
+  'primaryColor': '#3A0091',
+  'primaryTextColor': '#FFFFFF',
+  'primaryBorderColor': '#3A0091',
+  'lineColor': '#6200EE',
+  'secondaryColor': '#E0CCFF',
+  'tertiaryColor': '#F3E8FF',
+  'textColor': '#2B2B2B',
+  'edgeLabelBackground': '#F3E8FF',
+  'signalColor': '#6200EE',
+  'signalTextColor': '#2B2B2B',
+  'actorBkg': '#3A0091',
+  'actorBorder': '#3A0091',
+  'actorTextColor': '#FFFFFF',
+  'actorLineColor': '#C29FFF',
+  'noteBkgColor': '#F3E8FF',
+  'noteBorderColor': '#C29FFF',
+  'noteTextColor': '#2B2B2B',
+  'labelBoxBkgColor': '#F3E8FF',
+  'labelBoxBorderColor': '#C29FFF',
+  'labelTextColor': '#2B2B2B',
+  'sequenceNumberColor': '#FFFFFF'
+}}}%%
+sequenceDiagram
+    participant A as SAMAR API
+    participant T as Microsoft identity
+    participant B as Business Central
+    participant S as SAMAR document store
+
+    Note over A,B: Raising the documents
+    A->>T: requests access token
+    T-->>A: returns token
+    A->>B: posts invoice request
+    B-->>A: acknowledges
+
+    Note over A,B: Hourly read back
+    A->>B: asks for document results
+    B-->>A: returns document numbers
+
+    Note over B,S: Returning the files
+    B->>A: signs in as the ERP account
+    B->>A: uploads invoice and receipt files
+    A->>S: stores files against the payment
+    A-->>B: confirms receipt

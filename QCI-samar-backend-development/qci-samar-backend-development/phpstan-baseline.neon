@@ -1,0 +1,3811 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/NotifyExpiringCertificates.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$enterprise_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/NotifyExpiringCertificates.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/NotifyRecertificationMonthly.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$enterprise_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/NotifyRecertificationMonthly.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:renewalApplications\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Console/Commands/NotifyRecertificationMonthly.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RecalculateAssessmentScores.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RecalculateAssessmentScores.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RecalculateAssessmentScores.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weighted_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/RecalculateAssessmentScores.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:calculateScores\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Console/Commands/RecalculateAssessmentScores.php
+
+		-
+			message: '#^Offset ''message'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Console/Commands/TestBusinessCentralConnection.php
+
+		-
+			message: '#^Offset ''success'' on array\{success\: bool, message\: string, company\?\: string, token_preview\?\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Console/Commands/TestBusinessCentralConnection.php
+
+		-
+			message: '#^Offset ''function'' on array\{function\: string, line\?\: int, file\?\: string, class\?\: class\-string, type\?\: string, args\?\: list\<mixed\>, object\?\: object\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Exceptions/ErrorReporter.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exceptions/ErrorReporter.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 10
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$recorded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
+
+		-
+			message: '#^Parameter \#1 \$basicInfo of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentBasicInformationController\:\:getValidationStatus\(\) expects App\\Models\\ApplicationAssessmentBasicInformation\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentBasicInformationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$comments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 7
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_path\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMeetingController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:comments\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$mobile_completed_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{team_member_id\: int, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\}, Closure\(App\\Models\\AssessmentTeamMember\)\: array\{team_member_id\: int, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Models\\Assessment\:\:canMemberCompleteMobile\(\) expects App\\Models\\AssessmentTeamMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Models\\Assessment\:\:markMemberMobileComplete\(\) expects App\\Models\\AssessmentTeamMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentParameterAllocationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentParameterAllocationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_mandatory\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentParameterAllocationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentParameterAllocationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessor_remarks\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$attachments\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$comment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$feedback_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weighted_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:setResponse\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Match arm comparison between ''committee_feedback'' and ''committee_feedback'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Parameter \#1 \$attachment of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentQuestionFeedbackController\:\:formatAttachment\(\) expects App\\Models\\ApplicationAssessmentQuestionFeedbackAttachment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Parameter \#1 \$feedback of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentQuestionFeedbackController\:\:formatFeedback\(\) expects App\\Models\\ApplicationAssessmentQuestionFeedback, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Parameter \#2 \$feedback of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentQuestionFeedbackController\:\:formatAttachment\(\) expects App\\Models\\ApplicationAssessmentQuestionFeedback, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentQuestionFeedbackController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isLeadAssessor\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResetController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assigned_to_team_member_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discipline_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$questions\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$response\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Parameter \#1 \$evidence of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatEvidence\(\) expects App\\Models\\ApplicationAssessmentResponseEvidence, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Parameter \#1 \$parameter of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatParameter\(\) expects App\\Models\\ApplicationAssessmentParameter, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Parameter \#1 \$question of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatQuestionForParameter\(\) expects App\\Models\\ApplicationAssessmentQuestion, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Parameter \#1 \$response of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatResponse\(\) expects App\\Models\\ApplicationAssessmentResponse, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Parameter \#1 \$response of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatSimplifiedResponse\(\) expects App\\Models\\ApplicationAssessmentResponse, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ApplicationAssessmentSitePicture\:\:\$uploaded_by_user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSitePictureController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSitePictureController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ApplicationAssessmentSiteTourPicture\:\:\$uploaded_by_user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSiteTourPictureController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSiteTourPictureController.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Models\\Assessment\:\:getStepProgressForMember\(\) expects App\\Models\\AssessmentTeamMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentStepProgressController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$basicInformation\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:siteTourPictures\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\ApplicationAssessmentResponseEvidence\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>user" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSummaryController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$dpiit_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$drdo_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$full_unit_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$govt_registration_certificate_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$gst_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$incorporation_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$site_exterior_photo_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$udyam_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$meeting_link\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$scheduled_end_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$scheduled_start_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$teamMembers\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasLeadPunchedIn\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isAllocationLocked\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\ApplicationController\:\:updateManufacturingApplication\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\ApplicationController\:\:updateServicesApplication\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>file_upload_metadata" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>first_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>last_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$feedback_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$actual_end_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$contact_person_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$creator\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$scheduled_end_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_score\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Application\>\:\:through\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$dpiit_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$drdo_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$full_unit_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$govt_registration_certificate_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$gst_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$has_govt_registration\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$has_gst\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$has_ongoing_enquiry\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$incorporation_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$is_blacklisted\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$site_exterior_photo_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$third_party_certification_names\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$udyam_certificate_file_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$vendor_category_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Assessment\:\:\$recommendations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Assessment\:\:\$remarks\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$certificate_number\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grade\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issued_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$mobile_completed_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$valid_until\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$web_submitted_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:dateRange\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forAssessor\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:byEnterpriseSize\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:bySector\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:byType\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:byVendorCategory\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isCoAssessor\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:markReviewed\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\AssessmentController\:\:getTimelineColor\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\AssessmentController\:\:getTimelineEventTitle\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\AssessmentController\:\:getTimelineIcon\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Assessment\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\Assessment\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Models\\Assessment\:\:getStepProgressForMember\(\) expects App\\Models\\AssessmentTeamMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Parameter \#1 \$member of method App\\Models\\Assessment\:\:markMemberWebSubmitted\(\) expects App\\Models\\AssessmentTeamMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Parameter \#1 \$score of static method App\\Models\\Assessment\:\:ratingLabelFromScore\(\) expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>application_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>certificate_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>enterprise_classification" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>grade" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>samar_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>sector" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_address" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>vendor_category" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$options\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question_text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weightage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>option_text" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 5
+			path: app/Http/Controllers/Api/V1/AssessmentParameterController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:autoDeactivateIfNeeded\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getActiveQuestionsWeightage\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array, Closure\(App\\Models\\AuditLog\)\: array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AuditLogController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\AuditLog\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\AuditLog\>, Illuminate\\Support\\Collection\<int, array\{id\: int, user_id\: int\|null, user_name\: string\|null, user_email\: string\|null, user_roles\: array\|null, event\: string\|null, ip_address\: string\|null, user_agent\: string\|null, \.\.\.\}\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AuditLogController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/AuditLogController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Http/Controllers/Api/V1/AuditLogController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_profile_completed\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_verified\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/Auth/LoginController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Certificate\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\Certificate\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Parameter \#1 \$score of static method App\\Models\\Assessment\:\:ratingLevelFromScore\(\) expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Http/Controllers/Api/V1/CertificateController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$committeeMember\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$committee_member_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$decided_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$decision\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$designation\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$mobile_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organisation\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$remarks\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 3
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Match arm comparison between ''hybrid'' and ''hybrid'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\CommitteeMeeting\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\CommitteeMeeting\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Parameter \#1 \$pivot of method App\\Services\\CommitteeMeetingAssessmentService\:\:detach\(\) expects App\\Models\\CommitteeMeetingAssessment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Parameter \#1 \$record of method App\\Http\\Controllers\\Api\\V1\\CommitteeMeetingController\:\:formatMeetingMember\(\) expects App\\Models\\MeetingMember, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Relation ''assessments'' is not found in App\\Models\\CommitteeMeeting model\.$#'
+			identifier: larastan.relationExistence
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 11
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>enterprise_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>registered_office_district" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>registered_office_state" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>sector" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_address" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_district" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_state" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ErrorLog\:\:\$count\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/ErrorLogController.php
+
+		-
+			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\FeedbackQuestion\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\FeedbackQuestion\>, Illuminate\\Support\\Collection\<int, App\\Http\\Resources\\FeedbackQuestionResource\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/FeedbackQuestionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/InvoiceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/InvoiceController.php
+
+		-
+			message: '#^Cannot call method toDateString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/V1/InvoiceController.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type string\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/InvoiceController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$first_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grade\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issue_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$last_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$samar_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$valid_until\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:isProfileComplete\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:markProfileAsComplete\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Parameter \#1 \$organization of method App\\Http\\Controllers\\Api\\V1\\OrganizationController\:\:formatOrganization\(\) expects App\\Models\\Organization, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>grade" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/OrganizationController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$enterprise_classification\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$latestInvoice\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sector\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Pincode\:\:\$district\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PincodeController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Pincode\:\:\$state\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/PincodeController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Pincode\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/PincodeController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>code" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PincodeController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/SupportTicketController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UnitController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UnitController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UnitController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\V1\\UnitController\:\:assignUnitAdmins\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/Api/V1/UnitController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\User\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/UnitController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$state\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$state_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/Api/V1/UserController.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Middleware/ConvertRequestToSnakeCase.php
+
+		-
+			message: '#^Call to function is_array\(\) with array\<Illuminate\\Http\\UploadedFile\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Http/Middleware/FileUploadSecurity.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: app/Http/Middleware/FileUploadSecurity.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>organization_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Requests/Api/V1/ManufacturingApplicationDraftRequest.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>organization_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Requests/Api/V1/ServicesApplicationDraftRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$answer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$application_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$feedback_question_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$formatted_answer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$question_text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$question_type\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$remarks\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ApplicationFeedbackResource\:\:\$yes_no_answer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ApplicationFeedbackResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$sector\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DisciplineResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DisciplineResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$extension\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$mime_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$original_filename\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$size\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$uploader\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DocumentResource\:\:\$uuid\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DocumentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$base_certification_fee\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$enterprise_size\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$food_and_accommodation_fee\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$gst_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$gst_percentage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$sector\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$tds_enabled\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$total_fee\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeeConfigurationResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeeConfigurationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$display_order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$question_text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FeedbackQuestionResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FeedbackQuestionResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IntegrationFailureResource\:\:\$error_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IntegrationFailureResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IntegrationFailureResource\:\:\$exception_message\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IntegrationFailureResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IntegrationFailureResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IntegrationFailureResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IntegrationFailureResource\:\:\$occurred_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IntegrationFailureResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IntegrationFailureResource\:\:\$source\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IntegrationFailureResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$enforce_single_session\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$is_system_role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$level\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$requires_organization\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$requires_unit\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\RoleResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RoleResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$activeRoles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$assessorDistricts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$assessorDomains\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$assigned_states\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$city\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$deleted_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$designation\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$district\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$email_verified_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$first_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$is_profile_completed\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$last_login_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$last_login_ip\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$last_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$mobile_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$organization\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$pincode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$profile_completed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$samar_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$state\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$updated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\UserResource\:\:assignedUnit\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\UserResource\:\:relationLoaded\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Listeners/ApplicationStatusChangedListener.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Listeners/ApplicationStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Listeners/ApplicationStatusChangedListener.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>application_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>email" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 4
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>mobile_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: app/Models/Application.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Application\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Application\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Application\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Application.php
+
+		-
+			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Models/ApplicationAssessmentBasicInformation.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>timestamp" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/ApplicationAssessmentMeeting.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rc_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ApplicationAssessmentQuestion.php
+
+		-
+			message: '#^Match arm comparison between ''assessor…'' and ''assessor…'' is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 1
+			path: app/Models/ApplicationAssessmentQuestionFeedback.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getOptionScore\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/ApplicationAssessmentResponse.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ApplicationAssessmentResponseEvidence.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ApplicationAssessmentResponseEvidence.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ApplicationAssessmentResponseEvidence\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ApplicationAssessmentResponseEvidence.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ApplicationAssessmentResponseEvidence\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ApplicationAssessmentResponseEvidence.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/ApplicationFeedback.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/ApplicationFeedback.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ApplicationFeedback\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ApplicationFeedback.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''yes_no'' and ''yes_no'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 2
+			path: app/Models/ApplicationFeedback.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
+			path: app/Models/ApplicationFeedback.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ApplicationStatusHistory\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ApplicationStatusHistory.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$latestAttendance\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$mobile_completed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$options\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question_text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$questions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$web_submitted_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weightage\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:latestAttendance\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:assigned\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<1, max\> and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Method App\\Models\\Assessment\:\:addTeamMember\(\) should return App\\Models\\AssessmentTeamMember but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Assessment\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between ''allocation_pending''\|''certified''\|''committee_feedback''\|''committee_review''\|''in_progress''\|''qc_feedback''\|''ready_for_committee''\|''scheduled''\|''submitted_for_qc'' and ''mobile_complete'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 3
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between int\<1, max\> and 0 will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 2
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 3
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^Method App\\Models\\AssessmentParameter\:\:getVendorCategory\(\) should return App\\Models\\ManufacturingVendorCategory\|App\\Models\\ServiceVendorCategory\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentParameter\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentParameter\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentParameter\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: app/Models/AssessmentParameter.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/AssessmentQuestion.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/AssessmentQuestion.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentQuestion\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentQuestion.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentQuestionOption\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentQuestionOption.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessmentStatusHistory\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessmentStatusHistory.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AssessorOffTime\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AssessorOffTime.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\AuditLog\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/AuditLog.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Certificate\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Certificate.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/CommitteeMeeting.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/CommitteeMeeting.php
+
+		-
+			message: '#^Method App\\Models\\CommitteeMeeting\:\:getChair\(\) should return App\\Models\\MeetingMember\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/CommitteeMeeting.php
+
+		-
+			message: '#^Method App\\Models\\CommitteeMeeting\:\:getConvenor\(\) should return App\\Models\\MeetingMember\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/CommitteeMeeting.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\CommitteeMeeting\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/CommitteeMeeting.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/CommitteeMember.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/CommitteeMember.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\CommitteeMember\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/CommitteeMember.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Discipline.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Discipline.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Discipline\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Discipline.php
+
+		-
+			message: '#^PHPDoc type array\<string\> of property App\\Models\\Document\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Document.php
+
+		-
+			message: '#^PHPDoc type array\<string\> of property App\\Models\\Document\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Document.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\EmailNotificationEvent\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/EmailNotificationEvent.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/EmailNotificationTemplate.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/EmailNotificationTemplate.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\EmailNotificationTemplate\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/EmailNotificationTemplate.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ErrorGroup\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ErrorGroup.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\ErrorLog\:\:\$count\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/ErrorLog.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ErrorLog\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ErrorLog.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\),Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ErrorLog\>\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Models/ErrorLog.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ErrorLogContextSnapshot\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ErrorLogContextSnapshot.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/FeeConfiguration.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/FeeConfiguration.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\FeeConfiguration\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/FeeConfiguration.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/FeedbackQuestion.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/FeedbackQuestion.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\FeedbackQuestion\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/FeedbackQuestion.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Organization.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Organization.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Organization\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Organization.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$enterprise_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Payment\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Payment\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^Variable \$baseFee on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Models/Payment.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\PaymentReconciliation\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/PaymentReconciliation.php
+
+		-
+			message: '#^Method App\\Models\\PendingLoginSession\:\:getLockoutMinutesRemaining\(\) should return int\|null but returns float\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/PendingLoginSession.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: app/Models/PendingLoginSession.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\PendingLoginSession\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/PendingLoginSession.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\PendingLoginSession\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/PendingLoginSession.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Role\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Session\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Session.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/ThirdPartyCertification.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/ThirdPartyCertification.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\ThirdPartyCertification\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/ThirdPartyCertification.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/Unit.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Unit.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Unit\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Unit.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$unit_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Cannot access property \$deleted_by on class\-string\|object\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Cannot call method save\(\) on class\-string\|object\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\User\:\:\$hidden is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$hidden\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Policies/ApplicationFeedbackPolicy.php
+
+		-
+			message: '#^Parameter \#2 \$application of method App\\Policies\\ApplicationFeedbackPolicy\:\:canAccessApplicationFeedback\(\) expects App\\Models\\Application, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Policies/ApplicationFeedbackPolicy.php
+
+		-
+			message: '#^Parameter \#2 \$application of method App\\Policies\\ApplicationFeedbackPolicy\:\:create\(\) expects App\\Models\\Application, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Policies/ApplicationFeedbackPolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Policies/CertificatePolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Policies/CertificatePolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$device_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$device_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ip_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$started_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:activeRoles\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getOrganizationInactiveMessage\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:hasActiveOrganization\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:logAudit\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:transitionTo\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Parameter \#1 \$forceForever of static method PHPOpenSourceSaver\\JWTAuth\\JWT\:\:invalidate\(\) expects bool, PHPOpenSourceSaver\\JWTAuth\\Token\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\Auth\\AuthService\:\:generateRefreshToken\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\Auth\\AuthService\:\:terminateUserSessions\(\) expects App\\Models\\User, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Parameter \#1 \$user of static method PHPOpenSourceSaver\\JWTAuth\\JWT\:\:fromUser\(\) expects PHPOpenSourceSaver\\JWTAuth\\Contracts\\JWTSubject, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/Auth/AuthService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$utr_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/BcSyncService.php
+
+		-
+			message: '#^Parameter \#1 \$organization of method App\\Services\\BusinessCentral\\BcSyncService\:\:ensureCustomerForOrganization\(\) expects App\\Models\\Organization, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Services/BusinessCentral/BcSyncService.php
+
+		-
+			message: '#^Parameter \#5 \$postingDate of method App\\Services\\BusinessCentral\\BcSyncService\:\:raiseInvoice\(\) expects Illuminate\\Support\\Carbon\|null, Carbon\\Carbon\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/BusinessCentral/BcSyncService.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Services/BusinessCentral/BcSyncService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>base_amount" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/BusinessCentral/BcSyncService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$mobile_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner_mobile_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$owner_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pan\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$registered_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$registered_district\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$registered_pincode\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$registered_state\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/BusinessCentral/Payloads/CustomerPayloadBuilder.php
+
+		-
+			message: '#^Cannot call method toDateString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/BusinessCentral/Payloads/InvoicePayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$invoice_reference\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/ReceiptPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/ReceiptPayloadBuilder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$reference_no\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/ReceiptPayloadBuilder.php
+
+		-
+			message: '#^Cannot call method toDateString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/BusinessCentral/Payloads/ReceiptPayloadBuilder.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>invoice_reference" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/BusinessCentral/Payloads/ReceiptPayloadBuilder.php
+
+		-
+			message: '#^Parameter \#1 \$score of method App\\Services\\CertificateService\:\:calculateRating\(\) expects float\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/CertificateService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CommitteeMeetingAssessmentService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CommitteeMeetingAssessmentService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/CommitteeMeetingAssessmentService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:transitionTo\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/CommitteeMeetingAssessmentService.php
+
+		-
+			message: '#^Parameter \#1 \$pivot of method App\\Services\\CommitteeMeetingAssessmentService\:\:detach\(\) expects App\\Models\\CommitteeMeetingAssessment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/CommitteeMeetingAssessmentService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$certified\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Application\:\:\$registered\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Certificate\:\:\$count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Offset ''Manufacturing''\|''Service'' on array\{Manufacturing\: array\{array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}\}, Service\: array\{array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}, array\{name\: ''Large''\|''Medium''\|''Micro''\|''Small''\|''Startup'', registered\: int, certified\: int\}\}\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Application\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 2
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Assessment\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/DocumentService.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/FileStorageService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessor_remarks\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$captured_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$conducted_at\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$decision\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$discipline_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$disk\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$file_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$image_path\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_mandatory\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issue_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$latitude\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$longitude\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$questions\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weighted_score\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 2
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>application_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>assessor_remarks" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>latitude" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>longitude" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Notification/CommitteeClarificationNotifier.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Notification/CommitteeClarificationNotifier.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forStates\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: app/Services/StateFilterService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:inStates\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateFilterService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$payment_status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/ApplicationStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application\.$#'
+			identifier: property.notFound
+			count: 7
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 16
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$started_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_score\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:areAllTeamMembersMobileComplete\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:initializeStepProgress\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:questions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:responses\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:statusHistories\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:teamMembers\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:logAudit\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:statusHistories\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Method App\\Services\\StateMachine\\StateMachine\:\:getHistory\(\) should return Illuminate\\Database\\Eloquent\\Collection but returns Illuminate\\Support\\Collection\<\(int\|string\), mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Static call to instance method stdClass\:\:withoutStatusUpdateAudit\(\)\.$#'
+			identifier: method.staticCall
+			count: 1
+			path: app/Services/StateMachine/StateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email_verified_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/UserStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/UserStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$organization_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/StateMachine/UserStateMachine.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Offset ''password'' on non\-empty\-array in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 3
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Services/UserService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 4
+			path: app/Services/UserService.php

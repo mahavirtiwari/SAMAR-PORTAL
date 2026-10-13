@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "$comment": "Machine-readable infra map for QCI SAMAR (schema: ~/.claude/conventions/infra-map.md). This repo OWNS the shared facts (hosts, environments, DBs) for the constellation; sibling repos carry thin files pointing here. Non-secret — credentials live in the committed .env* / appsettings files per the layered-env convention. Deploy procedure: deploy/README.md.",
+  "constellation": {
+    "repos": {
+      "backend": "Webority/qci-samar-backend",
+      "web": "Webority/qci-samar-web",
+      "assessor-mobile": "Webority/qci-samar-assessor-mobile",
+      "applicant-mobile": "Webority/qci-samar-applicant-mobile"
+    },
+    "sharedFactsIn": "qci-samar-backend",
+    "$comment": "The *-old repos (backend/web/assessor-mobile) are retired — ignore them. API contract lands in backend first; backend is source of truth."
+  },
+  "environments": {
+    "development": {
+      "db": {
+        "engine": "mysql",
+        "server": "127.0.0.1 (on vm-webhost-dev-cin-01)",
+        "database": "qci_samar_development",
+        "credentialsIn": ".env.development"
+      },
+      "deploy": {
+        "method": "ssh-rsync",
+        "workflow": "deploy/deploy.sh dev"
+      }
+    },
+    "staging": {
+      "db": {
+        "engine": "mysql",
+        "server": "127.0.0.1 (on qci-staging-vm)",
+        "database": "qci_samar",
+        "credentialsIn": ".env.staging"
+      },
+      "deploy": {
+        "method": "ssh-rsync",
+        "workflow": "deploy/deploy.sh staging"
+      }
+    },
+    "production": null,
+    "$comment": "No production environment exists. As of 20-Aug-2026 the mobile store builds deliberately point at staging (docs/10-architecture/D-007) — a PILOT release: the apps are distributed through the stores for testing, staging keeps its testing posture, and the apps are released again against the real production backend once one exists."
+  },
+  "hosts": {
+    "vm-webhost-dev-cin-01": {
+      "provider": "azure-vm",
+      "ip": "20.204.69.31",
+      "os": "ubuntu",
+      "resourceGroup": "WEBORITYWEBHOSTING-DEV",
+      "cloud": {
+        "subscription": {
+          "name": "Webority-Azure-Subscription-CSP",
+          "id": "7cbd1ae5-18b9-4b7b-97a3-11fb644f7906"
+        }
+      },
+      "ssh": {
+        "method": "entra",
+        "hint": "az ssh config (no PEM)"
+      },
+      "services": [
+        "nginx",
+        "php8.4-fpm",
+        "mysql",
+        "pm2"
+      ],
+      "tls": "samar-api.webority.dev: Let's Encrypt via certbot, AUTO-RENEW VERIFIED (certbot.timer active, twice daily; checked 18-Jul-2026, expiry 14-Oct-2026). Mobile pins target ISRG roots, so LE renewals do NOT break pinned builds. samar.webority.dev: CF-proxied, shared *.webority.dev origin cert",
+      "backups": "none — pre-production estate, accepted (Navneet, 18-Jul-2026); revisit when production is provisioned",
+      "notes": "Shared Webority dev web host. Fixed egress IP — partner IP-whitelisting (Protean GST, ICICI UAT). Dev API domain is DNS-only (NOT Cloudflare-proxied): mobile apps pin ISRG roots; Let's Encrypt direct."
+    },
+    "qci-staging-vm": {
+      "provider": "vm",
+      "ownership": "CUSTOMER-HOSTED (confirmed Navneet 18-Jul-2026) — this VM belongs to QCI, not Webority; we hold deploy access via the PEM. The dev VM is ours, this one is theirs.",
+      "ip": "13.126.142.111",
+      "os": "ubuntu",
+      "ssh": {
+        "method": "pem",
+        "user": "ubuntu",
+        "keyIn": "deploy/zed-staging-server-2026.pem"
+      },
+      "services": [
+        "nginx",
+        "php8.4-fpm",
+        "mysql",
+        "pm2"
+      ],
+      "tls": "samar-staging1.qci.org.in — cert on the server-managed nginx on the CUSTOMER's VM (their DNS, their cert responsibility; VERIFY issuer/renewal only if an expiry incident arises)",
+      "backups": "none on our side — customer-hosted staging VM; pre-production estate (Navneet, 18-Jul-2026). Still accepted under the D-007 pilot store release (the store apps are a testing distribution channel, not a production launch). Trigger to revisit: production provisioning, or real dependence on staging data arriving before it.",
+      "notes": "Fixed egress IP for partner whitelisting. nginx config is server-managed (/etc/nginx/sites-enabled/qci-samar.conf) — the deploy script does NOT overwrite it. Security-header snippet source of truth: deploy/nginx/qci-security-headers.conf."
+    }
+  },
+  "cicd": {
+    "provider": "none",
+    "manualOnly": [
+      "everything — ./deploy/deploy.sh [all|backend|frontend|dev|staging|status] over SSH/rsync from a dev machine (deploy/README.md)"
+    ],
+    "$comment": "No GitHub Actions in any QCI repo. The script refuses dirty tree / non-development branch and parity-checks deployed_commit after."
+  },
+  "guards": [
+    "Deploy scripts intentionally ship ALL .env* files (layered loader) — never 'harden' the rsync to exclude them; the app boots broken without them",
+    "Never overwrite staging nginx config — /etc/nginx/sites-enabled/qci-samar.conf is server-managed; repo snippet deploy/nginx/qci-security-headers.conf is the only nginx piece we own",
+    "deploy-staging.sh fresh runs migrate:fresh --seed — DESTRUCTIVE, wipes staging data; never run it as a routine deploy. Since D-007 that data also includes pilot store users' work — check who is mid-assessment before anyone runs it deliberately.",
+    "Mobile staging builds pin TLS certs — rotating the API cert without a coordinated app release bricks the pinned builds",
+    "Partner integrations (Protean GST, ICICI) whitelist our fixed egress IPs — changing VM/IP breaks partners until re-whitelisted",
+    "No production BACKEND exists — anything called 'prod' in the backend/web configs is a placeholder; do not deploy to it. The mobile apps are the exception: their appsettings.Production.json deliberately carries the STAGING BASE_URL so store builds work (D-007). 'Production' in a mobile appsettings means 'the config a store build ships with', not a production backend.",
+    "Staging carries the PILOT store apps (D-007) — internal staging testing shares the qci_samar DB with pilot store users, both directions"
+  ],
+  "deployables": {
+    "samar-api": {
+      "kind": "vm-service",
+      "stack": "laravel/php8.4",
+      "sourceIn": "qci-samar-backend",
+      "environments": {
+        "development": {
+          "host": "vm-webhost-dev-cin-01",
+          "path": "/data/www/samar-api.webority.dev",
+          "url": "https://samar-api.webority.dev"
+        },
+        "staging": {
+          "host": "qci-staging-vm",
+          "path": "/var/www/qci-samar/backend",
+          "url": "https://samar-staging1.qci.org.in (API under /api)"
+        },
+        "production": null
+      },
+      "deploy": {
+        "command": "./deploy/deploy.sh [backend|all|dev|staging|status]",
+        "docs": "deploy/README.md",
+        "$comment": "Refuses dirty tree / non-development branch. Ships ALL .env* files deliberately (layered loader) — never 'harden' that away. Version source: APP_VERSION in base .env, surfaced at /api/health + X-Api-Version."
+      },
+      "diagnostics": {
+        "logs": {
+          "type": "file",
+          "path": "storage/logs/laravel-*.log (under the env's deploy path)",
+          "access": "ssh",
+          "$comment": "LOG_CHANNEL=daily, LOG_LEVEL=debug on dev/staging"
+        },
+        "health": [
+          "/api/health (version, environment, database connected|disconnected)",
+          "/api/v1/system/status (returns deployed_commit — deploy parity check)"
+        ],
+        "runbook": "deploy/README.md (troubleshooting section)"
+      }
+    },
+    "samar-frontend": {
+      "kind": "spa",
+      "stack": "react19/vite7",
+      "sourceIn": "qci-samar-web",
+      "environments": {
+        "development": {
+          "host": "vm-webhost-dev-cin-01",
+          "path": "/data/www/samar.webority.dev/build",
+          "url": "https://samar.webority.dev",
+          "$comment": "served by pm2 app 'samar-frontend' (node build/server.js, PORT 3010) behind nginx"
+        },
+        "staging": {
+          "host": "qci-staging-vm",
+          "path": "/var/www/qci-samar/frontend",
+          "url": "https://samar-staging1.qci.org.in",
+          "$comment": "static via nginx"
+        },
+        "production": null
+      },
+      "deploy": {
+        "command": "dev: qci-samar-web ./deploy/deploy-dev.sh | staging: qci-samar-backend ./deploy/deploy-staging.sh frontend",
+        "docs": "qci-samar-web/deploy/README.md"
+      },
+      "diagnostics": {
+        "logs": {
+          "type": "pm2",
+          "access": "ssh",
+          "$comment": "dev: pm2 logs samar-frontend; staging is static nginx — nginx logs"
+        },
+        "health": [
+          "/version.json (version + buildTime — the SPA deploy marker and readiness probe)",
+          "/ (SPA shell 200) — insufficient alone, the fallback answers 200 to everything"
+        ]
+      }
+    }
+  },
+  "cloudflare": {
+    "zones": {
+      "webority.dev": "4731fbe7c5cdf2c1dbab32dc6d79b254"
+    },
+    "settings": [
+      "samar-api.webority.dev is DNS-only (NOT proxied) — mobile cert pinning against ISRG roots; proxying it breaks the apps",
+      "samar.webority.dev (web) IS proxied",
+      "staging domain samar-staging1.qci.org.in is on QCI's DNS, not ours"
+    ]
+  },
+  "integrations": {
+    "$comment": "Config in .env* per environment.",
+    "payments": "ICICI EazyPay (UAT on dev/staging)",
+    "erp": "Microsoft Dynamics 365 Business Central outbound push (BC_*)",
+    "email": "SendGrid SMTP",
+    "notes": "Partner endpoints whitelist our fixed egress IPs (see hosts)."
+  },
+  "monitoring": {
+    "$comment": "Standard: ~/.claude/conventions/monitoring.md. DELIBERATELY NOT IMPLEMENTED for this estate (Navneet, 20-Aug-2026): no alerting, no availability tests, no action group. This is a pre-production estate on a customer-hosted VM with the mobile apps in a D-007 pilot — the monitoring baseline is a production control and is not wanted yet. Revisit when a production environment is provisioned; do not re-raise it as a gap before then.",
+    "healthCheckPaths": {
+      "samar-api": "/api/health (version, environment, database connected|disconnected) + /api/v1/system/status (deployed_commit, deploy-parity)",
+      "samar-frontend": "/version.json (version + buildTime; the deploy marker and probe in one) — currently probed at / by nothing automated"
+    },
+    "alerts": [],
+    "escalation": "None, deliberately — see $comment. Not a gap to close until production exists.",
+    "gaps": [
+      "No alerting or availability testing anywhere in this constellation — a DECISION, not an oversight (see $comment). Outages are found by users or by manual checks until production is provisioned.",
+      "samar-frontend publishes /version.json (generated by scripts/prebuild.js, live on dev + staging) but nothing probes it. Available whenever monitoring is wanted."
+    ]
+  },
+  "pending": [
+    {
+      "intent": "Provision a production environment (API + frontend + DB) and fill environments.production plus each deployable's production entry",
+      "when": "QCI commits to a production host; triggers the mobile repoint + store re-release per D-007",
+      "ref": "TASK-05597"
+    }
+  ],
+  "log": [
+    {
+      "date": "2026-08-20",
+      "change": "Staging became the backend for the pilot mobile store release (D-007) — still a testing environment, but now with external app users",
+      "ref": "BUG-06302"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+# Environment files
+.env
+!.env.example
+!.env.development
+!.env.staging
+!.env.production
+!.env.testing
+
+# Laravel
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+/storage/logs/*.log
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+!storage/framework/.gitkeep
+!storage/framework/cache/.gitkeep
+!storage/framework/sessions/.gitkeep
+!storage/framework/testing/.gitkeep
+!storage/framework/views/.gitkeep
+/.fleet
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Build files
+/public/build
+/public/hot
+
+# NPM
+npm-debug.log
+yarn-error.log
+
+# Composer
+composer.phar
+
+# Testing
+.phpunit.result.cache
+coverage/
+.phpunit.cache
+
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation
+/storage/api-docs/*
+!/storage/api-docs/api-docs.json
+/public/docs/
+
+# Logs
+*.log
+storage/logs/*.log
+NUL
+deploy.zip
+
+# Deploy stamp (written per-deploy by deploy/deploy.sh, served via /api/v1/system/status)
+/public/deployed-commit.txt
+
+# Database dumps
+qci_samar
+
+# Python (docs/user-manual build scripts)
+__pycache__/
+*.pyc
+
+# SAMAR-PORTAL: keep files with live credentials out of the repo
+.env
+.env.staging
+.env.production
+.env.development
+.env.example

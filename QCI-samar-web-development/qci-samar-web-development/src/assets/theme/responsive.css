@@ -1,0 +1,1138 @@
+/* Responsive.css - All responsive styles for mobile and tablet devices */
+@media (max-width: 1400px) {
+  .custom-stepper {
+    width: auto;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .cus-radio-gap .css-sqklou-MuiFormGroup-root {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    gap: 0;
+  }
+}
+/* Tablet Responsive (max-width: 1024px) */
+@media (max-width: 1280px) {
+  .publicMainContainer {
+    padding: 10px 0px 30px 40px;
+  }
+  .samarLogo {
+    height: 90px;
+  }
+  .publicFormTopMainContainer h2 {
+    font-size: var(--fs-lg);
+  }
+  .publicFormTopMainContainer p {
+    font-size: var(--fs-xs);
+  }
+  .login-bg-container {
+    margin-left: 0px;
+    margin-top: 0px;
+    position: absolute;
+    left: 0;
+    width: 490px;
+  }
+  .publicFormMainContainer {
+    max-width: 410px;
+    margin: auto;
+    padding-bottom: 100px;
+  }
+  .statIconContainer {
+    width: 40px;
+    height: 40px;
+  }
+  .statIconContainer img {
+    width: 26px;
+  }
+  .sidebar.sidebar-open {
+    width: 270px;
+  }
+  .main-content.sidebar-open {
+    margin-left: 270px;
+  }
+  .statCard {
+    padding: 16px;
+    height: 100%;
+  }
+  .row.h-100.align-content-between {
+    row-gap: 10px;
+  }
+  .statCard .row {
+    line-height: normal;
+    gap: 4px;
+  }
+  .new-application-button {
+    padding: 15px 5px;
+    text-align: center;
+  }
+  .new-application-button img {
+    width: 30px;
+  }
+  .new-application-button {
+    gap: 10px;
+  }
+  .sidebar-open-header {
+    padding-left: 270px;
+  }
+  .subHeader.sidebar-open {
+    padding-left: 300px;
+  }
+
+  .enterpriseInfoHorizontalUl {
+    row-gap: 10px;
+  }
+  /* .sidebar.sidebar-closed:hover {
+    width: 270px;
+    } */
+  .sidebar-icon {
+    flex: none;
+  }
+  .four-cards.col.cus-col {
+    width: 25%;
+  }
+  .col.cus-col {
+    width: 30%;
+    flex: auto;
+  }
+  .sidebar-subitem {
+    font-size: 11px;
+  }
+  .nav-text {
+    font-size: 12px;
+    text-wrap-mode: wrap;
+  }
+  .custom-sidebar-nav .sidebar-submenu {
+    padding-left: 10px !important;
+  }
+  .enterpriseInfoHorizontalUl li {
+    margin-right: 25px;
+  }
+  .enterpriseInfoHorizontalUl li:after {
+    content: "";
+    right: -15px;
+  }
+  .vertical-divider {
+    margin: 0px 10px !important;
+  }
+  .enterpriseInfoUl-divider {
+    width: 25px;
+  }
+  .enterpriseInfoUl-divider:before {
+    content: "";
+    right: 10px;
+  }
+  .details-card {
+    padding: 15px;
+  }
+  .assessment-tab-number {
+    width: 30px;
+    height: 30px;
+    font-size: var(--fs-sm);
+    flex: none;
+  }
+  .assessment-tab .nav-link {
+    padding: 10px 10px;
+    line-height: normal;
+  }
+  .payment-allocation-container {
+    padding: 10px;
+  }
+  .avatar {
+    flex: none;
+  }
+  .at-left {
+    flex: 0 0 140px;
+  }
+  .at-mid {
+    gap: 10px;
+  }
+  .page-heading {
+    font-size: var(--fs-md);
+    padding-right: 10px;
+  }
+  .at-check-block {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .scheduleMeetingProfile {
+    width: 70px;
+    height: 70px;
+  }
+  .custom-gap-style {
+    gap: var(--space-2) !important;
+  }
+  .custom-flex-wrap {
+    flex-wrap: wrap !important;
+  }
+  .top-details-card-content .rowBetween {
+    align-items: flex-start;
+  }
+  .top-right-details-card .rowCenter {
+    align-items: flex-start;
+  }
+  .badge-container {
+    flex: none;
+  }
+  .table-header {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    align-items: flex-start;
+  }
+  .table-header-left {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .table-header-left-without-search {
+    flex-direction: row !important;
+  }
+  .table-header-right {
+    gap: 5px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .statCard {
+    padding: 12px;
+  }
+}
+
+/* Tablet Responsive (max-width: 992px) */
+@media (max-width: 992px) {
+  /* Header adjustments for tablet */
+  .custom-header {
+    left: 0 !important;
+  }
+
+  /* Sidebar.jsx toggles this class on the header; its desktop 280px inset would
+     push the menu button off screen while the sidebar is an overlay. */
+  .sidebar-open-header {
+    padding-left: 0;
+  }
+
+  /* Sidebar becomes overlay on tablet.
+     Two-class selectors are load-bearing: custom.css .sidebar.sidebar-closed sets
+     its own transform, and a media query contributes no specificity — a plain
+     .sidebar rule here loses to it and the sidebar stays on screen. */
+  .sidebar,
+  .sidebar.sidebar-closed {
+    transform: translateX(-100%);
+    width: 280px;
+    z-index: 1050;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: block;
+    top: 0;
+    height: 100vh;
+    z-index: 1045;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  /* The user block sizes to its text and has no intrinsic limit, so a long
+     name + role widens the header past the viewport. Let every ancestor
+     shrink (flex items default to min-width:auto) and ellipsize the text. */
+  .header-content {
+    min-width: 0;
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+  }
+
+  .header-right {
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  .header-nav,
+  .header-nav .dropdown {
+    min-width: 0;
+  }
+
+  .user-dropdown-toggle {
+    gap: 8px;
+    padding: 6px 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .user-info,
+  .user-name-role-wrapper {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .user-name,
+  .user-role,
+  .user-id {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Bare `.col` splits equally at every width and never stacks, so the 1280px
+     rule below (25%) would still put four stat cards across a phone. */
+  .four-cards.col.cus-col,
+  .col.cus-col {
+    width: 50%;
+    flex: 0 0 50%;
+  }
+
+  /* The desktop table header spends 60px on padding and holds a fixed 300px
+     search box — together wider than the content column on a phone. */
+  .table-header {
+    padding: 16px 15px;
+  }
+
+  .table-header-left,
+  .table-header-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Action buttons carry a 70px floor and the row is nowrap, so a five-button
+     header (import/bulk/export/filters/add) needs 370px it doesn't have. */
+  .table-header-right {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  /* Stacked into a column the heading sizes to max-content, so a long page
+     title (e.g. "Manufacturing Assessment Parameters") outgrows the column. */
+  .table-header-left > * {
+    max-width: 100%;
+  }
+
+  .table-header-left .page-heading {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .input-search-document {
+    width: 100%;
+  }
+
+  .table-wrapper {
+    padding: 0 15px 15px;
+  }
+
+  /* Main content always full width on tablet */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 20px 15px;
+  }
+
+  .dashboard-stats {
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 20px 15px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .recent-activity-card,
+  .quick-actions-card {
+    margin-bottom: 20px;
+  }
+
+  .action-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile Responsive (max-width: 768px) */
+@media (max-width: 768px) {
+  /* Header always full width on mobile */
+  .custom-header {
+    left: 0 !important;
+    padding: 15px 20px;
+  }
+
+  /* Symmetric side padding for the two-logo public header so the left logo
+     sits the same distance from the edge as the right one. */
+  .publicMainContainer {
+    padding: 10px 0px 30px 0px;
+  }
+
+  /* ----- Application Details page: stack the header on phones ----- */
+  /* Header row (info block) — let it use full width instead of a squeezed column. */
+  .top-details-card,
+  .top-details-card-content {
+    flex-direction: column;
+  }
+  .top-right-details-card,
+  .top-details-card-content > * {
+    width: 100%;
+  }
+
+  /* Oversized unit-name headings overflow a phone column — scale them down
+     only inside the details header, not the fs-* utilities elsewhere. */
+  .top-details-card .fs-24 {
+    font-size: 18px;
+  }
+  .top-details-card .fs-22 {
+    font-size: 15px;
+  }
+
+  /* The meta row (DPIIT/DRDO/dates) is a nowrap flex row split by vertical
+     dividers — stack the boxes full width and drop the now-pointless dividers. */
+  .bottom-details-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bottom-details-card > .each-details-box {
+    max-width: 100%;
+    width: 100%;
+  }
+  .bottom-details-card > .vertical-divider {
+    display: none;
+  }
+
+  /* Tabs bar: tighter side padding and horizontal scroll if it still overflows. */
+  .card-bottom-tabs {
+    padding: 0 15px;
+  }
+  .card-tabs-link {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .header-logo {
+    left: 20px !important;
+    font-size: 18px;
+  }
+
+  .header-right {
+    gap: 15px;
+  }
+
+  /* Sidebar becomes overlay on mobile — see the 992px block for why the
+     .sidebar-closed selector must be repeated here. */
+  .sidebar,
+  .sidebar.sidebar-closed {
+    width: 280px;
+    z-index: 1050;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Longest labels ("Assessment (Manufacturing)") still exceed the drawer, so
+     let them wrap instead of running under the edge. */
+  .sidebar .nav-text {
+    white-space: normal;
+    line-height: 1.25;
+  }
+
+  /* These columns stack below md, so a divider on the right edge now cuts
+     across the middle of the page instead of between two columns. */
+  .border-right,
+  .right-border,
+  .support-form-section {
+    border-right: 0;
+  }
+
+  .support-form-section {
+    padding-right: 0;
+    padding-bottom: var(--space-20, 20px);
+    border-bottom: 1px solid var(--outline);
+  }
+
+  .contact-info-section {
+    padding-left: 0;
+  }
+
+  /* Sticky only makes sense beside the content it indexes; stacked it pins a
+     tall block over the page and traps its own scroll. */
+  .assessment-tab-sidebar {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .site-img {
+    width: 100%;
+    max-width: 370px;
+    height: auto;
+    aspect-ratio: 37 / 23;
+    object-fit: cover;
+  }
+
+  /* These are hand-rolled <table>s with no .table-responsive wrapper, so
+     multi-column rows had no way to scroll and simply overflowed the card.
+     Making the table itself the scroll container avoids touching the nine
+     call sites; the row/cell boxes still lay out through anonymous table
+     boxes, so column alignment is preserved. */
+  .table.product-details-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Main content always full width on mobile */
+  .main-content {
+    padding: 15px 10px;
+    margin-left: 0 !important;
+  }
+
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 15px 12px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .action-btn {
+    padding: 15px;
+    font-size: 14px;
+    justify-content: center;
+  }
+
+  .recent-activity-item {
+    padding: 12px;
+  }
+
+  .activity-title {
+    font-size: 14px;
+  }
+
+  .activity-time {
+    font-size: 11px;
+  }
+
+  /* Payment History Mobile */
+  .payment-filters {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group label {
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .payment-table {
+    font-size: 12px;
+  }
+
+  .payment-table th,
+  .payment-table td {
+    padding: 8px 6px;
+  }
+
+  .payment-amount {
+    font-size: 14px;
+  }
+
+  .payment-status {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  /* Documents Mobile */
+  .document-filters {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .document-card {
+    padding: 15px;
+  }
+
+  .document-title {
+    font-size: 14px;
+  }
+
+  .document-meta {
+    font-size: 11px;
+  }
+
+  .document-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .doc-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Feedback Mobile */
+  .feedback-form {
+    padding: 20px 15px;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .form-subtitle {
+    font-size: 14px;
+  }
+
+  .rating-stars {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .star-btn {
+    font-size: 24px;
+  }
+
+  .feedback-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+  }
+
+  /* Create Application Mobile */
+  .form-title {
+    font-size: 24px;
+  }
+
+  .form-subtitle {
+    font-size: 14px;
+  }
+
+  .sector-card {
+    padding: 25px 15px;
+    min-height: 120px;
+  }
+
+  .sector-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .sector-title {
+    font-size: 16px;
+  }
+
+  .radio-group,
+  .classification-group {
+    gap: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+    padding: 15px;
+  }
+  .verify-certificate-card {
+    min-height: auto;
+    border-radius: 12px;
+    padding: 24px 12px 16px;
+  }
+
+  .verify-certificate-samar-logo {
+    width: 98px;
+    margin-bottom: 24px;
+  }
+
+  .verify-certificate-fields {
+    margin-top: 24px;
+    gap: 20px;
+  }
+
+  .verify-certificate-divider {
+    margin: 24px 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .logo50 {
+    height: 44px;
+  }
+  .subHeaderRightBx {
+    gap: 5px;
+    display: inline-grid;
+  }
+
+  ul.enterpriseInfoUl li p {
+    word-break: break-word;
+  }
+
+  .verify-certificate-details-card {
+    padding: 10px 18px;
+    border-radius: 14px;
+  }
+
+  .verify-certificate-detail-row {
+    padding: 11px 0;
+    display: grid;
+    grid-template-columns: minmax(140px, 1fr) minmax(120px, 1fr);
+    align-items: center;
+    gap: 5px;
+  }
+  .main-content {
+    margin-top: 155px;
+  }
+  .accordion-header button {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .enterpriseInfoMainWrapper .row {
+    gap: 30px;
+  }
+  .subHeaderLeft {
+    flex-direction: column;
+    display: flex;
+    align-items: flex-start;
+  }
+  .subHeaderLeftBox {
+    display: flex;
+    align-items: center;
+  }
+  .subHeaderRightBx ul li.margin-left-30 {
+    margin-left: 0 !important;
+  }
+  .subHeaderLeft .subHeaderRightBx {
+    gap: 4px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .subHeaderLeft {
+    gap: 8px;
+  }
+  .subHeaderLeft .subHeaderRightBx .badge-container {
+    margin-left: 0 !important;
+  }
+  .custom-header {
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .subHeader {
+    padding: 10px 0;
+  }
+  .enterpriseInfoUl li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .enterpriseInfoUl li p {
+    margin-left: 0;
+  }
+  ul.enterpriseInfoUl li .app-button.link {
+    padding-left: 0;
+  }
+  .numberEmployeesUl {
+    padding-left: 0;
+  }
+  .top-right-details-card .d-flex.justify-content-between {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .payment-allocation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .payment-allocation-container .d-flex.justify-content-between.cursor-pointer {
+    display: flex;
+    flex-direction: column;
+  }
+  .attendance-list .at-row {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+  }
+  .at-left {
+    width: 140px;
+  }
+
+  .card-tabs-link span {
+    line-height: 20px;
+    display: flex;
+  }
+  .top-right-details-card .d-flex.flex-row.justify-content-between {
+    flex-direction: column !important;
+  }
+  .subHeaderRightBx .margin-left-30 {
+    margin-left: 0;
+  }
+  .subHeaderLeft .heading-seperator {
+    display: none;
+  }
+  .top-details-card-content .rowBetween {
+    flex-direction: column;
+  }
+  .payment-allocation-container .rowBetween.cursor-pointer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .subHeaderLeft img {
+    margin-right: 10px;
+  }
+  .organization-card {
+    padding: 12px;
+  }
+
+  .custom-unit-tabs {
+    flex-direction: column;
+  }
+
+  .custom-unit-tabs .nav-item {
+    width: 100%;
+  }
+
+  .top-right-details-card {
+    padding-left: 0 !important;
+  }
+
+  .top-right-details-card .rowBetween {
+    flex-wrap: wrap;
+  }
+
+  .review-parameter-container {
+    padding: 20px;
+  }
+
+  .top-left-details-card {
+    margin-bottom: 20px;
+  }
+
+  .top-details-card-content .top-right-details-card {
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .settings-card,
+  .maintenance-card {
+    flex-direction: column;
+  }
+
+  .MuiDialog-paper {
+    margin: 0 !important;
+    width: 95% !important;
+  }
+}
+
+/* Small Mobile Responsive (max-width: 480px) */
+@media (max-width: 480px) {
+  /* One stat card per row on a phone — two leaves ~72px of usable width. */
+  .four-cards.col.cus-col,
+  .col.cus-col {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .header-content {
+    padding: 0 0px;
+  }
+
+  .main-content-inner {
+    padding: 10px 0px !important;
+  }
+
+  .progressBarLabels {
+    gap: 10px;
+  }
+
+  .progressBarLabels > * {
+    min-width: calc((100% - 0px) / 1) !important;
+  }
+
+  .details-card {
+    height: auto !important;
+  }
+
+  .publicFormBottomMainContainer {
+    text-align: center;
+  }
+
+  .header {
+    padding: 12px 15px;
+  }
+
+  .header-logo {
+    left: 15px !important;
+    font-size: 16px;
+  }
+
+  .sidebar-open .header-logo {
+    left: 265px !important;
+  }
+
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-nav .nav-link {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .nav-icon {
+    font-size: 16px;
+    min-width: 20px;
+  }
+
+  .main-content {
+    padding: 10px 8px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 12px 10px;
+  }
+
+  .stat-number {
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  .page-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .quick-actions {
+    gap: 10px;
+  }
+
+  .action-btn {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .recent-activity-item {
+    padding: 10px;
+  }
+
+  .activity-title {
+    font-size: 13px;
+  }
+
+  .activity-time {
+    font-size: 10px;
+  }
+
+  /* Payment History Small Mobile */
+  .payment-table {
+    font-size: 11px;
+  }
+
+  .payment-table th,
+  .payment-table td {
+    padding: 6px 4px;
+  }
+
+  .payment-amount {
+    font-size: 12px;
+  }
+
+  .payment-status {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  /* Documents Small Mobile */
+  .documents-grid {
+    gap: 12px;
+  }
+
+  .document-card {
+    padding: 12px;
+  }
+
+  .document-title {
+    font-size: 13px;
+  }
+
+  .document-meta {
+    font-size: 10px;
+  }
+
+  /* Feedback Small Mobile */
+  .feedback-form {
+    padding: 15px 10px;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .rating-stars {
+    gap: 6px;
+  }
+
+  .star-btn {
+    font-size: 20px;
+  }
+
+  /* Create Application Small Mobile */
+  .sector-selection-row {
+    margin-bottom: 30px;
+  }
+
+  .application-form-card .card-body {
+    padding: 20px !important;
+  }
+
+  .form-header {
+    margin-bottom: 30px;
+  }
+
+  .form-title {
+    font-size: 22px;
+  }
+
+  .sector-card {
+    padding: 20px 10px;
+    min-height: 100px;
+  }
+
+  .sector-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .sector-title {
+    font-size: 14px;
+  }
+
+  .radio-group,
+  .classification-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Extra Small Mobile (max-width: 320px) */
+@media (max-width: 320px) {
+  .header {
+    padding: 10px 12px;
+  }
+
+  .header-logo {
+    left: 12px !important;
+    font-size: 14px;
+  }
+
+  .sidebar-open .header-logo {
+    left: 252px !important;
+  }
+
+  .sidebar {
+    width: 220px;
+  }
+
+  .sidebar-nav .nav-link {
+    padding: 10px 15px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    padding: 8px 6px;
+  }
+
+  .page-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .stat-card {
+    padding: 10px 8px;
+  }
+
+  .stat-number {
+    font-size: 16px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .action-btn {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "name": "qci-samar-web",
+  "version": "0.20.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "node scripts/prebuild.js",
+    "dev": "npm run prebuild -- Local && vite",
+    "dev:development": "npm run prebuild -- Development && vite",
+    "dev:staging": "npm run prebuild -- Staging && vite",
+    "dev:production": "npm run prebuild -- Production && vite",
+    "start": "npm run dev",
+    "start:development": "npm run dev:development",
+    "start:production": "npm run dev:production",
+    "start:staging": "npm run dev:staging",
+    "build": "vite build",
+    "build:development": "npm run prebuild -- Development && vite build && node scripts/verify-build.js",
+    "build:local": "npm run prebuild -- Local && vite build && node scripts/verify-build.js",
+    "build:production": "npm run prebuild -- Production && vite build && node scripts/verify-build.js",
+    "build:staging": "npm run prebuild -- Staging && vite build && node scripts/verify-build.js",
+    "staging": "npm run build:staging",
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "lint": "biome lint ./src",
+    "format": "biome format --write ./src",
+    "format:check": "biome format ./src",
+    "check": "biome check ./src",
+    "check:fix": "biome check --write ./src"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/material": "^7.3.4",
+    "@mui/x-charts": "^8.27.0",
+    "@mui/x-data-grid": "^8.16.0",
+    "@mui/x-date-pickers": "^8.16.0",
+    "@reduxjs/toolkit": "^2.10.1",
+    "axios": "^1.13.2",
+    "axios-retry": "^4.5.0",
+    "bootstrap": "^5.3.8",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.19",
+    "formik": "^2.4.9",
+    "input-otp": "^1.4.2",
+    "prop-types": "^15.8.1",
+    "react": "^19.2.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.5",
+    "recharts": "^3.5.0",
+    "redux": "^5.0.1",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.5",
+    "@playwright/test": "^1.57.0",
+    "@vitejs/plugin-react": "^4.5.2",
+    "sass": "^1.93.2",
+    "typescript": "^4.9.5",
+    "vite": "^7.1.13"
+  }
+}

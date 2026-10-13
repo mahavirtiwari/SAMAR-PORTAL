@@ -1,0 +1,74 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+require_relative '../node_modules/react-native-permissions/scripts/setup'
+
+# react-native-firebase 26 resolves firebase-ios-sdk via SPM by default, which
+# collides with RN's static linkage (duplicate symbols). This project pins the
+# Firebase pods via CocoaPods (below), so opt out of SPM and use those instead.
+$RNFirebaseDisableSPM = true
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+setup_permissions([
+  'Camera',
+  'LocationWhenInUse',
+  'PhotoLibrary',
+])
+
+target 'assessor' do
+  config = use_native_modules!
+
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+  
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'FirebaseCrashlytics', :modular_headers => true
+  pod 'FirebaseSessions', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true 
+
+
+  pod 'TrustKit'
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+    
+    # Fix for non-modular include errors
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      end
+    end
+
+    # ccache wiring on by default — set DISABLE_CCACHE=1 to opt out. Requires `ccache` on PATH.
+    if ENV['DISABLE_CCACHE'] != '1' && system('command -v ccache > /dev/null 2>&1')
+      ccache_dir = "#{Pod::Config.instance.installation_root}/../.ccache"
+      Pod::UI.puts "Enabling ccache for Pods build".green
+      installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings['CC'] = "#{ccache_dir}/ccache-clang"
+          config.build_settings['CXX'] = "#{ccache_dir}/ccache-clang++"
+          config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+        end
+      end
+    end
+  end
+end

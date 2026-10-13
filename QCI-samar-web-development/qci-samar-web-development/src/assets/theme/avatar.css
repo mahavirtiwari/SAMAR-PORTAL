@@ -1,0 +1,136 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  font-weight: 600;
+  box-sizing: border-box;
+  border: 1px solid;
+  padding: 1px;
+}
+
+.avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 30px;
+}
+
+.avatar-initials {
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Additional numeric sizes (with 1px border included via box-sizing) */
+.avatar--24 {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+
+.avatar--28 {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.avatar--36 {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.avatar--80 {
+  width: 80px;
+  height: 80px;
+  font-size: 32px;
+}
+
+.avatar--40 {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.avatar--46 {
+  width: 46px;
+  height: 46px;
+  font-size: 15px;
+}
+
+.avatar--46 {
+  width: 46px;
+  height: 46px;
+  font-size: 15px;
+}
+
+/* Role color combos */
+/* Lead Assessor: purple outline with pale purple background */
+.lead-assessor {
+  border-color: var(--purple-primary);
+  /* purple border */
+  background-color: var(--purple-clarity);
+  /* pale purple */
+  color: var(--purple-primary);
+  /* initials color */
+}
+/* Active Assessor: green outline with pale green background */
+.active-assessor {
+  border-color: #04b440;
+  /* green border */
+  background-color: #e6f4ea;
+  /* pale green */
+  color: #04b440;
+  /* initials color */
+}
+
+/* Co Assessor: blue outline with pale blue background */
+.co-assessor {
+  border-color: var(--primary);
+  /* blue border */
+  background-color: var(--primary-10);
+  /* very pale blue */
+  color: var(--primary);
+  /* initials color */
+}
+
+/* Participant: lighter blue / cyan combo */
+.participant {
+  border-color: var(--primary);
+  /* light blue border */
+  background-color: var(--primary-10);
+  /* very pale cyan */
+  color: var(--primary);
+  /* initials color */
+}
+
+/* When an image is present, force a white background so image sits on white while border keeps role color */
+.avatar--image {
+  background-color: #ffffff !important;
+}
+.MuiTooltip-tooltip.MuiTooltip-tooltipArrow.MuiTooltip-tooltipPlacementBottom {
+  background-color: white;
+  border: 1px solid var(--outline);
+}
+
+/* 1. Hide MUI's default arrow shape */
+.css-iglfhh-MuiTooltip-arrow::before {
+  display: none !important;
+}
+
+/* 2. Insert your custom triangle image */
+.css-iglfhh-MuiTooltip-arrow {
+  width: 28px !important;
+  height: 28px !important;
+  background-image: url("../icons/triangle.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translateY(0px); /* adjust position so it sits exactly like your screenshot */
+}
+.css-jycagz-MuiPopper-root-MuiTooltip-popper[data-popper-placement*="bottom"] .MuiTooltip-arrow {
+  top: 0;
+  margin-top: -21px !important;
+}

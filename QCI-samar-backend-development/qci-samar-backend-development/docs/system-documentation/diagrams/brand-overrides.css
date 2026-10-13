@@ -1,0 +1,52 @@
+/* Edge/link label text inherits primaryTextColor (white) from the Webority brand
+   init block, which lands white-on-lavender and is unreadable. Mermaid exposes no
+   theme variable that separates node-label colour from edge-label colour, so the
+   only fix is a CSS override at render time. */
+.edgeLabel .label text,
+.edgeLabel .label span,
+.edgeLabel p,
+.edgeLabel {
+  fill: #2B2B2B !important;
+  color: #2B2B2B !important;
+}
+
+.edgeLabel .label rect {
+  fill: #F3E8FF !important;
+  opacity: 1 !important;
+}
+
+/* Sequence-diagram message labels have the same inheritance problem.
+   They also sit directly on top of the participant lifelines, which run
+   straight through the words. SVG has no text background, so a white halo
+   painted under the glyphs is the only way to mask the line. paint-order
+   puts the stroke behind the fill so the letterforms stay crisp. */
+text.messageText {
+  fill: #2B2B2B !important;
+  font-size: 15px !important;
+  paint-order: stroke fill !important;
+  stroke: #FFFFFF !important;
+  stroke-width: 5px !important;
+  stroke-linejoin: round !important;
+}
+
+/* Message ARROWS inherit primaryTextColor too, which renders them white on
+   white - invisible. Every sequence diagram loses all its arrows without this. */
+line.messageLine0,
+line.messageLine1,
+.messageLine0,
+.messageLine1 {
+  stroke: #6200EE !important;
+}
+
+marker#arrowhead path,
+marker[id$="-arrowhead"] path,
+marker[id$="sequencenumber"] circle {
+  fill: #6200EE !important;
+  stroke: #6200EE !important;
+}
+
+/* Sequence-diagram note text sits on a pale note background. */
+text.noteText,
+text.noteText tspan {
+  fill: #2B2B2B !important;
+}

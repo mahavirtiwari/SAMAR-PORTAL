@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "$comment": "Thin constellation file (schema: ~/.claude/conventions/infra-map.md). Shared facts — hosts, environments, DBs, integrations — live in qci-samar-backend/.webority/infra.json. This repo is the source of the 'samar-frontend' deployable defined there.",
+  "constellation": {
+    "repos": {
+      "backend": "Webority/qci-samar-backend",
+      "web": "Webority/qci-samar-web",
+      "assessor-mobile": "Webority/qci-samar-assessor-mobile",
+      "applicant-mobile": "Webority/qci-samar-applicant-mobile"
+    },
+    "sharedFactsIn": "qci-samar-backend"
+  },
+  "deployables": {
+    "samar-frontend": {
+      "kind": "spa", "stack": "react19/vite7",
+      "$comment": "Full definition (hosts, paths, pm2, urls) in qci-samar-backend infra.json. Dev deploys from THIS repo: ./deploy/deploy-dev.sh. Staging deploys from the backend repo (./deploy/deploy-staging.sh frontend) — this repo has no staging script. Env config: scripts/prebuild.js merges src/appsettings.{ENV}.json (no .env files). Production BASE_URL is still empty — prod not provisioned."
+    }
+  }
+}

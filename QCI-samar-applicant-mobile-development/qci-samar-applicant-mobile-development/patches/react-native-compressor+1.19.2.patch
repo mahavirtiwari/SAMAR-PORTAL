@@ -1,0 +1,23 @@
+diff --git a/node_modules/react-native-compressor/android/src/main/java/com/reactnativecompressor/Video/VideoCompressor/compressor/Compressor.kt b/node_modules/react-native-compressor/android/src/main/java/com/reactnativecompressor/Video/VideoCompressor/compressor/Compressor.kt
+index 9963b78..4a2437f 100644
+--- a/node_modules/react-native-compressor/android/src/main/java/com/reactnativecompressor/Video/VideoCompressor/compressor/Compressor.kt
++++ b/node_modules/react-native-compressor/android/src/main/java/com/reactnativecompressor/Video/VideoCompressor/compressor/Compressor.kt
+@@ -783,6 +783,18 @@ object Compressor {
+         return profile == 0x20
+     }
+ 
++  // Remaps a "video/dolby-vision" input to its decodable HEVC base layer in
++  // place, so MediaCodec can select a standard decoder. Profile 5 (no base
++  // layer) is already rejected up front in start() via isUnsupportedDolbyVision,
++  // so anything reaching here is a profile 8.x stream that carries an HEVC base
++  // layer and can simply be treated as HEVC (#398).
++    private fun ensureDecodableVideoFormat(inputFormat: MediaFormat) {
++        val mime = inputFormat.getString(MediaFormat.KEY_MIME) ?: return
++        if (mime.equals("video/dolby-vision", ignoreCase = true)) {
++            inputFormat.setString(MediaFormat.KEY_MIME, "video/hevc")
++        }
++    }
++
+   // Function to prepare the video decoder
+     private fun prepareDecoder(
+         inputFormat: MediaFormat,

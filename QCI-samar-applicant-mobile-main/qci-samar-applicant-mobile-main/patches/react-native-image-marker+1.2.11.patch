@@ -1,0 +1,44 @@
+diff --git a/node_modules/react-native-image-marker/react-native-image-marker.podspec b/node_modules/react-native-image-marker/react-native-image-marker.podspec
+index 09c3a53..e7fee5d 100644
+--- a/node_modules/react-native-image-marker/react-native-image-marker.podspec
++++ b/node_modules/react-native-image-marker/react-native-image-marker.podspec
+@@ -16,20 +16,27 @@ Pod::Spec.new do |s|
+ 
+   s.source_files = "ios/**/*.{h,m,mm,swift}"
+ 
+-  s.dependency "React-Core"
+-
+-  # Don't install the dependencies when we run `pod install` in the old architecture.
+-  if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
+-    s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
+-    s.pod_target_xcconfig    = {
++  # RN 0.85 / New Architecture: the upstream podspec hard-declared legacy pods
++  # (RCT-Folly, React-Codegen) that no longer resolve under the current React
++  # Native CocoaPods setup. install_modules_dependencies injects the correct
++  # per-architecture dependencies (folly flags, codegen, turbomodule core) for
++  # the active RN version, and falls back to plain React-Core on old RN.
++  if respond_to?(:install_modules_dependencies, true)
++    install_modules_dependencies(s)
++  else
++    s.dependency "React-Core"
++    if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
++      s.compiler_flags = folly_compiler_flags + " -DRCT_NEW_ARCH_ENABLED=1"
++      s.pod_target_xcconfig = {
+         "HEADER_SEARCH_PATHS" => "\"$(PODS_ROOT)/boost\"",
+         "OTHER_CPLUSPLUSFLAGS" => "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1",
+         "CLANG_CXX_LANGUAGE_STANDARD" => "c++17"
+-    }
+-    s.dependency "React-Codegen"
+-    s.dependency "RCT-Folly"
+-    s.dependency "RCTRequired"
+-    s.dependency "RCTTypeSafety"
+-    s.dependency "ReactCommon/turbomodule/core"
++      }
++      s.dependency "React-Codegen"
++      s.dependency "RCT-Folly"
++      s.dependency "RCTRequired"
++      s.dependency "RCTTypeSafety"
++      s.dependency "ReactCommon/turbomodule/core"
++    end
+   end
+ end

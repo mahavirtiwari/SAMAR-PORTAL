@@ -1,0 +1,26 @@
+{
+  "name": "qci-samar-backend",
+  "version": "1.0.0",
+  "description": "Laravel-based backend API for the QCI SAMAR Certification Lifecycle Management System. This project provides a complete, production-ready API infrastructure with JWT authentication, OTP verification, role-based access control, state machine workflows, payment gateway integration, and comprehensive audit trails.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Webority/qci-samar-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Webority/qci-samar-backend/issues"
+  },
+  "homepage": "https://github.com/Webority/qci-samar-backend#readme",
+  "devDependencies": {}
+}

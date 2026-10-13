@@ -1,0 +1,86 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+require_relative '../node_modules/react-native-permissions/scripts/setup'
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+setup_permissions([
+  'Camera',
+  'LocationWhenInUse',
+  'PhotoLibrary',
+  'PhotoLibraryAddOnly',
+])
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+# react-native-firebase 26 resolves the Firebase SDK via SPM by default, whose
+# automatic-library products emit duplicate symbols under CocoaPods' default
+# static linkage. Opt out so the RNFB pods link against the CocoaPods Firebase
+# pods declared in the target below. Must be set before the target block.
+$RNFirebaseDisableSPM = true
+
+target 'qciapplicantapp' do
+  config = use_native_modules!
+
+  # Firebase (Crashlytics) — modular headers are required for the Swift/ObjC
+  # interop these pods need; without them the build fails on non-modular
+  # includes. Mirrors qci-samar-assessor-mobile.
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'FirebaseCrashlytics', :modular_headers => true
+  pod 'FirebaseSessions', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+
+  # TLS pinning — see AppDelegate.swift for the pinned roots.
+  pod 'TrustKit'
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # Firebase pods ship non-modular includes; without this the app target
+    # fails to build against them.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      end
+    end
+
+    # ccache wiring on by default — set DISABLE_CCACHE=1 to opt out. Requires `ccache` on PATH.
+    # Mirrors qci-samar-assessor-mobile, which this app otherwise matched everywhere else.
+    if ENV['DISABLE_CCACHE'] != '1' && system('command -v ccache > /dev/null 2>&1')
+      ccache_dir = "#{Pod::Config.instance.installation_root}/../.ccache"
+      Pod::UI.puts "Enabling ccache for Pods build".green
+      installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+          config.build_settings['CC'] = "#{ccache_dir}/ccache-clang"
+          config.build_settings['CXX'] = "#{ccache_dir}/ccache-clang++"
+          config.build_settings['COMPILER_INDEX_STORE_ENABLE'] = 'NO'
+        end
+      end
+    end
+  end
+end

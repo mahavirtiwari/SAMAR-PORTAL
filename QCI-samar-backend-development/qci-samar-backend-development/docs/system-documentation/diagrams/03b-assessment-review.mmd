@@ -1,0 +1,36 @@
+%%{init: {'theme': 'base', 'fontFamily': 'Josefin Sans, Verdana, sans-serif', 'themeVariables': {
+  'primaryColor': '#3A0091',
+  'primaryTextColor': '#FFFFFF',
+  'primaryBorderColor': '#3A0091',
+  'lineColor': '#6200EE',
+  'secondaryColor': '#E0CCFF',
+  'tertiaryColor': '#F3E8FF',
+  'textColor': '#2B2B2B',
+  'edgeLabelBackground': '#F3E8FF',
+  'signalColor': '#6200EE',
+  'signalTextColor': '#2B2B2B',
+  'actorBkg': '#3A0091',
+  'actorBorder': '#3A0091',
+  'actorTextColor': '#FFFFFF',
+  'actorLineColor': '#C29FFF',
+  'noteBkgColor': '#F3E8FF',
+  'noteBorderColor': '#C29FFF',
+  'noteTextColor': '#2B2B2B',
+  'labelBoxBkgColor': '#F3E8FF',
+  'labelBoxBorderColor': '#C29FFF',
+  'labelTextColor': '#2B2B2B',
+  'sequenceNumberColor': '#FFFFFF'
+}}}%%
+stateDiagram-v2
+    direction TB
+    ReadyForCommittee --> CommitteeReview: put to meeting
+    CommitteeReview --> CommitteeFeedback: sent back
+    CommitteeFeedback --> BackToQc: lead responds
+    CommitteeReview --> Certified: certified
+    Certified --> [*]
+
+    ReadyForCommittee: Ready for committee
+    CommitteeReview: Committee review
+    CommitteeFeedback: Committee feedback
+    BackToQc: Returns to quality check
+    Certified: Certified

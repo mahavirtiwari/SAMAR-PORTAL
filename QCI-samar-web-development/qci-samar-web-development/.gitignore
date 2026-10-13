@@ -1,0 +1,137 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# Xcode / iOS
+ios/build/
+ios/DerivedData/
+ios/Pods/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xccheckout
+*.xcworkspace
+xcuserdata/
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.xcuserstate
+**/.xcode.env.local
+
+# Android / IntelliJ
+android/app/build/
+android/.gradle/
+android/local.properties
+android/*.iml
+android/.idea/
+android/.cxx/
+captures/
+outputs/
+*.keystore
+!debug.keystore
+*.hprof
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production build files
+build/
+dist/
+
+# Generated at build time by prebuild script
+public/version.json
+
+# Logs
+logs/
+*.log
+
+# Metro
+.metro-health-check*
+
+# Testing
+coverage/
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+e2e/screenshots/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Bundle artifacts
+*.jsbundle
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Ruby / CocoaPods
+/vendor/bundle/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Environment variables
+.env
+.env.*
+*.env
+
+# Editor directories and files
+.idea/
+*.iml
+
+# Build-generated config (written by scripts/prebuild.js on every build)
+src/appsettings.Compiled.json
+
+# Keys and certificates — this repo deploys dev via Entra ID SSH and never needs a
+# key. The staging PEM lives in qci-samar-backend/deploy/, which ships it deliberately.
+*.pem
+*.key
+
+# Miscellaneous
+.eslintcache
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Exclude binary files
+*.swp
+*.lock
+*.pid
+
+# Exclude temporary files
+tmp/
+temp/
+.codegpt

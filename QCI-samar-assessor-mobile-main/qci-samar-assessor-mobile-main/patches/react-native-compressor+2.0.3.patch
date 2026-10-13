@@ -1,0 +1,72 @@
+diff --git a/node_modules/react-native-compressor/ios/Image/ImageCompressor.swift b/node_modules/react-native-compressor/ios/Image/ImageCompressor.swift
+index 2bcc790..0855fbe 100644
+--- a/node_modules/react-native-compressor/ios/Image/ImageCompressor.swift
++++ b/node_modules/react-native-compressor/ios/Image/ImageCompressor.swift
+@@ -42,10 +42,33 @@ class ImageCompressor {
+             if let imageUrl = URL(string: path), let imageData = try? Data(contentsOf: imageUrl) {
+                 image = UIImage(data: imageData)
+             }
++            // Fallback: URL(string:) returns nil for file paths with characters
++            // it will not accept unencoded, leaving image nil and crashing the
++            // caller via exception.raise(). Load the raw file path directly —
++            // UIImage(contentsOfFile:) is more forgiving and the file is known
++            // to exist by the time we get here.
++            if image == nil, !path.hasPrefix("data:") {
++                let filePath = path.hasPrefix("file://")
++                    ? String(path.dropFirst("file://".count))
++                    : path
++                image = UIImage(contentsOfFile: filePath.removingPercentEncoding ?? filePath)
++            }
+         } else {
+             image = UIImage(contentsOfFile: path)
+         }
+ 
++        // Diagnostic: when nothing could decode the file, log its real format
++        // (magic bytes) so a decode failure is identifiable from the console
++        // instead of guessed at. Cheap — only runs on the failure path.
++        if image == nil {
++            let raw = path.hasPrefix("file://") ? String(path.dropFirst("file://".count)) : path
++            let p = raw.removingPercentEncoding ?? raw
++            let data = FileManager.default.contents(atPath: p)
++            let magic = data?.prefix(16).map { String(format: "%02x", $0) }.joined(separator: " ") ?? "n/a"
++            NSLog("[react-native-compressor] loadImage FAILED path=%@ exists=%@ size=%d magic=%@",
++                  path, FileManager.default.fileExists(atPath: p) ? "yes" : "no", data?.count ?? -1, magic)
++        }
++
+         return image
+     }
+ 
+@@ -316,8 +339,14 @@ class ImageCompressor {
+             let isBase64 = options.returnableOutputType == .rbase64
+             return ImageCompressor.manualCompress(resizedImage, output: options.output.rawValue, quality: options.quality, outputExtension: outputExtension, isBase64: isBase64,disablePngTransparency: options.disablePngTransparency, actualImagePath: imagePath)
+         } else {
+-            exception = NSException(name: NSExceptionName(rawValue: "unsupported_value"), reason: "Unsupported value type.", userInfo: nil)
+-            exception?.raise()
++            // The image could not be decoded. NEVER raise() here: it is an
++            // unhandled Obj-C exception that hard-crashes the whole JS runtime.
++            // Log the path (so a decode failure is diagnosable) and return the
++            // original path so the caller keeps the source file uncompressed
++            // instead of the app dying (persistPhoto moves it to durable).
++            _ = exception
++            NSLog("[react-native-compressor] image decode failed, returning original path: %@", imagePath ?? "<nil>")
++            return imagePath ?? ""
+         }
+ 
+         return ""
+@@ -375,8 +404,14 @@ class ImageCompressor {
+                 return writeImage(img, output: options.output.rawValue, quality: Float(compressionQuality), outputExtension: outputExtension, isBase64: isBase64, disablePngTransparency: options.disablePngTransparency, isEnableAutoCompress: true, actualImagePath: imagePath)
+             }
+         } else {
+-            exception = NSException(name: NSExceptionName(rawValue: "unsupported_value"), reason: "Unsupported value type.", userInfo: nil)
+-            exception?.raise()
++            // The image could not be decoded. NEVER raise() here: it is an
++            // unhandled Obj-C exception that hard-crashes the whole JS runtime.
++            // Log the path (so a decode failure is diagnosable) and return the
++            // original path so the caller keeps the source file uncompressed
++            // instead of the app dying (persistPhoto moves it to durable).
++            _ = exception
++            NSLog("[react-native-compressor] image decode failed, returning original path: %@", imagePath ?? "<nil>")
++            return imagePath ?? ""
+         }
+         
+         return ""

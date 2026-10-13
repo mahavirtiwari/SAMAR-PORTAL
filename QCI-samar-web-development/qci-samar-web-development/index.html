@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="SAMAR" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="app-loader" style="position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,255,255,0.95),rgba(245,245,250,0.95));z-index:1400;flex-direction:column;gap:24px;">
+      <img src="/samarLogo.webp" alt="SAMAR" style="width:120px;height:auto;object-fit:contain;display:block;" />
+      <div style="width:200px;height:4px;background-color:#e0e0e0;border-radius:2px;overflow:hidden;position:relative;">
+        <div style="position:absolute;height:100%;width:40%;background-color:#1976d2;border-radius:2px;animation:progressSlide 1.2s ease-in-out infinite;"></div>
+      </div>
+    </div>
+    <style>#app-loader{transition:opacity .3s}@keyframes progressSlide{0%{left:-40%}100%{left:100%}}</style>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>

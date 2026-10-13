@@ -1,0 +1,9 @@
+# Transient build/render output - the .docx is the committed artefact.
+qa/
+*.pdf
+node_modules/
+
+# Working files for track-changes generation and rendering (local only)
+_*.docx
+*-changes.docx
+_*.ps1

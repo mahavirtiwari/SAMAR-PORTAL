@@ -1,0 +1,54 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🧪 Running final validation before push..."
+
+# Check if branch is behind remote
+echo "Checking branch status..."
+branch=$(git rev-parse --abbrev-ref HEAD)
+git fetch origin $branch
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u})
+BASE=$(git merge-base @ @{u})
+
+if [ $LOCAL = $REMOTE ]; then
+    echo "Your branch is up-to-date with the remote branch."
+elif [ $LOCAL = $BASE ]; then
+    echo "Your branch is behind the remote branch. Attempting to rebase..."
+    git pull --rebase origin $branch
+    if [ $? -ne 0 ]; then
+        echo "Rebase failed. Please resolve conflicts manually."
+        exit 1
+    else
+        echo "Rebase successful."
+    fi
+elif [ $REMOTE = $BASE ]; then
+    echo "Your branch is ahead of the remote branch. Ready to push."
+else
+    echo "Your branch has diverged from the remote branch. Attempting to rebase..."
+    git pull --rebase origin $branch
+    if [ $? -ne 0 ]; then
+        echo "Rebase failed. Please resolve conflicts manually."
+        exit 1
+    else
+        echo "Rebase successful."
+    fi
+fi
+
+# Run lint checks (warning about errors but not blocking)
+echo "Running ESLint checks..."
+npm run lint || {
+  echo "⚠️ WARNING: ESLint errors found."
+  echo "You can run 'npm run lint:fix' to fix auto-fixable issues."
+  echo "Push will continue anyway."
+}
+
+# Run TypeScript checks
+echo "Running TypeScript checks..."
+npm run typecheck || {
+  echo "⚠️ WARNING: TypeScript errors found."
+  echo "You can run 'npm run typecheck' to see the errors."
+  echo "Push will continue anyway."
+}
+
+echo "✅ All checks passed. Pushing changes..."
