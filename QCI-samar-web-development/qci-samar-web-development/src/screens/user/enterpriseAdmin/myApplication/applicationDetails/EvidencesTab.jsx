@@ -39,6 +39,7 @@ const EvidencesTab = ({ evidences, loading }) => {
               <div className="subAccordionBx">
                 <Accordion defaultActiveKey="0" alwaysOpen>
                   {groupedEvidences[paramName].map((evidence, evidenceIdx) => (
+                    // The summary API sends the uploader as `uploadedBy`; keep `uploadedByUser` as a fallback.
                     <Accordion.Item key={evidence.id || evidenceIdx} eventKey={String(evidenceIdx)}>
                       <Accordion.Header>
                         {evidence.questionCode ? `${evidence.questionCode} - ` : ''}
@@ -52,12 +53,14 @@ const EvidencesTab = ({ evidences, loading }) => {
                               lat={evidence.latitude}
                               long={evidence.longitude}
                               dateString={evidence.capturedAt ? formatDate(evidence.capturedAt) : '-'}
-                              uploader={formatPersonNameWithDesignation(evidence.uploadedByUser)}
+                              uploader={formatPersonNameWithDesignation(evidence.uploadedBy || evidence.uploadedByUser)}
                             />
                             <div className="mt-2">
                               <span className="fs-12 fw-500 text-2-color">{evidence.fileName}</span>
                               <span className="fs-12 fw-400 text-3-color margin-left-8">{evidence.formattedSize}</span>
-                              {evidence.uploadedByUser && <span className="fs-12 fw-400 text-3-color margin-left-8">Uploaded by: {formatPersonNameWithDesignation(evidence.uploadedByUser)}</span>}
+                              {(evidence.uploadedBy || evidence.uploadedByUser) && (
+                                <span className="fs-12 fw-400 text-3-color margin-left-8">Uploaded by: {formatPersonNameWithDesignation(evidence.uploadedBy || evidence.uploadedByUser)}</span>
+                              )}
                             </div>
                           </div>
                         </div>

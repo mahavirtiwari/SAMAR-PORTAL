@@ -4,6 +4,10 @@ import { Logger } from '../../../utils/logger';
 
 const service = Api.ApplicationAssessment;
 
+// The step fetches below take an assessment id, or { assessmentId, silent: true }
+// for a background refresh (see useLiveRefresh) that must not flash a loader.
+const assessmentIdOf = arg => (arg && typeof arg === 'object' ? arg.assessmentId : arg);
+
 // ============================================
 // Step Progress
 // ============================================
@@ -49,9 +53,9 @@ export const updateMeetingCommentsAction = createAsyncThunk('applicationAssessme
 // Step 2: Site Pictures
 // ============================================
 
-export const getSitePicturesAction = createAsyncThunk('applicationAssessment/getSitePictures', async (assessmentId, { rejectWithValue }) => {
+export const getSitePicturesAction = createAsyncThunk('applicationAssessment/getSitePictures', async (arg, { rejectWithValue }) => {
   try {
-    const response = await service.getSitePictures(assessmentId);
+    const response = await service.getSitePictures(assessmentIdOf(arg));
     Logger.info('Get site pictures successful:', response);
     return response;
   } catch (error) {
@@ -64,9 +68,9 @@ export const getSitePicturesAction = createAsyncThunk('applicationAssessment/get
 // Step 3 & 7: Meetings (Opening & Closing)
 // ============================================
 
-export const getOpeningMeetingAction = createAsyncThunk('applicationAssessment/getOpeningMeeting', async (assessmentId, { rejectWithValue }) => {
+export const getOpeningMeetingAction = createAsyncThunk('applicationAssessment/getOpeningMeeting', async (arg, { rejectWithValue }) => {
   try {
-    const response = await service.getOpeningMeeting(assessmentId);
+    const response = await service.getOpeningMeeting(assessmentIdOf(arg));
     Logger.info('Get opening meeting successful:', response);
     return response;
   } catch (error) {
@@ -75,9 +79,9 @@ export const getOpeningMeetingAction = createAsyncThunk('applicationAssessment/g
   }
 });
 
-export const getClosingMeetingAction = createAsyncThunk('applicationAssessment/getClosingMeeting', async (assessmentId, { rejectWithValue }) => {
+export const getClosingMeetingAction = createAsyncThunk('applicationAssessment/getClosingMeeting', async (arg, { rejectWithValue }) => {
   try {
-    const response = await service.getClosingMeeting(assessmentId);
+    const response = await service.getClosingMeeting(assessmentIdOf(arg));
     Logger.info('Get closing meeting successful:', response);
     return response;
   } catch (error) {
@@ -90,9 +94,9 @@ export const getClosingMeetingAction = createAsyncThunk('applicationAssessment/g
 // Step 4: Site Tour Pictures
 // ============================================
 
-export const getSiteTourPicturesAction = createAsyncThunk('applicationAssessment/getSiteTourPictures', async (assessmentId, { rejectWithValue }) => {
+export const getSiteTourPicturesAction = createAsyncThunk('applicationAssessment/getSiteTourPictures', async (arg, { rejectWithValue }) => {
   try {
-    const response = await service.getSiteTourPictures(assessmentId);
+    const response = await service.getSiteTourPictures(assessmentIdOf(arg));
     Logger.info('Get site tour pictures successful:', response);
     return response;
   } catch (error) {
@@ -167,9 +171,9 @@ export const getResponseEvidencesAction = createAsyncThunk('applicationAssessmen
 // Attendance
 // ============================================
 
-export const getAttendanceAction = createAsyncThunk('applicationAssessment/getAttendance', async (assessmentId, { rejectWithValue }) => {
+export const getAttendanceAction = createAsyncThunk('applicationAssessment/getAttendance', async (arg, { rejectWithValue }) => {
   try {
-    const response = await service.getAttendance(assessmentId);
+    const response = await service.getAttendance(assessmentIdOf(arg));
     Logger.info('Get attendance successful:', response);
     return response;
   } catch (error) {

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
+import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSiteTourPicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatUploaderDesignation } from '../../../utils/formatters';
@@ -33,6 +34,9 @@ const SiteTourTab = () => {
       dispatch(getSiteTourPicturesAction(id));
     }
   }, [dispatch, id]);
+
+  // Pictures and captions synced from the mobile apps appear without a reload.
+  useLiveRefresh(() => dispatch(getSiteTourPicturesAction({ assessmentId: id, silent: true })), { enabled: !!id });
 
   const handleOpenModal = picture => {
     setSelectedPicture(picture);

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
+import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSitePicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { isServiceSector } from '../../../utils/assessmentExecution';
 import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
@@ -30,14 +31,11 @@ const SitePictures = () => {
       return undefined;
     }
     dispatch(getSitePicturesAction(id));
-    // The applicant can upload these from the mobile app while the lead has this step open.
-    // Refetch on window focus so the images refresh on the same trigger that already updates
-    // the step-completion icon (the host refetches step progress on focus) — otherwise the
-    // icon flips to "completed" but the images stay stale until a full page reload.
-    const handleFocus = () => dispatch(getSitePicturesAction(id));
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    return undefined;
   }, [dispatch, id]);
+
+  // Pictures synced from the mobile apps while this step is open appear without a reload.
+  useLiveRefresh(() => dispatch(getSitePicturesAction({ assessmentId: id, silent: true })), { enabled: !!id });
 
   const handleOpenModal = picture => {
     setSelectedPicture(picture);

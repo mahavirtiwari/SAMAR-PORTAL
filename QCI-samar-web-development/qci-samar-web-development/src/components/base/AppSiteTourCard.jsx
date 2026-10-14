@@ -122,11 +122,12 @@ const AppSiteTourCard = ({ picture, lat, long, dateString, uploader = '-' }) => 
   return (
     <>
       <div className="site-tour-container">
-        <h3>{picture?.title || 'Site Photo'}</h3>
+        {/* Evidence photos carry the assessor's comment as `description` rather than `title`. */}
+        <h3>{picture?.title || picture?.description || 'Site Photo'}</h3>
         <div className="site-tour-image-container">
           <div className="site-card" onClick={() => handleOpen()} style={{ cursor: 'pointer' }}>
             <div className="site-image-wrapper">
-              <img src={imageSrc || picture?.downloadUrl || Images.dummySite} alt={picture?.title || 'Site Interior'} className="site-image" onError={e => (e.target.src = Images.dummySite)} />
+              <img src={imageSrc || Images.dummySite} alt={picture?.title || picture?.description || 'Site photo'} className="site-image" onError={e => (e.target.src = Images.dummySite)} />
               <div className="site-overlay">
                 {lat && long ? (
                   <div className="overlay-text">

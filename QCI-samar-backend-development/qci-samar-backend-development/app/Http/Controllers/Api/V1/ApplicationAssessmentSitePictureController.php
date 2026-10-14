@@ -345,9 +345,11 @@ class ApplicationAssessmentSitePictureController extends Controller
         }
 
         // Site pictures may be captured before the opening meeting (which starts
-        // the assessment), so uploading is allowed while still scheduled.
-        if (! in_array($assessment->status, [Assessment::STATUS_SCHEDULED, Assessment::STATUS_IN_PROGRESS], true)) {
-            return $this->errorResponse('Site pictures can only be uploaded before the assessment is completed', 400);
+        // the assessment), so uploading is allowed while still scheduled. Field
+        // work complete is still accepted: phones sync their offline queue late
+        // and treat a 400 as final, so rejecting it would lose those captures.
+        if (! in_array($assessment->status, [Assessment::STATUS_SCHEDULED, Assessment::STATUS_IN_PROGRESS, Assessment::STATUS_MOBILE_COMPLETE], true)) {
+            return $this->errorResponse('Site pictures can only be uploaded before the assessment is submitted for QC', 400);
         }
 
         // The applicant may only capture site pictures once the lead assessor is

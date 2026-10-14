@@ -31,6 +31,18 @@ import {
   uploadResponseEvidenceAction,
 } from '../../action/common/ApplicationAssessmentAction';
 
+// Background refreshes (useLiveRefresh) pass { silent: true }: they keep the
+// current content on screen, ignore transient errors, and only replace the data
+// when it actually changed, so images are not re-fetched on every tick.
+const isSilent = action => !!action.meta?.arg?.silent;
+const sameData = (current, next) => {
+  try {
+    return JSON.stringify(current) === JSON.stringify(next);
+  } catch {
+    return false;
+  }
+};
+
 const initialState = {
   // Step Progress
   stepProgress: null,
@@ -53,6 +65,7 @@ const initialState = {
 
   // Step 3: Opening Meeting
   openingMeeting: null,
+  openingMeetingPendingComments: [],
   openingMeetingLoading: false,
   openingMeetingError: null,
 
@@ -90,6 +103,7 @@ const initialState = {
 
   // Step 7: Closing Meeting
   closingMeeting: null,
+  closingMeetingPendingComments: [],
   closingMeetingLoading: false,
   closingMeetingError: null,
 
@@ -232,17 +246,26 @@ const applicationAssessmentSlice = createSlice({
     // Step 2: Site Pictures
     // ============================================
     builder
-      .addCase(getSitePicturesAction.pending, state => {
+      .addCase(getSitePicturesAction.pending, (state, action) => {
+        if (isSilent(action)) {
+          return;
+        }
         state.sitePicturesLoading = true;
         state.sitePicturesError = null;
       })
       .addCase(getSitePicturesAction.fulfilled, (state, action) => {
         state.sitePicturesLoading = false;
-        state.sitePictures = action.payload?.data?.sitePictures || action.payload?.data || action.payload || [];
+        const next = action.payload?.data?.sitePictures || action.payload?.data || action.payload || [];
+        if (!(isSilent(action) && sameData(state.sitePictures, next))) {
+          state.sitePictures = next;
+        }
         Logger.info('Site pictures loaded successfully in slice');
       })
       .addCase(getSitePicturesAction.rejected, (state, action) => {
         state.sitePicturesLoading = false;
+        if (isSilent(action)) {
+          return;
+        }
         state.sitePicturesError = action.payload;
         Logger.error('Get site pictures failed in slice:', action.payload);
       });
@@ -251,17 +274,30 @@ const applicationAssessmentSlice = createSlice({
     // Step 3: Opening Meeting
     // ============================================
     builder
-      .addCase(getOpeningMeetingAction.pending, state => {
+      .addCase(getOpeningMeetingAction.pending, (state, action) => {
+        if (isSilent(action)) {
+          return;
+        }
         state.openingMeetingLoading = true;
         state.openingMeetingError = null;
       })
       .addCase(getOpeningMeetingAction.fulfilled, (state, action) => {
         state.openingMeetingLoading = false;
-        state.openingMeeting = action.payload?.data?.meeting || action.payload?.data || action.payload || null;
+        const next = action.payload?.data?.meeting || action.payload?.data || action.payload || null;
+        if (!(isSilent(action) && sameData(state.openingMeeting, next))) {
+          state.openingMeeting = next;
+        }
+        const pending = action.payload?.data?.pendingCommentsFrom || [];
+        if (!sameData(state.openingMeetingPendingComments, pending)) {
+          state.openingMeetingPendingComments = pending;
+        }
         Logger.info('Opening meeting loaded successfully in slice');
       })
       .addCase(getOpeningMeetingAction.rejected, (state, action) => {
         state.openingMeetingLoading = false;
+        if (isSilent(action)) {
+          return;
+        }
         state.openingMeetingError = action.payload;
         Logger.error('Get opening meeting failed in slice:', action.payload);
       });
@@ -270,17 +306,26 @@ const applicationAssessmentSlice = createSlice({
     // Step 4: Site Tour Pictures
     // ============================================
     builder
-      .addCase(getSiteTourPicturesAction.pending, state => {
+      .addCase(getSiteTourPicturesAction.pending, (state, action) => {
+        if (isSilent(action)) {
+          return;
+        }
         state.siteTourPicturesLoading = true;
         state.siteTourPicturesError = null;
       })
       .addCase(getSiteTourPicturesAction.fulfilled, (state, action) => {
         state.siteTourPicturesLoading = false;
-        state.siteTourPictures = action.payload?.data?.siteTourPictures || action.payload?.data || action.payload || [];
+        const next = action.payload?.data?.siteTourPictures || action.payload?.data || action.payload || [];
+        if (!(isSilent(action) && sameData(state.siteTourPictures, next))) {
+          state.siteTourPictures = next;
+        }
         Logger.info('Site tour pictures loaded successfully in slice');
       })
       .addCase(getSiteTourPicturesAction.rejected, (state, action) => {
         state.siteTourPicturesLoading = false;
+        if (isSilent(action)) {
+          return;
+        }
         state.siteTourPicturesError = action.payload;
         Logger.error('Get site tour pictures failed in slice:', action.payload);
       });
@@ -432,17 +477,30 @@ const applicationAssessmentSlice = createSlice({
     // Step 7: Closing Meeting
     // ============================================
     builder
-      .addCase(getClosingMeetingAction.pending, state => {
+      .addCase(getClosingMeetingAction.pending, (state, action) => {
+        if (isSilent(action)) {
+          return;
+        }
         state.closingMeetingLoading = true;
         state.closingMeetingError = null;
       })
       .addCase(getClosingMeetingAction.fulfilled, (state, action) => {
         state.closingMeetingLoading = false;
-        state.closingMeeting = action.payload?.data?.meeting || action.payload?.data || action.payload || null;
+        const next = action.payload?.data?.meeting || action.payload?.data || action.payload || null;
+        if (!(isSilent(action) && sameData(state.closingMeeting, next))) {
+          state.closingMeeting = next;
+        }
+        const pending = action.payload?.data?.pendingCommentsFrom || [];
+        if (!sameData(state.closingMeetingPendingComments, pending)) {
+          state.closingMeetingPendingComments = pending;
+        }
         Logger.info('Closing meeting loaded successfully in slice');
       })
       .addCase(getClosingMeetingAction.rejected, (state, action) => {
         state.closingMeetingLoading = false;
+        if (isSilent(action)) {
+          return;
+        }
         state.closingMeetingError = action.payload;
         Logger.error('Get closing meeting failed in slice:', action.payload);
       });
@@ -451,17 +509,26 @@ const applicationAssessmentSlice = createSlice({
     // Attendance
     // ============================================
     builder
-      .addCase(getAttendanceAction.pending, state => {
+      .addCase(getAttendanceAction.pending, (state, action) => {
+        if (isSilent(action)) {
+          return;
+        }
         state.attendanceLoading = true;
         state.attendanceError = null;
       })
       .addCase(getAttendanceAction.fulfilled, (state, action) => {
         state.attendanceLoading = false;
-        state.attendance = action.payload?.data?.attendance || action.payload?.data || action.payload || [];
+        const next = action.payload?.data?.attendance || action.payload?.data || action.payload || [];
+        if (!(isSilent(action) && sameData(state.attendance, next))) {
+          state.attendance = next;
+        }
         Logger.info('Attendance loaded successfully in slice');
       })
       .addCase(getAttendanceAction.rejected, (state, action) => {
         state.attendanceLoading = false;
+        if (isSilent(action)) {
+          return;
+        }
         state.attendanceError = action.payload;
         Logger.error('Get attendance failed in slice:', action.payload);
       });

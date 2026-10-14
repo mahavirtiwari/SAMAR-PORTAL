@@ -336,8 +336,10 @@ class ApplicationAssessmentSiteTourPictureController extends Controller
             return $this->errorResponse('You are not a team member of this assessment', 403);
         }
 
-        if ($assessment->status !== Assessment::STATUS_IN_PROGRESS) {
-            return $this->errorResponse('Site tour pictures can only be uploaded when assessment is in progress', 400);
+        // Field work complete is still accepted so captures queued offline on a
+        // phone sync after the lead closes field work (as evidence already does).
+        if (! in_array($assessment->status, [Assessment::STATUS_IN_PROGRESS, Assessment::STATUS_MOBILE_COMPLETE], true)) {
+            return $this->errorResponse('Site tour pictures can only be uploaded while the assessment is in progress or field work is complete', 400);
         }
 
         // The one cross-role dependency: for assessor-captured tours the site tour

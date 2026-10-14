@@ -6,6 +6,7 @@ import { ASSESSMENT_STATUS } from '../../../constants/assessmentStatus';
 import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
 import useGeolocation from '../../../hooks/useGeolocation';
+import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import {
   addMeetingParticipantAction,
   createMeetingAction,
@@ -19,7 +20,7 @@ import {
 import { getAssessmentByIdAction } from '../../../redux/action/common/AssessmentAction';
 import { isMemberExecutionLocked, isServiceSector, resolveTeamRole } from '../../../utils/assessmentExecution';
 import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
-import { formatCoordinates, formatDateTimeOrDash } from '../../../utils/formatters';
+import { formatCoordinates, formatDateTimeOrDash, formatPersonName } from '../../../utils/formatters';
 import { hasRole } from '../../../utils/roleUtils';
 import { AppButton, AppInput, AppWebcamCapture } from '../../base';
 import AppCommentCard from '../../base/AppCommentCard';
@@ -60,8 +61,20 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
   const { user } = useSelector(state => state.Account);
   const { assessment } = useSelector(state => state.Assessment);
 
-  const { openingMeeting, openingMeetingLoading, openingMeetingError, closingMeeting, closingMeetingLoading, closingMeetingError, punchStatus, meetingActionLoading, responses, responsesLoading } =
-    useSelector(state => state.ApplicationAssessment);
+  const {
+    openingMeeting,
+    openingMeetingLoading,
+    openingMeetingError,
+    openingMeetingPendingComments,
+    closingMeeting,
+    closingMeetingLoading,
+    closingMeetingError,
+    closingMeetingPendingComments,
+    punchStatus,
+    meetingActionLoading,
+    responses,
+    responsesLoading,
+  } = useSelector(state => state.ApplicationAssessment);
 
   const assessmentData = assessment?.data?.assessment || assessment?.assessment || assessment;
   // Editable while the assessment is running, but locked the moment this member
@@ -126,6 +139,15 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
       }
     }
   }, [dispatch, id, isOpening]);
+
+  // The photo and comments synced from the assessors' phones appear without a reload.
+  useLiveRefresh(
+    () => {
+      const arg = { assessmentId: id, silent: true };
+      dispatch(isOpening ? getOpeningMeetingAction(arg) : getClosingMeetingAction(arg));
+    },
+    { enabled: !!id },
+  );
 
   // Closing meeting seeds its participants from the opening meeting.
   useEffect(() => {
@@ -846,7 +868,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
     );
   }
 
-  const pendingComments = meeting?.pending_comments_from || [];
+  const pendingComments = (isOpening ? openingMeetingPendingComments : closingMeetingPendingComments) || [];
 
   const openParticipantModal = () => {
     setParticipantName('');
@@ -1270,7 +1292,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
               <div className="d-flex flex-wrap gap-2">
                 {pendingComments.map(member => (
                   <span key={member.id} className="badge bg-warning text-dark">
-                    {member.user?.full_name || member.user?.name || 'Unknown'}
+                    {formatPersonName(member.user) || member.user?.name || 'Unknown'}
                   </span>
                 ))}
               </div>

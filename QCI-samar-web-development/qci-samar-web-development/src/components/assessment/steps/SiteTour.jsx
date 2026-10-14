@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
+import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSiteTourPicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { getStepStatus, isServiceSector, resolveTeamRole, STEP_STATUS } from '../../../utils/assessmentExecution';
 import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
@@ -46,12 +47,11 @@ const SiteTour = () => {
       return undefined;
     }
     dispatch(getSiteTourPicturesAction(id));
-    // Applicant-uploaded from mobile; refetch on focus so the images refresh on the same
-    // trigger that already updates the step icon, instead of only after a full page reload.
-    const handleFocus = () => dispatch(getSiteTourPicturesAction(id));
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    return undefined;
   }, [dispatch, id]);
+
+  // Pictures and captions synced from the mobile apps appear without a reload.
+  useLiveRefresh(() => dispatch(getSiteTourPicturesAction({ assessmentId: id, silent: true })), { enabled: !!id });
 
   const handleOpenModal = picture => {
     setSelectedPicture(picture);

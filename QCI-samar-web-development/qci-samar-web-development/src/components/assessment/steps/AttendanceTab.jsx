@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { ASSESSMENT_STATUS } from '../../../constants/assessmentStatus';
 import Icons from '../../../constants/Icons';
+import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getAttendanceAction, getMyAssignmentsAction, getMyPunchStatusAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { isServiceSector, resolveTeamRole } from '../../../utils/assessmentExecution';
 import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
@@ -204,6 +205,9 @@ const AttendanceTab = ({ assessment: assessmentProp }) => {
       dispatch(getAttendanceAction(id));
     }
   }, [dispatch, id]);
+
+  // Punch selfies synced from the assessors' phones appear without a reload.
+  useLiveRefresh(() => dispatch(getAttendanceAction({ assessmentId: id, silent: true })), { enabled: !!id });
 
   useEffect(() => {
     if (id && canPunch) {
