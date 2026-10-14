@@ -13351,6 +13351,129 @@
                 ]
             }
         },
+        "/api/v1/branding": {
+            "get": {
+                "tags": [
+                    "Branding"
+                ],
+                "summary": "Get the logos and their links (public)",
+                "description": "image is a data: URI of the uploaded logo, or null to use the built-in one.",
+                "operationId": "listBranding",
+                "responses": {
+                    "200": {
+                        "description": "Branding retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/branding/{key}/image": {
+            "get": {
+                "tags": [
+                    "Branding"
+                ],
+                "summary": "The uploaded logo image (public; used by emails)",
+                "operationId": "getBrandingImage",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Image"
+                    },
+                    "404": {
+                        "description": "No uploaded image for this logo"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/branding": {
+            "get": {
+                "tags": [
+                    "Branding"
+                ],
+                "summary": "List logos with editing details (System Admin)",
+                "operationId": "adminListBranding",
+                "responses": {
+                    "200": {
+                        "description": "Branding retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/branding/{key}": {
+            "post": {
+                "tags": [
+                    "Branding"
+                ],
+                "summary": "Replace a logo and/or change its link (System Admin)",
+                "description": "multipart/form-data: image (PNG or JPG, up to 1 MB) and/or linkUrl (http/https; empty removes the link).",
+                "operationId": "updateBranding",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logo updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/branding/{key}/reset": {
+            "post": {
+                "tags": [
+                    "Branding"
+                ],
+                "summary": "Restore the built-in logo and default link (System Admin)",
+                "operationId": "resetBranding",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logo reset to default"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/certificates": {
             "get": {
                 "tags": [
@@ -20541,6 +20664,108 @@
                     },
                     "404": {
                         "description": "PDF not received from the ERP yet"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/mail-settings": {
+            "get": {
+                "tags": [
+                    "Email Server"
+                ],
+                "summary": "Get the outgoing mail server settings (password never returned)",
+                "operationId": "getMailSettings",
+                "responses": {
+                    "200": {
+                        "description": "Mail settings retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Email Server"
+                ],
+                "summary": "Update the outgoing mail server settings",
+                "description": "Leave password empty to keep the stored one. While enabled is false the MAIL_* environment settings are used.",
+                "operationId": "updateMailSettings",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "enabled": {
+                                        "type": "boolean"
+                                    },
+                                    "host": {
+                                        "type": "string"
+                                    },
+                                    "port": {
+                                        "type": "integer"
+                                    },
+                                    "encryption": {
+                                        "type": "string",
+                                        "enum": [
+                                            "tls",
+                                            "ssl",
+                                            "none"
+                                        ]
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "fromAddress": {
+                                        "type": "string"
+                                    },
+                                    "fromName": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Mail settings updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/mail-settings/test": {
+            "post": {
+                "tags": [
+                    "Email Server"
+                ],
+                "summary": "Send a test email using the given (or saved) settings",
+                "operationId": "testMailSettings",
+                "responses": {
+                    "200": {
+                        "description": "Test email sent"
+                    },
+                    "502": {
+                        "description": "The mail server rejected the connection or message"
                     }
                 },
                 "security": [
@@ -29655,6 +29880,10 @@
             "description": "User authentication and registration endpoints"
         },
         {
+            "name": "Branding",
+            "description": "Replaceable logos and their links. Public read; System Admin edit (Settings → Branding & Logos)."
+        },
+        {
             "name": "Certificates",
             "description": "Certificate management endpoints - Issue, approve, suspend, revoke, and verify certificates"
         },
@@ -29689,6 +29918,10 @@
         {
             "name": "Integration Failures",
             "description": "Read-only operations monitor of third-party API and system-job failures for System Administrators"
+        },
+        {
+            "name": "Email Server",
+            "description": "System Admin management of the outgoing mail server (Settings → Email Server)."
         },
         {
             "name": "Manufacturing Master Data",

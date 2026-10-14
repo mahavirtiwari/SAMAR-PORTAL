@@ -13,6 +13,7 @@ import OperationsManagerMenuItem from '../../utils/sidebarMenu/OperationsManager
 import SystemAdminMenuItem from '../../utils/sidebarMenu/SystemAdminMenuItem';
 import UnitAdminMenuItem from '../../utils/sidebarMenu/UnitAdminMenuItem';
 import { AppToolTip } from '../base';
+import BrandLogo from '../base/BrandLogo';
 import './../../assets/theme/Sidebar.css';
 import SidebarSubMenu from './SidebarSubMenu';
 
@@ -115,9 +116,9 @@ const Sidebar = ({ isOpen, onClose, toggleSidebar }) => {
         <div className="sidebar-content">
           <div className="sidebar-logo">
             {isOpen ? (
-              <img src={Images.logo} alt="Logo" className="sidebarLogo" />
+              <BrandLogo brandKey="sidebar_logo" fallback={Images.logo} alt="Logo" className="sidebarLogo" linked={false} />
             ) : (
-              <img src={Images.samarLogo} alt="Logo" className="sidebar-closed-logo" />
+              <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="Logo" className="sidebar-closed-logo" linked={false} />
             )}
           </div>
           <Nav className="sidebar-nav custom-sidebar-nav">

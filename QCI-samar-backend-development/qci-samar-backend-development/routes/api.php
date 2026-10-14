@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\PasswordController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\Auth\TwoFactorController;
+use App\Http\Controllers\Api\V1\BrandAssetController;
 use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\CommitteeMeetingController;
 use App\Http\Controllers\Api\V1\CommitteeMemberController;
@@ -43,6 +44,7 @@ use App\Http\Controllers\Api\V1\FeeConfigurationController;
 use App\Http\Controllers\Api\V1\FeedbackQuestionController;
 use App\Http\Controllers\Api\V1\IntegrationFailureController;
 use App\Http\Controllers\Api\V1\InvoiceController;
+use App\Http\Controllers\Api\V1\MailConfigurationController;
 use App\Http\Controllers\Api\V1\ManufacturingBoughtOutPartsController;
 use App\Http\Controllers\Api\V1\ManufacturingKeyProcessesController;
 use App\Http\Controllers\Api\V1\ManufacturingRawMaterialsController;
@@ -129,6 +131,8 @@ Route::prefix('v1')->group(function () {
     Route::middleware('throttle:120,1')->group(function () {
         Route::get('/content-blocks', [ContentBlockController::class, 'index']);
         Route::get('/content-blocks/{key}', [ContentBlockController::class, 'show']);
+        Route::get('/branding', [BrandAssetController::class, 'index']);
+        Route::get('/branding/{key}/image', [BrandAssetController::class, 'image']);
     });
 
     // Public routes (no authentication required)
@@ -236,6 +240,20 @@ Route::prefix('v1')->group(function () {
                     ->whereNumber('id')
                     ->middleware('throttle:10,1');
                 Route::post('/{id}/reset', [EmailTemplateController::class, 'reset'])->whereNumber('id');
+            });
+
+            // Settings → Email Server
+            Route::prefix('mail-settings')->middleware('role:system_admin')->group(function () {
+                Route::get('/', [MailConfigurationController::class, 'show']);
+                Route::put('/', [MailConfigurationController::class, 'update']);
+                Route::post('/test', [MailConfigurationController::class, 'test'])->middleware('throttle:10,1');
+            });
+
+            // Settings → Branding & Logos
+            Route::prefix('branding')->middleware('role:system_admin')->group(function () {
+                Route::get('/', [BrandAssetController::class, 'adminIndex']);
+                Route::post('/{key}', [BrandAssetController::class, 'update']);
+                Route::post('/{key}/reset', [BrandAssetController::class, 'reset']);
             });
 
             // Settings → Content & Disclaimers

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import AppSettings from '../../appsettings';
+import BrandLogo from '../../components/base/BrandLogo';
 import Images from '../../constants/Images';
 import publicClient from '../../services/api/clients/publicClient';
 import { Logger } from '../../utils/logger';
@@ -84,10 +85,10 @@ const StateWrapper = ({ children }) => (
   <section className="certified-enterprise">
     <Container fluid className="d-flex flex-column align-items-center justify-content-center min-vh-100 py-5">
       <div className="d-flex align-items-center gap-3 mb-4">
-        <img src={Images.defenceResearch} alt="Defence Research" className="logo50" />
-        <img src={Images.qualityCouncil} alt="Quality Council" className="logo50" />
+        <BrandLogo brandKey="drdo_logo" fallback={Images.defenceResearch} alt="Defence Research" className="logo50" />
+        <BrandLogo brandKey="qci_logo" fallback={Images.qualityCouncil} alt="Quality Council" className="logo50" />
       </div>
-      <img src={Images.samarLogo} alt="SAMAR Logo" className="samarLogo mb-3" />
+      <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR Logo" className="samarLogo mb-3" />
       <h1 className="fs-24 fw-600 primary-color mb-4 text-center">Certificate Verification</h1>
       {children}
       <p className="fs-12 fw-500 text-3-color mt-5">Build Version - {AppSettings.VERSION}</p>

@@ -8,6 +8,7 @@ use App\Listeners\AssessmentStatusChangedListener;
 use App\Models\AssessmentQuestion;
 use App\Models\User;
 use App\Observers\AssessmentQuestionObserver;
+use App\Services\Email\MailConfigurationApplier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Http\Request;
@@ -38,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Mail server settings saved in Settings → Email Server override MAIL_*.
+        $this->app->booted(fn () => app(MailConfigurationApplier::class)->apply());
+
         // Force HTTPS URLs in production/staging/development (Azure environments)
         if (app()->environment('production', 'staging', 'development')) {
             URL::forceScheme('https');

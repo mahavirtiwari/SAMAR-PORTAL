@@ -20,7 +20,7 @@
         <tr>
             <td align="center">
                 <img
-                    src="{{ asset('images/emails/samar-logo-2026.png') }}"
+                    src="{{ \App\Models\BrandAsset::emailImageUrl('samar_logo') }}"
                     alt="SAMAR Logo"
                     style="width:130px; display:block; margin:auto;"
                 />
@@ -104,19 +104,25 @@
                 <table width="90%" border="0" cellspacing="0" cellpadding="0" style="width:90%; max-width:90%; padding-bottom: 30px; padding-top: 16px;">
                     <tr>
                         <td align="left">
+                            @php($__link = \App\Models\BrandAsset::linkFor('drdo_logo'))
+                            @if($__link)<a href="{{ $__link }}" target="_blank" style="text-decoration:none;">@endif
                             <img
-                                src="{{ asset('images/emails/footer-left.png') }}"
-                                alt="Left Logo"
-                                style="width:184px; display:block;"
+                                src="{{ \App\Models\BrandAsset::emailImageUrl('drdo_logo') }}"
+                                alt="DRDO"
+                                style="width:184px; display:block; border:0;"
                             />
+                            @if($__link)</a>@endif
                         </td>
 
                         <td align="right">
+                            @php($__link = \App\Models\BrandAsset::linkFor('qci_logo'))
+                            @if($__link)<a href="{{ $__link }}" target="_blank" style="text-decoration:none;">@endif
                             <img
-                                src="{{ asset('images/emails/footer-right.png') }}"
-                                alt="Right Logo"
-                                style="width:128px; display:block;"
+                                src="{{ \App\Models\BrandAsset::emailImageUrl('qci_logo') }}"
+                                alt="Quality Council of India"
+                                style="width:128px; display:block; border:0;"
                             />
+                            @if($__link)</a>@endif
                         </td>
                     </tr>
                 </table>

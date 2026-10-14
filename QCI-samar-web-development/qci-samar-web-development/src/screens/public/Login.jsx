@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import AppSettings from '../../appsettings';
 import { AppCaptcha, AppModal } from '../../components/base';
 import AppButton from '../../components/base/AppButton';
+import BrandLogo from '../../components/base/BrandLogo';
 import AppInput from '../../components/base/textInput/AppInput';
 import { toastError, toastSuccess } from '../../components/base/toast';
 import { InstructionModal, OTPVerificationModal } from '../../components/modals';
@@ -247,12 +248,12 @@ const Login = () => {
           </Col>
           <Col xl={7} lg={6} xs={12}>
             <div className="publicMainContainer">
-              <img src={Images.defenceResearch} alt="Defence Research" className="logo50" />
-              <img src={Images.qualityCouncil} alt="Quality Council" className="logo50" />
+              <BrandLogo brandKey="drdo_logo" fallback={Images.defenceResearch} alt="Defence Research" className="logo50" />
+              <BrandLogo brandKey="qci_logo" fallback={Images.qualityCouncil} alt="Quality Council" className="logo50" />
             </div>
             <div className="publicFormMainContainer position-relative">
               <div className="publicFormTopMainContainer">
-                <img src={Images.samarLogo} alt="logo" className="samarLogo" />
+                <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="logo" className="samarLogo" />
                 <h2 className="fs-24 fw-500 margin-top-40 mb-2">
                   Welcome to <span style={{ color: 'var(--info-dark)' }}>SAMAR</span>
                 </h2>

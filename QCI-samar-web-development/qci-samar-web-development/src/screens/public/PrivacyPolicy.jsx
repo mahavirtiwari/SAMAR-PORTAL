@@ -1,4 +1,5 @@
 import { Container } from 'react-bootstrap';
+import BrandLogo from '../../components/base/BrandLogo';
 import ContentBlock from '../../components/base/ContentBlock';
 import Images from '../../constants/Images';
 import useContentBlocks from '../../hooks/useContentBlocks';
@@ -25,13 +26,13 @@ const PrivacyPolicy = () => {
     <section className="privacy-policy">
       <Container fluid className="d-flex flex-column align-items-center pt-4 pb-5">
         <div className="d-flex align-items-center justify-content-between gap-3 w-100 mb-5">
-          <img src={Images.defenceResearch} alt="Defence Research" className="logo50" />
-          <img src={Images.qualityCouncil} alt="Quality Council" className="logo50" />
+          <BrandLogo brandKey="drdo_logo" fallback={Images.defenceResearch} alt="Defence Research" className="logo50" />
+          <BrandLogo brandKey="qci_logo" fallback={Images.qualityCouncil} alt="Quality Council" className="logo50" />
         </div>
 
         <div className="privacy-policy-card">
           <div className="d-flex flex-column align-items-center mb-4">
-            <img src={Images.samarLogo} alt="SAMAR Logo" className="privacy-policy-logo mb-3" />
+            <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR Logo" className="privacy-policy-logo mb-3" />
             <h1 className="fs-20 fw-600 primary-color mb-0 text-center">{blocks.website_policy?.title || 'Terms & Conditions and Website Policy'}</h1>
           </div>
 

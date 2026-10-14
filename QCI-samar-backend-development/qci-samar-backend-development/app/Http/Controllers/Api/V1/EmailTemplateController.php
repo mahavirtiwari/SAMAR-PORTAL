@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Settings\UpdateEmailTemplateRequest;
 use App\Mail\NotificationMail;
+use App\Models\BrandAsset;
 use App\Models\EmailNotificationTemplate;
 use App\Services\Email\EmailTemplateEditor;
 use App\Support\HtmlSanitizer;
@@ -158,6 +159,13 @@ class EmailTemplateController extends Controller
      */
     private function inlineEmailImages(string $html): string
     {
+        // Logos replaced in Settings → Branding & Logos.
+        $html = preg_replace_callback('#https?://[^"\'\s]+/api/v1/branding/([a-z_]+)/image(\?v=\d*)?#', function (array $m) {
+            $assets = BrandAsset::allByKey();
+
+            return isset($assets[$m[1]]) ? ($assets[$m[1]]->dataUri() ?? $m[0]) : $m[0];
+        }, $html);
+
         return preg_replace_callback('#https?://[^"\'\s]+/(images/emails/[A-Za-z0-9_.-]+\.(png|jpe?g|gif))#i', function (array $m) {
             $path = public_path($m[1]);
             if (! is_file($path)) {

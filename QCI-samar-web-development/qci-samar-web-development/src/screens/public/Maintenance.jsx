@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AppSettings from '../../appsettings';
 import { AppButton } from '../../components/base';
+import BrandLogo from '../../components/base/BrandLogo';
 import Images from '../../constants/Images';
 import useContentBlocks from '../../hooks/useContentBlocks';
 import { logoutUserAction } from '../../redux/action/common/AccountAction';
@@ -28,7 +29,7 @@ const Maintenance = () => {
     <section className="maintenance">
       <Container fluid className="d-flex flex-column align-items-center justify-content-center min-vh-100">
         <div className="text-center">
-          <img src={Images.samarLogo} alt="SAMAR Logo" className="samarLogo mb-4" />
+          <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR Logo" className="samarLogo mb-4" />
           <div className="maintenance-icon mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#3278B9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />

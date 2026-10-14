@@ -274,6 +274,8 @@ export const SystemAdminSystemSettings = lazy(() => import('./user/systemAdmin/s
 export const SystemAdminEmailTemplates = lazy(() => import('./user/systemAdmin/emailTemplates/EmailTemplates'));
 export const SystemAdminEmailTemplateEdit = lazy(() => import('./user/systemAdmin/emailTemplates/EmailTemplateEdit'));
 export const SystemAdminContentBlocks = lazy(() => import('./user/systemAdmin/contentBlocks/ContentBlocks'));
+export const SystemAdminEmailServerSettings = lazy(() => import('./user/systemAdmin/emailServer/EmailServerSettings'));
+export const SystemAdminBrandingLogos = lazy(() => import('./user/systemAdmin/branding/BrandingLogos'));
 export const SystemAdminUserGuides = lazy(() => import('./user/systemAdmin/userGuides/UserGuides'));
 export const SystemAdminAssessors = lazy(() => import('./user/systemAdmin/userManagement/assessors/Assessors'));
 export const SystemAdminAssessorDetails = lazy(() => import('./user/systemAdmin/userManagement/assessors/AssessorsDetails'));

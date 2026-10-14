@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Assessment;
+use App\Models\BrandAsset;
 use App\Models\CommitteeMeeting;
+use App\Support\BrandAssetDefaults;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -586,19 +588,30 @@ class MeetingSummarySheetService
      */
     public function encodeLogoBase64(string $relativePath): string
     {
-        if (array_key_exists($relativePath, self::$logoCache)) {
-            return self::$logoCache[$relativePath];
-        }
-
+        // A logo replaced in Settings → Branding & Logos takes the place of
+        // the built-in file it corresponds to.
         $fullPath = public_path($relativePath);
-        if (! file_exists($fullPath)) {
-            return self::$logoCache[$relativePath] = '';
+        foreach (BrandAssetDefaults::all() as $asset) {
+            if ($asset['pdf_image'] === $relativePath) {
+                $fullPath = BrandAsset::pdfImagePath($asset['key']);
+                break;
+            }
         }
 
-        $extension = pathinfo($fullPath, PATHINFO_EXTENSION);
+        // Keyed by the resolved file, so a replaced logo is never served stale.
+        $cacheKey = $fullPath.'@'.(@filemtime($fullPath) ?: 0);
+        if (array_key_exists($cacheKey, self::$logoCache)) {
+            return self::$logoCache[$cacheKey];
+        }
+
+        if (! file_exists($fullPath)) {
+            return self::$logoCache[$cacheKey] = '';
+        }
+
+        $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
         $mime = $extension === 'png' ? 'image/png' : 'image/jpeg';
 
-        return self::$logoCache[$relativePath] = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($fullPath));
+        return self::$logoCache[$cacheKey] = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($fullPath));
     }
 
     /**

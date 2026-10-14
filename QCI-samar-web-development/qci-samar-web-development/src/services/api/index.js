@@ -23,6 +23,7 @@ import PaymentService from './payment/PaymentService';
 import SystemAdminApplicationServices from './systemAdmin/ApplicationService';
 import SystemAdminAssessmentParameterService from './systemAdmin/AssessmentParameterService';
 import SystemAdminAuditLogService from './systemAdmin/AuditLogService';
+import BrandingAdminService from './systemAdmin/BrandingAdminService';
 import ContentBlockAdminService from './systemAdmin/ContentBlockAdminService';
 import SystemAdminDashboardService from './systemAdmin/DashboardService';
 import SystemAdminDisciplinesService from './systemAdmin/DisciplinesService';
@@ -32,6 +33,7 @@ import SystemAdminEnterprisesService from './systemAdmin/EnterprisesService';
 import SystemAdminFeeConfigService from './systemAdmin/FeeConfigService';
 import SystemAdminFeedbackService from './systemAdmin/FeedbackService';
 import SystemAdminIntegrationFailureService from './systemAdmin/IntegrationFailureService';
+import MailSettingsService from './systemAdmin/MailSettingsService';
 import SystemSettingsService from './systemAdmin/SystemSettingsService';
 import UnitAdminApplicationServices from './unitAdmin/application/ApplicationService';
 import UnitAdminCertificateService from './unitAdmin/CertificateService';
@@ -71,6 +73,8 @@ const Api = {
   SystemSettingsService: SystemSettingsService(),
   EmailTemplates: EmailTemplateService(),
   ContentBlockAdmin: ContentBlockAdminService(),
+  MailSettings: MailSettingsService(),
+  BrandingAdmin: BrandingAdminService(),
   SystemStatus: SystemStatusService(),
   CommitteeMeeting: CommitteeMeetingService(),
   CommitteeMember: CommitteeMemberService(),

@@ -9,6 +9,7 @@ import { getLoggedInUserDetailsAction } from '../../redux/action/common/UnitAdmi
 import { Logger } from '../../utils/logger';
 import { hasRole } from '../../utils/roleUtils';
 import { AppBadge, AppModal } from '../base';
+import BrandLogo from '../base/BrandLogo';
 
 const PublicHeader = () => {
   const handleLogoutClick = () => {
@@ -144,7 +145,7 @@ const PublicHeader = () => {
       <div className="publicheader-content">
         <div className="header-left">
           <Navbar.Brand className="publicHeaderLogo">
-            <img src={Images.samarLogo} alt="Logo" className="logo" />
+            <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="Logo" className="logo" linked={false} />
             <p className="fs-20 fw-600 text-1-color mb-0">SAMAR</p>
           </Navbar.Brand>
         </div>

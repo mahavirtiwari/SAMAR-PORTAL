@@ -16,7 +16,7 @@
 .sidebar-content {
   height: 100%;
   padding: 20px 0;
- overflow: hidden;
+  overflow: hidden;
 }
 
 .sidebar-nav {
@@ -134,6 +134,8 @@
 
 .sidebar-logo img {
   width: 154px;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 .sidebarLogo {
@@ -251,17 +253,19 @@ padding-right: 8px;
 
 .sidebar-logo {
   width: 100%;
-  padding-left: 11px;
+  /* Centred in the sidebar (expanded and collapsed). */
+  padding: 0 11px;
   height: 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-bottom: 40px;
   margin-top: 15px;
 }
 
 .sidebar-closed-logo {
   width: auto !important;
-    height: 52.2px !important;
+  height: 52.2px !important;
 }
 
 /* When sidebar is open show full logo and hide collapsed icon */

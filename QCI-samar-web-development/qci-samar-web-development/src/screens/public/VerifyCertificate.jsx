@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { AppButton, AppDatePicker, AppEmptyState, AppInput } from '../../components/base';
+import BrandLogo from '../../components/base/BrandLogo';
 import PublicHeader from '../../components/layout/PublicHeader';
 import Images from '../../constants/Images';
 import publicClient from '../../services/api/clients/publicClient';
@@ -101,7 +102,7 @@ const VerifyCertificate = () => {
               <div className="verify-certificate-card">
                 <form className="verify-certificate-form" onSubmit={handleSubmit}>
                   <div>
-                    <img src={Images.samarLogo} alt="SAMAR" className="verify-certificate-samar-logo" />
+                    <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR" className="verify-certificate-samar-logo" />
                   </div>
                   <h1 className="fs-32 fw-600 heading-color text-center mb-0">Verify Certificate</h1>
 

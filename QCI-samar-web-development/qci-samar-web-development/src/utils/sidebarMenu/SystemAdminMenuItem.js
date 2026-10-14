@@ -114,6 +114,8 @@ const SystemAdminMenuItem = [
       { key: 'systemSettings', label: 'System Settings', path: '/system-settings' },
       { key: 'emailTemplates', label: 'Email Templates', path: '/email-templates' },
       { key: 'contentBlocks', label: 'Content & Disclaimers', path: '/content-blocks' },
+      { key: 'emailServer', label: 'Email Server (SMTP)', path: '/email-server' },
+      { key: 'branding', label: 'Branding & Logos', path: '/branding' },
       { key: 'userGuides', label: 'User Guides', path: '/user-guides' },
       { key: 'auditLog', label: 'Audit Logs', path: '/audit-logs' },
       { key: 'integrationFailures', label: 'Error Logs', path: '/integration-failures' },
