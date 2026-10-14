@@ -25,3 +25,8 @@
 # RootBeer — native bridge must stay intact
 -keep class com.scottyab.rootbeer.** { *; }
 -dontwarn com.scottyab.rootbeer.**
+
+# AGP 9 requires proguard-android-optimize.txt as the default config. Keep R8
+# optimizations off, as they were with the old proguard-android.txt, until
+# release builds have been verified with them enabled.
+-dontoptimize

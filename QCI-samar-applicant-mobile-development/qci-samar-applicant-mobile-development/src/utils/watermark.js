@@ -67,6 +67,11 @@ export const applyWatermark = async ({ uri, latitude, longitude, timestamp }) =>
     return uri;
   }
 
+  // react-native-image-marker v2 resolves to a result object ({ uri, ... });
+  // v1 resolved to the output path itself.
+  if (markedPath && typeof markedPath === 'object') {
+    markedPath = markedPath.uri;
+  }
   if (!markedPath) {
     return uri;
   }

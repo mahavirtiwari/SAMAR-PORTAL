@@ -111,6 +111,11 @@ export const applyWatermark = async ({
     return uri;
   }
 
+  // react-native-image-marker v2 resolves to a result object ({ uri, ... });
+  // v1 resolved to the output path itself.
+  if (markedPath && typeof markedPath === 'object') {
+    markedPath = markedPath.uri;
+  }
   if (!markedPath) {
     Logger.error('[watermark] burn returned no path — photo saved WITHOUT lat/long stamp', { uri });
     return uri;
