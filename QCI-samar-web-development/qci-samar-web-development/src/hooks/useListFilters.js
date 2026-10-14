@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import useDebouncedValue from './useDebouncedValue';
 
 /**
  * List-screen filter and pagination state that survives navigation.
@@ -18,8 +19,12 @@ import { useSearchParams } from 'react-router-dom';
  * @param {Object} defaultFilters - the empty filter shape, e.g. { name: '', type: '' }
  * @param {Object} [options]
  * @param {number} [options.defaultPageSize=10]
+ * @param {number} [options.searchDebounceMs=0] - for screens that write the top search box
+ *   straight into `appliedFilters.search` on every keystroke: `appliedQuery` then only picks
+ *   up a changed `search` once typing has paused this long. Screens that already debounce
+ *   their fetch effect, or their commit of the search box, leave it at 0.
  */
-const useListFilters = (defaultFilters, { defaultPageSize = 10 } = {}) => {
+const useListFilters = (defaultFilters, { defaultPageSize = 10, searchDebounceMs = 0 } = {}) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // The default shape is fixed for the life of the screen; keeping it in a ref stops a
@@ -93,15 +98,29 @@ const useListFilters = (defaultFilters, { defaultPageSize = 10 } = {}) => {
   // What to send to the API: the committed filters with the empty ones dropped, so a
   // cleared filter is absent from the request rather than sent as an empty string, which
   // some endpoints validate against their allowed-values list and reject.
+  //
+  // With searchDebounceMs set, the search key is debounced. The object identity only
+  // changes when the content does: a keystroke that has not yet passed the debounce keeps
+  // the previous object, so fetch effects depending on it do not re-run with identical
+  // parameters.
+  const debouncedSearch = useDebouncedValue(appliedFilters.search, searchDebounceMs);
+  const effectiveSearch = searchDebounceMs > 0 ? debouncedSearch : appliedFilters.search;
+  const queryRef = useRef(null);
   const appliedQuery = useMemo(() => {
     const query = {};
     for (const [key, value] of Object.entries(appliedFilters)) {
-      if (value !== '' && value !== null && value !== undefined) {
-        query[key] = value;
+      const effective = key === 'search' ? effectiveSearch : value;
+      if (effective !== '' && effective !== null && effective !== undefined) {
+        query[key] = effective;
       }
     }
-    return query;
-  }, [appliedFilters]);
+    const previous = queryRef.current;
+    const unchanged = previous && Object.keys(previous).length === Object.keys(query).length && Object.entries(query).every(([key, value]) => previous[key] === value);
+    if (!unchanged) {
+      queryRef.current = query;
+    }
+    return queryRef.current;
+  }, [appliedFilters, effectiveSearch]);
 
   return {
     filters,

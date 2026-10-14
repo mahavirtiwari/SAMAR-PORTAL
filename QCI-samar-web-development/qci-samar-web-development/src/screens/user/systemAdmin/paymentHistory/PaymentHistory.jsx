@@ -52,7 +52,11 @@ const PaymentHistory = () => {
 
   // Filters and pagination are held in the URL so returning from a detail page
   // restores the list the user had filtered down to.
-  const { filters, setFilters, appliedFilters, appliedQuery, setAppliedFilters, page, setPage, pageSize, setPageSize, resetFilters } = useListFilters({ search: '', sector: '', classification: '' });
+  // The search box commits on every keystroke; searchDebounceMs holds the fetch until typing pauses.
+  const { filters, setFilters, appliedFilters, appliedQuery, setAppliedFilters, page, setPage, pageSize, setPageSize, resetFilters } = useListFilters(
+    { search: '', sector: '', classification: '' },
+    { searchDebounceMs: 400 },
+  );
   // Reopen the filter panel on return when a filter is active, so the restored list shows what it is filtered by.
   const [showFilters, setShowFilters] = useState(() => Object.entries(appliedFilters).some(([key, value]) => key !== 'search' && value !== '' && value != null));
   const [dropdownResetKey, setDropdownResetKey] = useState(0);
@@ -93,7 +97,9 @@ const PaymentHistory = () => {
       sector: appliedQuery.sector || null,
       classification: appliedQuery.classification || null,
     };
-    dispatch(getPaymentHistoryAction(filtersPayload));
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getPaymentHistoryAction(filtersPayload));
+    return () => request.abort();
   }, [dispatch, page, pageSize, appliedQuery]);
 
   const filteredData = useMemo(() => transformPaymentData(paymentHistory), [paymentHistory]);

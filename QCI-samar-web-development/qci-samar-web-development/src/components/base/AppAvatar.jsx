@@ -101,7 +101,7 @@ const AppAvatar = ({ src, alt = '', size = '40', role = 'Participant', className
   if (src && !imgError) {
     return (
       <div className={`avatar ${sizeClass} ${roleClass} avatar--image ${className}`.trim()} title={alt} style={{ ...style }} onClick={onClick}>
-        <img src={src} alt={alt} className="avatar-img" onError={() => setImgError(true)} />
+        <img src={src} alt={alt} className="avatar-img" loading="lazy" onError={() => setImgError(true)} />
       </div>
     );
   }

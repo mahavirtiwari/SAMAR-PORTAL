@@ -8,23 +8,19 @@ export { default as AppAssessmentViewParameter } from './AppAssessmentViewParame
 export { default as AppAvatar } from './AppAvatar';
 export { default as AppAvatarTooltip } from './AppAvatarTooltip';
 export { default as AppBadge } from './AppBadge';
-export { default as AppBarChartCard } from './AppBarChartCard';
 export { default as AppButton } from './AppButton';
 export { default as AppCaptcha } from './AppCaptcha';
 export { default as AppCommentCard } from './AppCommentCard';
 export { default as AppDataGrid } from './AppDataGrid';
 export { default as AppDatePicker } from './AppDatePicker';
 export { default as AppDateRangePicker } from './AppDateRangePicker';
-export { default as AppDonutChartCard } from './AppDonutChartCard';
 export { default as AppDropdown } from './AppDropdown';
 export { default as AppEmptyState } from './AppEmptyState';
 export { default as AppErrorBoundary } from './AppErrorBoundary';
 export { default as AppMultiDataDropdown } from './AppMultiDataDropdown';
 export { default as AppMultiSelectDropdown } from './AppMultiSelectDropdown';
 export { default as AppOperationsManagerAssessmentQuestions } from './AppOperationsManagerAssessmentQuestions';
-export { default as AppPieChartCard } from './AppPieChartCard';
 export { default as AppSnackBar } from './AppSnackBar';
-export { default as AppStackedBarChartCard } from './AppStackedBarChartCard';
 export { default as AppStatusSteps } from './AppStatusSteps';
 export { default as AppSuggestionInput } from './AppSuggestionInput';
 export { default as AppSuggestionSingleSelect } from './AppSuggestionSingleSelect';
@@ -42,3 +38,5 @@ export { default as StepProgressBar } from './StepProgressBar';
 export { default as AppFileUpload } from './textInput/AppFileUpload';
 export { default as AppInput } from './textInput/AppInput';
 export { default as AppInputWithDropdown } from './textInput/AppInputWithDropdown';
+// The App*ChartCard components are deliberately not exported here: import them from
+// their own files so recharts / @mui/x-charts are only loaded by the screens that chart.

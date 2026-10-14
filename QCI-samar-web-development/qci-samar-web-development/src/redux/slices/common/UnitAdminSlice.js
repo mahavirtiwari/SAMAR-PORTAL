@@ -91,6 +91,10 @@ const unitAdminSlice = createSlice({
         Logger.info('Users loaded successfully in slice');
       })
       .addCase(getAllUsersAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.userListLoading = false;
         state.userListError = action.payload;
         Logger.error('Get users failed in slice:', action.payload);

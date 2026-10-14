@@ -1,11 +1,12 @@
 import { Box, Link, Skeleton } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppAvatar, AppBadge, AppDataGrid, AppInput, AppTableEmpty, FullScreenLoader } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import { AppAssessorLocationModal, AssessorDomainModal } from '../../../../components/modals';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { getUserDetailsAction } from '../../../../redux/action/common/UnitAdminAction';
 import Api from '../../../../services/api';
 import { formatDate } from '../../../../utils/formatters';
@@ -79,6 +80,7 @@ const AssessorsDetails = () => {
   const handleCloseLocationModal = () => setShowLocationModal(false);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery);
 
   // Assessment history state
   const [assessmentHistory, setAssessmentHistory] = useState([]);
@@ -94,10 +96,15 @@ const AssessorsDetails = () => {
   }, [dispatch, id]);
 
   // Fetch assessment history for this assessor
+  // Only the latest request may write state, so a slow response for an earlier search or
+  // page cannot overwrite a newer one; the effect cleanup also retires it on unmount.
+  const historyRequestRef = useRef(0);
   const fetchAssessmentHistory = useCallback(async () => {
     if (!id) {
       return;
     }
+    const requestId = ++historyRequestRef.current;
+    const isLatest = () => requestId === historyRequestRef.current;
 
     setAssessmentHistoryLoading(true);
     try {
@@ -107,9 +114,12 @@ const AssessorsDetails = () => {
         leadAssessor: id,
         page: paginationModel.page + 1,
         perPage: paginationModel.pageSize,
-        search: searchQuery || undefined,
+        search: debouncedSearch || undefined,
       });
 
+      if (!isLatest()) {
+        return;
+      }
       const assessments = response?.data?.assessments || response?.data || [];
       const pagination = response?.data?.pagination || response?.pagination;
 
@@ -118,15 +128,23 @@ const AssessorsDetails = () => {
       Logger.info('Fetched assessment history:', { assessments, pagination });
     } catch (error) {
       Logger.error('Error fetching assessment history:', error);
+      if (!isLatest()) {
+        return;
+      }
       setAssessmentHistory([]);
       setTotalRows(0);
     } finally {
-      setAssessmentHistoryLoading(false);
+      if (isLatest()) {
+        setAssessmentHistoryLoading(false);
+      }
     }
-  }, [id, paginationModel.page, paginationModel.pageSize, searchQuery]);
+  }, [id, paginationModel.page, paginationModel.pageSize, debouncedSearch]);
 
   useEffect(() => {
     fetchAssessmentHistory();
+    return () => {
+      historyRequestRef.current += 1;
+    };
   }, [fetchAssessmentHistory]);
 
   const handleSearchChange = e => {

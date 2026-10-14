@@ -106,6 +106,10 @@ const applicationFeedbackSlice = createSlice({
         Logger.info('Applications for feedback loaded successfully in slice');
       })
       .addCase(getApplicationsForFeedbackAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.applicationsForFeedbackLoading = false;
         state.applicationsForFeedbackError = action.payload;
         Logger.error('Get applications for feedback failed in slice:', action.payload);
@@ -132,6 +136,10 @@ const applicationFeedbackSlice = createSlice({
         Logger.info('Submitted feedback loaded successfully in slice');
       })
       .addCase(getSubmittedFeedbackAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.feedbackSubmissionsLoading = false;
         state.feedbackSubmissionsError = action.payload;
         Logger.error('Get submitted feedback failed in slice:', action.payload);

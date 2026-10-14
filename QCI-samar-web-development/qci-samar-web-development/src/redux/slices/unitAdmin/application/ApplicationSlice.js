@@ -117,6 +117,10 @@ const unitAdminApplicationSlice = createSlice({
         Logger.info('Applications loaded successfully in slice');
       })
       .addCase(getApplicationAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.applicationListLoading = false;
         state.applicationListError = action.payload;
         Logger.error('Get applications failed in slice:', action.payload);

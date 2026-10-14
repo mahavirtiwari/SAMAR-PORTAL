@@ -7,6 +7,7 @@ import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddAssessmentQuestionModal, EditAssessmentQuestionModal, QuestionDetailModal } from '../../../../../components/modals';
 import Icons from '../../../../../constants/Icons';
+import useDebouncedValue from '../../../../../hooks/useDebouncedValue';
 import {
   activateAssessmentQuestionAction,
   deactivateAssessmentQuestionAction,
@@ -116,27 +117,30 @@ const AssessmentParameterDetail = () => {
 
   // Fetch assessment questions for the parameter using the correct API
 
+  // Debounced so typing in the search box sends one request, not one per keystroke.
+  const debouncedSearch = useDebouncedValue(filters.search);
+
   useEffect(() => {
     if (parameterId) {
       const fetchQuestionsData = {
         parameterId,
         perPage: pageSize,
         page,
-        search: filters.search || '',
+        search: debouncedSearch || '',
       };
       dispatch(getAssessmentParameterQuestionsAction(fetchQuestionsData)).catch(err => {
         Logger.error('Failed fetching parameter questions:', err);
         handleGeneralError(err?.message || 'Failed fetching questions');
       });
     }
-  }, [parameterId, dispatch, activatedAssessmentQuestion, deactivatedAssessmentQuestion, page, pageSize, filters.search]);
+  }, [parameterId, dispatch, activatedAssessmentQuestion, deactivatedAssessmentQuestion, page, pageSize, debouncedSearch]);
 
   // Total weightage comes from backend aggregate (covers all pages, not just current).
   useEffect(() => {
-    if (!filters.search) {
+    if (!debouncedSearch) {
       setTotalWeightage(assessmentParameter?.data?.questionsSumWeightage ?? 0);
     }
-  }, [assessmentParameter, filters.search]);
+  }, [assessmentParameter, debouncedSearch]);
 
   // Trigger search immediately (reset to first page)
   const handleSearch = () => {
@@ -438,7 +442,10 @@ const AssessmentParameterDetail = () => {
                         leftIcon={Icons.search}
                         marginLeft="6px"
                         value={filters.search}
-                        onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                        onChange={e => {
+                          setFilters(prev => ({ ...prev, search: e.target.value }));
+                          setPage(1);
+                        }}
                         onKeyDown={e => {
                           if (e.key === 'Enter') {
                             handleSearch();

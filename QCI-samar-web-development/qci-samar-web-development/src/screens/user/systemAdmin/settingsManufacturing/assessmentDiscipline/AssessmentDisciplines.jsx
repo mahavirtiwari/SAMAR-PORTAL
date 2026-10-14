@@ -8,6 +8,7 @@ import { Layout } from '../../../../../components/layout';
 import AddDisciplineModal from '../../../../../components/modals/AddDisciplineModal';
 import EditDisciplineModal from '../../../../../components/modals/EditDisciplineModal';
 import Icons from '../../../../../constants/Icons';
+import useDebouncedValue from '../../../../../hooks/useDebouncedValue';
 import {
   activateDisciplineAction,
   deactivateDisciplineAction,
@@ -37,11 +38,13 @@ const AssessmentDisciplines = () => {
   const [pageSize, setPageSize] = useState(10);
   // Filter options
 
+  // Filters drive the fetch directly, so any change starts again from the first page.
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({
       ...prev,
       [name]: value,
     }));
+    setPage(1);
   };
 
   const _handleSearch = () => {
@@ -60,16 +63,19 @@ const AssessmentDisciplines = () => {
     toastError(errorMessage);
   };
 
+  // Debounced so typing in the search box sends one request, not one per keystroke.
+  const debouncedName = useDebouncedValue(filters.name);
+
   // Fetch list on mount and pagination change
   useEffect(() => {
     const filtersData = {
       perPage: pageSize,
       page: page,
-      search: filters.name || '',
+      search: debouncedName || '',
       sector: 'manufacturing',
     };
     dispatch(getDisciplinesAction(filtersData));
-  }, [dispatch, page, pageSize, filters.name]);
+  }, [dispatch, page, pageSize, debouncedName]);
 
   // Refresh list when activate/deactivate is successful
   useEffect(() => {
@@ -77,12 +83,12 @@ const AssessmentDisciplines = () => {
       const filtersData = {
         perPage: pageSize,
         page: page,
-        search: filters.name || '',
+        search: debouncedName || '',
         sector: 'manufacturing',
       };
       dispatch(getDisciplinesAction(filtersData));
     }
-  }, [activatedDiscipline, deactivatedDiscipline, dispatch, filters.name, pageSize, page]);
+  }, [activatedDiscipline, deactivatedDiscipline, dispatch, debouncedName, pageSize, page]);
 
   // Open edit modal when discipline data is received
   useEffect(() => {

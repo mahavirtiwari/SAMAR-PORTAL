@@ -1,3 +1,4 @@
+import { Pagination } from '@mui/material';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,24 +7,32 @@ import { AppBadge, AppButton, AppInput, AppTableEmpty } from '../../../../compon
 import { toastError, toastSuccess } from '../../../../components/base/toast';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { downloadAssessmentReportAction, downloadCertificateAction } from '../../../../redux/action/common/AssessmentAction';
 import { getRecertificationWindowSettingByKeyAction } from '../../../../redux/action/common/SystemSettingAction';
-import { getApplicationAction, renewApplicationAction } from '../../../../redux/action/enterpriseAdmin/application/ApplicationAction';
+import { renewApplicationAction } from '../../../../redux/action/enterpriseAdmin/application/ApplicationAction';
 import { getCertificatesAction } from '../../../../redux/action/enterpriseAdmin/CertificateAction';
+import Api from '../../../../services/api';
+import { fetchAllPages } from '../../../../services/api/utils/pagination';
 import { downloadPayloadAsPdf } from '../../../../utils/FileUtils';
 import { formatDate } from '../../../../utils/formatters';
 import { getBadgeVariantByLabel } from '../../../../utils/getStatusColors';
 import { Logger } from '../../../../utils/logger';
+
+// Cards per page: a multiple of the 3-column grid.
+const CERTIFICATES_PER_PAGE = 12;
 
 // Main Documents component
 const Documents = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery);
+  const [page, setPage] = useState(1);
+  const [applications, setApplications] = useState([]);
   const [_renewingId, setRenewingId] = useState(null);
 
   const { certificates } = useSelector(state => state.EnterpriseAdminCertificate);
-  const { applicationList } = useSelector(state => state.EnterpriseAdminApplication);
   const { downloadLoading, downloadReportLoading } = useSelector(state => state.Assessment);
   const { recertWindowSetting } = useSelector(state => state.SystemSetting);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -32,42 +41,55 @@ const Documents = () => {
 
   useEffect(() => {
     const params = {
-      perPage: 50,
-      ...(searchQuery && { q: searchQuery }),
+      perPage: CERTIFICATES_PER_PAGE,
+      page,
+      ...(debouncedSearch && { q: debouncedSearch }),
     };
-    dispatch(getCertificatesAction(params));
-  }, [dispatch, searchQuery]);
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getCertificatesAction(params));
+    return () => request.abort();
+  }, [dispatch, page, debouncedSearch]);
 
   useEffect(() => {
     dispatch(getRecertificationWindowSettingByKeyAction('recertification_window_days'));
   }, [dispatch]);
 
   // Load applications so we can tell which certificates already have a renewal in progress.
+  // Every page is walked: one capped page silently dropped renewal flags and unit names
+  // for organisations with more than 100 applications.
   useEffect(() => {
-    dispatch(getApplicationAction({ perPage: 100, page: 1 }));
-  }, [dispatch]);
+    let active = true;
+    fetchAllPages(params => Api.Application.getApplication(params))
+      .then(rows => {
+        if (active) {
+          setApplications(rows);
+        }
+      })
+      .catch(error => Logger.error('Failed to load applications for certificates:', error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // A renewal application points back to the certificate's source application via previousApplicationId.
   // Collect the source ids of every submitted (non-draft) renewal to flag certificates whose renewal is already under way.
-  const submittedRenewalSourceIds = useMemo(() => {
-    const apps = applicationList?.data || [];
-    return new Set(apps.filter(app => app?.previousApplicationId && app.status !== 'draft').map(app => String(app.previousApplicationId)));
-  }, [applicationList]);
+  const submittedRenewalSourceIds = useMemo(
+    () => new Set(applications.filter(app => app?.previousApplicationId && app.status !== 'draft').map(app => String(app.previousApplicationId))),
+    [applications],
+  );
 
   const hasSubmittedRenewal = cert => submittedRenewalSourceIds.has(String(cert?.application?.id));
 
   // Certificate list doesn't carry the unit name yet, so resolve it by matching the
   // certificate's application id against the already-loaded applications list.
-  const unitNameByApplicationId = useMemo(() => {
-    const apps = applicationList?.data || [];
-    return new Map(apps.map(app => [String(app.id), app.unitName]));
-  }, [applicationList]);
+  const unitNameByApplicationId = useMemo(() => new Map(applications.map(app => [String(app.id), app.unitName])), [applications]);
 
   const getUnitName = cert => cert?.application?.unitName || unitNameByApplicationId.get(String(cert?.application?.id)) || '-';
 
-  // Handle search input change with debounce
+  // The fetch is driven by the debounced value; a new search starts from the first page.
   const handleSearchChange = e => {
     setSearchQuery(e.target.value);
+    setPage(1);
   };
 
   // Renewal window (in days) before expiry within which the banner is shown.
@@ -200,6 +222,7 @@ const Documents = () => {
   };
 
   const certificatesData = certificates?.data || [];
+  const certificatesLastPage = certificates?.pagination?.lastPage || 1;
 
   return (
     <Layout>
@@ -306,6 +329,11 @@ const Documents = () => {
                     </div>
                   ) : (
                     <AppTableEmpty title="No Certificates & Reports" subtitle="There are currently no certificates or reports to display." height="300px" />
+                  )}
+                  {certificatesLastPage > 1 && (
+                    <div className="d-flex justify-content-end margin-top-16">
+                      <Pagination count={certificatesLastPage} page={page} onChange={(_, value) => setPage(value)} shape="rounded" />
+                    </div>
                   )}
                 </div>
               </div>

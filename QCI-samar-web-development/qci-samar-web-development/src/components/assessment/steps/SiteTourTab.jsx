@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -6,7 +6,7 @@ import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
 import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSiteTourPicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
-import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
+import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatUploaderDesignation } from '../../../utils/formatters';
 import AppCommonModal from '../../modals/AppCommonModal';
 import SitePictureDetailsModal from '../../modals/SitePictureDetailsModal';
@@ -22,8 +22,6 @@ const SiteTourTab = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [imageUrls, setImageUrls] = useState({});
-  const blobUrlsRef = useRef({});
-  const modalBlobRef = useRef(null);
   const [modalImageSrc, setModalImageSrc] = useState(null);
   const [modalImageLoading, setModalImageLoading] = useState(false);
 
@@ -61,100 +59,52 @@ const SiteTourTab = () => {
 
   // Preload thumbnails (authenticated) when pictures change
   useEffect(() => {
-    const load = async () => {
-      const pics = Array.isArray(siteTourPictures) ? siteTourPictures : siteTourPictures?.pictures || [];
-      const promises = pics.map(async pic => {
-        if (!pic?.id) {
+    // The shared image cache owns these blob URLs (and revokes them on eviction), so a
+    // live-refresh tick that returns the same pictures reuses what is already loaded.
+    let cancelled = false;
+    const pics = Array.isArray(siteTourPictures) ? siteTourPictures : siteTourPictures?.pictures || [];
+    Promise.all(
+      pics.map(async pic => {
+        if (!pic?.id || !pic?.downloadUrl) {
           return null;
         }
-        const src = pic.downloadUrl;
-        if (!src) {
-          return null;
-        }
-        try {
-          const blobUrl = await fetchAuthenticatedImageUrl(src);
-          if (blobUrl) {
-            blobUrlsRef.current[pic.id] = blobUrl;
-            return { id: pic.id, url: blobUrl };
-          }
-        } catch {
-          return null;
-        }
-        return null;
-      });
-
-      const results = await Promise.all(promises);
-      const map = {};
-      results.forEach(r => {
-        if (r) {
-          map[r.id] = r.url;
-        }
-      });
-      setImageUrls(map);
-    };
-
-    load();
-
+        const url = await getCachedImageUrl(pic.downloadUrl, { thumb: true });
+        return url ? [pic.id, url] : null;
+      }),
+    ).then(entries => {
+      if (!cancelled) {
+        setImageUrls(Object.fromEntries(entries.filter(Boolean)));
+      }
+    });
     return () => {
-      Object.values(blobUrlsRef.current).forEach(u => {
-        try {
-          URL.revokeObjectURL(u);
-        } catch {
-          // ignore
-        }
-      });
-      blobUrlsRef.current = {};
+      cancelled = true;
     };
   }, [siteTourPictures]);
 
   // Load modal full-size image when selected
   useEffect(() => {
-    const src = selectedPicture ? selectedPicture.downloadUrl : null;
+    const src = selectedPicture?.downloadUrl || null;
+    setModalImageSrc(null);
+    if (!modalOpen || !src) {
+      setModalImageLoading(false);
+      return undefined;
+    }
+    // Full-size image for the modal, through the same cache as the thumbnails.
     let cancelled = false;
-
-    const loadModal = async () => {
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
-
-      if (!modalOpen || !src) {
-        setModalImageSrc(null);
-        return;
-      }
-
-      setModalImageLoading(true);
-      try {
-        const blobUrl = await fetchAuthenticatedImageUrl(src);
+    setModalImageLoading(true);
+    getCachedImageUrl(src)
+      .then(blobUrl => {
         if (!cancelled && blobUrl) {
-          modalBlobRef.current = blobUrl;
           setModalImageSrc(blobUrl);
         }
-      } catch {
-        // ignore
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) {
           setModalImageLoading(false);
         }
-      }
-    };
-
-    loadModal();
-
+      });
     return () => {
       cancelled = true;
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
     };
   }, [modalOpen, selectedPicture]);
 
@@ -225,6 +175,7 @@ const SiteTourTab = () => {
                   <div className="site-image-wrapper">
                     <img
                       src={imageUrls[picture.id]}
+                      loading="lazy"
                       alt={picture.title || 'Site Tour'}
                       className="site-image"
                       onError={e => {

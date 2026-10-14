@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import Icons from '../../../constants/Icons';
 import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getAttendanceAction, getMyAssignmentsAction, getMyPunchStatusAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { isServiceSector, resolveTeamRole } from '../../../utils/assessmentExecution';
-import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
+import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatDate, formatTime } from '../../../utils/formatters';
 import { AppAvatar } from '../../base';
 import AttendanceImageViewModal from '../../modals/AttendanceImageViewModal';
@@ -181,7 +181,6 @@ const AttendanceTab = ({ assessment: assessmentProp }) => {
 
   // Preloaded blob URLs for selfies: map originalUrl -> blobUrl
   const [imageUrls, setImageUrls] = useState({});
-  const imageBlobRef = useRef({});
   // Modal state for AttendanceImageViewModal
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [modalData, setModalData] = useState({});
@@ -198,6 +197,15 @@ const AttendanceTab = ({ assessment: assessmentProp }) => {
       punchType,
     });
     setImageModalOpen(true);
+    // The avatar shows the thumbnail; swap in the full-size selfie once it has loaded,
+    // unless another avatar has been opened in the meantime.
+    if (punchRecord?.selfieUrl) {
+      getCachedImageUrl(punchRecord.selfieUrl).then(fullImage => {
+        if (fullImage) {
+          setModalData(prev => (prev.image === image ? { ...prev, image: fullImage } : prev));
+        }
+      });
+    }
   };
 
   useEffect(() => {
@@ -216,49 +224,30 @@ const AttendanceTab = ({ assessment: assessmentProp }) => {
     }
   }, [dispatch, id, canPunch]);
 
-  // Preload selfie images (authenticated) for all attendance records
+  // Preload selfie thumbnails (authenticated) for all attendance records. The blob URLs
+  // belong to the shared image cache, so a live-refresh tick reuses what is loaded and
+  // nothing is revoked here.
   useEffect(() => {
     const allRecords = attendances || [];
     const urls = Array.from(new Set(allRecords.flatMap(r => [r.selfieUrl, r.selfie_url, r.punchIn?.selfieUrl, r.punchOut?.selfieUrl].filter(Boolean))));
+    if (urls.length === 0) {
+      return undefined;
+    }
 
     let mounted = true;
-
-    const loadAll = async () => {
-      const map = {};
-      for (const u of urls) {
-        if (!u) {
-          continue;
-        }
-        try {
-          const blob = await fetchAuthenticatedImageUrl(u);
-          if (blob && mounted) {
-            imageBlobRef.current[u] = blob;
-            map[u] = blob;
-          }
-        } catch {
-          // ignore per-image failures
-        }
-      }
+    Promise.all(
+      urls.map(async u => {
+        const blobUrl = await getCachedImageUrl(u, { thumb: true });
+        return blobUrl ? [u, blobUrl] : null;
+      }),
+    ).then(entries => {
       if (mounted) {
-        setImageUrls(map);
+        setImageUrls(Object.fromEntries(entries.filter(Boolean)));
       }
-    };
-
-    if (urls.length > 0) {
-      loadAll();
-    }
+    });
 
     return () => {
       mounted = false;
-      Object.values(imageBlobRef.current).forEach(b => {
-        try {
-          URL.revokeObjectURL(b);
-        } catch {
-          // ignore
-        }
-      });
-      imageBlobRef.current = {};
-      setImageUrls({});
     };
   }, [attendances]);
 

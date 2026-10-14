@@ -53,6 +53,10 @@ const UnitAdminCertificateSlice = createSlice({
         };
       })
       .addCase(getCertificatesAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.certificatesLoading = false;
         state.certificatesError = action.payload;
       })

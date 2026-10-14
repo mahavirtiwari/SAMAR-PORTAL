@@ -134,3 +134,21 @@ export const buildPaginationParams = data => {
   }
   return queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
 };
+
+/**
+ * Walks every page of a paginated list endpoint and returns the concatenated rows.
+ * The API caps perPage at 100, so a single request silently truncates longer lists.
+ * `maxPages` is only a runaway guard (10,000 rows at the default page size).
+ * @param {(params: {perPage: number, page: number}) => Promise<Object>} fetchPage
+ */
+export const fetchAllPages = async (fetchPage, { perPage = 100, maxPages = 100 } = {}) => {
+  const rows = [];
+  for (let page = 1; page <= maxPages; page += 1) {
+    const response = await fetchPage({ perPage, page });
+    rows.push(...(response?.data || []));
+    if (page >= (response?.pagination?.lastPage ?? 1)) {
+      break;
+    }
+  }
+  return rows;
+};

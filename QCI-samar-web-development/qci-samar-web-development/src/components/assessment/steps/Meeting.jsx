@@ -19,7 +19,7 @@ import {
 } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { getAssessmentByIdAction } from '../../../redux/action/common/AssessmentAction';
 import { isMemberExecutionLocked, isServiceSector, resolveTeamRole } from '../../../utils/assessmentExecution';
-import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
+import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatPersonName } from '../../../utils/formatters';
 import { hasRole } from '../../../utils/roleUtils';
 import { AppButton, AppInput, AppWebcamCapture } from '../../base';
@@ -144,7 +144,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
   useLiveRefresh(
     () => {
       const arg = { assessmentId: id, silent: true };
-      dispatch(isOpening ? getOpeningMeetingAction(arg) : getClosingMeetingAction(arg));
+      return dispatch(isOpening ? getOpeningMeetingAction(arg) : getClosingMeetingAction(arg));
     },
     { enabled: !!id },
   );
@@ -232,35 +232,27 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
   const handleCloseModal = () => setModalOpen(false);
 
   const [meetingImageSrc, setMeetingImageSrc] = useState(null);
-  const meetingBlobRef = useRef(null);
+  const [meetingModalImageSrc, setMeetingModalImageSrc] = useState(null);
   // Set right after a photo replacement uploads: tells the image effect to hold the
   // local preview until the refetched server image has loaded, then swap without a flash.
   const pendingPhotoSwapRef = useRef(false);
 
-  // Fetch authenticated blob URL for meeting image to avoid direct unauthenticated <img> requests
+  // Fetch authenticated blob URL for meeting image to avoid direct unauthenticated <img> requests.
+  // The card shows the thumbnail rendition; the blob URL belongs to the shared image cache
+  // (which revokes it on eviction), so the live refresh does not re-download it.
   useEffect(() => {
     const url = meeting?.imageUrl;
     let cancelled = false;
 
     const load = async () => {
-      if (meetingBlobRef.current) {
-        try {
-          URL.revokeObjectURL(meetingBlobRef.current);
-        } catch {
-          // ignore
-        }
-        meetingBlobRef.current = null;
-      }
-
       if (!meeting?.id || !url) {
         setMeetingImageSrc(null);
         return;
       }
 
       try {
-        const blobUrl = await fetchAuthenticatedImageUrl(url);
+        const blobUrl = await getCachedImageUrl(url, { thumb: true });
         if (!cancelled && blobUrl) {
-          meetingBlobRef.current = blobUrl;
           setMeetingImageSrc(blobUrl);
           if (pendingPhotoSwapRef.current) {
             // The freshly uploaded photo has now loaded from the server; only now drop
@@ -288,18 +280,28 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
 
     return () => {
       cancelled = true;
-      if (meetingBlobRef.current) {
-        try {
-          URL.revokeObjectURL(meetingBlobRef.current);
-        } catch {
-          // ignore
-        }
-        meetingBlobRef.current = null;
-      }
     };
     // imageUrl is a dependency: replacing the photo keeps the same meeting id but
     // returns a new URL, so keying on id alone leaves the stale blob on screen.
   }, [meeting?.id, meeting?.imageUrl]);
+
+  // Full-size photo for the modal, loaded only when it opens; the thumbnail stands in meanwhile.
+  useEffect(() => {
+    const url = meeting?.imageUrl;
+    setMeetingModalImageSrc(null);
+    if (!modalOpen || !url) {
+      return undefined;
+    }
+    let cancelled = false;
+    getCachedImageUrl(url).then(blobUrl => {
+      if (!cancelled && blobUrl) {
+        setMeetingModalImageSrc(blobUrl);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [modalOpen, meeting?.imageUrl]);
 
   useEffect(
     () => () => {
@@ -1207,6 +1209,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
                   <div className="site-image-wrapper">
                     <img
                       src={meetingImageSrc}
+                      loading="lazy"
                       alt={`${type} Meeting`}
                       className="site-image"
                       onError={e => {
@@ -1330,7 +1333,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
           capturedAt: meetingData?.conductedAt,
         }}
         modalImageLoading={false}
-        modalImageSrc={meetingImageSrc}
+        modalImageSrc={meetingModalImageSrc || meetingImageSrc}
       />
     </div>
   );

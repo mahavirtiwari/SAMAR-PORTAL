@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { AppDataGrid, AppPieChartCard, AppStackedBarChartCard } from '../../../components/base';
+import { AppDataGrid } from '../../../components/base';
+// Imported from their files, not the base barrel, so the charting libraries stay in
+// this lazily loaded screen's chunks instead of the shared startup bundle.
+import AppPieChartCard from '../../../components/base/AppPieChartCard';
+import AppStackedBarChartCard from '../../../components/base/AppStackedBarChartCard';
 import StepProgressBar from '../../../components/base/StepProgressBar';
 import { Layout } from '../../../components/layout';
 import Icons from '../../../constants/Icons';

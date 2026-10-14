@@ -6,6 +6,7 @@ import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddOperationsAdminModal, EditOperationsAdminModal } from '../../../../../components/modals';
 import Icons from '../../../../../constants/Icons';
+import useDebouncedValue from '../../../../../hooks/useDebouncedValue';
 import { activateUserAccountAction, deactivateUserAccountAction, getAllUsersAction, getUserDetailsAction } from '../../../../../redux/action/common/UnitAdminAction';
 import { resetUserDetails } from '../../../../../redux/slices/common/UnitAdminSlice';
 import { getBadgeVariantByLabel } from '../../../../../utils/getStatusColors';
@@ -33,24 +34,29 @@ const OperationsAdmin = () => {
   const { user } = useSelector(state => state.Account);
   const { userList, userListLoading, userDetails, userAccountActivateLoading, userAccountDeactivateLoading, userAccountActivate, userAccountDeactivate } = useSelector(state => state.UnitAdmin);
 
+  // Debounced so typing in the search box sends one request, not one per keystroke.
+  const debouncedSearch = useDebouncedValue(filters.search);
+
   // Fetch users
   useEffect(() => {
     const filtersData = {
-      search: filters.search,
+      search: debouncedSearch,
       role: 'operations_admin',
       status: filters?.unitStatus,
       organizationId: user?.organization?.id,
       perPage: pageSize,
       page: page,
     };
-    dispatch(getAllUsersAction(filtersData));
-  }, [dispatch, user?.organization?.id, filters.search, filters.unitStatus, page, pageSize]);
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getAllUsersAction(filtersData));
+    return () => request.abort();
+  }, [dispatch, user?.organization?.id, debouncedSearch, filters.unitStatus, page, pageSize]);
 
   // Refresh user list when activate/deactivate is successful
   useEffect(() => {
     if (userAccountActivate || userAccountDeactivate) {
       const filtersData = {
-        search: filters.search,
+        search: debouncedSearch,
         role: 'operations_admin',
         status: filters?.unitStatus,
         organizationId: user?.organization?.id,
@@ -59,13 +65,15 @@ const OperationsAdmin = () => {
       };
       dispatch(getAllUsersAction(filtersData));
     }
-  }, [userAccountActivate, userAccountDeactivate, dispatch, filters.search, filters.unitStatus, user?.organization?.id, pageSize, page]);
+  }, [userAccountActivate, userAccountDeactivate, dispatch, debouncedSearch, filters.unitStatus, user?.organization?.id, pageSize, page]);
 
+  // Filters drive the fetch directly, so any change starts again from the first page.
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({
       ...prev,
       [name]: value,
     }));
+    setPage(1);
   };
 
   // Handle general error callback from modal (for non-field errors)

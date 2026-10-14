@@ -1,6 +1,10 @@
 import { Logger } from '../../../utils/logger';
 import userClient from '../clients/userClient';
+import { withAllListCache } from '../utils/listCache';
 import { buildPaginationParams } from '../utils/pagination';
+
+// all=true lookups are cached for 10 minutes; any write through this client clears them.
+const client = withAllListCache(userClient);
 
 const MasterServices = () => {
   // Utility to build pagination query string
@@ -9,7 +13,7 @@ const MasterServices = () => {
     try {
       const queryString = buildPaginationParams(params);
       const url = `/master-data/service/vendor-categories${queryString}`;
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listVendorCategoriesV1 response:', response);
       return response.data;
     } catch (error) {
@@ -20,7 +24,7 @@ const MasterServices = () => {
 
   const getVendorCategoryV1 = async id => {
     try {
-      const response = await userClient.get(`/master-data/service/vendor-categories/${id}`);
+      const response = await client.get(`/master-data/service/vendor-categories/${id}`);
       Logger.info('getVendorCategoryV1 response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -31,7 +35,7 @@ const MasterServices = () => {
 
   const createVendorCategoryV1 = async payload => {
     try {
-      const response = await userClient.post('/master-data/service/vendor-categories', payload);
+      const response = await client.post('/master-data/service/vendor-categories', payload);
       Logger.info('createVendorCategoryV1 response:', response);
       return response.data;
     } catch (error) {
@@ -42,7 +46,7 @@ const MasterServices = () => {
 
   const updateVendorCategoryV1 = async payload => {
     try {
-      const response = await userClient.put(`/master-data/service/vendor-categories/${payload.id}`, payload);
+      const response = await client.put(`/master-data/service/vendor-categories/${payload.id}`, payload);
       Logger.info('updateVendorCategoryV1 response:', response);
       return response.data;
     } catch (error) {
@@ -53,7 +57,7 @@ const MasterServices = () => {
 
   const activateVendorCategoryV1 = async id => {
     try {
-      const response = await userClient.post(`/master-data/service/vendor-categories/${id}/activate`);
+      const response = await client.post(`/master-data/service/vendor-categories/${id}/activate`);
       Logger.info('activateVendorCategoryV1 response:', response);
       return response.data;
     } catch (error) {
@@ -64,7 +68,7 @@ const MasterServices = () => {
 
   const deactivateVendorCategoryV1 = async id => {
     try {
-      const response = await userClient.post(`/master-data/service/vendor-categories/${id}/deactivate`);
+      const response = await client.post(`/master-data/service/vendor-categories/${id}/deactivate`);
       Logger.info('deactivateVendorCategoryV1 response:', response);
       return response.data;
     } catch (error) {
@@ -78,7 +82,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/service/key-processes${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listKeyProcessV1 response:', response);
       return response;
     } catch (error) {
@@ -89,7 +93,7 @@ const MasterServices = () => {
 
   const getKeyProcessV1 = async id => {
     try {
-      const response = await userClient.get(`/master-data/service/key-processes/${id}`);
+      const response = await client.get(`/master-data/service/key-processes/${id}`);
       Logger.info('getKeyProcessV1 response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -100,7 +104,7 @@ const MasterServices = () => {
 
   const createKeyProcessV1 = async payload => {
     try {
-      const response = await userClient.post('/master-data/service/key-processes', payload);
+      const response = await client.post('/master-data/service/key-processes', payload);
       Logger.info('createKeyProcessV1 response:', response);
       return response.data;
     } catch (error) {
@@ -111,7 +115,7 @@ const MasterServices = () => {
 
   const updateKeyProcessV1 = async payload => {
     try {
-      const response = await userClient.put(`/master-data/service/key-processes/${payload.id}`, payload);
+      const response = await client.put(`/master-data/service/key-processes/${payload.id}`, payload);
       Logger.info('updateKeyProcessV1 response:', response);
       return response;
     } catch (error) {
@@ -123,7 +127,7 @@ const MasterServices = () => {
   const activateKeyProcessV1 = async id => {
     try {
       Logger.info('Activating key process V1 with ID:', id);
-      const response = await userClient.post(`/master-data/service/key-processes/${id}/activate`);
+      const response = await client.post(`/master-data/service/key-processes/${id}/activate`);
       Logger.info('Key process V1 activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -135,7 +139,7 @@ const MasterServices = () => {
   const deactivateKeyProcessV1 = async id => {
     try {
       Logger.info('Deactivating key process V1 with ID:', id);
-      const response = await userClient.post(`/master-data/service/key-processes/${id}/deactivate`);
+      const response = await client.post(`/master-data/service/key-processes/${id}/deactivate`);
       Logger.info('Key process V1 deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -148,7 +152,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/assessor-domains${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listAssessorDomains response:', response);
       return response.data;
     } catch (error) {
@@ -159,7 +163,7 @@ const MasterServices = () => {
 
   const getAssessorDomain = async id => {
     try {
-      const response = await userClient.get(`/master-data/assessor-domains/${id}`);
+      const response = await client.get(`/master-data/assessor-domains/${id}`);
       Logger.info('getAssessorDomain response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -173,7 +177,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/service/outsourced-components${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listOutsourcedComponents response:', response);
       return response;
     } catch (error) {
@@ -184,7 +188,7 @@ const MasterServices = () => {
 
   const getOutsourcedComponent = async id => {
     try {
-      const response = await userClient.get(`/master-data/service/outsourced-components/${id}`);
+      const response = await client.get(`/master-data/service/outsourced-components/${id}`);
       Logger.info('getOutsourcedComponent response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -195,7 +199,7 @@ const MasterServices = () => {
 
   const createOutsourcedComponent = async payload => {
     try {
-      const response = await userClient.post('/master-data/service/outsourced-components', payload);
+      const response = await client.post('/master-data/service/outsourced-components', payload);
       Logger.info('createOutsourcedComponent response:', response);
       return response.data;
     } catch (error) {
@@ -206,7 +210,7 @@ const MasterServices = () => {
 
   const updateOutsourcedComponent = async payload => {
     try {
-      const response = await userClient.put(`/master-data/service/outsourced-components/${payload.id}`, payload);
+      const response = await client.put(`/master-data/service/outsourced-components/${payload.id}`, payload);
       Logger.info('updateOutsourcedComponent response:', response);
       return response.data;
     } catch (error) {
@@ -218,7 +222,7 @@ const MasterServices = () => {
   const activateOutsourcedComponent = async id => {
     try {
       Logger.info('Activating outsourced component with ID:', id);
-      const response = await userClient.post(`/master-data/service/outsourced-components/${id}/activate`);
+      const response = await client.post(`/master-data/service/outsourced-components/${id}/activate`);
       Logger.info('Outsourced component activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -230,7 +234,7 @@ const MasterServices = () => {
   const deactivateOutsourcedComponent = async id => {
     try {
       Logger.info('Deactivating outsourced component with ID:', id);
-      const response = await userClient.post(`/master-data/service/outsourced-components/${id}/deactivate`);
+      const response = await client.post(`/master-data/service/outsourced-components/${id}/deactivate`);
       Logger.info('Outsourced component deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -241,7 +245,7 @@ const MasterServices = () => {
 
   const createAssessorDomain = async payload => {
     try {
-      const response = await userClient.post('/master-data/assessor-domains', payload);
+      const response = await client.post('/master-data/assessor-domains', payload);
       Logger.info('createAssessorDomain response:', response);
       return response.data;
     } catch (error) {
@@ -252,7 +256,7 @@ const MasterServices = () => {
 
   const updateAssessorDomain = async payload => {
     try {
-      const response = await userClient.put(`/master-data/assessor-domains/${payload.id}`, payload);
+      const response = await client.put(`/master-data/assessor-domains/${payload.id}`, payload);
       Logger.info('updateAssessorDomain response:', response);
       return response.data;
     } catch (error) {
@@ -264,7 +268,7 @@ const MasterServices = () => {
   const activateAssessorDomain = async id => {
     try {
       Logger.info('Activating assessor domain with ID:', id);
-      const response = await userClient.post(`/master-data/assessor-domains/${id}/activate`);
+      const response = await client.post(`/master-data/assessor-domains/${id}/activate`);
       Logger.info('Assessor domain activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -276,7 +280,7 @@ const MasterServices = () => {
   const deactivateAssessorDomain = async id => {
     try {
       Logger.info('Deactivating assessor domain with ID:', id);
-      const response = await userClient.post(`/master-data/assessor-domains/${id}/deactivate`);
+      const response = await client.post(`/master-data/assessor-domains/${id}/deactivate`);
       Logger.info('Assessor domain deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -290,7 +294,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/manufacturing/bought-out-parts${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listBoughtOutParts response:', response);
       return response.data;
     } catch (error) {
@@ -301,7 +305,7 @@ const MasterServices = () => {
 
   const getBoughtOutPart = async id => {
     try {
-      const response = await userClient.get(`/master-data/manufacturing/bought-out-parts/${id}`);
+      const response = await client.get(`/master-data/manufacturing/bought-out-parts/${id}`);
       Logger.info('getBoughtOutPart response:', response.data?.data ?? response.data);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -312,7 +316,7 @@ const MasterServices = () => {
 
   const createBoughtOutPart = async payload => {
     try {
-      const response = await userClient.post('/master-data/manufacturing/bought-out-parts', payload);
+      const response = await client.post('/master-data/manufacturing/bought-out-parts', payload);
       Logger.info('createBoughtOutPart response:', response);
       return response.data;
     } catch (error) {
@@ -323,7 +327,7 @@ const MasterServices = () => {
 
   const updateBoughtOutPart = async payload => {
     try {
-      const response = await userClient.put(`/master-data/manufacturing/bought-out-parts/${payload.id}`, payload);
+      const response = await client.put(`/master-data/manufacturing/bought-out-parts/${payload.id}`, payload);
       Logger.info('updateBoughtOutPart response:', response);
       return response.data;
     } catch (error) {
@@ -334,7 +338,7 @@ const MasterServices = () => {
 
   const activateBoughtOutPart = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/bought-out-parts/${id}/activate`);
+      const response = await client.post(`/master-data/manufacturing/bought-out-parts/${id}/activate`);
       Logger.info('activateBoughtOutPart response:', response);
       return response.data;
     } catch (error) {
@@ -345,7 +349,7 @@ const MasterServices = () => {
 
   const deactivateBoughtOutPart = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/bought-out-parts/${id}/deactivate`);
+      const response = await client.post(`/master-data/manufacturing/bought-out-parts/${id}/deactivate`);
       Logger.info('deactivateBoughtOutPart response:', response);
       return response.data;
     } catch (error) {
@@ -359,7 +363,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/manufacturing/vendor-categories${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listVendorCategories response:', response);
       return response.data;
     } catch (error) {
@@ -370,7 +374,7 @@ const MasterServices = () => {
 
   const getVendorCategory = async id => {
     try {
-      const response = await userClient.get(`/master-data/manufacturing/vendor-categories/${id}`);
+      const response = await client.get(`/master-data/manufacturing/vendor-categories/${id}`);
       Logger.info('getVendorCategory response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -381,7 +385,7 @@ const MasterServices = () => {
 
   const createVendorCategory = async payload => {
     try {
-      const response = await userClient.post('/master-data/manufacturing/vendor-categories', payload);
+      const response = await client.post('/master-data/manufacturing/vendor-categories', payload);
       Logger.info('createVendorCategory response:', response);
       return response.data;
     } catch (error) {
@@ -392,7 +396,7 @@ const MasterServices = () => {
 
   const updateVendorCategory = async payload => {
     try {
-      const response = await userClient.put(`/master-data/manufacturing/vendor-categories/${payload.id}`, payload);
+      const response = await client.put(`/master-data/manufacturing/vendor-categories/${payload.id}`, payload);
       Logger.info('updateVendorCategory response:', response);
       return response.data;
     } catch (error) {
@@ -403,7 +407,7 @@ const MasterServices = () => {
 
   const activateVendorCategory = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/vendor-categories/${id}/activate`);
+      const response = await client.post(`/master-data/manufacturing/vendor-categories/${id}/activate`);
       Logger.info('activateVendorCategory response:', response);
       return response.data;
     } catch (error) {
@@ -414,7 +418,7 @@ const MasterServices = () => {
 
   const deactivateVendorCategory = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/vendor-categories/${id}/deactivate`);
+      const response = await client.post(`/master-data/manufacturing/vendor-categories/${id}/deactivate`);
       Logger.info('deactivateVendorCategory response:', response);
       return response.data;
     } catch (error) {
@@ -428,7 +432,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/manufacturing/key-processes${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listKeyProcesses response:', response);
       return response;
     } catch (error) {
@@ -441,7 +445,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/service/vendor-labs${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listVendorLabs response:', response);
       return response.data;
     } catch (error) {
@@ -452,7 +456,7 @@ const MasterServices = () => {
 
   const getVendorLab = async id => {
     try {
-      const response = await userClient.get(`/master-data/service/vendor-labs/${id}`);
+      const response = await client.get(`/master-data/service/vendor-labs/${id}`);
       Logger.info('getVendorLab response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -463,7 +467,7 @@ const MasterServices = () => {
 
   const createVendorLab = async payload => {
     try {
-      const response = await userClient.post('/master-data/service/vendor-labs', payload);
+      const response = await client.post('/master-data/service/vendor-labs', payload);
       Logger.info('createVendorLab response:', response);
       return response.data;
     } catch (error) {
@@ -474,7 +478,7 @@ const MasterServices = () => {
 
   const updateVendorLab = async payload => {
     try {
-      const response = await userClient.put(`/master-data/service/vendor-labs/${payload.id}`, payload);
+      const response = await client.put(`/master-data/service/vendor-labs/${payload.id}`, payload);
       Logger.info('updateVendorLab response:', response);
       return response.data;
     } catch (error) {
@@ -486,7 +490,7 @@ const MasterServices = () => {
   const activateVendorLab = async id => {
     try {
       Logger.info('Activating vendor lab with ID:', id);
-      const response = await userClient.post(`/master-data/service/vendor-labs/${id}/activate`);
+      const response = await client.post(`/master-data/service/vendor-labs/${id}/activate`);
       Logger.info('Vendor lab activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -498,7 +502,7 @@ const MasterServices = () => {
   const deactivateVendorLab = async id => {
     try {
       Logger.info('Deactivating vendor lab with ID:', id);
-      const response = await userClient.post(`/master-data/service/vendor-labs/${id}/deactivate`);
+      const response = await client.post(`/master-data/service/vendor-labs/${id}/deactivate`);
       Logger.info('Vendor lab deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -509,7 +513,7 @@ const MasterServices = () => {
 
   const getKeyProcess = async id => {
     try {
-      const response = await userClient.get(`/master-data/manufacturing/key-processes/${id}`);
+      const response = await client.get(`/master-data/manufacturing/key-processes/${id}`);
       Logger.info('getKeyProcess response:', response);
       return response?.data?.data;
     } catch (error) {
@@ -522,7 +526,7 @@ const MasterServices = () => {
 
   const createKeyProcess = async payload => {
     try {
-      const response = await userClient.post('/master-data/manufacturing/key-processes', payload);
+      const response = await client.post('/master-data/manufacturing/key-processes', payload);
       Logger.info('createKeyProcess response:', response);
       return response.data;
     } catch (error) {
@@ -533,7 +537,7 @@ const MasterServices = () => {
 
   const updateKeyProcess = async payload => {
     try {
-      const response = await userClient.put(`/master-data/manufacturing/key-processes/${payload.id}`, payload);
+      const response = await client.put(`/master-data/manufacturing/key-processes/${payload.id}`, payload);
       Logger.info('updateKeyProcess response:', response);
       return response?.data;
     } catch (error) {
@@ -544,7 +548,7 @@ const MasterServices = () => {
 
   const activateKeyProcess = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/key-processes/${id}/activate`);
+      const response = await client.post(`/master-data/manufacturing/key-processes/${id}/activate`);
       Logger.info('activateKeyProcess response:', response);
       return response.data;
     } catch (error) {
@@ -555,7 +559,7 @@ const MasterServices = () => {
 
   const deactivateKeyProcess = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/key-processes/${id}/deactivate`);
+      const response = await client.post(`/master-data/manufacturing/key-processes/${id}/deactivate`);
       Logger.info('deactivateKeyProcess response:', response);
       return response.data;
     } catch (error) {
@@ -569,7 +573,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/manufacturing/stores${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listManufacturingStores response:', response);
       return response.data;
     } catch (error) {
@@ -580,7 +584,7 @@ const MasterServices = () => {
 
   const getManufacturingStore = async id => {
     try {
-      const response = await userClient.get(`/master-data/manufacturing/stores/${id}`);
+      const response = await client.get(`/master-data/manufacturing/stores/${id}`);
       Logger.info('getManufacturingStore response:', response);
       return response.data;
     } catch (error) {
@@ -591,7 +595,7 @@ const MasterServices = () => {
 
   const createManufacturingStore = async payload => {
     try {
-      const response = await userClient.post('/master-data/manufacturing/stores', payload);
+      const response = await client.post('/master-data/manufacturing/stores', payload);
       Logger.info('createManufacturingStore response:', response);
       return response.data;
     } catch (error) {
@@ -602,7 +606,7 @@ const MasterServices = () => {
 
   const updateManufacturingStore = async payload => {
     try {
-      const response = await userClient.put(`/master-data/manufacturing/stores/${payload.id}`, payload);
+      const response = await client.put(`/master-data/manufacturing/stores/${payload.id}`, payload);
       Logger.info('updateManufacturingStore response:88888', response);
       return response.data;
     } catch (error) {
@@ -613,7 +617,7 @@ const MasterServices = () => {
 
   const activateManufacturingStore = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/stores/${id}/activate`);
+      const response = await client.post(`/master-data/manufacturing/stores/${id}/activate`);
       Logger.info('activateManufacturingStore response:', response);
       return response.data;
     } catch (error) {
@@ -624,7 +628,7 @@ const MasterServices = () => {
 
   const deactivateManufacturingStore = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/stores/${id}/deactivate`);
+      const response = await client.post(`/master-data/manufacturing/stores/${id}/deactivate`);
       Logger.info('deactivateManufacturingStore response:', response);
       return response.data;
     } catch (error) {
@@ -638,7 +642,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/service/key-resources${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listKeyResources response:', response);
       return response.data;
     } catch (error) {
@@ -649,7 +653,7 @@ const MasterServices = () => {
 
   const getKeyResource = async id => {
     try {
-      const response = await userClient.get(`/master-data/service/key-resources/${id}`);
+      const response = await client.get(`/master-data/service/key-resources/${id}`);
       Logger.info('getKeyResource response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -660,7 +664,7 @@ const MasterServices = () => {
 
   const createKeyResource = async payload => {
     try {
-      const response = await userClient.post('/master-data/service/key-resources', payload);
+      const response = await client.post('/master-data/service/key-resources', payload);
       Logger.info('createKeyResource response:', response);
       return response.data;
     } catch (error) {
@@ -671,7 +675,7 @@ const MasterServices = () => {
 
   const updateKeyResource = async payload => {
     try {
-      const response = await userClient.put(`/master-data/service/key-resources/${payload.id}`, payload);
+      const response = await client.put(`/master-data/service/key-resources/${payload.id}`, payload);
       Logger.info('updateKeyResource response:', response);
       return response.data;
     } catch (error) {
@@ -683,7 +687,7 @@ const MasterServices = () => {
   const activateKeyResource = async id => {
     try {
       Logger.info('Activating key resource with ID:', id);
-      const response = await userClient.post(`/master-data/service/key-resources/${id}/activate`);
+      const response = await client.post(`/master-data/service/key-resources/${id}/activate`);
       Logger.info('Key resource activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -695,7 +699,7 @@ const MasterServices = () => {
   const deactivateKeyResource = async id => {
     try {
       Logger.info('Deactivating key resource with ID:', id);
-      const response = await userClient.post(`/master-data/service/key-resources/${id}/deactivate`);
+      const response = await client.post(`/master-data/service/key-resources/${id}/deactivate`);
       Logger.info('Key resource deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -709,7 +713,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/third-party-certs${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listThirdPartyCerts response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -720,7 +724,7 @@ const MasterServices = () => {
 
   const getThirdPartyCert = async id => {
     try {
-      const response = await userClient.get(`/master-data/third-party-certs/${id}`);
+      const response = await client.get(`/master-data/third-party-certs/${id}`);
       Logger.info('getThirdPartyCert response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -731,7 +735,7 @@ const MasterServices = () => {
 
   const createThirdPartyCert = async payload => {
     try {
-      const response = await userClient.post('/master-data/third-party-certs', payload);
+      const response = await client.post('/master-data/third-party-certs', payload);
       Logger.info('createThirdPartyCert response:', response);
       return response.data;
     } catch (error) {
@@ -742,7 +746,7 @@ const MasterServices = () => {
 
   const updateThirdPartyCert = async payload => {
     try {
-      const response = await userClient.put(`/master-data/third-party-certs/${payload.id}`, payload);
+      const response = await client.put(`/master-data/third-party-certs/${payload.id}`, payload);
       Logger.info('updateThirdPartyCert response:', response);
       return response.data;
     } catch (error) {
@@ -753,7 +757,7 @@ const MasterServices = () => {
 
   const deleteThirdPartyCert = async id => {
     try {
-      const response = await userClient.delete(`/master-data/third-party-certs/${id}`);
+      const response = await client.delete(`/master-data/third-party-certs/${id}`);
       Logger.info('deleteThirdPartyCert response:', response);
       return response.data;
     } catch (error) {
@@ -765,7 +769,7 @@ const MasterServices = () => {
   const activateThirdPartyCert = async id => {
     try {
       Logger.info('Activating third-party cert with ID:', id);
-      const response = await userClient.post(`/master-data/third-party-certs/${id}/activate`);
+      const response = await client.post(`/master-data/third-party-certs/${id}/activate`);
       Logger.info('Third-party cert activated successfully:', response);
       return response.data;
     } catch (error) {
@@ -777,7 +781,7 @@ const MasterServices = () => {
   const deactivateThirdPartyCert = async id => {
     try {
       Logger.info('Deactivating third-party cert with ID:', id);
-      const response = await userClient.post(`/master-data/third-party-certs/${id}/deactivate`);
+      const response = await client.post(`/master-data/third-party-certs/${id}/deactivate`);
       Logger.info('Third-party cert deactivated successfully:', response);
       return response.data;
     } catch (error) {
@@ -790,7 +794,7 @@ const MasterServices = () => {
     const queryString = buildPaginationParams(params);
     const url = `/master-data/manufacturing/raw-materials${queryString}`;
     try {
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('listRawMaterials response:', response);
       return response.data;
     } catch (error) {
@@ -801,7 +805,7 @@ const MasterServices = () => {
 
   const getRawMaterial = async id => {
     try {
-      const response = await userClient.get(`/master-data/manufacturing/raw-materials/${id}`);
+      const response = await client.get(`/master-data/manufacturing/raw-materials/${id}`);
       Logger.info('getRawMaterial response:', response);
       return response.data;
     } catch (error) {
@@ -812,7 +816,7 @@ const MasterServices = () => {
 
   const createRawMaterial = async payload => {
     try {
-      const response = await userClient.post('/master-data/manufacturing/raw-materials', payload);
+      const response = await client.post('/master-data/manufacturing/raw-materials', payload);
       Logger.info('createRawMaterial response:', response);
       return response.data;
     } catch (error) {
@@ -823,7 +827,7 @@ const MasterServices = () => {
 
   const updateRawMaterial = async payload => {
     try {
-      const response = await userClient.put(`/master-data/manufacturing/raw-materials/${payload.id}`, payload);
+      const response = await client.put(`/master-data/manufacturing/raw-materials/${payload.id}`, payload);
       Logger.info('updateRawMaterial response:', response);
       return response.data;
     } catch (error) {
@@ -834,7 +838,7 @@ const MasterServices = () => {
 
   const activateRawMaterial = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/raw-materials/${id}/activate`);
+      const response = await client.post(`/master-data/manufacturing/raw-materials/${id}/activate`);
       Logger.info('activateRawMaterial response:', response);
       return response.data;
     } catch (error) {
@@ -845,7 +849,7 @@ const MasterServices = () => {
 
   const deactivateRawMaterial = async id => {
     try {
-      const response = await userClient.post(`/master-data/manufacturing/raw-materials/${id}/deactivate`);
+      const response = await client.post(`/master-data/manufacturing/raw-materials/${id}/deactivate`);
       Logger.info('deactivateRawMaterial response:', response);
       return response.data;
     } catch (error) {
@@ -864,7 +868,7 @@ const MasterServices = () => {
 
       const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
       const url = `/master-data/pincodes${queryString}`;
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('Response in UserManagementServices.getAllUsers:pincode', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -879,7 +883,7 @@ const MasterServices = () => {
 
       const url = `/master-data/states${queryString}`;
 
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('Response in state:', response);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -891,7 +895,7 @@ const MasterServices = () => {
   const getDistricts = async id => {
     try {
       const url = `/master-data/districts?all=true&stateName=${id}`;
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('Response in districts:78', response.data);
       return response.data?.data ?? response.data;
     } catch (error) {
@@ -903,7 +907,7 @@ const MasterServices = () => {
     try {
       const queryString = buildPaginationParams(params);
 
-      const response = await userClient.get(`/master-data/countries${queryString}`);
+      const response = await client.get(`/master-data/countries${queryString}`);
       Logger.info('listCountries response:', response);
       return response.data?.data ?? response.data;
     } catch (error) {

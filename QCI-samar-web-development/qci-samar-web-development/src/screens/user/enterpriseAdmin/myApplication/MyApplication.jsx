@@ -59,13 +59,17 @@ const MyApplication = () => {
   const [openAddApplicationModal, setOpenAddApplicationModal] = useState(false);
   // Filters and pagination are held in the URL so returning from a detail page
   // restores the list the user had filtered down to.
-  const { filters, setFilters, appliedFilters, appliedQuery, setAppliedFilters, page, setPage, pageSize, setPageSize, resetFilters } = useListFilters({
-    search: '',
-    status: '',
-    sector: '',
-    classification: '',
-    applicationType: '',
-  });
+  // The search box commits on every keystroke; searchDebounceMs holds the fetch until typing pauses.
+  const { filters, setFilters, appliedFilters, appliedQuery, setAppliedFilters, page, setPage, pageSize, setPageSize, resetFilters } = useListFilters(
+    {
+      search: '',
+      status: '',
+      sector: '',
+      classification: '',
+      applicationType: '',
+    },
+    { searchDebounceMs: 400 },
+  );
   // Reopen the filter panel on return when a filter is active, so the restored list shows what it is filtered by.
   const [showFilters, setShowFilters] = useState(() => Object.entries(appliedFilters).some(([key, value]) => key !== 'search' && value !== '' && value != null));
   const { applicationList, applicationListLoading } = useSelector(state => state.EnterpriseAdminApplication);
@@ -104,8 +108,10 @@ const MyApplication = () => {
       classification: appliedQuery.classification || null,
       applicationType: appliedQuery.applicationType || null,
     };
-    dispatch(getApplicationAction(filtersData));
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getApplicationAction(filtersData));
     dispatch(resetApplicationDetails());
+    return () => request.abort();
   }, [dispatch, page, pageSize, appliedQuery]);
   // The export carries the same applied filters as the list, so the downloaded
   // rows are always the rows on screen rather than the whole table.

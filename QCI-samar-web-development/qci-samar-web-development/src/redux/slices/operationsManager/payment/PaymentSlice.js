@@ -93,6 +93,10 @@ const paymentSlice = createSlice({
         Logger.info('Payment history loaded successfully in slice');
       })
       .addCase(getPaymentHistoryAction.rejected, (state, action) => {
+        // Superseded by a newer search/page request, which owns the loading flag.
+        if (action.meta.aborted) {
+          return;
+        }
         state.paymentHistoryLoading = false;
         state.paymentHistoryError = action.payload;
         Logger.error('Get payment history failed in slice:', action.payload);

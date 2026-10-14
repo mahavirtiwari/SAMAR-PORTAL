@@ -1,8 +1,12 @@
 import { Logger } from '../../../utils/logger';
 import userClient from '../clients/userClient';
+import { withAllListCache } from '../utils/listCache';
 import { buildPaginationParams } from '../utils/pagination';
 
 // Utility to build pagination query string
+
+// all=true lookups are cached for 10 minutes; any write through this client clears them.
+const client = withAllListCache(userClient);
 
 const SystemAdminDisciplinesService = () => {
   // Get all disciplines (with pagination/filter support)
@@ -10,7 +14,7 @@ const SystemAdminDisciplinesService = () => {
     try {
       const queryString = buildPaginationParams(params);
       const url = `/disciplines${queryString}`;
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('Response in DisciplinesService.getDisciplines:', response);
       return response.data;
     } catch (error) {
@@ -22,7 +26,7 @@ const SystemAdminDisciplinesService = () => {
   // Get discipline by ID
   const getDisciplineById = async id => {
     try {
-      const response = await userClient.get(`/disciplines/${id}`);
+      const response = await client.get(`/disciplines/${id}`);
       Logger.info('Response in DisciplinesService.getDisciplineById:', response);
       return response.data;
     } catch (error) {
@@ -34,7 +38,7 @@ const SystemAdminDisciplinesService = () => {
   // Create discipline
   const createDiscipline = async data => {
     try {
-      const response = await userClient.post('/disciplines', data);
+      const response = await client.post('/disciplines', data);
       Logger.info('Response in DisciplinesService.createDiscipline:', response);
       return response.data;
     } catch (error) {
@@ -46,7 +50,7 @@ const SystemAdminDisciplinesService = () => {
   // Update discipline
   const updateDiscipline = async data => {
     try {
-      const response = await userClient.put(`/disciplines/${data.id}`, data);
+      const response = await client.put(`/disciplines/${data.id}`, data);
       Logger.info('Response in DisciplinesService.updateDiscipline:', response);
       return response.data;
     } catch (error) {
@@ -56,7 +60,7 @@ const SystemAdminDisciplinesService = () => {
   };
   const activateDiscipline = async id => {
     try {
-      const response = await userClient.post(`/disciplines/${id}/activate`);
+      const response = await client.post(`/disciplines/${id}/activate`);
       Logger.info('Response in DisciplinesService.activateDiscipline:', response);
       return response.data;
     } catch (error) {
@@ -68,7 +72,7 @@ const SystemAdminDisciplinesService = () => {
   // Deactivate discipline
   const deactivateDiscipline = async id => {
     try {
-      const response = await userClient.post(`/disciplines/${id}/deactivate`);
+      const response = await client.post(`/disciplines/${id}/deactivate`);
       Logger.info('Response in DisciplinesService.deactivateDiscipline:', response);
       return response.data;
     } catch (error) {
@@ -82,7 +86,7 @@ const SystemAdminDisciplinesService = () => {
     try {
       const queryString = buildPaginationParams(params);
       const url = `/disciplines/export${queryString}`;
-      const response = await userClient.get(url);
+      const response = await client.get(url);
       Logger.info('Response in DisciplinesService.exportDisciplines:', response);
       return response.data;
     } catch (error) {

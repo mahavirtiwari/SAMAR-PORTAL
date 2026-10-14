@@ -1,23 +1,31 @@
+import { Pagination } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppBadge, AppButton, AppInput, AppTableEmpty } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { downloadAssessmentReportAction, downloadCertificateAction } from '../../../../redux/action/common/AssessmentAction';
-import { getApplicationAction } from '../../../../redux/action/unitAdmin/application/ApplicationAction';
 import { getCertificatesAction } from '../../../../redux/action/unitAdmin/CertificateAction';
+import Api from '../../../../services/api';
+import { fetchAllPages } from '../../../../services/api/utils/pagination';
 import { downloadPayloadAsPdf } from '../../../../utils/FileUtils';
 import { formatDate } from '../../../../utils/formatters';
 import { getBadgeVariantByLabel } from '../../../../utils/getStatusColors';
 import { Logger } from '../../../../utils/logger';
 
+// Cards per page: a multiple of the 3-column grid.
+const CERTIFICATES_PER_PAGE = 12;
+
 // Main Documents component
 const Documents = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery);
+  const [page, setPage] = useState(1);
+  const [applications, setApplications] = useState([]);
 
   const { certificates } = useSelector(state => state.UnitAdminCertificate);
-  const { applicationList } = useSelector(state => state.UnitAdminApplication);
   const { downloadLoading } = useSelector(state => state.Assessment);
   const { user } = useSelector(state => state.Account);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -26,28 +34,40 @@ const Documents = () => {
 
   useEffect(() => {
     const params = {
-      perPage: 50,
-      ...(searchQuery && { q: searchQuery }),
+      perPage: CERTIFICATES_PER_PAGE,
+      page,
+      ...(debouncedSearch && { q: debouncedSearch }),
     };
-    dispatch(getCertificatesAction(params));
-  }, [dispatch, searchQuery]);
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getCertificatesAction(params));
+    return () => request.abort();
+  }, [dispatch, page, debouncedSearch]);
 
   // Load applications so we can resolve the unit name for each certificate — the
   // certificate list doesn't carry it, so match on the certificate's application id.
+  // Every page is walked: one capped page left units beyond the first 100 applications blank.
   useEffect(() => {
-    dispatch(getApplicationAction({ perPage: 100, page: 1 }));
-  }, [dispatch]);
+    let active = true;
+    fetchAllPages(params => Api.UnitAdminApplication.getApplication(params))
+      .then(rows => {
+        if (active) {
+          setApplications(rows);
+        }
+      })
+      .catch(error => Logger.error('Failed to load applications for certificates:', error));
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const unitNameByApplicationId = useMemo(() => {
-    const apps = applicationList?.data || [];
-    return new Map(apps.map(app => [String(app.id), app.unitName]));
-  }, [applicationList]);
+  const unitNameByApplicationId = useMemo(() => new Map(applications.map(app => [String(app.id), app.unitName])), [applications]);
 
   const getUnitName = cert => cert?.application?.unitName || unitNameByApplicationId.get(String(cert?.application?.id)) || '-';
 
-  // Handle search input change with debounce
+  // The fetch is driven by the debounced value; a new search starts from the first page.
   const handleSearchChange = e => {
     setSearchQuery(e.target.value);
+    setPage(1);
   };
 
   // Get status label for display
@@ -105,6 +125,7 @@ const Documents = () => {
     }
     return all.filter(cert => myUnitIds.includes(cert?.application?.unitId));
   }, [certificates, myUnitIds]);
+  const certificatesLastPage = certificates?.pagination?.lastPage || 1;
 
   return (
     <Layout>
@@ -195,6 +216,11 @@ const Documents = () => {
                     </div>
                   ) : (
                     <AppTableEmpty title="No Certificates & Reports" subtitle="There are currently no certificates or reports to display." height="300px" />
+                  )}
+                  {certificatesLastPage > 1 && (
+                    <div className="d-flex justify-content-end margin-top-16">
+                      <Pagination count={certificatesLastPage} page={page} onChange={(_, value) => setPage(value)} shape="rounded" />
+                    </div>
                   )}
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry';
+import axiosRetry, { exponentialDelay, isNetworkOrIdempotentRequestError, retryAfter } from 'axios-retry';
 import AppSettings from '../../../appsettings';
 import { Logger } from '../../../utils/logger';
 import { getToken } from '../../storage/authStore';
@@ -36,29 +36,35 @@ const userClient = axios.create({
 const IDEMPOTENT_METHODS = ['get', 'head', 'options', 'put', 'delete'];
 const isIdempotentRequest = config => IDEMPOTENT_METHODS.includes((config?.method || 'get').toLowerCase());
 
-// Configure axios-retry with modified exponential backoff
+// A 429 is retried only when the server says when (Retry-After), and only if that wait is
+// short enough to be worth holding the screen for; anything longer fails fast.
+const MAX_RETRY_AFTER_MS = 15000;
+
+const isMaintenanceResponse = error => error.response?.data?.errorCode === 'MAINTENANCE_MODE' || error.response?.data?.error_code === 'MAINTENANCE_MODE' || error.response?.data?.maintenance === true;
+
+// Exponential backoff from 1s (1s, 2s, 4s) with axios-retry's 0-20% jitter, so clients that
+// failed together do not retry in lockstep, and never sooner than a Retry-After header asks.
 axiosRetry(userClient, {
   retries: 3,
-  retryDelay: retryCount => (retryCount === 0 ? 0 : Math.pow(2, retryCount) * 1000),
+  retryDelay: (retryCount, error) => Math.max(retryAfter(error), exponentialDelay(retryCount, error, 500)),
   retryCondition: error => {
+    const status = error.response?.status;
     // Don't retry on 503 if it's maintenance mode
-    if (error.response?.status === 503) {
-      const isMaintenanceMode = error.response?.data?.errorCode === 'MAINTENANCE_MODE' || error.response?.data?.error_code === 'MAINTENANCE_MODE' || error.response?.data?.maintenance === true;
-      if (isMaintenanceMode) {
-        return false; // Don't retry maintenance mode responses
-      }
+    if (status === 503 && isMaintenanceResponse(error)) {
+      return false;
     }
-    // Don't retry 429 on auth endpoints (rate limited)
-    if (error.response?.status === 429) {
-      const url = error.config?.url || '';
-      if (url.includes('/auth/')) {
+    if (status === 429) {
+      // Auth endpoints are rate limited on purpose; never replay them.
+      if ((error.config?.url || '').includes('/auth/')) {
         return false;
       }
+      const wait = retryAfter(error);
+      return isIdempotentRequest(error.config) && wait > 0 && wait <= MAX_RETRY_AFTER_MS;
     }
-    // 429/503 are only replayed for idempotent methods. A POST that hit a 503
+    // 503 is only replayed for idempotent methods. A POST that hit a 503
     // from a proxy may already have been processed (payment initiation, an
     // application submit); resending it would create a duplicate.
-    return isNetworkOrIdempotentRequestError(error) || ([429, 503].includes(error.response?.status) && isIdempotentRequest(error.config));
+    return isNetworkOrIdempotentRequestError(error) || (status === 503 && isIdempotentRequest(error.config));
   },
 });
 
@@ -231,8 +237,7 @@ userClient.interceptors.response.use(
 
     // Handle maintenance mode (503 Service Unavailable)
     if (error.response.status === 503) {
-      const isMaintenanceMode = error.response?.data?.errorCode === 'MAINTENANCE_MODE' || error.response?.data?.error_code === 'MAINTENANCE_MODE' || error.response?.data?.maintenance === true;
-      if (isMaintenanceMode) {
+      if (isMaintenanceResponse(error)) {
         // Check if the user is a system_admin - they should bypass maintenance mode
         const user = store?.getState()?.Account?.user;
         const userRole = Array.isArray(user?.roles) && user.roles.length > 0 ? user.roles[0].slug : null;
@@ -269,6 +274,22 @@ userClient.interceptors.response.use(
           await store.dispatch(logoutUserAction());
         }
         return Promise.reject(error);
+      }
+    }
+
+    if (error.response.status === 401 && !originalRequest._retry && !originalRequest._tokenReplay && !refreshTokenPromise) {
+      // The request went out with an access token that has since been replaced (another
+      // request's refresh finished while this one was in flight). Replay it with the
+      // current token instead of starting a second refresh, which would rotate the
+      // refresh token again and can log the user out. Done at most once per request.
+      const currentToken = await getToken('accessToken');
+      const sentAuthorization = originalRequest.headers?.Authorization;
+      if (currentToken?.token && sentAuthorization && sentAuthorization !== `Bearer ${currentToken.token}`) {
+        // Not marked _retry: if the current token is rejected too, the normal refresh still runs.
+        originalRequest._tokenReplay = true;
+        Logger.info('Replaying request sent with a superseded access token:', originalRequest.url);
+        originalRequest.headers.Authorization = `Bearer ${currentToken.token}`;
+        return userClient(originalRequest);
       }
     }
 

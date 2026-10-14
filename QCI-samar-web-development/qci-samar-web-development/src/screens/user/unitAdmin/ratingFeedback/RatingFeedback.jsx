@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppBadge, AppButton, AppDataGrid, AppInput } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { getApplicationsForFeedbackAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
 import { formatDate } from '../../../../utils/formatters';
 import { getBadgeVariantByLabel } from '../../../../utils/getStatusColors';
@@ -14,6 +15,7 @@ const RatingFeedback = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -21,12 +23,14 @@ const RatingFeedback = () => {
 
   useEffect(() => {
     const params = {
-      q: searchQuery || null,
+      q: debouncedSearch || null,
       perPage: pageSize,
       page: page,
     };
-    dispatch(getApplicationsForFeedbackAction(params));
-  }, [dispatch, page, pageSize, searchQuery]);
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getApplicationsForFeedbackAction(params));
+    return () => request.abort();
+  }, [dispatch, page, pageSize, debouncedSearch]);
 
   const handleSearchChange = e => {
     setSearchQuery(e.target.value);

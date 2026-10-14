@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppButton, AppDataGrid, AppInput } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { exportSubmittedFeedbackAction, getSubmittedFeedbackAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
 import { formatDate } from '../../../../utils/formatters';
 
@@ -12,6 +13,8 @@ const ApplicantFeedbackList = () => {
   const dispatch = useDispatch();
   const [applicationNumber, setApplicationNumber] = useState('');
   const [samarId, setSamarId] = useState('');
+  const debouncedApplicationNumber = useDebouncedValue(applicationNumber);
+  const debouncedSamarId = useDebouncedValue(samarId);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -19,13 +22,15 @@ const ApplicantFeedbackList = () => {
 
   useEffect(() => {
     const params = {
-      q: applicationNumber || null,
-      samarId: samarId || null,
+      q: debouncedApplicationNumber || null,
+      samarId: debouncedSamarId || null,
       perPage: pageSize,
       page: page,
     };
-    dispatch(getSubmittedFeedbackAction(params));
-  }, [dispatch, page, pageSize, applicationNumber, samarId]);
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getSubmittedFeedbackAction(params));
+    return () => request.abort();
+  }, [dispatch, page, pageSize, debouncedApplicationNumber, debouncedSamarId]);
 
   const handleApplicationNumberChange = e => {
     setApplicationNumber(e.target.value);

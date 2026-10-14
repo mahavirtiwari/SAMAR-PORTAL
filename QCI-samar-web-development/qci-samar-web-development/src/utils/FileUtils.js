@@ -376,41 +376,17 @@ export const fetchAuthenticatedImageBlob = async fileValue => {
       return null;
     }
 
-    // For http/https URLs, try bearer token first, then fall back to cookie credentials
-    const token = await getToken('accessToken');
-    let response;
-    if (token?.token) {
-      response = await fetch(urlToFetch, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-        },
-      });
-
-      // If token rejected, try credentials-based fetch
-      if (response.status === 401) {
-        Logger.info('Bearer token unauthorized for image; retrying with credentials');
-        response = await fetch(urlToFetch, {
-          method: 'GET',
-          credentials: 'include',
-        });
+    // Queued so a grid of thumbnails cannot open dozens of downloads at once.
+    return await withImageFetchSlot(async () => {
+      const response = await fetchImageResponse(urlToFetch);
+      if (!response.ok) {
+        const errorText = await response.text();
+        Logger.error('Authenticated image fetch failed:', response.status, errorText);
+        return null;
       }
-    } else {
-      Logger.info('No bearer token for image fetch; attempting credentials-based fetch');
-      response = await fetch(urlToFetch, {
-        method: 'GET',
-        credentials: 'include',
-      });
-    }
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      Logger.error('Authenticated image fetch failed:', response.status, errorText);
-      return null;
-    }
-
-    Logger.info('Authenticated image fetched successfully:', urlToFetch);
-    return await response.blob();
+      Logger.info('Authenticated image fetched successfully:', urlToFetch);
+      return await response.blob();
+    });
   } catch (err) {
     Logger.error('Error fetching authenticated image:', err);
     return null;
@@ -443,6 +419,145 @@ export const fetchAuthenticatedImageUrl = async fileValue => {
     return null;
   }
   return URL.createObjectURL(blob);
+};
+
+// ---------------------------------------------------------------------------
+// Authenticated image fetching: concurrency limit, thumbnails and a blob cache
+// ---------------------------------------------------------------------------
+
+// Browsers allow ~6 connections per host; more in flight only queues behind API calls.
+const MAX_CONCURRENT_IMAGE_FETCHES = 6;
+let activeImageFetches = 0;
+const imageFetchQueue = [];
+
+const withImageFetchSlot = task =>
+  new Promise((resolve, reject) => {
+    const start = () => {
+      activeImageFetches += 1;
+      Promise.resolve()
+        .then(task)
+        .then(resolve, reject)
+        .finally(() => {
+          activeImageFetches -= 1;
+          imageFetchQueue.shift()?.();
+        });
+    };
+    if (activeImageFetches < MAX_CONCURRENT_IMAGE_FETCHES) {
+      start();
+    } else {
+      imageFetchQueue.push(start);
+    }
+  });
+
+// Bearer token first; only a rejected token (401) falls back to cookie credentials, so a
+// successful response is never fetched twice.
+const fetchImageResponse = async url => {
+  const token = await getToken('accessToken');
+  if (token?.token) {
+    const response = await fetch(url, { method: 'GET', headers: { Authorization: `Bearer ${token.token}` } });
+    if (response.status !== 401) {
+      return response;
+    }
+    Logger.info('Bearer token unauthorized for image; retrying with credentials');
+  } else {
+    Logger.info('No bearer token for image fetch; attempting credentials-based fetch');
+  }
+  return fetch(url, { method: 'GET', credentials: 'include' });
+};
+
+/**
+ * Ask the backend for the thumbnail rendition of an image download URL: a JPEG at most
+ * 480px on its longest side (the original when no thumbnail can be made). Use it for
+ * grid/card previews and keep the plain URL for the full-size modal view.
+ *
+ * @param {string} url - Image download URL from the API
+ * @returns {string} The URL with `size=thumb`, or the input unchanged when not an http URL
+ */
+export const withThumbSize = url => {
+  if (typeof url !== 'string' || !url.startsWith('http') || /[?&]size=/.test(url)) {
+    return url;
+  }
+  const hashIndex = url.indexOf('#');
+  const base = hashIndex === -1 ? url : url.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? '' : url.slice(hashIndex);
+  let separator = '&';
+  if (!base.includes('?')) {
+    separator = '?';
+  } else if (base.endsWith('?') || base.endsWith('&')) {
+    separator = '';
+  }
+  return `${base}${separator}size=thumb${hash}`;
+};
+
+// URL -> { promise, blobUrl }. Map iteration order is insertion order, and a hit is
+// re-inserted, so the first key is always the least recently used.
+const IMAGE_CACHE_LIMIT = 300;
+const imageCache = new Map();
+
+// Downloads still in flight are skipped: their callers are about to receive the URL.
+const evictImageCache = () => {
+  for (const [url, entry] of imageCache) {
+    if (imageCache.size <= IMAGE_CACHE_LIMIT) {
+      break;
+    }
+    if (entry.blobUrl) {
+      imageCache.delete(url);
+      URL.revokeObjectURL(entry.blobUrl);
+    }
+  }
+};
+
+/**
+ * Like fetchAuthenticatedImageUrl, but the blob URL is shared and owned by a module-level
+ * cache: re-renders and the live-refresh polling of the assessment steps reuse an image
+ * that is already loaded instead of downloading it again. Callers must NOT revoke the
+ * returned URL; the cache revokes it when the entry is evicted.
+ *
+ * @param {string|object} fileValue - Download URL (or object carrying one)
+ * @param {{ thumb?: boolean }} [options] - `thumb` fetches the small rendition
+ * @returns {Promise<string|null>}
+ */
+export const getCachedImageUrl = async (fileValue, { thumb = false } = {}) => {
+  const resolved = resolveFileUrl(fileValue);
+  if (!resolved || !resolved.startsWith('http')) {
+    // File objects, blob: and data: URLs are already local; nothing to download or cache.
+    return fetchAuthenticatedImageUrl(fileValue);
+  }
+  const url = thumb ? withThumbSize(resolved) : resolved;
+
+  const cached = imageCache.get(url);
+  if (cached) {
+    imageCache.delete(url);
+    imageCache.set(url, cached);
+    return cached.promise;
+  }
+
+  const entry = { blobUrl: null, promise: null };
+  entry.promise = fetchAuthenticatedImageBlob(url).then(blob => {
+    if (!blob) {
+      // Do not cache failures; the next render or refresh tries again.
+      if (imageCache.get(url) === entry) {
+        imageCache.delete(url);
+      }
+      return null;
+    }
+    entry.blobUrl = URL.createObjectURL(blob);
+    evictImageCache();
+    return entry.blobUrl;
+  });
+  imageCache.set(url, entry);
+  evictImageCache();
+  return entry.promise;
+};
+
+/** Drop every cached image (on logout, so the next user cannot see the previous user's). */
+export const clearAuthenticatedImageCache = () => {
+  for (const entry of imageCache.values()) {
+    if (entry.blobUrl) {
+      URL.revokeObjectURL(entry.blobUrl);
+    }
+  }
+  imageCache.clear();
 };
 
 /**

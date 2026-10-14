@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry';
+import axiosRetry, { isNetworkOrIdempotentRequestError, retryAfter } from 'axios-retry';
 import AppSettings from '../../../appsettings';
 import { Logger } from '../../../utils/logger';
 
@@ -17,12 +17,19 @@ const publicClient = axios.create({
   },
 });
 
-// Configure axios-retry with exponential backoff
+// A 429 is retried only when the server says when (Retry-After), and only for a short wait.
+const MAX_RETRY_AFTER_MS = 15000;
+
+const isMaintenanceResponse = error => error.response?.data?.errorCode === 'MAINTENANCE_MODE' || error.response?.data?.error_code === 'MAINTENANCE_MODE' || error.response?.data?.maintenance === true;
+
+// Configure axios-retry with backoff. Each delay gets +/-20% jitter so clients that failed
+// together do not retry in lockstep, and is never shorter than a Retry-After header asks.
 axiosRetry(publicClient, {
   retries: AppSettings.MAX_RETRY_ATTEMPTS || 5,
-  retryDelay: retryCount => {
+  retryDelay: (retryCount, error) => {
     const delays = AppSettings.RETRY_DELAYS || [0, 1000, 2000, 5000, 10000, 15000];
-    return delays[retryCount] || 15000;
+    const base = delays[retryCount] || 15000;
+    return Math.max(retryAfter(error), base * (0.8 + Math.random() * 0.4));
   },
   retryCondition: error => {
     // Never retry non-idempotent requests (POST/PATCH). The server may have already
@@ -34,16 +41,29 @@ axiosRetry(publicClient, {
       return false;
     }
 
-    // Retry on network errors, timeouts, and specific status codes
+    const status = error.response?.status;
+    // Maintenance mode is a deliberate 503: retrying only delays the maintenance screen.
+    if (status === 503 && isMaintenanceResponse(error)) {
+      return false;
+    }
+    // A timed-out request may still be running on the server, and replaying it against a
+    // struggling API only adds load; surface the timeout instead.
+    if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+      return false;
+    }
+    if (status === 429) {
+      const wait = retryAfter(error);
+      return wait > 0 && wait <= MAX_RETRY_AFTER_MS;
+    }
+
+    // Retry on network errors and specific status codes
     const shouldRetry =
       isNetworkOrIdempotentRequestError(error) || // Network errors
-      error.code === 'ECONNABORTED' || // Timeout errors
       error.code === 'ENOTFOUND' || // DNS errors
       error.code === 'ECONNRESET' || // Connection reset
       error.code === 'ECONNREFUSED' || // Connection refused
       error.message?.includes('Network Error') ||
-      error.message?.includes('timeout') ||
-      [408, 429, 500, 502, 503, 504].includes(error.response?.status);
+      [408, 500, 502, 503, 504].includes(status);
 
     if (shouldRetry) {
       Logger.info(`[PublicClient] Retrying request due to: ${error.code || error.message} (Status: ${error.response?.status || '-'})`);

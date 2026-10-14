@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Images from '../../constants/Images';
-import { fetchAuthenticatedImageUrl } from '../../utils/FileUtils';
+import { getCachedImageUrl } from '../../utils/FileUtils';
 import { formatDateTime } from '../../utils/formatters';
 import SitePictureDetailsModal from '../modals/SitePictureDetailsModal';
 
@@ -11,9 +11,6 @@ const AppSiteTourCard = ({ picture, lat, long, dateString, uploader = '-' }) => 
   const [imageSrc, setImageSrc] = useState(null);
   const [modalImageSrc, setModalImageSrc] = useState(null);
   const [modalImageLoading, setModalImageLoading] = useState(false);
-
-  const blobUrlRef = useRef(null);
-  const modalBlobRef = useRef(null);
 
   const handleOpen = pic => {
     const toOpen = pic || picture;
@@ -26,96 +23,50 @@ const AppSiteTourCard = ({ picture, lat, long, dateString, uploader = '-' }) => 
     setOpen(false);
     setSelectedPicture(null);
     setModalOpen(false);
-    if (modalBlobRef.current) {
-      try {
-        URL.revokeObjectURL(modalBlobRef.current);
-      } catch {
-        // ignore
-      }
-      modalBlobRef.current = null;
-    }
   };
 
-  // preload thumbnail
+  // Preload the thumbnail. Blob URLs come from the shared image cache, which owns and
+  // revokes them, so a re-render or live refresh with the same picture costs nothing.
+  const thumbSource = picture?.downloadUrl || null;
   useEffect(() => {
+    setImageSrc(null);
+    if (!thumbSource) {
+      return undefined;
+    }
     let cancelled = false;
-    const loadThumb = async () => {
-      if (!picture || !picture.downloadUrl) {
-        setImageSrc(null);
-        return;
+    getCachedImageUrl(thumbSource, { thumb: true }).then(blobUrl => {
+      if (!cancelled && blobUrl) {
+        setImageSrc(blobUrl);
       }
-      try {
-        const blobUrl = await fetchAuthenticatedImageUrl(picture.downloadUrl);
-        if (!cancelled && blobUrl) {
-          blobUrlRef.current = blobUrl;
-          setImageSrc(blobUrl);
-        }
-      } catch {
-        // ignore
-      }
-    };
-    loadThumb();
+    });
     return () => {
       cancelled = true;
-      if (blobUrlRef.current) {
-        try {
-          URL.revokeObjectURL(blobUrlRef.current);
-        } catch {
-          // ignore
-        }
-        blobUrlRef.current = null;
-      }
     };
-  }, [picture]);
+  }, [thumbSource]);
 
-  // load modal full-size image when opened
+  // Load the full-size image when the modal opens.
   useEffect(() => {
-    const src = selectedPicture ? selectedPicture.downloadUrl : null;
+    const src = selectedPicture?.downloadUrl || null;
+    setModalImageSrc(null);
+    if (!modalOpen || !src) {
+      setModalImageLoading(false);
+      return undefined;
+    }
     let cancelled = false;
-
-    const loadModal = async () => {
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
-
-      if (!modalOpen || !src) {
-        setModalImageSrc(null);
-        return;
-      }
-
-      setModalImageLoading(true);
-      try {
-        const blobUrl = await fetchAuthenticatedImageUrl(src);
+    setModalImageLoading(true);
+    getCachedImageUrl(src)
+      .then(blobUrl => {
         if (!cancelled && blobUrl) {
-          modalBlobRef.current = blobUrl;
           setModalImageSrc(blobUrl);
         }
-      } catch {
-        // ignore
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) {
           setModalImageLoading(false);
         }
-      }
-    };
-
-    loadModal();
-
+      });
     return () => {
       cancelled = true;
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
     };
   }, [modalOpen, selectedPicture]);
 
@@ -127,7 +78,13 @@ const AppSiteTourCard = ({ picture, lat, long, dateString, uploader = '-' }) => 
         <div className="site-tour-image-container">
           <div className="site-card" onClick={() => handleOpen()} style={{ cursor: 'pointer' }}>
             <div className="site-image-wrapper">
-              <img src={imageSrc || Images.dummySite} alt={picture?.title || picture?.description || 'Site photo'} className="site-image" onError={e => (e.target.src = Images.dummySite)} />
+              <img
+                src={imageSrc || Images.dummySite}
+                loading="lazy"
+                alt={picture?.title || picture?.description || 'Site photo'}
+                className="site-image"
+                onError={e => (e.target.src = Images.dummySite)}
+              />
               <div className="site-overlay">
                 {lat && long ? (
                   <div className="overlay-text">

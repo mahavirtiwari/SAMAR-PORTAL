@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import AccountService from '../../../services/api/common/AccountService';
+import { clearAllListCaches } from '../../../services/api/utils/listCache';
 import { clearAllUserData, getToken, getUser, storeToken, storeUser } from '../../../services/storage/authStore';
 import { getDeviceInfo } from '../../../utils/deviceInfo';
+import { clearAuthenticatedImageCache } from '../../../utils/FileUtils';
 import { Logger } from '../../../utils/logger';
 
 const service = AccountService();
@@ -92,6 +94,9 @@ export const logoutUserAction = createAsyncThunk('commonAuth/logout', async () =
 
   // Always clear local data (clearAllUserData also removes encrypted user data)
   await clearAllUserData();
+  // In-memory caches must not carry one user's data into the next session.
+  clearAuthenticatedImageCache();
+  clearAllListCaches();
 
   return { success: true };
 });

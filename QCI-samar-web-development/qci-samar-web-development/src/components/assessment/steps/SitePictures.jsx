@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -7,7 +7,7 @@ import Images from '../../../constants/Images';
 import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSitePicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { isServiceSector } from '../../../utils/assessmentExecution';
-import { fetchAuthenticatedImageUrl } from '../../../utils/FileUtils';
+import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatPersonName, formatUploaderDesignation } from '../../../utils/formatters';
 import SitePictureDetailsModal from '../../modals/SitePictureDetailsModal';
 
@@ -61,105 +61,55 @@ const SitePictures = () => {
   const [modalImageSrc, setModalImageSrc] = useState(null);
   const [modalImageLoading, setModalImageLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState({});
-  const blobUrlsRef = useRef({});
-  const modalBlobRef = useRef(null);
 
   // Load image URLs for all pictures
   useEffect(() => {
-    const loadImageUrls = async () => {
-      const pictures = Array.isArray(sitePictures) ? sitePictures : sitePictures?.sitePictures || sitePictures?.pictures || sitePictures?.data?.sitePictures || [];
-
-      const urlPromises = pictures.map(async picture => {
-        if (!picture?.id || !picture?.downloadUrl) {
+    // The shared image cache owns these blob URLs (and revokes them on eviction), so a
+    // live-refresh tick that returns the same pictures reuses what is already loaded.
+    let cancelled = false;
+    const pics = Array.isArray(sitePictures) ? sitePictures : sitePictures?.sitePictures || sitePictures?.pictures || sitePictures?.data?.sitePictures || [];
+    Promise.all(
+      pics.map(async pic => {
+        if (!pic?.id || !pic?.downloadUrl) {
           return null;
         }
-
-        try {
-          const blobUrl = await fetchAuthenticatedImageUrl(picture.downloadUrl);
-          if (blobUrl) {
-            blobUrlsRef.current[picture.id] = blobUrl;
-            return { id: picture.id, url: blobUrl };
-          }
-        } catch {
-          return null;
-        }
-      });
-
-      const urls = await Promise.all(urlPromises);
-      const urlMap = {};
-      urls.forEach(item => {
-        if (item) {
-          urlMap[item.id] = item.url;
-        }
-      });
-      setImageUrls(urlMap);
-    };
-
-    if (sitePictures) {
-      loadImageUrls();
-    }
-
+        const url = await getCachedImageUrl(pic.downloadUrl, { thumb: true });
+        return url ? [pic.id, url] : null;
+      }),
+    ).then(entries => {
+      if (!cancelled) {
+        setImageUrls(Object.fromEntries(entries.filter(Boolean)));
+      }
+    });
     return () => {
-      Object.values(blobUrlsRef.current).forEach(url => {
-        try {
-          URL.revokeObjectURL(url);
-        } catch {
-          // ignore
-        }
-      });
-      blobUrlsRef.current = {};
+      cancelled = true;
     };
   }, [sitePictures]);
 
   // Load full image for modal when a picture is selected
   useEffect(() => {
-    const src = selectedPicture ? selectedPicture.downloadUrl || null : null;
+    const src = selectedPicture?.downloadUrl || null;
+    setModalImageSrc(null);
+    if (!modalOpen || !src) {
+      setModalImageLoading(false);
+      return undefined;
+    }
+    // Full-size image for the modal, through the same cache as the thumbnails.
     let cancelled = false;
-
-    const loadModalImage = async () => {
-      // revoke previous modal blob
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
-
-      if (!modalOpen || !src) {
-        setModalImageSrc(null);
-        return;
-      }
-
-      setModalImageLoading(true);
-      try {
-        const blobUrl = await fetchAuthenticatedImageUrl(src);
+    setModalImageLoading(true);
+    getCachedImageUrl(src)
+      .then(blobUrl => {
         if (!cancelled && blobUrl) {
-          modalBlobRef.current = blobUrl;
           setModalImageSrc(blobUrl);
         }
-      } catch {
-        // ignore - fall back to dummy image
-      } finally {
+      })
+      .finally(() => {
         if (!cancelled) {
           setModalImageLoading(false);
         }
-      }
-    };
-
-    loadModalImage();
-
+      });
     return () => {
       cancelled = true;
-      if (modalBlobRef.current) {
-        try {
-          URL.revokeObjectURL(modalBlobRef.current);
-        } catch {
-          // ignore
-        }
-        modalBlobRef.current = null;
-      }
     };
   }, [modalOpen, selectedPicture]);
 
@@ -229,6 +179,7 @@ const SitePictures = () => {
                     <div className="site-image-wrapper">
                       <img
                         src={picture && getImageUrl(picture)}
+                        loading="lazy"
                         alt={picture.title || 'Site Interior'}
                         className="site-image"
                         // onError={e => {
@@ -262,6 +213,7 @@ const SitePictures = () => {
                     <div className="site-image-wrapper">
                       <img
                         src={picture && getImageUrl(picture)}
+                        loading="lazy"
                         alt={picture.title || 'Site Exterior'}
                         className="site-image"
                         onError={e => {
@@ -321,6 +273,7 @@ const SitePictures = () => {
               <div className="site-image-wrapper">
                 <img
                   src={picture && getImageUrl(picture)}
+                  loading="lazy"
                   alt={picture.title || 'Site Picture'}
                   className="site-image"
                   onError={e => {

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDataGrid, AppInput } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
+import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { getAllUsersAction } from '../../../../redux/action/common/UnitAdminAction';
 import { resetApplicationDetails } from '../../../../redux/slices/enterpriseAdmin/application/ApplicationSlice';
 
@@ -47,10 +48,11 @@ const UnitUsers = () => {
   const { user } = useSelector(state => state.Account);
   const { userList, userListLoading } = useSelector(state => state.UnitAdmin);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebouncedValue(searchQuery);
 
   useEffect(() => {
     const filtersData = {
-      search: searchQuery || null,
+      search: debouncedSearch || null,
       role: 'unit_admin',
       status: filters?.unitStatus,
       isActive: true,
@@ -58,9 +60,11 @@ const UnitUsers = () => {
       perPage: pageSize,
       page: page,
     };
-    dispatch(getAllUsersAction(filtersData));
+    // Abort on change so a slow earlier response cannot overwrite a newer one.
+    const request = dispatch(getAllUsersAction(filtersData));
     dispatch(resetApplicationDetails());
-  }, [dispatch, page, pageSize, searchQuery]);
+    return () => request.abort();
+  }, [dispatch, page, pageSize, debouncedSearch]);
   const handleSearchChange = e => {
     setSearchQuery(e.target.value);
     setPage(1);
