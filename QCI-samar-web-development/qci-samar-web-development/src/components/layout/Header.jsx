@@ -93,12 +93,12 @@ const Header = ({ onToggleSidebar }) => {
                   </div>
                   <span className="user-id">{displaySamarId}</span>
                 </div>
-                <img src={Icons.defaultProfile} alt="SAMAR Logo" className="icon-40" />
+                <img src={Icons.defaultProfile} alt="" className="icon-40" />
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="user-dropdown-menu">
                 <div className="top-user-dropdown-menu">
-                  <img src={Icons.defaultProfile} alt="SAMAR Logo" className="icon-60" />
+                  <img src={Icons.defaultProfile} alt="" className="icon-60" />
                   <div>
                     <h4 className="fs-16 fw-600 heading-color mb-0">{profileUserName}</h4>
                     {isEnterpriseAdmin && profileEnterpriseName ? <p className="fs-12 fw-500 heading-color margin-top-2 mb-0">{profileEnterpriseName}</p> : null}
@@ -111,10 +111,10 @@ const Header = ({ onToggleSidebar }) => {
                     <li>
                       <Link to="/edit-profile">
                         <div>
-                          <img src={Icons.userProfile} alt="profile" className="icon-18 margin-right-10" />
+                          <img src={Icons.userProfile} alt="" className="icon-18 margin-right-10" />
                           <span className="fs-14 fw-500 text-2-color">View Profile</span>
                         </div>
-                        <img src={Icons.rightArrow} alt="arrow" className="icon-16" />
+                        <img src={Icons.rightArrow} alt="" className="icon-16" />
                       </Link>
                     </li>
 
@@ -122,10 +122,10 @@ const Header = ({ onToggleSidebar }) => {
                       <li>
                         <Link to="/set-unavailability">
                           <div>
-                            <img src={Icons.calendar} alt="unavailability" className="icon-18 margin-right-10" />
+                            <img src={Icons.calendar} alt="" className="icon-18 margin-right-10" />
                             <span className="fs-14 fw-500 text-2-color">Set Unavailability</span>
                           </div>
-                          <img src={Icons.rightArrow} alt="arrow" className="icon-16" />
+                          <img src={Icons.rightArrow} alt="" className="icon-16" />
                         </Link>
                       </li>
                     )}
@@ -133,19 +133,19 @@ const Header = ({ onToggleSidebar }) => {
                     <li>
                       <Link to="/change-password">
                         <div>
-                          <img src={Icons.key} alt="profile" className="icon-18 margin-right-10" />
+                          <img src={Icons.key} alt="" className="icon-18 margin-right-10" />
                           <span className="fs-14 fw-500 text-2-color">Change Password</span>
                         </div>
-                        <img src={Icons.rightArrow} alt="arrow" className="icon-16" />
+                        <img src={Icons.rightArrow} alt="" className="icon-16" />
                       </Link>
                     </li>
                     <li>
                       <Link to="#" onClick={handleLogoutClick}>
                         <div>
-                          <img src={Icons.logoutRed} alt="profile" className="icon-18 margin-right-10" />
+                          <img src={Icons.logoutRed} alt="" className="icon-18 margin-right-10" />
                           <span className="fs-14 fw-500 danger-primary-color">Logout</span>
                         </div>
-                        {/* <img src={Icons.rightArrow} alt="arrow" className="icon-16" /> */}
+                        {/* <img src={Icons.rightArrow} alt="" className="icon-16" /> */}
                       </Link>
                     </li>
                   </ul>

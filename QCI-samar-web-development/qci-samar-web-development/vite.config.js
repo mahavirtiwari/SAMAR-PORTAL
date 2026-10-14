@@ -10,6 +10,10 @@ export default defineConfig({
   },
   build: {
     outDir: 'build',
+    // Browsers the portal supports; public/browser-check.js shows an "update your
+    // browser" message below these instead of a loader that never finishes. (The
+    // browserslist field in package.json is not read by Vite.)
+    target: ['chrome107', 'edge107', 'firefox104', 'safari15.4'],
     sourcemap: 'hidden',
     chunkSizeWarningLimit: 1700,
     // constants/Icons.js imports ~280 SVGs, which are statically imported by the startup

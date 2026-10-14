@@ -11,6 +11,9 @@ const AppToolTip = ({
   fontFamily = 'Inter-Medium',
   padding = '4px 8px',
   borderRadius = '4px',
+  // Set when the wrapped content is not itself focusable (e.g. an info icon), so
+  // keyboard users can reach the tooltip.
+  focusable = false,
   ...otherProps
 }) => {
   return (
@@ -18,6 +21,9 @@ const AppToolTip = ({
       title={title}
       arrow={arrow}
       placement={placement}
+      // Touch: show on a short tap instead of a 700 ms long-press.
+      enterTouchDelay={0}
+      leaveTouchDelay={3000}
       {...otherProps}
       slotProps={{
         tooltip: {
@@ -48,7 +54,9 @@ const AppToolTip = ({
           },
         },
       }}>
-      <span style={{ display: 'inline-flex', alignItems: 'center' }}>{children}</span>
+      <span style={{ display: 'inline-flex', alignItems: 'center' }} {...(focusable ? { tabIndex: 0 } : {})}>
+        {children}
+      </span>
     </Tooltip>
   );
 };

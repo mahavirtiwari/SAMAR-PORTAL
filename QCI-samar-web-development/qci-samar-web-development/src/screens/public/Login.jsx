@@ -234,16 +234,20 @@ const Login = () => {
         <Row>
           <Col xl={5} lg={6} className="d-none d-lg-block position-relative">
             <div className="login-bg-container">
-              <img src={Images.loginBg} alt="Login Background" className="login-bg" />
+              <img src={Images.loginBg} alt="" className="login-bg" />
             </div>
             <div className="quickLinksContainer">
               <p className="fs-18 fw-600 primary-color mb-0">Quick Link</p>
-              <div className="d-flex align-items-center gap-6 cursor-pointer" onClick={() => handleDownloadManual()}>
+              <button
+                type="button"
+                className="d-flex align-items-center gap-6 cursor-pointer"
+                style={{ background: 'none', border: 0, padding: 0, textAlign: 'left' }}
+                onClick={() => handleDownloadManual()}>
                 {/* Applicant User Manual Modal */}
-                <img src={Icons.fourDot} alt="dots" className="icon-12" />
-                <p className="mb-0 fs-16 fw-500 text-1-color">Applicant User Manual</p>
-                <img src={Icons.arrowDown} alt="arrow" className="icon-12" />
-              </div>
+                <img src={Icons.fourDot} alt="" className="icon-12" />
+                <span className="mb-0 fs-16 fw-500 text-1-color">Applicant User Manual</span>
+                <img src={Icons.arrowDown} alt="" className="icon-12" />
+              </button>
             </div>
           </Col>
           <Col xl={7} lg={6} xs={12}>
@@ -325,6 +329,16 @@ const Login = () => {
                     <p className="fs-16 fw-600 primary-color mb-0">Sign up</p>
                   </Link>
                 </div>
+                {/* Below lg the quick-links column is hidden; keep the manual reachable. */}
+                <button
+                  type="button"
+                  className="d-lg-none d-flex align-items-center gap-6 margin-top-16 cursor-pointer"
+                  style={{ background: 'none', border: 0, padding: 0, textAlign: 'left' }}
+                  onClick={() => handleDownloadManual()}>
+                  <img src={Icons.fourDot} alt="" className="icon-12" />
+                  <span className="fs-14 fw-500 text-1-color">Applicant User Manual</span>
+                  <img src={Icons.arrowDown} alt="" className="icon-12" />
+                </button>
               </div>
               <div className="publicFormBottomMainContainer">
                 <p className="fs-12 fw-500 text-2-color mb-0">

@@ -3,9 +3,13 @@ import './../../assets/theme/Layout.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
+// At and below this width the sidebar is an overlay drawer instead of a rail.
+const OVERLAY_QUERY = '(max-width: 992px)';
+
 const Layout = ({ children, subHeader, isSubHeaderWithButton }) => {
-  // On desktop (>992px), sidebar is always open. On mobile/tablet, it starts closed
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 992);
+  const [isOverlay, setIsOverlay] = useState(() => window.matchMedia(OVERLAY_QUERY).matches);
+  // On desktop the sidebar starts open; as an overlay it starts closed.
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => !window.matchMedia(OVERLAY_QUERY).matches);
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen(prev => !prev);
@@ -15,27 +19,39 @@ const Layout = ({ children, subHeader, isSubHeaderWithButton }) => {
     setIsSidebarOpen(false);
   }, []);
 
-  // Handle sidebar state on window resize
+  // Reset the sidebar only when the layout actually crosses the breakpoint. A plain
+  // resize listener also fired when a phone's address bar hid or its keyboard
+  // opened (closing an open drawer), and on any desktop resize (reopening a rail
+  // the user had collapsed).
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 992) {
-        // Desktop: sidebar should be open
-        setIsSidebarOpen(true);
-      } else {
-        // Mobile/Tablet: sidebar should be closed
+    const query = window.matchMedia(OVERLAY_QUERY);
+    const handleChange = event => {
+      setIsOverlay(event.matches);
+      setIsSidebarOpen(!event.matches);
+    };
+    query.addEventListener('change', handleChange);
+    return () => query.removeEventListener('change', handleChange);
+  }, []);
+
+  // Escape closes the drawer.
+  useEffect(() => {
+    if (!isOverlay || !isSidebarOpen) {
+      return undefined;
+    }
+    const handleKeyDown = event => {
+      if (event.key === 'Escape') {
         setIsSidebarOpen(false);
       }
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOverlay, isSidebarOpen]);
 
   return (
     <div className="layout">
       <Header onToggleSidebar={toggleSidebar} />
       {subHeader && <div className={`subHeader${isSidebarOpen ? ' sidebar-open' : ' sidebar-closed'}`}>{subHeader}</div>}
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} isOverlay={isOverlay} onClose={closeSidebar} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       {isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar} aria-hidden="true" />}
       <main className={`main-content ${isSubHeaderWithButton ? 'subHeaderWithButton' : ''} ${!subHeader ? 'withoutSubHeader' : ''} ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {children}

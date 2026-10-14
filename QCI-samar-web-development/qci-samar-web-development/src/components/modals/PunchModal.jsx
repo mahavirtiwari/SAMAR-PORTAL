@@ -78,7 +78,8 @@ const PunchModal = ({ open, onClose, mode, assessmentId, onSuccess }) => {
     formData.append('deviceMetadata[deviceModel]', device.deviceModel);
     formData.append('deviceMetadata[osVersion]', device.osVersion);
     formData.append('deviceMetadata[appVersion]', device.appVersion);
-    formData.append('clientUuid', crypto.randomUUID());
+    // crypto.randomUUID exists only on secure (HTTPS/localhost) origins.
+    formData.append('clientUuid', crypto?.randomUUID ? crypto.randomUUID() : `web-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
     try {
       const action = isPunchOut ? punchOutAction : punchInAction;

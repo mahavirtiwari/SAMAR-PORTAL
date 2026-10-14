@@ -4,6 +4,14 @@ import { parseIndianLandline } from '../../../utils/FormatIndianLandline';
 import { parseIndianMobile } from '../../../utils/FormatIndianMobile';
 import { formatNumber, parseNumericOrNull } from '../../../utils/formatters';
 
+// Enter or Space on a focused icon control acts like a click.
+const activateOnKey = (event, action) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    action(event);
+  }
+};
+
 const AppInput = ({
   label,
   placeholder,
@@ -29,6 +37,8 @@ const AppInput = ({
   disabled,
   maxLength,
   passwordIconOnClick,
+  passwordToggleLabel = 'Show or hide password',
+  rightIconLabel,
   className = '',
   phoneNumberFormat = false,
   landLineFormat = false,
@@ -287,6 +297,18 @@ const AppInput = ({
     }
   };
 
+  const handleRightIconClick = e => {
+    if (disabled) {
+      return;
+    }
+    if (onRightIconClick) {
+      return onRightIconClick(e);
+    }
+    if (inputType === 'search' && displayValue) {
+      return handleClearClick(e);
+    }
+  };
+
   const handleClearClick = e => {
     // Prevent parent handlers
     e.stopPropagation();
@@ -320,6 +342,7 @@ const AppInput = ({
   } else if (landLineFormat) {
     displayValue = value;
   }
+  const rightIconActive = !disabled && (!!onRightIconClick || (inputType === 'search' && !!displayValue));
   // Compute effective maxLength for phone input (10 digits + 1 space), fee validation (9 chars: 6 digits + 1 dot + 2 decimals), percentage (5 chars: 2 digits + 1 dot + 2 decimals), search inputs default to 50
   const effectiveMaxLength = phoneNumberFormat ? 11 : landLineFormat ? 14 : feeValidation ? 9 : percentageFormat ? 5 : inputType === 'search' ? maxLength || 50 : maxLength;
   // Compute effective inputMode
@@ -400,24 +423,16 @@ const AppInput = ({
                 rightIcon ? (
                   <div
                     className="right-icon-button"
-                    onClick={e => {
-                      if (disabled) {
-                        return;
-                      }
-                      if (onRightIconClick) {
-                        return onRightIconClick(e);
-                      }
-                      if (inputType === 'search' && displayValue) {
-                        return handleClearClick(e);
-                      }
-                    }}
-                    style={{ cursor: onRightIconClick || (inputType === 'search' && displayValue) ? 'pointer' : 'default' }}>
-                    <img className="img-fluid" src={rightIcon} alt="Right Icon" />
+                    onClick={handleRightIconClick}
+                    // Keyboard-operable only when the icon does something.
+                    {...(rightIconActive ? { role: 'button', tabIndex: 0, 'aria-label': rightIconLabel, onKeyDown: e => activateOnKey(e, handleRightIconClick) } : {})}
+                    style={{ cursor: rightIconActive ? 'pointer' : 'default' }}>
+                    <img className="img-fluid" src={rightIcon} alt="" />
                   </div>
                 ) : null,
               startAdornment: showLeftIcon ? (
                 <div className="left-icon-button" style={leftIconStyle}>
-                  <img className="img-fluid" src={leftIcon} alt="Left Icon" />
+                  <img className="img-fluid" src={leftIcon} alt="" />
                 </div>
               ) : null,
               classes: { input: 'input-style' },
@@ -436,8 +451,15 @@ const AppInput = ({
         />
         {/* If no custom rightIcon provided, show inline clear button for search inputs when value exists */}
         {inputType === 'search' && !disabled && !rightIcon && displayValue ? (
-          <div className="right-icon-button clear-button" onClick={handleClearClick} style={{ cursor: 'pointer' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div
+            className="right-icon-button clear-button"
+            role="button"
+            tabIndex={0}
+            aria-label="Clear search"
+            onClick={handleClearClick}
+            onKeyDown={e => activateOnKey(e, handleClearClick)}
+            style={{ cursor: 'pointer' }}>
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18" stroke="#6B6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M6 6L18 18" stroke="#6B6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -445,7 +467,10 @@ const AppInput = ({
         ) : null}
         {passwordIcon && (
           <div className="password-eye">
-            <img src={passwordIcon} alt="eye" className="icon-16" onClick={passwordIconOnClick} />
+            {/* A real button: reachable by keyboard and a 32px touch target around the 16px icon. */}
+            <button type="button" aria-label={passwordToggleLabel} onClick={passwordIconOnClick} style={{ background: 'none', border: 0, padding: 8, margin: -8, lineHeight: 0, cursor: 'pointer' }}>
+              <img src={passwordIcon} alt="" className="icon-16" />
+            </button>
           </div>
         )}
         {subLabel ? <p className="fs-12 fw-italic-400 mb-0 margin-top-4 text-3-color">{subLabel}</p> : null}

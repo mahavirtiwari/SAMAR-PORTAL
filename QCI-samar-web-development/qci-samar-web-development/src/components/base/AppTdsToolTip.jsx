@@ -29,6 +29,9 @@ const AppTdsToolTip = ({
       }
       arrow={arrow}
       placement={placement}
+      // Touch: show on a short tap instead of a 700 ms long-press.
+      enterTouchDelay={0}
+      leaveTouchDelay={5000}
       {...otherProps}
       slotProps={{
         tooltip: {
@@ -62,7 +65,10 @@ const AppTdsToolTip = ({
           },
         },
       }}>
-      <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>{children}</span>
+      {/* Focusable so keyboard users can open the TDS guidance. */}
+      <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} tabIndex={0} aria-label="TDS rate guidance">
+        {children}
+      </span>
     </Tooltip>
   );
 };

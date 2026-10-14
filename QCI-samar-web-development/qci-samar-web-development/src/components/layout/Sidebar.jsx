@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ import BrandLogo from '../base/BrandLogo';
 import './../../assets/theme/Sidebar.css';
 import SidebarSubMenu from './SidebarSubMenu';
 
-const Sidebar = ({ isOpen, onClose, toggleSidebar }) => {
+const Sidebar = ({ isOpen, isOverlay = false, onClose, toggleSidebar }) => {
   const { user } = useSelector(state => state.Account);
   const role = user?.roles?.[0]?.slug;
   // Logger.info('User role in Sidebar:', role); // Uncomment for logging if needed
@@ -87,6 +87,14 @@ const Sidebar = ({ isOpen, onClose, toggleSidebar }) => {
     }
   }, [isOpen]);
 
+  // Opening the drawer moves keyboard focus into it.
+  const sidebarRef = useRef(null);
+  useEffect(() => {
+    if (isOverlay && isOpen) {
+      sidebarRef.current?.querySelector('a, button, [tabindex="0"]')?.focus();
+    }
+  }, [isOverlay, isOpen]);
+
   const handleNavigation = useCallback(
     path => {
       if (path) {
@@ -107,7 +115,9 @@ const Sidebar = ({ isOpen, onClose, toggleSidebar }) => {
   return (
     <>
       {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      {/* A closed drawer is only translated off screen; inert keeps its links out of
+          the tab order and away from screen readers until it is opened. */}
+      <div ref={sidebarRef} className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-closed'}`} inert={isOverlay && !isOpen} aria-label="Main menu">
         {/* <div className="sidebar-toggle-bx">
           <button className="sidebar-toggle-btn" onClick={toggleSidebar} aria-label="Toggle sidebar">
             <img src={Icons.sideBarArrow} alt="Toggle Sidebar" className={`sideBarArrow ${!isOpen ? 'rotated' : ''}`} />
@@ -159,10 +169,10 @@ const Sidebar = ({ isOpen, onClose, toggleSidebar }) => {
 
           <Nav className="sidebar-nav nav logout-nav">
             <Nav.Item className="sidebar-nav-item">
-              <Nav.Link className={`sidebar-nav-link highlight-bg`}>
-                <div className="nav-link-content" onClick={toggleSidebar} aria-label="Toggle sidebar">
+              <Nav.Link className={`sidebar-nav-link highlight-bg`} onClick={toggleSidebar} aria-label={isOpen ? 'Collapse menu' : 'Expand menu'}>
+                <div className="nav-link-content">
                   <div className="sidebar-icon">
-                    <img src={Icons.sideBarArrow} alt="Toggle Sidebar" className={`sideBarArrow ${!isOpen ? 'rotated' : ''} nav-icon`} />
+                    <img src={Icons.sideBarArrow} alt="" className={`sideBarArrow ${!isOpen ? 'rotated' : ''} nav-icon`} />
                   </div>
                   <span className="nav-text">Collapse Menu</span>
                 </div>

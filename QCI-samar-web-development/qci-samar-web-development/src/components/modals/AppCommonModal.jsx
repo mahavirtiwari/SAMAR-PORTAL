@@ -42,8 +42,8 @@ const AppCommonModal = ({ open, onClose, modalHeader, modalContent, modalFooter,
         <DialogTitle className="model-header">
           {modalHeader}
           {!crossBtn && (
-            <IconButton onClick={onClose}>
-              <img src={Icons.modalCross} alt="Close" className="icon-24" />
+            <IconButton onClick={onClose} aria-label="Close">
+              <img src={Icons.modalCross} alt="" className="icon-24" />
             </IconButton>
           )}
         </DialogTitle>
