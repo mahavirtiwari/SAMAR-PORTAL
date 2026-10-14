@@ -401,8 +401,8 @@ const performLogout = async (
   if (wipeData) {
     // Best-effort flush while the token is still valid, so a manual logout with
     // connectivity uploads what it can before wiping the rest. Forced past any
-    // rate-limit pause: a silent no-op right before the wipe would destroy
-    // captures without a single upload attempt.
+    // rate-limit / server-outage pause: a silent no-op right before the wipe
+    // would destroy captures without a single upload attempt.
     try {
       await drainOutbox({ force: true });
     } catch (drainError) {

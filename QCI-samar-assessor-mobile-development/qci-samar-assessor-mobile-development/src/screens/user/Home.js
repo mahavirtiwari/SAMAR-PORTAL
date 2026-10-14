@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -59,6 +60,17 @@ const isActiveAssessmentCard = (assessment) =>
   assessment.status === 'mobile_complete' ||
   assessment.localMobileCompletedAt != null;
 
+// Reconnect handling. A flapping field connection (or a whole fleet coming back
+// after a server or network outage) used to fire a drain plus a full re-download
+// of every actionable assessment on every offline→online edge. Act only once
+// the connection has held for RECONNECT_STABLE_MS, plus random jitter so devices
+// do not all hit the server in the same second, and re-pull already-downloaded
+// assessments at most once per RECONNECT_REFRESH_INTERVAL_MS.
+const RECONNECT_STABLE_MS = 15000;
+const RECONNECT_JITTER_MS = 20000;
+const RECONNECT_REFRESH_INTERVAL_MS = 15 * 60 * 1000;
+const RECONNECT_REFRESH_AT_KEY = 'offline.reconnectRefreshAt';
+
 const Home = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -69,6 +81,11 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const wasOnlineRef = useRef(true);
   const autoDownloadingRef = useRef(false);
+  const reconnectTimerRef = useRef(null);
+  // The network listener is registered once, so it calls the latest render's
+  // handler through this ref; a direct call would see the first render's
+  // (often still empty) assessment list.
+  const reconnectSyncRef = useRef(null);
 
   useEffect(() => {
     dispatch(getUserDetails());
@@ -133,26 +150,61 @@ const Home = () => {
 
     const unsubscribe = subscribeToNetworkChanges((isConnected) => {
       setOnline(isConnected);
-      // Auto-sync the moment connectivity returns so offline captures don't
-      // sit unsynced until the user remembers to tap "Sync Now". The drain's
-      // own in-process lock makes this safe alongside a manual sync.
-      if (isConnected && !wasOnlineRef.current) {
-        // Drain BEFORE re-downloading: the download replaces local parameter
-        // payloads with the server copy, so running it while local mutations
-        // (e.g. an allocation) are still queued would pull pre-mutation state
-        // over them. Push first, then pull.
-        (async () => {
-          await autoDrain();
-          autoDownloadActionable(true);
-        })();
+      // Auto-sync once connectivity is back and has stayed back, so offline
+      // captures don't sit unsynced until the user remembers to tap "Sync
+      // Now". A drop before the timer fires cancels it; the next stable
+      // reconnect re-arms it. The drain's own in-process lock makes this safe
+      // alongside a manual sync.
+      if (!isConnected) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      } else if (!wasOnlineRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        const delay = RECONNECT_STABLE_MS + Math.floor(Math.random() * RECONNECT_JITTER_MS);
+        reconnectTimerRef.current = setTimeout(() => {
+          reconnectTimerRef.current = null;
+          reconnectSyncRef.current?.();
+        }, delay);
       }
       wasOnlineRef.current = isConnected;
     });
 
     return () => {
+      clearTimeout(reconnectTimerRef.current);
+      reconnectTimerRef.current = null;
       unsubscribe();
     };
   }, []);
+
+  // Push first, then (at most every RECONNECT_REFRESH_INTERVAL_MS) pull. Drain
+  // BEFORE re-downloading: the download replaces local parameter payloads with
+  // the server copy, so running it while local mutations (e.g. an allocation)
+  // are still queued would pull pre-mutation state over them.
+  const reconnectSync = async () => {
+    if (!(await checkInternetConnection())) {
+      return;
+    }
+    await autoDrain();
+    let lastRefreshAt = 0;
+    try {
+      lastRefreshAt = Number(await AsyncStorage.getItem(RECONNECT_REFRESH_AT_KEY)) || 0;
+    } catch {
+      // unreadable timestamp — treat as never refreshed
+    }
+    const now = Date.now();
+    // A timestamp in the future (clock moved back) must not block refreshes.
+    if (lastRefreshAt <= now && now - lastRefreshAt < RECONNECT_REFRESH_INTERVAL_MS) {
+      Logger.info('[offline] reconnect: drained; assessment re-download throttled');
+      return;
+    }
+    try {
+      await AsyncStorage.setItem(RECONNECT_REFRESH_AT_KEY, String(now));
+    } catch (error) {
+      Logger.warn('Persisting reconnect refresh time failed:', error?.message);
+    }
+    autoDownloadActionable(true);
+  };
+  reconnectSyncRef.current = reconnectSync;
 
   const autoDrain = async () => {
     try {

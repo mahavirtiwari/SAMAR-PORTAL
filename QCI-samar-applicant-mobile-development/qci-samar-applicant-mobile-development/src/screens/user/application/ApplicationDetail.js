@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   AppState,
@@ -33,8 +33,12 @@ import { showCopyToast, toTitleCase } from '../../../utils';
 
 // While any step is still locked, the applicant is waiting on the lead assessor
 // (punch-in, allocation, opening meeting). We refresh the lock state on this
-// cadence so the gate opens on its own, then stop once nothing is locked.
-const LOCK_POLL_INTERVAL_MS = 30000;
+// cadence (±20% jitter, so applicants do not poll in step) so the gate opens on
+// its own, then stop once nothing is locked. A failed poll doubles the wait, up
+// to LOCK_POLL_MAX_MS, so an outage is not met by a steady stream of polls.
+const LOCK_POLL_INTERVAL_MS = 60000;
+const LOCK_POLL_JITTER = 0.2;
+const LOCK_POLL_MAX_MS = 5 * 60 * 1000;
 
 const STEPS = [
   {
@@ -64,10 +68,16 @@ const ApplicationDetail = () => {
     const app = state.application.applications.find(a => a.id === params.applicationId);
     return app ? !!app.leadPunchedIn : !!params.leadPunchedIn;
   });
-  const allocationLive = useSelector(state => {
+  const allocationListLive = useSelector(state => {
     const app = state.application.applications.find(a => a.id === params.applicationId);
     return app ? !!app.allocationLocked : !!params.allocationLocked;
   });
+  // The step-progress response carries this assessment's allocation gate too,
+  // so the poll can follow it without reloading the whole applications list.
+  // Kept per screen (not read from the shared store slice) so another
+  // assessment's progress can never open this one's gate.
+  const [progressAllocationLocked, setProgressAllocationLocked] = useState(null);
+  const allocationLive = progressAllocationLocked ?? allocationListLive;
   const completedStepsSignature = useSelector(state => {
     const data = state.application.stepProgress?.data || state.application.stepProgress;
     const steps = Array.isArray(data?.steps) ? data.steps : [];
@@ -116,15 +126,31 @@ const ApplicationDetail = () => {
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
 
-  // The two upload gates flip on the server as the lead assessor works, so both
-  // sources feed the lock state: step progress (opening meeting) and the
-  // applications list (punch-in, allocation). Refresh both together.
-  const refreshLockState = useCallback(() => {
-    if (params.assessmentId) {
-      dispatch(getStepProgress(params.assessmentId));
+  // Step progress: opening meeting + allocation gate. Rejects on failure so the
+  // poll can back off.
+  const fetchStepProgress = useCallback(async () => {
+    if (!params.assessmentId) {
+      return;
     }
-    return dispatch(getApplications({ sector: 'service' }));
+    const response = await dispatch(getStepProgress(params.assessmentId)).unwrap();
+    const data = response?.data || response;
+    if (typeof data?.allocationLocked === 'boolean') {
+      setProgressAllocationLocked(data.allocationLocked);
+    }
   }, [params.assessmentId, dispatch]);
+
+  // The two upload gates flip on the server as the lead assessor works, so both
+  // sources feed the lock state: step progress (opening meeting, allocation)
+  // and the applications list (punch-in). Focus, foreground and pull-to-refresh
+  // refresh both together.
+  const refreshLockState = useCallback(
+    () =>
+      Promise.all([
+        fetchStepProgress().catch(() => undefined),
+        dispatch(getApplications({ sector: 'service' })),
+      ]),
+    [fetchStepProgress, dispatch],
+  );
 
   // Refresh on every focus (mount + returning from a step screen) so the gate
   // reflects assessor activity that happened while the applicant was away.
@@ -187,25 +213,68 @@ const ApplicationDetail = () => {
 
   const hasLockedStep = STEPS.some(step => !isStepUnlocked(step.progressKey));
 
-  // Poll only while a step is still locked and this screen is in front, so an
-  // applicant sitting on the locked screen sees it unlock on its own; the poll
-  // stops the moment everything is unlocked or the screen loses focus.
-  useEffect(() => {
-    if (!isFocused || !hasLockedStep) {
-      return undefined;
-    }
-    const intervalId = setInterval(refreshLockState, LOCK_POLL_INTERVAL_MS);
-    return () => clearInterval(intervalId);
-  }, [isFocused, hasLockedStep, refreshLockState]);
+  // Read by the poll through a ref so a flip does not restart its timer.
+  const leadPunchedInRef = useRef(leadPunchedIn);
+  leadPunchedInRef.current = leadPunchedIn;
 
-  // Returning from background is the other moment fresh assessor activity is
-  // likely; refresh immediately rather than waiting for the next poll tick.
+  // One poll tick. Step progress is the only thing polled once the lead is on
+  // site. The punch-in flag exists only on the applications list (step progress
+  // does not carry it), so the list is reloaded only while that gate is closed.
+  const pollLockState = useCallback(async () => {
+    const progress = fetchStepProgress();
+    const list = leadPunchedInRef.current
+      ? null
+      : dispatch(getApplications({ sector: 'service' })).unwrap();
+    await Promise.all([progress, list]);
+  }, [fetchStepProgress, dispatch]);
+
+  const [appActive, setAppActive] = useState(AppState.currentState === 'active');
+
+  // Poll only while a step is still locked, this screen is in front and the app
+  // is in the foreground, so an applicant sitting on the locked screen sees it
+  // unlock on its own; the poll stops the moment everything is unlocked, the
+  // screen loses focus or the app is backgrounded.
   useEffect(() => {
-    if (!isFocused || !hasLockedStep) {
+    if (!isFocused || !hasLockedStep || !appActive || !params.assessmentId) {
       return undefined;
     }
+    let cancelled = false;
+    let timerId = null;
+    let delayMs = LOCK_POLL_INTERVAL_MS;
+    const schedule = () => {
+      const jitter = 1 - LOCK_POLL_JITTER + Math.random() * 2 * LOCK_POLL_JITTER;
+      timerId = setTimeout(tick, Math.round(delayMs * jitter));
+    };
+    const tick = async () => {
+      try {
+        await pollLockState();
+        delayMs = LOCK_POLL_INTERVAL_MS;
+      } catch {
+        delayMs = Math.min(delayMs * 2, LOCK_POLL_MAX_MS);
+      }
+      if (!cancelled) {
+        schedule();
+      }
+    };
+    schedule();
+    return () => {
+      cancelled = true;
+      clearTimeout(timerId);
+    };
+  }, [isFocused, hasLockedStep, appActive, params.assessmentId, pollLockState]);
+
+  // Track foreground/background for the poll above. Returning to the foreground
+  // is also the moment fresh assessor activity is likely, so refresh right away
+  // rather than waiting for the next poll tick.
+  useEffect(() => {
+    if (!isFocused) {
+      return undefined;
+    }
+    setAppActive(AppState.currentState === 'active');
     const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active') {
+      const active = state === 'active';
+      setAppActive(active);
+      if (active && hasLockedStep) {
         refreshLockState();
       }
     });

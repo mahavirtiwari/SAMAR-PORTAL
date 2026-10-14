@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import Api from '../../services/api';
+import { resetSyncThrottle } from '../../services/offline/syncEngine';
 import { getToken, removeToken, storeToken } from '../../services/storage/authStore';
 import { getApiErrorMessage } from '../../utils/apiError';
 import { Logger } from '../../utils/logger';
@@ -239,6 +240,9 @@ const logoutAction = createAsyncThunk(
         Logger.warn('Clearing cached user details failed:', cacheError?.message),
       );
 
+      // A sync pause opened under this session must not hold back the next
+      // user's drains.
+      resetSyncThrottle();
       dispatch(resetStore());
       Logger.info('Logout completed successfully');
       return true;

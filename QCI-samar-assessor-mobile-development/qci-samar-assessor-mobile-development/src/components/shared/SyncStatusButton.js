@@ -47,12 +47,17 @@ const SyncStatusButton = ({ style, onSynced }) => {
   // One sentence per abort reason so every branch that surfaces a paused drain
   // says the same thing.
   const pausedMessage = (result) => {
-    if (result.abortReason === 'rateLimited') {
+    if (result.abortReason === 'rateLimited' || result.abortReason === 'serverUnavailable') {
       const seconds = Math.max(
         1,
         Math.ceil(((result.pausedUntil ?? Date.now()) - Date.now()) / 1000)
       );
-      return `The server asked us to slow down. Sync resumes automatically in about ${seconds} seconds.`;
+      const resumesIn = seconds >= 90 ? `${Math.ceil(seconds / 60)} minutes` : `${seconds} seconds`;
+      const cause =
+        result.abortReason === 'serverUnavailable'
+          ? 'The server is temporarily unavailable.'
+          : 'The server asked us to slow down.';
+      return `${cause} Your items are saved on this phone. Sync resumes automatically in about ${resumesIn}.`;
     }
     if (result.abortReason === 'busy') {
       return 'A sync is already running. Check again in a moment.';
@@ -66,7 +71,9 @@ const SyncStatusButton = ({ style, onSynced }) => {
     }
     setSyncing(true);
     try {
-      const result = await drainOutbox({ force: true });
+      // Not forced: inside a rate-limit / server-outage pause the drain returns
+      // at once and the toast below says when sync resumes.
+      const result = await drainOutbox();
       // Rows the auto-drain will never pick up (retry-exhausted / server-
       // rejected). The drain reports processed=0 for these, so without this the
       // header would flash "All clear" while a stuck item still blocks Submit.

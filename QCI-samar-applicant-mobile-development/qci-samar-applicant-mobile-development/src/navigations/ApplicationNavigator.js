@@ -20,6 +20,11 @@ import { Logger } from '../utils/logger';
 import PublicNavigator from './PublicNavigator';
 import UserNavigator from './UserNavigator';
 
+// Reconnect debounce: connectivity must hold this long, plus up to
+// RECONNECT_JITTER_MS of random delay, before the outbox drains.
+const RECONNECT_STABLE_MS = 15000;
+const RECONNECT_JITTER_MS = 20000;
+
 const ApplicationNavigator = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn, isUnderMaintenance, maintenanceMessage } = useSelector(
@@ -29,14 +34,19 @@ const ApplicationNavigator = () => {
   const appStateRef = useRef(AppState.currentState);
   const wasOnlineRef = useRef(true);
 
-  // Auto-sync the offline outbox the moment connectivity returns, so captures
-  // made offline don't sit unsynced until the user remembers to tap Sync. The
-  // drain's own in-process lock makes this safe alongside a manual sync.
+  // Auto-sync the offline outbox once connectivity is back and has stayed back,
+  // so captures made offline don't sit unsynced until the user remembers to tap
+  // Sync. Waiting RECONNECT_STABLE_MS (plus random jitter) means a flapping
+  // field connection, or many phones coming back after an outage, does not fire
+  // a drain per offline→online edge in the same second. A drop before the timer
+  // fires cancels it. The drain's own in-process lock makes this safe alongside
+  // a manual sync, and it honours any rate-limit / server-outage pause.
   useEffect(() => {
     if (!isLoggedIn) {
       return undefined;
     }
     let cancelled = false;
+    let reconnectTimer = null;
     (async () => {
       const online = await checkInternetConnection();
       if (!cancelled) {
@@ -44,13 +54,24 @@ const ApplicationNavigator = () => {
       }
     })();
     const unsubscribe = subscribeToNetworkChanges(online => {
-      if (online && !wasOnlineRef.current) {
-        drainOutbox().catch(error => Logger.warn('Auto-sync on reconnect failed:', error?.message));
+      if (!online) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      } else if (!wasOnlineRef.current) {
+        clearTimeout(reconnectTimer);
+        const delay = RECONNECT_STABLE_MS + Math.floor(Math.random() * RECONNECT_JITTER_MS);
+        reconnectTimer = setTimeout(() => {
+          reconnectTimer = null;
+          drainOutbox().catch(error =>
+            Logger.warn('Auto-sync on reconnect failed:', error?.message),
+          );
+        }, delay);
       }
       wasOnlineRef.current = online;
     });
     return () => {
       cancelled = true;
+      clearTimeout(reconnectTimer);
       unsubscribe();
     };
   }, [isLoggedIn]);

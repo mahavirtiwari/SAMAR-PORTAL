@@ -10,7 +10,7 @@ import {
   markBasicInformationSynced,
   upsertBasicInformation
 } from '../database/repositories/basicInformationRepo';
-import { cacheMasterData } from '../database/repositories/masterDataRepo';
+import { cacheMasterData, getMasterDataCachedAt } from '../database/repositories/masterDataRepo';
 import { replaceParametersForAssessment } from '../database/repositories/parametersRepo';
 import {
   ensureQuestionRow,
@@ -25,44 +25,81 @@ import {
 } from '../database/repositories/sitePicturesRepo';
 import { getToken } from '../storage/authStore';
 
+// Global master lists the Basic Information forms read offline, as
+// [cache key, fetcher]. Cache keys mirror what the basicInformation actions read
+// back on their offline fallback. The search-as-you-type lists are warmed with
+// an empty search so the FULL list is cached, not just the last typed query.
+const MASTER_LISTS = [
+  ['vendor_categories', () => Api.BasicInformationApi.getCategory()],
+  ['stores', () => Api.BasicInformationApi.getStore()],
+  ['countries', () => Api.BasicInformationApi.getCountries()],
+  ['key_processes', () => Api.BasicInformationApi.getKeyProcesses('')],
+  ['raw_materials', () => Api.BasicInformationApi.getKeyResources('')],
+  ['bought_out_parts', () => Api.BasicInformationApi.getBoughtOutPart('')],
+  ['third_party_certs', () => Api.BasicInformationApi.thirdPartyCertifications('')],
+  // Service-sector lists, for the Service Basic Information form.
+  ['service_vendor_categories', () => Api.BasicInformationApi.getServiceCategory()],
+  ['service_vendor_labs', () => Api.BasicInformationApi.getVendorLabs()],
+  ['service_key_processes', () => Api.BasicInformationApi.getServiceKeyProcesses('')],
+  ['service_key_resources', () => Api.BasicInformationApi.getServiceKeyResources('')]
+];
+// The lists are global, not per assessment, and change rarely. They used to be
+// re-pulled for every assessment on every download (11 requests each, times
+// every actionable assessment on every reconnect); now a list is fetched only
+// when it is missing from the cache or its cached copy is older than this.
+const MASTER_LIST_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+// Shared by concurrent downloads so two warm-ups never fetch the same lists.
+let masterListsInFlight = null;
+
+const warmMasterLists = async () => {
+  let cachedAt = {};
+  try {
+    cachedAt = await getMasterDataCachedAt(MASTER_LISTS.map(([key]) => key));
+  } catch (error) {
+    Logger.warn('[offline] master-data cache age lookup failed:', error?.message);
+  }
+  const now = Date.now();
+  const stale = MASTER_LISTS.filter(([key]) => {
+    const at = cachedAt[key];
+    return !at || at > now || now - at >= MASTER_LIST_MAX_AGE_MS;
+  });
+  if (stale.length === 0) {
+    Logger.info('[offline] master lists fresh, skipping warm-up');
+    return;
+  }
+  for (const [key, apiCall] of stale) {
+    try {
+      const resp = await apiCall();
+      // An empty envelope must not be cached as a fresh list for a day.
+      if (resp?.data === undefined) {
+        Logger.warn(`[offline] master-data warm for ${key} returned no data`);
+        continue;
+      }
+      await cacheMasterData(key, resp.data);
+    } catch (error) {
+      Logger.warn(`[offline] master-data warm failed for ${key}:`, error?.message);
+    }
+  }
+};
+
+const warmMasterListsOnce = () => {
+  if (!masterListsInFlight) {
+    masterListsInFlight = warmMasterLists().finally(() => {
+      masterListsInFlight = null;
+    });
+  }
+  return masterListsInFlight;
+};
+
 /**
  * Pull the global dropdown lists and any already-saved Basic Information into
  * local storage so the Basic Information form is fillable — and prior entries
  * visible — offline, even on a device that never opened those screens online
  * (e.g. a co-assessor). All best-effort: a failure here must not fail the
- * assessment download. Cache keys mirror what the basicInformation actions
- * read back on their offline fallback.
+ * assessment download.
  */
 const warmOfflineExtras = async (serverAssessmentId, localId) => {
-  const cacheList = async (key, apiCall) => {
-    try {
-      const resp = await apiCall();
-      await cacheMasterData(key, resp?.data);
-    } catch (error) {
-      Logger.warn(`[offline] master-data warm failed for ${key}:`, error?.message);
-    }
-  };
-
-  await cacheList('vendor_categories', () => Api.BasicInformationApi.getCategory());
-  await cacheList('stores', () => Api.BasicInformationApi.getStore());
-  await cacheList('countries', () => Api.BasicInformationApi.getCountries());
-  // Search-as-you-type master lists: warm the FULL list (empty search) so the
-  // Basic Information sub-forms are fillable offline, not just the cached three
-  // above. Mirrors the cache keys the basicInformation actions read back.
-  await cacheList('key_processes', () => Api.BasicInformationApi.getKeyProcesses(''));
-  await cacheList('raw_materials', () => Api.BasicInformationApi.getKeyResources(''));
-  await cacheList('bought_out_parts', () => Api.BasicInformationApi.getBoughtOutPart(''));
-  await cacheList('third_party_certs', () => Api.BasicInformationApi.thirdPartyCertifications(''));
-  // Service-sector master lists — warm so the Service Basic Information form is
-  // fillable offline. Cache keys mirror the service basicInformation actions.
-  await cacheList('service_vendor_categories', () => Api.BasicInformationApi.getServiceCategory());
-  await cacheList('service_vendor_labs', () => Api.BasicInformationApi.getVendorLabs());
-  await cacheList('service_key_processes', () =>
-    Api.BasicInformationApi.getServiceKeyProcesses('')
-  );
-  await cacheList('service_key_resources', () =>
-    Api.BasicInformationApi.getServiceKeyResources('')
-  );
+  await warmMasterListsOnce();
 
   try {
     const biResp = await Api.BasicInformationApi.getBasicInformation(serverAssessmentId);

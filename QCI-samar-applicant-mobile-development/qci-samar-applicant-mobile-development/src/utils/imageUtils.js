@@ -93,21 +93,35 @@ export const persistPhoto = async ({ uri, assessmentId, bucket, name }) => {
     await ensureDir(dir);
 
     const quality = await adaptiveQuality(src);
+    const compress = async (maxSide, q) =>
+      stripScheme(
+        await Compressor.compress(uri, {
+          compressionMethod: 'manual',
+          maxWidth: maxSide,
+          maxHeight: maxSide,
+          quality: q,
+          output: 'jpg',
+          // Location/time already travel in the payload fields; EXIF is dead
+          // weight on a slow field uplink.
+          strip: true,
+        }),
+      );
     let compressedPath = src;
     try {
-      compressedPath = await Compressor.compress(uri, {
-        compressionMethod: 'manual',
-        maxWidth: 1500,
-        maxHeight: 1500,
-        quality,
-        output: 'jpg',
-        // Location/time already travel in the payload fields; EXIF is dead
-        // weight on a slow field uplink.
-        strip: true,
-      });
-      compressedPath = stripScheme(compressedPath);
+      compressedPath = await compress(1500, quality);
     } catch (compressionError) {
-      Logger.warn('persistPhoto: compression failed, using original:', compressionError?.message);
+      // The usual cause is the native decoder running out of memory on a
+      // large capture. The original is 5-12MB, which would crawl up a field
+      // link and press on the server, so retry once smaller before giving up.
+      Logger.warn(
+        'persistPhoto: compression failed, retrying at 1024px/0.6:',
+        compressionError?.message,
+      );
+      try {
+        compressedPath = await compress(1024, 0.6);
+      } catch (retryError) {
+        Logger.warn('persistPhoto: compression retry failed, using original:', retryError?.message);
+      }
     }
 
     const target = `${dir}/${name || `${Date.now()}.jpg`}`;

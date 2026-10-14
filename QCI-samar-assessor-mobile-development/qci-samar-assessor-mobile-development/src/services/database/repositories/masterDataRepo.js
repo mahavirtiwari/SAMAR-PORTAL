@@ -27,3 +27,30 @@ export const getCachedMasterData = async (cacheKey) => {
   const raw = result.rows.item(0).payload_json;
   return raw ? JSON.parse(raw) : null;
 };
+
+/**
+ * When each cached list was last written, as epoch ms keyed by cache key. Keys
+ * with no cached row are absent. `updated_at` is SQLite CURRENT_TIMESTAMP, i.e.
+ * UTC 'YYYY-MM-DD HH:MM:SS'. Lets the offline warm-up skip lists that are
+ * still fresh instead of re-pulling every global list per assessment.
+ */
+export const getMasterDataCachedAt = async (cacheKeys) => {
+  if (!Array.isArray(cacheKeys) || cacheKeys.length === 0) {
+    return {};
+  }
+  const result = await executeSql(
+    `SELECT cache_key, updated_at FROM master_data_cache WHERE cache_key IN (${cacheKeys
+      .map(() => '?')
+      .join(', ')})`,
+    cacheKeys
+  );
+  const cachedAt = {};
+  for (let i = 0; i < result.rows.length; i++) {
+    const row = result.rows.item(i);
+    const ms = Date.parse(`${String(row.updated_at).replace(' ', 'T')}Z`);
+    if (Number.isFinite(ms)) {
+      cachedAt[row.cache_key] = ms;
+    }
+  }
+  return cachedAt;
+};

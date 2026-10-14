@@ -33,9 +33,10 @@ const REQUEST_TIMEOUT = 30000; // 30 seconds
 
 // Multipart photo uploads (site pictures, site-tour photos) run ~0.4–1.5MB
 // each; on weak field networks 30s is not enough and the upload aborts
-// mid-transfer, so file-upload endpoints pass this instead. 5 minutes matches
-// the sibling apps and covers ~2KB/s worst-case field links.
-export const UPLOAD_TIMEOUT = 300000;
+// mid-transfer, so file-upload endpoints pass this instead. 2 minutes covers a
+// 1.5MB photo at ~13KB/s; the old 5 minutes let a stalled upload hold a server
+// worker that long, and the outbox retries a timed-out row anyway.
+export const UPLOAD_TIMEOUT = 120000;
 
 const userClient = axios.create({
   baseURL: AppSettings.BASE_URL,
@@ -46,10 +47,13 @@ const userClient = axios.create({
   timeout: REQUEST_TIMEOUT,
 });
 
-// Configure axios-retry with modified exponential backoff
+// Configure axios-retry with exponential backoff. exponentialDelay (axios-retry
+// 4.x) gives 2s/4s/8s plus 0-20% random jitter, so devices retrying the same
+// failure do not land in lockstep, and waits at least as long as a Retry-After
+// header asks.
 axiosRetry(userClient, {
   retries: 3,
-  retryDelay: retryCount => (retryCount === 0 ? 0 : Math.pow(2, retryCount) * 1000),
+  retryDelay: (retryCount, error) => axiosRetry.exponentialDelay(retryCount, error, 1000),
   retryCondition: error => {
     // Don't retry on 503 if it's maintenance mode
     if (error.response?.status === 503) {

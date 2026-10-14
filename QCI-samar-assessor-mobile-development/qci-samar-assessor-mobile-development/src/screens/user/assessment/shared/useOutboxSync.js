@@ -222,7 +222,8 @@ const useOutboxSync = ({
     try {
       const localId = idFromServer(assessmentId);
       await resetForRetry({ assessmentId: localId });
-      const result = await drainOutbox({ force: true });
+      // Not forced: a rate-limit / server-outage pause is honoured and reported.
+      const result = await drainOutbox();
       await refreshFailed(localId);
       const remaining = (await getUnsyncedSummaryForAssessment(localId)).failed || 0;
       // resetForRetry zeroes retry_count, so `remaining` alone reads as 0 even
@@ -235,6 +236,8 @@ const useOutboxSync = ({
       } else if (result.aborted) {
         const pausedCopy = {
           rateLimited: 'The server asked us to slow down. Try again in a minute.',
+          serverUnavailable:
+            'The server is temporarily unavailable. The items are saved and will retry automatically.',
           busy: 'A sync is already running. Try again in a moment.'
         };
         showWarningToast(

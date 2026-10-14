@@ -107,26 +107,90 @@ const requireServerId = (response, label) => {
  * captures (or close enough).
  */
 let draining = false;
-// Set when the server rate-limits a drain; drains started before this instant
-// are skipped so a throttled device stops hammering the limit window.
+// Set when the server rate-limits a drain or the circuit breaker below trips;
+// drains started before this instant are skipped so a throttled device stops
+// hammering the limit window and a device facing a server outage stops
+// re-uploading its whole queue on every trigger. `pauseReason` says which one
+// ('rateLimited' | 'serverUnavailable') so the UI can word the pause correctly.
 let rateLimitedUntil = 0;
+let pauseReason = null;
+// Consecutive 5xx / timed-out rows across drains (module level, so the backoff
+// keeps growing while an outage lasts). Reset by any row that syncs.
+let consecutiveServerFailures = 0;
 
 const RETRY_AFTER_DEFAULT_MS = 30000;
 const RETRY_AFTER_MAX_MS = 5 * 60 * 1000;
-// Retry-After may be delta-seconds or an HTTP-date; a date parses to NaN and
-// takes the default. Clamped so a huge value cannot park sync for a day.
+// Circuit breaker: after this many consecutive server failures the drain stops
+// and pauses for min(10 min, 15s * 2^(n-1)) plus up to 15s of jitter, so a fleet
+// of devices does not come back to a recovering server in lockstep.
+const CIRCUIT_BREAKER_THRESHOLD = 2;
+const BREAKER_BASE_MS = 15000;
+const BREAKER_MAX_MS = 10 * 60 * 1000;
+const BREAKER_JITTER_MS = 15000;
+
+// Retry-After as milliseconds, or null when absent/unparseable. It may be
+// delta-seconds or an HTTP-date.
+const parseRetryAfterMs = (error) => {
+  const header = error?.response?.headers?.['retry-after'];
+  if (header == null || header === '') {
+    return null;
+  }
+  const seconds = Number(header);
+  if (Number.isFinite(seconds)) {
+    return seconds > 0 ? seconds * 1000 : null;
+  }
+  const until = Date.parse(header);
+  if (!Number.isFinite(until)) {
+    return null;
+  }
+  const ms = until - Date.now();
+  return ms > 0 ? ms : null;
+};
+
+// 429 pause. Clamped so a huge value cannot park sync for a day.
 const retryAfterMs = (error) => {
-  const seconds = Number(error?.response?.headers?.['retry-after']);
-  if (!Number.isFinite(seconds) || seconds <= 0) {
+  const ms = parseRetryAfterMs(error);
+  if (ms == null) {
     return RETRY_AFTER_DEFAULT_MS;
   }
-  return Math.min(seconds * 1000, RETRY_AFTER_MAX_MS);
+  return Math.min(ms, RETRY_AFTER_MAX_MS);
 };
+
+/**
+ * Circuit-breaker pause after `failures` consecutive server failures:
+ * min(10 min, 15s * 2^(n-1)) + random(0, 15s). A 503 carrying Retry-After is
+ * honoured (never paused for less than it asks, still capped at 10 min).
+ * Exported for tests; `random` is injectable for the same reason.
+ */
+export const serverOutageBackoffMs = (failures, error, random = Math.random) => {
+  const exponent = Math.max(0, failures - 1);
+  const base = Math.min(BREAKER_MAX_MS, BREAKER_BASE_MS * 2 ** exponent);
+  let delay = base + Math.floor(random() * BREAKER_JITTER_MS);
+  if (error?.response?.status === 503) {
+    const asked = parseRetryAfterMs(error);
+    if (asked != null) {
+      delay = Math.max(delay, Math.min(asked, BREAKER_MAX_MS));
+    }
+  }
+  return delay;
+};
+
+// A request that reached for the server and got no answer in time. Offline
+// refusals and missing local files are not server trouble.
+const isTimeoutError = (error) =>
+  !error?.response &&
+  !error?.isOffline &&
+  !error?.isMissingFile &&
+  (error?.code === 'ECONNABORTED' ||
+    error?.code === 'ETIMEDOUT' ||
+    /timeout/i.test(error?.message || ''));
 
 // A new session starts with a clean slate: a throttle window opened under one
 // user must not silently suppress the next user's post-login drain.
 export const resetSyncThrottle = () => {
   rateLimitedUntil = 0;
+  pauseReason = null;
+  consecutiveServerFailures = 0;
 };
 
 // Clears the in-process drain latch. A drain in flight when the app is swiped
@@ -561,11 +625,12 @@ const meetingHandler = async (payload, type) => {
 };
 
 /**
- * `force` is for a user-initiated sync (header tap, stuck-items Retry) and the
- * pre-wipe flush on manual logout: those must attempt the upload even inside a
- * rate-limit pause, because the alternative is a silent no-op right before the
- * user is told "synced" or their local data is destroyed. Background triggers
- * (interval, reconnect, foreground, post-login kick) honour the pause.
+ * Every trigger (interval, reconnect, foreground, post-login kick, header tap,
+ * stuck-items Retry, capture-time flush) honours a rate-limit / server-outage
+ * pause: the UI reports the pause and when sync resumes, instead of each tap
+ * sending another burst into a throttled or failing server. `force` is only
+ * for the pre-wipe flush on manual logout: a silent no-op right before the wipe
+ * would destroy captures without a single upload attempt.
  */
 export const drainOutbox = (opts = {}) => {
   if (draining && currentDrain) {
@@ -591,10 +656,12 @@ const runDrain = async ({ force = false } = {}) => {
     return emptyResult({ aborted: true, abortReason: 'busy' });
   }
   if (!force && Date.now() < rateLimitedUntil) {
-    Logger.info('[sync] rate-limited by the server, skipping drain until the window clears');
+    Logger.info(
+      `[sync] paused (${pauseReason || 'rateLimited'}), skipping drain until the window clears`
+    );
     return emptyResult({
       aborted: true,
-      abortReason: 'rateLimited',
+      abortReason: pauseReason || 'rateLimited',
       pausedUntil: rateLimitedUntil
     });
   }
@@ -620,7 +687,7 @@ const runDrain = async ({ force = false } = {}) => {
     byType[type][key] += 1;
   };
   const startedAt = Date.now();
-  // Set on a lost session or a 429: every further row in this drain would fail
+  // Set on a lost session, a 429 or a tripped circuit breaker: every further row in this drain would fail
   // the same way, so stop instead of burning through the queue and, on a lost
   // session, re-triggering a forced logout per row.
   let aborted = false;
@@ -753,6 +820,7 @@ const runDrain = async ({ force = false } = {}) => {
           await handler(row.payload);
           await markSynced(row.id);
           attempted.add(row.id);
+          consecutiveServerFailures = 0;
           succeeded += 1;
           passSucceeded += 1;
           bump(row.op_type, 'ok');
@@ -795,6 +863,7 @@ const runDrain = async ({ force = false } = {}) => {
           if (httpStatus === 429) {
             await markPending(row.id);
             rateLimitedUntil = Date.now() + retryAfterMs(error);
+            pauseReason = 'rateLimited';
             Logger.warn(
               `[sync] 429: rate-limited, pausing drains for ${rateLimitedUntil - Date.now()}ms`
             );
@@ -827,6 +896,10 @@ const runDrain = async ({ force = false } = {}) => {
           // retry cap either. A burst of server trouble was permanently
           // retiring good rows into the stuck list.
           const isTransientServer = httpStatus >= 500 && httpStatus <= 599;
+          // Circuit-breaker input: a 5xx or a timeout means the server is in
+          // trouble, not this payload. Other outcomes leave the count alone;
+          // only a synced row proves the server healthy again.
+          const tripsBreaker = isTransientServer || isTimeoutError(error);
           // Prefer the per-field validation reason (Laravel 422 puts it under
           // errors.<field>[0], e.g. "The comment must be at least 1 character")
           // over the generic top-level "Validation failed" — the field message is
@@ -860,6 +933,24 @@ const runDrain = async ({ force = false } = {}) => {
             message: serverMessage
           });
           bump(row.op_type, 'fail');
+          if (tripsBreaker) {
+            consecutiveServerFailures += 1;
+            if (consecutiveServerFailures >= CIRCUIT_BREAKER_THRESHOLD) {
+              // The server is down or overloaded: uploading the rest of the
+              // queue now only adds to its load. Pause every drain trigger with
+              // exponential backoff; the row stays failed without burning a
+              // retry, so good photos are never retired by an outage.
+              const pauseMs = serverOutageBackoffMs(consecutiveServerFailures, error);
+              rateLimitedUntil = Date.now() + pauseMs;
+              pauseReason = 'serverUnavailable';
+              Logger.warn(
+                `[sync] ${consecutiveServerFailures} consecutive server failures, pausing drains for ${pauseMs}ms`
+              );
+              aborted = true;
+              abortReason = 'serverUnavailable';
+              break;
+            }
+          }
         }
       }
       // No forward progress this pass — nothing a further pass could unblock.
@@ -886,6 +977,7 @@ const runDrain = async ({ force = false } = {}) => {
     failures,
     aborted,
     abortReason,
-    pausedUntil: abortReason === 'rateLimited' ? rateLimitedUntil : null
+    pausedUntil:
+      abortReason === 'rateLimited' || abortReason === 'serverUnavailable' ? rateLimitedUntil : null
   };
 };

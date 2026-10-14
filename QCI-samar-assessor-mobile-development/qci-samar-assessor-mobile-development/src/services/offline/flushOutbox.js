@@ -28,10 +28,10 @@ export const flushOutbox = async (outboxRowId, label = 'capture') => {
   const statusNow = async () => (outboxRowId != null ? getOutboxStatusById(outboxRowId) : null);
   const onFailure = (error) =>
     Logger.warn(`[offline] ${label} capture-time drain failed:`, error?.message);
-  let result = await drainOutbox({ force: true }).catch(onFailure);
+  let result = await drainOutbox().catch(onFailure);
   let status = await statusNow();
   if (status === 'pending' && result?.joined && !result.aborted && !result.offline) {
-    result = await drainOutbox({ force: true }).catch(onFailure);
+    result = await drainOutbox().catch(onFailure);
     status = await statusNow();
   }
   if (status !== 'synced') {

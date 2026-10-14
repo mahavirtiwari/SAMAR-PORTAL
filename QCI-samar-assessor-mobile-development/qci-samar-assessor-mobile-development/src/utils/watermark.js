@@ -95,7 +95,9 @@ export const applyWatermark = async ({
           }
         }
       ],
-      quality: 90,
+      // image-marker 2.x takes an integer 0-100. This re-encodes the already
+      // compressed photo, so 90 inflated every upload; 75 keeps the stamp legible.
+      quality: 75,
       saveFormat: ImageFormat.jpg
     });
   } catch (error) {

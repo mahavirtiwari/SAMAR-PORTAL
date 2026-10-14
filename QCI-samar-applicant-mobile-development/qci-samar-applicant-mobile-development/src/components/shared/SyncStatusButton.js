@@ -38,6 +38,24 @@ const SyncStatusButton = ({ style, onSynced }) => {
     }, [refresh]),
   );
 
+  // One sentence per abort reason so every branch that reports a stopped drain
+  // says the same thing.
+  const pausedMessage = result => {
+    if (result.abortReason === 'busy') {
+      return 'A sync is already running. Check again in a moment.';
+    }
+    const seconds = Math.max(
+      1,
+      Math.ceil(((result.pausedUntil ?? Date.now()) - Date.now()) / 1000),
+    );
+    const resumesIn = seconds >= 90 ? `${Math.ceil(seconds / 60)} minutes` : `${seconds} seconds`;
+    const cause =
+      result.abortReason === 'serverUnavailable'
+        ? 'The server is temporarily unavailable.'
+        : 'The server asked us to slow down.';
+    return `${cause} Your photos are saved on this phone. Sync resumes automatically in about ${resumesIn}.`;
+  };
+
   const handlePress = async () => {
     if (syncing) {
       return;
@@ -60,6 +78,15 @@ const SyncStatusButton = ({ style, onSynced }) => {
             } couldn't sync. Retry when you have a stable connection.`,
           );
         }
+        // Uploaded some, then stopped: the remainder is still queued, say so.
+        if (result.aborted) {
+          showWarningToast('Sync paused', pausedMessage(result));
+        }
+      } else if (result.aborted) {
+        // Nothing uploaded because the drain stopped itself (rate limit, server
+        // outage, or a sync already running). "All clear" here would report
+        // success over a queue that is still pending.
+        showWarningToast('Sync paused', pausedMessage(result));
       } else if (result.failed > 0) {
         // Surface the real reason: a 4xx carries the server's message, so the
         // user doesn't chase a non-existent connectivity problem.
