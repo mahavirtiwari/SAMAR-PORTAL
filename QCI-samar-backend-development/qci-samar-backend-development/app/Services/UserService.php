@@ -250,6 +250,7 @@ class UserService
                     'is_active' => true,
                     'assigned_at' => now(),
                 ]);
+                $user->forgetRoleCache();
 
                 // Pivot attach() does not fire the User model's updated event, so
                 // HasAuditLog never sees role grants — record them explicitly.
@@ -692,6 +693,7 @@ class UserService
 
             // Detach all roles before deletion
             $user->roles()->detach();
+            $user->forgetRoleCache();
 
             // Detach assessor domains if any
             if ($user->assessorDomains()->exists()) {

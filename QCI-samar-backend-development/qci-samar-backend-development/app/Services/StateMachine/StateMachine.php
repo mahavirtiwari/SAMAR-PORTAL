@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 abstract class StateMachine
 {
@@ -170,6 +171,43 @@ abstract class StateMachine
      * @throws \Exception
      */
     public function transition(string $transition, array $data = []): bool
+    {
+        // Two requests can load the same record and both try to move it (double
+        // click, two tabs, a retry). Lock the row and re-check its stored status so
+        // only the first one runs the transition and its side effects.
+        return DB::transaction(function () use ($transition, $data) {
+            $this->lockAndVerifyState();
+
+            return $this->performTransition($transition, $data);
+        });
+    }
+
+    /**
+     * Locks the model's row for the rest of the transaction and fails if its
+     * stored status no longer matches the in-memory one.
+     *
+     * @throws \Exception
+     */
+    protected function lockAndVerifyState(): void
+    {
+        if (! $this->model->exists) {
+            return;
+        }
+
+        $stored = $this->model->newQueryWithoutScopes()
+            ->whereKey($this->model->getKey())
+            ->lockForUpdate()
+            ->value('status');
+
+        if ($stored !== null && $stored !== $this->getCurrentState()) {
+            throw new \Exception("This record has already moved to '{$stored}'. Refresh the page and try again.");
+        }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function performTransition(string $transition, array $data): bool
     {
         $currentState = $this->getCurrentState();
 

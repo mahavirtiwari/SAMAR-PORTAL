@@ -198,7 +198,7 @@ class CommitteeMeetingController extends Controller
 
         // Use withCount for list view - only load counts, not full relations (optimization)
         $query = CommitteeMeeting::with(['chair', 'convenor'])
-            ->withCount(['members']);
+            ->withCount(['members', 'meetingAssessments']);
 
         // Apply filters
         if ($request->filled('search')) {
@@ -1483,11 +1483,27 @@ class CommitteeMeetingController extends Controller
         }
 
         try {
-            $meeting->update([
-                'status' => 'completed',
-                'ended_at' => now(),
-                'minutes' => $request->minutes,
-            ]);
+            // Claim the completion under a row lock: a double click or a second tab
+            // would otherwise both pass the in_progress check above and apply every
+            // decision (certificates, emails) twice.
+            $claimed = DB::transaction(function () use ($meeting, $request) {
+                $locked = CommitteeMeeting::whereKey($meeting->id)->lockForUpdate()->first();
+                if (! $locked || $locked->status !== 'in_progress') {
+                    return false;
+                }
+                $locked->update([
+                    'status' => 'completed',
+                    'ended_at' => now(),
+                    'minutes' => $request->minutes,
+                ]);
+
+                return true;
+            });
+
+            if (! $claimed) {
+                return $this->errorResponse('This meeting has already been completed.', 409);
+            }
+            $meeting->refresh();
 
             // Apply each committee decision now that the meeting has formally ended. Decisions
             // were captured (not applied) during the meeting so results stayed hidden; here we run
@@ -2433,7 +2449,7 @@ class CommitteeMeetingController extends Controller
         }
 
         // Add assessments count from pivot table
-        $data['assessmentsCount'] = $meeting->meetingAssessments()->count();
+        $data['assessmentsCount'] = $meeting->meeting_assessments_count ?? $meeting->meetingAssessments()->count();
 
         if ($detailed) {
             $data['minutes'] = $meeting->minutes;

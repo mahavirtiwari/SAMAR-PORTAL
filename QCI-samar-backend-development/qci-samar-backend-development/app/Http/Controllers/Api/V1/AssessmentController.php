@@ -204,7 +204,7 @@ class AssessmentController extends Controller
         $user = $request->user();
 
         $query = $this->buildListQuery($request, $user)
-            ->with(['application.organization', 'application.unit', 'application.certificate', 'teamMembers.user.assessorDomains']);
+            ->with(['application.organization', 'application.unit', 'application.certificate', 'teamMembers.user.assessorDomains', 'teamMembers.latestAttendance']);
 
         // Pagination
         $perPage = $this->resolvePerPage($request, 15);
@@ -2556,10 +2556,10 @@ class AssessmentController extends Controller
                 )),
             'all_steps_completed' => $assessment->areAllStepsCompleted(),
             'allocation_locked' => $assessment->isAllocationLocked(),
-            'all_team_members_punched_out' => $assessment->areAllTeamMembersPunchedOut(),
-            'all_team_members_mobile_complete' => $assessment->areAllTeamMembersMobileComplete(),
+            'all_team_members_punched_out' => $assessment->areAllTeamMembersPunchedOut(useLoaded: true),
+            'all_team_members_mobile_complete' => $assessment->areAllTeamMembersMobileComplete(useLoaded: true),
             'my_mobile_completed_at' => $viewerMember?->mobile_completed_at?->toIso8601String(),
-            'all_co_assessors_web_submitted' => $assessment->areAllCoAssessorsWebSubmitted(),
+            'all_co_assessors_web_submitted' => $assessment->areAllCoAssessorsWebSubmitted(useLoaded: true),
             'my_web_submitted_at' => $viewerMember?->web_submitted_at?->toIso8601String(),
 
             'parameters_summary' => $assessment->relationLoaded('parameters') ? [

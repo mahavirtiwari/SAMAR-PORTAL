@@ -863,6 +863,36 @@ class PaymentController extends Controller
         try {
             DB::beginTransaction();
 
+            // Serialise initiations per application: a double click or a second tab
+            // used to open two payable gateway orders, and both settled.
+            $lockedStatus = Application::whereKey($application->id)->lockForUpdate()->value('status');
+            if ($lockedStatus !== 'payment_pending') {
+                DB::rollBack();
+
+                return $this->errorResponse('Application is not in payment pending status.', 422);
+            }
+
+            $existing = Payment::where('application_id', $application->id)
+                ->where('payment_type', $request->payment_type)
+                ->whereIn('status', ['success', 'pending'])
+                ->latest('id')
+                ->first();
+            if ($existing?->status === 'success') {
+                DB::rollBack();
+
+                return $this->errorResponse('This fee has already been paid.', 409);
+            }
+            // The same request arriving twice within moments gets the same order
+            // back instead of a second one.
+            if ($existing && $existing->created_at->gt(now()->subMinutes(2)) && ! empty($existing->metadata['gateway_response'])) {
+                DB::commit();
+
+                return $this->successResponse([
+                    'payment' => $this->formatPayment($existing),
+                    'gateway_data' => $existing->metadata['gateway_response'],
+                ], 'Payment initiated successfully.', 201);
+            }
+
             // Generate payment number
             $paymentNumber = $this->generatePaymentNumber();
 

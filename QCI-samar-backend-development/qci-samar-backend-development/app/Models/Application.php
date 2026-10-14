@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Application extends Model
 {
@@ -668,15 +669,16 @@ class Application extends Model
     /**
      * Generate a unique application number.
      *
-     * Format: SAMAR-{id}-{MMYY}. Uses lockForUpdate() to avoid duplicate
-     * numbers under concurrent creates, so must run inside a DB transaction.
+     * Format: SAMAR-{n}-{MMYY}, n from the application_number_sequence
+     * auto-increment: unique under concurrent creates without locking the
+     * applications table, and never reissued (even if the creating transaction
+     * rolls back or the application is later deleted).
      */
     public static function generateApplicationNumber(): string
     {
-        $lastApplication = static::lockForUpdate()->latest('id')->first();
-        $nextId = $lastApplication ? $lastApplication->id + 1 : 1;
+        $next = DB::table('application_number_sequence')->insertGetId(['created_at' => now()]);
 
-        return "SAMAR-{$nextId}-".date('my');
+        return "SAMAR-{$next}-".date('my');
     }
 
     /**

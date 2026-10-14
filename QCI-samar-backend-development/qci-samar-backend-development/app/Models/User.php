@@ -219,11 +219,45 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * Active role slugs, loaded once per instance. Role checks run many times per
+     * request (middleware, every guard of every row in a list), and each used to
+     * be its own query. Reset with forgetRoleCache() after changing roles.
+     *
+     * @var array<int, string>|null
+     */
+    private ?array $activeRoleSlugCache = null;
+
+    /**
+     * @return array<int, string>
+     */
+    public function activeRoleSlugs(): array
+    {
+        if ($this->relationLoaded('activeRoles')) {
+            return $this->activeRoles->pluck('slug')->all();
+        }
+
+        return $this->activeRoleSlugCache ??= $this->activeRoles()->pluck('slug')->all();
+    }
+
+    public function forgetRoleCache(): void
+    {
+        $this->activeRoleSlugCache = null;
+        $this->unsetRelation('activeRoles');
+    }
+
+    public function refresh()
+    {
+        $this->activeRoleSlugCache = null;
+
+        return parent::refresh();
+    }
+
+    /**
      * Check if user has a specific role.
      */
     public function hasRole(string $roleSlug): bool
     {
-        return $this->activeRoles()->where('slug', $roleSlug)->exists();
+        return in_array($roleSlug, $this->activeRoleSlugs(), true);
     }
 
     /**
@@ -231,7 +265,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function hasAnyRole(array $roleSlugs): bool
     {
-        return $this->activeRoles()->whereIn('slug', $roleSlugs)->exists();
+        return array_intersect($roleSlugs, $this->activeRoleSlugs()) !== [];
     }
 
     /**
@@ -239,7 +273,7 @@ class User extends Authenticatable implements JWTSubject
      */
     public function hasAllRoles(array $roleSlugs): bool
     {
-        return $this->activeRoles()->whereIn('slug', $roleSlugs)->count() === count($roleSlugs);
+        return array_diff($roleSlugs, $this->activeRoleSlugs()) === [];
     }
 
     /**
@@ -285,6 +319,7 @@ class User extends Authenticatable implements JWTSubject
                 'is_active' => true,
                 'assigned_at' => now(),
             ]);
+            $this->forgetRoleCache();
         }
     }
 

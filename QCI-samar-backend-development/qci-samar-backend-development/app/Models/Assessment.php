@@ -1608,24 +1608,30 @@ class Assessment extends Model
      * True when every team member's most recent attendance event is punch_out.
      * A team member with no attendance at all counts as not punched out.
      */
-    public function areAllTeamMembersPunchedOut(): bool
+    public function areAllTeamMembersPunchedOut(bool $useLoaded = false): bool
     {
-        $teamMemberIds = $this->teamMembers()->pluck('id');
-        if ($teamMemberIds->isEmpty()) {
+        // Every member's latest attendance in one query (was one query per member).
+        $members = $this->teamForCheck($useLoaded);
+        if ($members->isEmpty()) {
             return false;
         }
+        $members->loadMissing('latestAttendance');
 
-        foreach ($teamMemberIds as $memberId) {
-            $last = $this->attendances()
-                ->where('team_member_id', $memberId)
-                ->orderByDesc('recorded_at')
-                ->first();
-            if (! $last || $last->type !== ApplicationAssessmentAttendance::TYPE_PUNCH_OUT) {
-                return false;
-            }
-        }
+        return $members->every(
+            fn (AssessmentTeamMember $m) => $m->latestAttendance?->type === ApplicationAssessmentAttendance::TYPE_PUNCH_OUT
+        );
+    }
 
-        return true;
+    /**
+     * The team for a completion check. Workflow gates read it fresh (a member may
+     * have just been updated in this request); list endpoints pass $useLoaded to
+     * reuse the eager-loaded relation instead of querying for every row.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, AssessmentTeamMember>
+     */
+    private function teamForCheck(bool $useLoaded)
+    {
+        return $useLoaded && $this->relationLoaded('teamMembers') ? $this->teamMembers : $this->teamMembers()->get();
     }
 
     /**
@@ -1633,9 +1639,9 @@ class Assessment extends Model
      * reliable "field work is finished" signal — unlike all-punched-out, which
      * is true every evening of a multi-day assessment.
      */
-    public function areAllTeamMembersMobileComplete(): bool
+    public function areAllTeamMembersMobileComplete(bool $useLoaded = false): bool
     {
-        $members = $this->teamMembers()->get();
+        $members = $this->teamForCheck($useLoaded);
         if ($members->isEmpty()) {
             return false;
         }
@@ -1777,11 +1783,10 @@ class Assessment extends Model
      * lead-only assessment (no co-assessors) is never blocked, so this returns
      * true when there are no co-assessors.
      */
-    public function areAllCoAssessorsWebSubmitted(): bool
+    public function areAllCoAssessorsWebSubmitted(bool $useLoaded = false): bool
     {
-        $coAssessors = $this->teamMembers()
-            ->where('role', AssessmentTeamMember::ROLE_CO_ASSESSOR)
-            ->get();
+        $coAssessors = $this->teamForCheck($useLoaded)
+            ->where('role', AssessmentTeamMember::ROLE_CO_ASSESSOR);
 
         if ($coAssessors->isEmpty()) {
             return true;
