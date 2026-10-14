@@ -6,46 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Models\District;
 use App\Models\Pincode;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class PincodeController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/pincodes",
-     *     summary="Search pincodes by pincode number, district or state",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="pincode",
-     *         in="query",
-     *         required=false,
-     *         description="Search by pincode number",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="state",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by state name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="district",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by district name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Pincodes retrieved successfully")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/pincodes',
+        summary: 'Search pincodes by pincode number, district or state',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'pincode',
+                in: 'query',
+                required: false,
+                description: 'Search by pincode number',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'state',
+                in: 'query',
+                required: false,
+                description: 'Filter by state name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'district',
+                in: 'query',
+                required: false,
+                description: 'Filter by district name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Pincodes retrieved successfully'),
+        ],
+    )]
     public function index(Request $request)
     {
         try {

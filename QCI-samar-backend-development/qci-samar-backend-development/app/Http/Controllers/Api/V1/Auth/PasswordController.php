@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
 class PasswordController extends Controller
 {
@@ -20,53 +21,83 @@ class PasswordController extends Controller
 
     /**
      * Change password.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/change-password",
-     *     summary="Change password for authenticated user",
-     *     description="Allows authenticated user to change their password by providing current password and new password.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"current_password", "new_password", "new_password_confirmation"},
-     *
-     *             @OA\Property(property="current_password", type="string", format="password", example="oldPassword123"),
-     *             @OA\Property(property="new_password", type="string", format="password", minLength=7, example="newPassword123"),
-     *             @OA\Property(property="new_password_confirmation", type="string", format="password", example="newPassword123")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password changed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Password changed successfully.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - invalid current password, password change failed, or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Current password is incorrect."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=429, description="Too many attempts, limited to 5 per minute per user")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/change-password',
+        summary: 'Change password for authenticated user',
+        description: 'Allows authenticated user to change their password by providing current password and new password.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['current_password', 'new_password', 'new_password_confirmation'],
+                properties: [
+                    new OA\Property(
+                        property: 'current_password',
+                        type: 'string',
+                        format: 'password',
+                        example: 'oldPassword123',
+                    ),
+                    new OA\Property(
+                        property: 'new_password',
+                        type: 'string',
+                        format: 'password',
+                        minLength: 7,
+                        example: 'newPassword123',
+                    ),
+                    new OA\Property(
+                        property: 'new_password_confirmation',
+                        type: 'string',
+                        format: 'password',
+                        example: 'newPassword123',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Password changed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Password changed successfully.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - invalid current password, password change failed, or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Current password is incorrect.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 429, description: 'Too many attempts, limited to 5 per minute per user'),
+        ],
+    )]
     public function change(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -93,47 +124,67 @@ class PasswordController extends Controller
 
     /**
      * Forgot password.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/forgot-password",
-     *     summary="Request password reset",
-     *     description="Sends a 6-digit OTP to the user's email address for password reset. OTP expires in 2 minutes and allows 5 attempts before 30-minute lockout.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"samar_id"},
-     *
-     *             @OA\Property(property="samar_id", type="string", example="SAMAR-040226-1", description="SAMAR ID (format: SAMAR-DDMMYY-ID)")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password reset OTP sent successfully via email",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Password reset OTP has been sent to your email. Valid for 2 minutes.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - failed to send OTP or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Account is temporarily locked. Please try again in 25 minutes."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/forgot-password',
+        summary: 'Request password reset',
+        description: 'Sends a 6-digit OTP to the user\'s email address for password reset. OTP expires in 2 minutes and allows 5 attempts before 30-minute lockout.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['samar_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'samar_id',
+                        type: 'string',
+                        example: 'SAMAR-040226-1',
+                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID)',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Password reset OTP sent successfully via email',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Password reset OTP has been sent to your email. Valid for 2 minutes.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - failed to send OTP or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Account is temporarily locked. Please try again in 25 minutes.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function forgot(Request $request): JsonResponse
     {
         // Format only. Whether the account exists is deliberately NOT validated
@@ -180,35 +231,43 @@ class PasswordController extends Controller
 
     /**
      * Resend password reset OTP.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/resend-password-otp",
-     *     summary="Resend password reset OTP",
-     *     description="Regenerates and re-sends the password-reset OTP to the user's email. Uses a separate per-account resend rate limit so it does not consume the stricter forgot-password limit.",
-     *     tags={"Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"samar_id"},
-     *
-     *             @OA\Property(property="samar_id", type="string", example="SAMAR-040226-1", description="SAMAR ID (format: SAMAR-DDMMYY-ID)")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password reset OTP resent successfully via email",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="A new password reset OTP has been sent to your email. Valid for 2 minutes.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/resend-password-otp',
+        summary: 'Resend password reset OTP',
+        description: 'Regenerates and re-sends the password-reset OTP to the user\'s email. Uses a separate per-account resend rate limit so it does not consume the stricter forgot-password limit.',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['samar_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'samar_id',
+                        type: 'string',
+                        example: 'SAMAR-040226-1',
+                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID)',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Password reset OTP resent successfully via email',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'A new password reset OTP has been sent to your email. Valid for 2 minutes.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function resendOtp(Request $request): JsonResponse
     {
         // Mirror forgot-password: format only, no existence check — see forgot().
@@ -239,50 +298,87 @@ class PasswordController extends Controller
 
     /**
      * Reset password.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/reset-password",
-     *     summary="Reset password using OTP",
-     *     description="Resets user password using the 6-digit OTP received via email. Maximum 5 attempts allowed before 30-minute lockout.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"samar_id", "otp", "password", "password_confirmation"},
-     *
-     *             @OA\Property(property="samar_id", type="string", example="SAMAR-040226-1", description="SAMAR ID (format: SAMAR-DDMMYY-ID)"),
-     *             @OA\Property(property="otp", type="string", pattern="^\d{6}$", example="123456", description="6-digit OTP received via email"),
-     *             @OA\Property(property="password", type="string", format="password", minLength=7, example="newPassword123!"),
-     *             @OA\Property(property="password_confirmation", type="string", format="password", example="newPassword123!")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Password reset successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Password has been reset successfully. Please login with your new password.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - invalid/expired OTP, account locked, or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Invalid or expired OTP. You have 3 attempts remaining."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/reset-password',
+        summary: 'Reset password using OTP',
+        description: 'Resets user password using the 6-digit OTP received via email. Maximum 5 attempts allowed before 30-minute lockout.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['samar_id', 'otp', 'password', 'password_confirmation'],
+                properties: [
+                    new OA\Property(
+                        property: 'samar_id',
+                        type: 'string',
+                        example: 'SAMAR-040226-1',
+                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID)',
+                    ),
+                    new OA\Property(
+                        property: 'otp',
+                        type: 'string',
+                        pattern: '^\\d{6}$',
+                        example: '123456',
+                        description: '6-digit OTP received via email',
+                    ),
+                    new OA\Property(
+                        property: 'password',
+                        type: 'string',
+                        format: 'password',
+                        minLength: 7,
+                        example: 'newPassword123!',
+                    ),
+                    new OA\Property(
+                        property: 'password_confirmation',
+                        type: 'string',
+                        format: 'password',
+                        example: 'newPassword123!',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Password reset successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Password has been reset successfully. Please login with your new password.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - invalid/expired OTP, account locked, or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Invalid or expired OTP. You have 3 attempts remaining.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function reset(Request $request): JsonResponse
     {
         // Format only — account existence is not validated here; see forgot().

@@ -6,41 +6,34 @@ use App\Traits\HasPaginatedResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use OpenApi\Attributes as OA;
 use Throwable;
 
 /**
  * Base Controller
  *
  * All API controllers should extend this base controller
- *
- * @OA\Info(
- *     version=QCI_API_VERSION,
- *     title="QCI Samar API Documentation",
- *     description="API documentation for QCI Samar Backend
+ */
+#[OA\Info(
+    version: QCI_API_VERSION,
+    title: 'QCI Samar API Documentation',
+    description: 'API documentation for QCI Samar Backend
 
 ## Case Convention: camelCase
 
 This API uses **camelCase** for all request and response JSON keys.
 
-```",
- *     @OA\Contact(
- *         email="support@webority.com"
- *     )
- * )
- *
- * @OA\Server(
- *     url=L5_SWAGGER_CONST_HOST,
- *     description="API Server"
- * )
- *
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     description="Enter your JWT token in the format: Bearer {token}"
- * )
- */
+```',
+    contact: new OA\Contact(email: 'support@webority.com'),
+)]
+#[OA\Server(url: L5_SWAGGER_CONST_HOST, description: 'API Server')]
+#[OA\SecurityScheme(
+    securityScheme: 'bearerAuth',
+    type: 'http',
+    scheme: 'bearer',
+    bearerFormat: 'JWT',
+    description: 'Enter your JWT token in the format: Bearer {token}',
+)]
 abstract class Controller
 {
     use HasPaginatedResponse;

@@ -18,115 +18,90 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Assessment Parameters",
- *     description="Assessment parameter/criteria management endpoints"
- * )
- */
+#[OA\Tag(name: 'Assessment Parameters', description: 'Assessment parameter/criteria management endpoints')]
 class AssessmentParameterController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/assessment-parameters",
-     *     summary="List all assessment parameters",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by parameter name",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="Quality")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="disciplineId",
-     *         in="query",
-     *         description="Filter by discipline ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector (manufacturing/service)",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="enterpriseSize",
-     *         in="query",
-     *         description="Filter by enterprise size",
-     *
-     *         @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="serviceProviderType",
-     *         in="query",
-     *         description="Filter by service provider type (only for service sector)",
-     *
-     *         @OA\Schema(type="string", enum={"annual_maintenance_contract", "critical_service_provider"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isMandatory",
-     *         in="query",
-     *         description="Filter by mandatory status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="vendorCategoryId",
-     *         in="query",
-     *         description="Filter by DRDO vendor category ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameters retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/assessment-parameters',
+        summary: 'List all assessment parameters',
+        tags: [
+            'Assessment Parameters',
+            'System Admin - Assessment Parameters',
+            'DRDO Admin - Assessment Parameters',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by parameter name',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'Quality'),
+            ),
+            new OA\Parameter(
+                name: 'disciplineId',
+                in: 'query',
+                description: 'Filter by discipline ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector (manufacturing/service)',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'enterpriseSize',
+                in: 'query',
+                description: 'Filter by enterprise size',
+                schema: new OA\Schema(type: 'string', enum: ['startup', 'micro', 'small', 'medium', 'large']),
+            ),
+            new OA\Parameter(
+                name: 'serviceProviderType',
+                in: 'query',
+                description: 'Filter by service provider type (only for service sector)',
+                schema: new OA\Schema(type: 'string', enum: ['annual_maintenance_contract', 'critical_service_provider']),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(
+                name: 'isMandatory',
+                in: 'query',
+                description: 'Filter by mandatory status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(
+                name: 'vendorCategoryId',
+                in: 'query',
+                description: 'Filter by DRDO vendor category ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Parameters retrieved successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -193,75 +168,101 @@ class AssessmentParameterController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/assessment-parameters",
-     *     summary="Create new assessment parameter(s)",
-     *     description="Creates one assessment parameter per combination of enterprise_size × vendor_category_id. Both fields accept a single value or an array of values for batch creation. Combinations that already exist are skipped (not an error) and reported in the 'skipped' list.",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"name", "sector", "enterprise_size"},
-     *
-     *             @OA\Property(property="name", type="string", example="Quality Management System"),
-     *             @OA\Property(property="discipline_id", type="integer", example=1),
-     *             @OA\Property(
-     *                 property="vendor_category_id",
-     *                 description="Single ID or array of IDs (from manufacturing_vendor_categories or service_vendor_categories based on sector)",
-     *                 oneOf={
-     *
-     *                     @OA\Schema(type="integer", nullable=true, example=1),
-     *                     @OA\Schema(type="array", @OA\Items(type="integer"), example={1,2})
-     *                 }
-     *             ),
-     *
-     *             @OA\Property(property="sector", type="string", enum={"manufacturing", "service"}, example="manufacturing"),
-     *             @OA\Property(
-     *                 property="enterprise_size",
-     *                 description="Single size or array of sizes",
-     *                 oneOf={
-     *
-     *                     @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"}, example="medium"),
-     *                     @OA\Schema(type="array", @OA\Items(type="string", enum={"startup", "micro", "small", "medium", "large"}), example={"small","medium"})
-     *                 }
-     *             ),
-     *
-     *             @OA\Property(property="service_provider_type", type="string", enum={"annual_maintenance_contract", "critical_service_provider"}, nullable=true),
-     *             @OA\Property(property="is_mandatory", type="boolean", example=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="One or more parameters created successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="2 parameter(s) created successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="created", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="skipped", type="array", @OA\Items(type="string"))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=422,
-     *         description="All combinations already exist"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/assessment-parameters',
+        summary: 'Create new assessment parameter(s)',
+        description: 'Creates one assessment parameter per combination of enterprise_size × vendor_category_id. Both fields accept a single value or an array of values for batch creation. Combinations that already exist are skipped (not an error) and reported in the \'skipped\' list.',
+        tags: [
+            'Assessment Parameters',
+            'System Admin - Assessment Parameters',
+            'DRDO Admin - Assessment Parameters',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name', 'sector', 'enterprise_size'],
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'Quality Management System'),
+                    new OA\Property(property: 'discipline_id', type: 'integer', example: 1),
+                    new OA\Property(
+                        property: 'vendor_category_id',
+                        description: 'Single ID or array of IDs (from manufacturing_vendor_categories or service_vendor_categories based on sector)',
+                        oneOf: [
+                            new OA\Schema(type: 'integer', nullable: true, example: 1),
+                            new OA\Schema(type: 'array', example: [1, 2], items: new OA\Items(type: 'integer')),
+                        ],
+                    ),
+                    new OA\Property(
+                        property: 'sector',
+                        type: 'string',
+                        enum: ['manufacturing', 'service'],
+                        example: 'manufacturing',
+                    ),
+                    new OA\Property(
+                        property: 'enterprise_size',
+                        description: 'Single size or array of sizes',
+                        oneOf: [
+                            new OA\Schema(
+                                type: 'string',
+                                enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                                example: 'medium',
+                            ),
+                            new OA\Schema(
+                                type: 'array',
+                                example: ['small', 'medium'],
+                                items: new OA\Items(
+                                    type: 'string',
+                                    enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                                ),
+                            ),
+                        ],
+                    ),
+                    new OA\Property(
+                        property: 'service_provider_type',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider'],
+                        nullable: true,
+                    ),
+                    new OA\Property(property: 'is_mandatory', type: 'boolean', example: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'One or more parameters created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: '2 parameter(s) created successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'created',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(
+                                    property: 'skipped',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string'),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 422, description: 'All combinations already exist'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function store(StoreAssessmentParameterRequest $request): JsonResponse
     {
         try {
@@ -376,32 +377,24 @@ class AssessmentParameterController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/assessment-parameters/{id}",
-     *     summary="Get assessment parameter details",
-     *     description="Returns parameter details with questions_count. Use GET /api/v1/assessment-parameters/{parameterId}/questions for paginated questions.",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameter retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Parameter not found"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/assessment-parameters/{id}',
+        summary: 'Get assessment parameter details',
+        description: 'Returns parameter details with questions_count. Use GET /api/v1/assessment-parameters/{parameterId}/questions for paginated questions.',
+        tags: [
+            'Assessment Parameters',
+            'System Admin - Assessment Parameters',
+            'DRDO Admin - Assessment Parameters',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Parameter retrieved successfully'),
+            new OA\Response(response: 404, description: 'Parameter not found'),
+        ],
+    )]
     public function show(int $id): JsonResponse
     {
         try {
@@ -416,50 +409,51 @@ class AssessmentParameterController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/assessment-parameters/{id}",
-     *     summary="Update an assessment parameter",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="discipline_id", type="integer"),
-     *             @OA\Property(property="vendor_category_id", type="integer", nullable=true, description="DRDO vendor category ID (from manufacturing_vendor_categories or service_vendor_categories based on sector)"),
-     *             @OA\Property(property="sector", type="string", enum={"manufacturing", "service"}),
-     *             @OA\Property(property="enterprise_size", type="string", enum={"startup", "micro", "small", "medium", "large"}),
-     *             @OA\Property(property="service_provider_type", type="string", enum={"annual_maintenance_contract", "critical_service_provider"}),
-     *             @OA\Property(property="is_mandatory", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameter updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Parameter not found"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/assessment-parameters/{id}',
+        summary: 'Update an assessment parameter',
+        tags: [
+            'Assessment Parameters',
+            'System Admin - Assessment Parameters',
+            'DRDO Admin - Assessment Parameters',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'name', type: 'string'),
+                    new OA\Property(property: 'discipline_id', type: 'integer'),
+                    new OA\Property(
+                        property: 'vendor_category_id',
+                        type: 'integer',
+                        nullable: true,
+                        description: 'DRDO vendor category ID (from manufacturing_vendor_categories or service_vendor_categories based on sector)',
+                    ),
+                    new OA\Property(property: 'sector', type: 'string', enum: ['manufacturing', 'service']),
+                    new OA\Property(
+                        property: 'enterprise_size',
+                        type: 'string',
+                        enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                    ),
+                    new OA\Property(
+                        property: 'service_provider_type',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider'],
+                    ),
+                    new OA\Property(property: 'is_mandatory', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Parameter updated successfully'),
+            new OA\Response(response: 404, description: 'Parameter not found'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function update(UpdateAssessmentParameterRequest $request, int $id): JsonResponse
     {
         try {
@@ -526,63 +520,55 @@ class AssessmentParameterController extends Controller
      *     )
      * )
      */
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/assessment-parameters/export",
-     *     summary="Export assessment parameters to CSV",
-     *     description="Exports active assessment parameters and their active questions/options to a CSV file matching the bulk-import format exactly. One row is output per question; parameters without questions produce a single row with empty question/option fields.",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         required=true,
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="enterprise_size",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by enterprise size (optional)",
-     *
-     *         @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="service_provider_type",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by service provider type (optional)",
-     *
-     *         @OA\Schema(type="string", enum={"annual_maintenance_contract", "critical_service_provider"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="vendor_category_id",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by vendor category ID (optional)",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(mediaType="text/csv")
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/assessment-parameters/export',
+        summary: 'Export assessment parameters to CSV',
+        description: 'Exports active assessment parameters and their active questions/options to a CSV file matching the bulk-import format exactly. One row is output per question; parameters without questions produce a single row with empty question/option fields.',
+        tags: ['Assessment Parameters', 'System Admin - Assessment Parameters'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                required: true,
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'enterprise_size',
+                in: 'query',
+                required: false,
+                description: 'Filter by enterprise size (optional)',
+                schema: new OA\Schema(type: 'string', enum: ['startup', 'micro', 'small', 'medium', 'large']),
+            ),
+            new OA\Parameter(
+                name: 'service_provider_type',
+                in: 'query',
+                required: false,
+                description: 'Filter by service provider type (optional)',
+                schema: new OA\Schema(type: 'string', enum: ['annual_maintenance_contract', 'critical_service_provider']),
+            ),
+            new OA\Parameter(
+                name: 'vendor_category_id',
+                in: 'query',
+                required: false,
+                description: 'Filter by vendor category ID (optional)',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(mediaType: 'text/csv'),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function export(Request $request): StreamedResponse|JsonResponse
     {
         $validated = $request->validate([
@@ -875,26 +861,25 @@ class AssessmentParameterController extends Controller
      *     )
      * )
      */
-    /**
-     * @OA\Get(
-     *     path="/api/v1/assessment-parameters/template",
-     *     summary="Download the bulk-import template (sample CSV)",
-     *     description="Returns a ready-to-edit sample CSV in the exact format expected by the bulk-import endpoint. Use this as the starting point for new imports.",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV template download",
-     *
-     *         @OA\MediaType(mediaType="text/csv")
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Template file missing on server")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/assessment-parameters/template',
+        summary: 'Download the bulk-import template (sample CSV)',
+        description: 'Returns a ready-to-edit sample CSV in the exact format expected by the bulk-import endpoint. Use this as the starting point for new imports.',
+        tags: ['Assessment Parameters', 'System Admin - Assessment Parameters'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV template download',
+                content: [
+                    new OA\MediaType(mediaType: 'text/csv'),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Template file missing on server'),
+        ],
+    )]
     public function downloadImportTemplate(): BinaryFileResponse|JsonResponse
     {
         $path = storage_path('app/templates/assessment_parameters_sample.csv');
@@ -997,23 +982,23 @@ class AssessmentParameterController extends Controller
         ]);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/assessment-parameters/{id}/activate",
-     *     summary="Activate assessment parameter",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Assessment parameter activated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Assessment parameter not found"),
-     *     @OA\Response(response=400, description="Assessment parameter is already active"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/assessment-parameters/{id}/activate',
+        summary: 'Activate assessment parameter',
+        tags: ['Assessment Parameters', 'System Admin - Assessment Parameters'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessment parameter activated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Assessment parameter not found'),
+            new OA\Response(response: 400, description: 'Assessment parameter is already active'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -1068,23 +1053,23 @@ class AssessmentParameterController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/assessment-parameters/{id}/deactivate",
-     *     summary="Deactivate assessment parameter",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Assessment parameter deactivated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Assessment parameter not found"),
-     *     @OA\Response(response=400, description="Assessment parameter is already inactive"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/assessment-parameters/{id}/deactivate',
+        summary: 'Deactivate assessment parameter',
+        tags: ['Assessment Parameters', 'System Admin - Assessment Parameters'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessment parameter deactivated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Assessment parameter not found'),
+            new OA\Response(response: 400, description: 'Assessment parameter is already inactive'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

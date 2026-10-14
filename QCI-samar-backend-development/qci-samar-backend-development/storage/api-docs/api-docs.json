@@ -59,11 +59,11 @@
                                                             },
                                                             "type": {
                                                                 "type": "string",
+                                                                "example": "punch_in",
                                                                 "enum": [
                                                                     "punch_in",
                                                                     "punch_out"
-                                                                ],
-                                                                "example": "punch_in"
+                                                                ]
                                                             },
                                                             "selfie_path": {
                                                                 "type": "string",
@@ -100,11 +100,11 @@
                                                             },
                                                             "last_action": {
                                                                 "type": "string",
+                                                                "nullable": true,
                                                                 "enum": [
                                                                     "punch_in",
                                                                     "punch_out"
-                                                                ],
-                                                                "nullable": true
+                                                                ]
                                                             },
                                                             "last_action_at": {
                                                                 "type": "string",
@@ -1077,11 +1077,11 @@
                                                 },
                                                 "customer_type": {
                                                     "type": "string",
+                                                    "example": "domestic",
                                                     "enum": [
                                                         "domestic",
                                                         "international"
-                                                    ],
-                                                    "example": "domestic"
+                                                    ]
                                                 },
                                                 "country": {
                                                     "description": "Required if customer_type is international",
@@ -1206,11 +1206,11 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "example": "opening",
                             "enum": [
                                 "opening",
                                 "closing"
-                            ],
-                            "example": "opening"
+                            ]
                         }
                     }
                 ],
@@ -1339,11 +1339,11 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "example": "opening",
                             "enum": [
                                 "opening",
                                 "closing"
-                            ],
-                            "example": "opening"
+                            ]
                         }
                     }
                 ],
@@ -1481,11 +1481,11 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "example": "opening",
                             "enum": [
                                 "opening",
                                 "closing"
-                            ],
-                            "example": "opening"
+                            ]
                         }
                     }
                 ],
@@ -1605,11 +1605,11 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "example": "opening",
                             "enum": [
                                 "opening",
                                 "closing"
-                            ],
-                            "example": "opening"
+                            ]
                         }
                     },
                     {
@@ -1691,11 +1691,11 @@
                         "required": true,
                         "schema": {
                             "type": "string",
+                            "example": "opening",
                             "enum": [
                                 "opening",
                                 "closing"
-                            ],
-                            "example": "opening"
+                            ]
                         }
                     }
                 ],
@@ -1711,8 +1711,8 @@
                                     "comment": {
                                         "description": "Mandatory comment text (min 10 characters)",
                                         "type": "string",
-                                        "minLength": 10,
-                                        "example": "Meeting conducted successfully with all stakeholders present."
+                                        "example": "Meeting conducted successfully with all stakeholders present.",
+                                        "minLength": 10
                                     }
                                 },
                                 "type": "object"
@@ -2554,8 +2554,8 @@
                                     "comment": {
                                         "description": "Clarification comment",
                                         "type": "string",
-                                        "maxLength": 2000,
-                                        "example": "Attaching additional evidence as requested"
+                                        "example": "Attaching additional evidence as requested",
+                                        "maxLength": 2000
                                     },
                                     "parent_feedback_id": {
                                         "description": "ID of the feedback being replied to. If omitted, auto-detected from the most recent QC/committee feedback for this question.",
@@ -2757,8 +2757,8 @@
                                     "comment": {
                                         "description": "Updated clarification comment",
                                         "type": "string",
-                                        "maxLength": 2000,
-                                        "example": "Updated explanation with new evidence"
+                                        "example": "Updated explanation with new evidence",
+                                        "maxLength": 2000
                                     },
                                     "attachments": {
                                         "description": "Optional new file attachments (max 5 total, 10MB each, jpeg/jpg/png/gif/pdf)",
@@ -4527,12 +4527,12 @@
                                                     "properties": {
                                                         "parameter_allocation": {
                                                             "type": "string",
+                                                            "example": "completed",
                                                             "enum": [
                                                                 "pending",
                                                                 "in_progress",
                                                                 "completed"
-                                                            ],
-                                                            "example": "completed"
+                                                            ]
                                                         },
                                                         "site_pictures": {
                                                             "type": "string",
@@ -5234,9 +5234,9 @@
                         "schema": {
                             "type": "number",
                             "format": "float",
+                            "example": 75,
                             "maximum": 100,
-                            "minimum": 0,
-                            "example": 75
+                            "minimum": 0
                         }
                     },
                     {
@@ -5246,9 +5246,9 @@
                         "schema": {
                             "type": "number",
                             "format": "float",
+                            "example": 95,
                             "maximum": 100,
-                            "minimum": 0,
-                            "example": 95
+                            "minimum": 0
                         }
                     },
                     {
@@ -5311,11 +5311,11 @@
                                     "applicationType": {
                                         "description": "Application type",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "new",
                                             "renewal"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "isExistingDrdoVendor": {
                                         "description": "Is existing DRDO vendor",
@@ -5325,8 +5325,8 @@
                                     "vendorCategory": {
                                         "description": "DRDO vendor category",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "mfgDrdoVendorStores": {
                                         "description": "DRDO vendor stores (manufacturing only) - array of objects with storeName",
@@ -5344,8 +5344,8 @@
                                     "drdoRegistrationNumber": {
                                         "description": "DRDO registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "drdoCertificateFile": {
                                         "description": "DRDO certificate file",
@@ -5356,120 +5356,120 @@
                                     "enterpriseClassification": {
                                         "description": "Enterprise classification",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "startup",
                                             "micro",
                                             "small",
                                             "medium",
                                             "large"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "enterpriseName": {
                                         "description": "Enterprise name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "registeredOfficeAddress": {
                                         "description": "Registered office address",
                                         "type": "string",
-                                        "maxLength": 500,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "registeredOfficeState": {
                                         "description": "Registered office state (used in application number generation)",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "registeredOfficeDistrict": {
                                         "description": "Registered office district",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "registeredOfficePinCode": {
                                         "description": "Registered office PIN code",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "registeredOfficeMobile": {
                                         "description": "Registered office mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "registeredOfficeLandline": {
                                         "description": "Registered office landline",
                                         "type": "string",
-                                        "maxLength": 12,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 12
                                     },
                                     "registeredOfficeEmail": {
                                         "description": "Registered office email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "registeredOfficeAlternateEmail": {
                                         "description": "Registered office alternate email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitAddress": {
                                         "description": "Unit address",
                                         "type": "string",
-                                        "maxLength": 500,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "unitState": {
                                         "description": "Unit state",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "unitDistrict": {
                                         "description": "Unit district",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "unitPinCode": {
                                         "description": "Unit PIN code",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "unitMobile": {
                                         "description": "Unit mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "unitLandline": {
                                         "description": "Unit landline",
                                         "type": "string",
-                                        "maxLength": 12,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 12
                                     },
                                     "unitEmail": {
                                         "description": "Unit email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitAlternateEmail": {
                                         "description": "Unit alternate email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitCommencementDate": {
                                         "description": "Unit commencement date (YYYY-MM-DD)",
@@ -5486,31 +5486,32 @@
                                     "contactPersonName": {
                                         "description": "Contact person name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonDesignation": {
                                         "description": "Contact person designation",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonMobile": {
                                         "description": "Contact person mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "contactPersonEmail": {
                                         "description": "Contact person email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "ownershipType": {
                                         "description": "Ownership type",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "proprietorship",
                                             "partnership",
@@ -5519,32 +5520,31 @@
                                             "joint_venture",
                                             "limited_liability_partnership",
                                             "other"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "maleEmployeesCount": {
                                         "description": "Number of male employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "femaleEmployeesCount": {
                                         "description": "Number of female employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "otherEmployeesCount": {
                                         "description": "Number of other gender employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "technicalStaffCount": {
                                         "description": "Number of technical staff",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "hasGst": {
                                         "description": "Has GST registration",
@@ -5554,8 +5554,8 @@
                                     "gstNumber": {
                                         "description": "GST number",
                                         "type": "string",
-                                        "maxLength": 15,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 15
                                     },
                                     "gstCertificateFile": {
                                         "description": "GST certificate file",
@@ -5571,8 +5571,8 @@
                                     "govtOrganisationName": {
                                         "description": "Government organization name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "govtRegistrationCertificate": {
                                         "description": "Government registration certificate",
@@ -5583,8 +5583,8 @@
                                     "dpiitRegistrationNumber": {
                                         "description": "DPIIT registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "dpiitCertificateFile": {
                                         "description": "DPIIT certificate file",
@@ -5595,8 +5595,8 @@
                                     "udyamRegistrationNumber": {
                                         "description": "Udyam registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "udyamCertificateFile": {
                                         "description": "Udyam certificate file",
@@ -5614,14 +5614,14 @@
                                         "description": "Production capacity",
                                         "type": "number",
                                         "format": "float",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "capacityUnit": {
                                         "description": "Capacity unit",
                                         "type": "string",
-                                        "maxLength": 50,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 50
                                     },
                                     "thirdPartyCertifications": {
                                         "description": "List of third party certifications",
@@ -5666,21 +5666,21 @@
                                                     "description": "Total production capacity",
                                                     "type": "number",
                                                     "format": "float",
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "minimum": 0
                                                 },
                                                 "capacityUnit": {
                                                     "description": "Capacity unit",
                                                     "type": "string",
-                                                    "maxLength": 50,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 50
                                                 },
                                                 "currentUtilizedCapacity": {
                                                     "description": "Current utilized capacity",
                                                     "type": "number",
                                                     "format": "float",
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "minimum": 0
                                                 },
                                                 "commencementDate": {
                                                     "description": "Production commencement date",
@@ -5705,9 +5705,9 @@
                                                     "description": "Export percentage (0-100)",
                                                     "type": "number",
                                                     "format": "float",
+                                                    "nullable": true,
                                                     "maximum": 100,
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "minimum": 0
                                                 }
                                             },
                                             "type": "object"
@@ -5722,8 +5722,8 @@
                                                 "materialName": {
                                                     "description": "Material name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "isImported": {
                                                     "description": "Is material imported",
@@ -5733,16 +5733,16 @@
                                                 "importCountry": {
                                                     "description": "Import country name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "importPercentage": {
                                                     "description": "Import percentage (0-100)",
                                                     "type": "number",
                                                     "format": "float",
+                                                    "nullable": true,
                                                     "maximum": 100,
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "minimum": 0
                                                 }
                                             },
                                             "type": "object"
@@ -5757,8 +5757,8 @@
                                                 "partName": {
                                                     "description": "Part name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "isImported": {
                                                     "description": "Is part imported",
@@ -5768,16 +5768,16 @@
                                                 "importCountry": {
                                                     "description": "Import country name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "importPercentage": {
                                                     "description": "Import percentage (0-100)",
                                                     "type": "number",
                                                     "format": "float",
+                                                    "nullable": true,
                                                     "maximum": 100,
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "minimum": 0
                                                 }
                                             },
                                             "type": "object"
@@ -5792,8 +5792,8 @@
                                                 "processName": {
                                                     "description": "Process name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -5808,8 +5808,8 @@
                                                 "processName": {
                                                     "description": "Process name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -5824,23 +5824,23 @@
                                                 "customerName": {
                                                     "description": "Customer name",
                                                     "type": "string",
-                                                    "maxLength": 255,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 255
                                                 },
                                                 "customerType": {
                                                     "description": "Customer type",
                                                     "type": "string",
+                                                    "nullable": true,
                                                     "enum": [
                                                         "domestic",
                                                         "international"
-                                                    ],
-                                                    "nullable": true
+                                                    ]
                                                 },
                                                 "country": {
                                                     "description": "Country name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -5900,21 +5900,21 @@
                                     "serviceProviderType": {
                                         "description": "Service provider type",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "annual_maintenance_contract",
                                             "critical_service_provider",
                                             "civil_works_contractor"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "applicationType": {
                                         "description": "Application type",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "new",
                                             "renewal"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "isExistingDrdoVendor": {
                                         "description": "Is existing DRDO vendor",
@@ -5924,14 +5924,14 @@
                                     "vendorCategory": {
                                         "description": "DRDO vendor category",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "drdoRegistrationNumber": {
                                         "description": "DRDO registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "drdoCertificateFile": {
                                         "description": "DRDO certificate file",
@@ -5942,120 +5942,120 @@
                                     "enterpriseClassification": {
                                         "description": "Enterprise classification",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "startup",
                                             "micro",
                                             "small",
                                             "medium",
                                             "large"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "enterpriseName": {
                                         "description": "Enterprise name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "registeredOfficeAddress": {
                                         "description": "Registered office address",
                                         "type": "string",
-                                        "maxLength": 500,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "registeredOfficeState": {
                                         "description": "Registered office state (used in application number generation)",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "registeredOfficeDistrict": {
                                         "description": "Registered office district",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "registeredOfficePinCode": {
                                         "description": "Registered office PIN code",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "registeredOfficeMobile": {
                                         "description": "Registered office mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "registeredOfficeLandline": {
                                         "description": "Registered office landline",
                                         "type": "string",
-                                        "maxLength": 12,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 12
                                     },
                                     "registeredOfficeEmail": {
                                         "description": "Registered office email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "registeredOfficeAlternateEmail": {
                                         "description": "Registered office alternate email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitAddress": {
                                         "description": "Unit address",
                                         "type": "string",
-                                        "maxLength": 500,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "unitState": {
                                         "description": "Unit state",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "unitDistrict": {
                                         "description": "Unit district",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "unitPinCode": {
                                         "description": "Unit PIN code",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "unitMobile": {
                                         "description": "Unit mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "unitLandline": {
                                         "description": "Unit landline",
                                         "type": "string",
-                                        "maxLength": 12,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 12
                                     },
                                     "unitEmail": {
                                         "description": "Unit email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitAlternateEmail": {
                                         "description": "Unit alternate email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "unitCommencementDate": {
                                         "description": "Unit commencement date (YYYY-MM-DD)",
@@ -6072,31 +6072,32 @@
                                     "contactPersonName": {
                                         "description": "Contact person name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonDesignation": {
                                         "description": "Contact person designation",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonMobile": {
                                         "description": "Contact person mobile",
                                         "type": "string",
-                                        "maxLength": 10,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "contactPersonEmail": {
                                         "description": "Contact person email",
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     },
                                     "ownershipType": {
                                         "description": "Ownership type",
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "proprietorship",
                                             "partnership",
@@ -6105,32 +6106,31 @@
                                             "joint_venture",
                                             "limited_liability_partnership",
                                             "other"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "maleEmployeesCount": {
                                         "description": "Number of male employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "femaleEmployeesCount": {
                                         "description": "Number of female employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "otherEmployeesCount": {
                                         "description": "Number of other gender employees",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "technicalStaffCount": {
                                         "description": "Number of technical staff",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "minimum": 0
                                     },
                                     "hasGst": {
                                         "description": "Has GST registration",
@@ -6140,8 +6140,8 @@
                                     "gstNumber": {
                                         "description": "GST number",
                                         "type": "string",
-                                        "maxLength": 15,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 15
                                     },
                                     "gstCertificateFile": {
                                         "description": "GST certificate file",
@@ -6157,8 +6157,8 @@
                                     "govtOrganisationName": {
                                         "description": "Government organization name",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "govtRegistrationCertificate": {
                                         "description": "Government registration certificate",
@@ -6169,8 +6169,8 @@
                                     "dpiitRegistrationNumber": {
                                         "description": "DPIIT registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "dpiitCertificateFile": {
                                         "description": "DPIIT certificate file",
@@ -6181,8 +6181,8 @@
                                     "udyamRegistrationNumber": {
                                         "description": "Udyam registration number",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "udyamCertificateFile": {
                                         "description": "Udyam certificate file",
@@ -6239,21 +6239,21 @@
                                                     "description": "Total services capacity",
                                                     "type": "number",
                                                     "format": "float",
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "minimum": 0
                                                 },
                                                 "capacityUnit": {
                                                     "description": "Capacity unit",
                                                     "type": "string",
-                                                    "maxLength": 50,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 50
                                                 },
                                                 "currentUtilizedCapacity": {
                                                     "description": "Current utilized capacity",
                                                     "type": "number",
                                                     "format": "float",
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "minimum": 0
                                                 },
                                                 "commencementDate": {
                                                     "description": "Service commencement date",
@@ -6278,9 +6278,9 @@
                                                     "description": "Supply percentage (0-100)",
                                                     "type": "number",
                                                     "format": "float",
+                                                    "nullable": true,
                                                     "maximum": 100,
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "minimum": 0
                                                 }
                                             },
                                             "type": "object"
@@ -6295,8 +6295,8 @@
                                                 "resourceName": {
                                                     "description": "Resource name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "isImported": {
                                                     "description": "Is resource imported",
@@ -6306,16 +6306,16 @@
                                                 "importCountry": {
                                                     "description": "Import country name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 },
                                                 "importPercentage": {
                                                     "description": "Import percentage (0-100)",
                                                     "type": "number",
                                                     "format": "float",
+                                                    "nullable": true,
                                                     "maximum": 100,
-                                                    "minimum": 0,
-                                                    "nullable": true
+                                                    "minimum": 0
                                                 }
                                             },
                                             "type": "object"
@@ -6330,8 +6330,8 @@
                                                 "processName": {
                                                     "description": "Process name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -6346,8 +6346,8 @@
                                                 "processName": {
                                                     "description": "Process name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -6362,23 +6362,23 @@
                                                 "customerName": {
                                                     "description": "Customer name",
                                                     "type": "string",
-                                                    "maxLength": 255,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 255
                                                 },
                                                 "customerType": {
                                                     "description": "Customer type",
                                                     "type": "string",
+                                                    "nullable": true,
                                                     "enum": [
                                                         "domestic",
                                                         "international"
-                                                    ],
-                                                    "nullable": true
+                                                    ]
                                                 },
                                                 "country": {
                                                     "description": "Country name",
                                                     "type": "string",
-                                                    "maxLength": 100,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maxLength": 100
                                                 }
                                             },
                                             "type": "object"
@@ -6919,28 +6919,28 @@
                                 "properties": {
                                     "contactPersonName": {
                                         "type": "string",
-                                        "maxLength": 255,
                                         "example": "John Doe",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonDesignation": {
                                         "type": "string",
-                                        "maxLength": 255,
                                         "example": "Manager",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 255
                                     },
                                     "contactPersonMobile": {
                                         "type": "string",
-                                        "maxLength": 10,
                                         "example": "9876543210",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 10
                                     },
                                     "contactPersonEmail": {
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
                                         "example": "john.doe@example.com",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 320
                                     }
                                 },
                                 "type": "object"
@@ -7300,18 +7300,18 @@
                                                     },
                                                     "question_type": {
                                                         "type": "string",
+                                                        "example": "rating",
                                                         "enum": [
                                                             "rating",
                                                             "yes_no"
-                                                        ],
-                                                        "example": "rating"
+                                                        ]
                                                     },
                                                     "rating": {
                                                         "type": "integer",
-                                                        "maximum": 5,
-                                                        "minimum": 1,
                                                         "example": 4,
-                                                        "nullable": true
+                                                        "nullable": true,
+                                                        "maximum": 5,
+                                                        "minimum": 1
                                                     },
                                                     "yes_no_answer": {
                                                         "type": "boolean",
@@ -7384,10 +7384,10 @@
                                     "rating": {
                                         "description": "Rating value (1-5) for rating type questions",
                                         "type": "integer",
-                                        "maximum": 5,
-                                        "minimum": 1,
                                         "example": 4,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maximum": 5,
+                                        "minimum": 1
                                     },
                                     "yes_no_answer": {
                                         "description": "Yes/No answer for yes_no type questions",
@@ -7524,10 +7524,10 @@
                                                 },
                                                 "rating": {
                                                     "type": "integer",
-                                                    "maximum": 5,
-                                                    "minimum": 1,
                                                     "example": 4,
-                                                    "nullable": true
+                                                    "nullable": true,
+                                                    "maximum": 5,
+                                                    "minimum": 1
                                                 },
                                                 "yesNoAnswer": {
                                                     "type": "boolean",
@@ -7628,11 +7628,11 @@
                                                             },
                                                             "type": {
                                                                 "type": "string",
+                                                                "example": "rating",
                                                                 "enum": [
                                                                     "rating",
                                                                     "yes_no"
-                                                                ],
-                                                                "example": "rating"
+                                                                ]
                                                             },
                                                             "rating": {
                                                                 "description": "Existing rating answer if any",
@@ -8701,11 +8701,11 @@
                                     "action": {
                                         "description": "QC action to take",
                                         "type": "string",
+                                        "example": "approve_for_committee",
                                         "enum": [
                                             "approve_for_committee",
                                             "provide_feedback"
-                                        ],
-                                        "example": "approve_for_committee"
+                                        ]
                                     },
                                     "feedback": {
                                         "description": "Optional feedback for assessor if action is provide_feedback",
@@ -8986,11 +8986,11 @@
                                     "action": {
                                         "description": "Committee decision action",
                                         "type": "string",
+                                        "example": "certify",
                                         "enum": [
                                             "certify",
                                             "provide_feedback"
-                                        ],
-                                        "example": "certify"
+                                        ]
                                     },
                                     "remarks": {
                                         "description": "Optional remarks for the decision",
@@ -9549,25 +9549,25 @@
                                     },
                                     "sector": {
                                         "type": "string",
+                                        "example": "manufacturing",
                                         "enum": [
                                             "manufacturing",
                                             "service"
-                                        ],
-                                        "example": "manufacturing"
+                                        ]
                                     },
                                     "enterprise_size": {
                                         "description": "Single size or array of sizes",
                                         "oneOf": [
                                             {
                                                 "type": "string",
+                                                "example": "medium",
                                                 "enum": [
                                                     "startup",
                                                     "micro",
                                                     "small",
                                                     "medium",
                                                     "large"
-                                                ],
-                                                "example": "medium"
+                                                ]
                                             },
                                             {
                                                 "type": "array",
@@ -9590,11 +9590,11 @@
                                     },
                                     "service_provider_type": {
                                         "type": "string",
+                                        "nullable": true,
                                         "enum": [
                                             "annual_maintenance_contract",
                                             "critical_service_provider"
-                                        ],
-                                        "nullable": true
+                                        ]
                                     },
                                     "is_mandatory": {
                                         "type": "boolean",
@@ -10602,8 +10602,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -11504,14 +11504,14 @@
                                     },
                                     "deviceType": {
                                         "type": "string",
+                                        "example": "web",
                                         "enum": [
                                             "web",
                                             "tablet",
                                             "mobile",
                                             "ios",
                                             "android"
-                                        ],
-                                        "example": "web"
+                                        ]
                                     },
                                     "deviceName": {
                                         "type": "string",
@@ -11633,14 +11633,14 @@
                                     "deviceType": {
                                         "description": "Device class of the attempted login; scopes the conflict check so a mobile login only reports another mobile session, not the web session.",
                                         "type": "string",
+                                        "example": "android",
                                         "enum": [
                                             "web",
                                             "tablet",
                                             "mobile",
                                             "ios",
                                             "android"
-                                        ],
-                                        "example": "android"
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -11715,9 +11715,9 @@
                                     },
                                     "otp": {
                                         "type": "string",
+                                        "example": "123456",
                                         "maxLength": 6,
-                                        "minLength": 6,
-                                        "example": "123456"
+                                        "minLength": 6
                                     }
                                 },
                                 "type": "object"
@@ -12310,8 +12310,8 @@
                                     "new_password": {
                                         "type": "string",
                                         "format": "password",
-                                        "minLength": 7,
-                                        "example": "newPassword123"
+                                        "example": "newPassword123",
+                                        "minLength": 7
                                     },
                                     "new_password_confirmation": {
                                         "type": "string",
@@ -12557,8 +12557,8 @@
                                     "password": {
                                         "type": "string",
                                         "format": "password",
-                                        "minLength": 7,
-                                        "example": "newPassword123!"
+                                        "example": "newPassword123!",
+                                        "minLength": 7
                                     },
                                     "password_confirmation": {
                                         "type": "string",
@@ -12647,18 +12647,18 @@
                                 "properties": {
                                     "organization_name": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "ABC Manufacturing Pvt Ltd"
+                                        "example": "ABC Manufacturing Pvt Ltd",
+                                        "maxLength": 255
                                     },
                                     "first_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "John"
+                                        "example": "John",
+                                        "maxLength": 100
                                     },
                                     "last_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Doe"
+                                        "example": "Doe",
+                                        "maxLength": 100
                                     },
                                     "email": {
                                         "type": "string",
@@ -12760,9 +12760,9 @@
                                     },
                                     "otp": {
                                         "type": "string",
+                                        "example": "123456",
                                         "maxLength": 6,
-                                        "minLength": 6,
-                                        "example": "123456"
+                                        "minLength": 6
                                     }
                                 },
                                 "type": "object"
@@ -13186,14 +13186,14 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "active",
                             "enum": [
                                 "draft",
                                 "active",
                                 "suspended",
                                 "revoked",
                                 "expired"
-                            ],
-                            "example": "active"
+                            ]
                         }
                     },
                     {
@@ -13203,13 +13203,13 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "initial",
                             "enum": [
                                 "initial",
                                 "renewal",
                                 "upgrade",
                                 "surveillance"
-                            ],
-                            "example": "initial"
+                            ]
                         }
                     },
                     {
@@ -13229,8 +13229,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -13923,14 +13923,14 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "scheduled",
                             "enum": [
                                 "scheduled",
                                 "rescheduled",
                                 "in_progress",
                                 "completed",
                                 "cancelled"
-                            ],
-                            "example": "scheduled"
+                            ]
                         }
                     },
                     {
@@ -13972,8 +13972,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -14141,8 +14141,8 @@
                                     },
                                     "title": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "Quarterly Application Review"
+                                        "example": "Quarterly Application Review",
+                                        "maxLength": 255
                                     },
                                     "meetingDate": {
                                         "description": "Must be after today",
@@ -14157,8 +14157,8 @@
                                     },
                                     "venue": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "Conference Room A"
+                                        "example": "Conference Room A",
+                                        "maxLength": 255
                                     },
                                     "agenda": {
                                         "type": "string",
@@ -14577,8 +14577,8 @@
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "Updated Meeting Title"
+                                        "example": "Updated Meeting Title",
+                                        "maxLength": 255
                                     },
                                     "meeting_date": {
                                         "type": "string",
@@ -14591,8 +14591,8 @@
                                     },
                                     "venue": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "Conference Room B"
+                                        "example": "Conference Room B",
+                                        "maxLength": 255
                                     },
                                     "agenda": {
                                         "type": "string",
@@ -15581,12 +15581,12 @@
                                     },
                                     "role": {
                                         "type": "string",
+                                        "example": "member",
                                         "enum": [
                                             "chair",
                                             "convenor",
                                             "member"
-                                        ],
-                                        "example": "member"
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -15673,12 +15673,12 @@
                                 "properties": {
                                     "role": {
                                         "type": "string",
+                                        "example": "convenor",
                                         "enum": [
                                             "chair",
                                             "convenor",
                                             "member"
-                                        ],
-                                        "example": "convenor"
+                                        ]
                                     },
                                     "attended": {
                                         "type": "boolean",
@@ -16053,8 +16053,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -16248,8 +16248,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -16340,11 +16340,11 @@
                                     },
                                     "sector": {
                                         "type": "string",
+                                        "example": "manufacturing",
                                         "enum": [
                                             "manufacturing",
                                             "service"
-                                        ],
-                                        "example": "manufacturing"
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -16670,8 +16670,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -16872,9 +16872,9 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "contract",
                             "maxLength": 100,
-                            "minLength": 2,
-                            "example": "contract"
+                            "minLength": 2
                         }
                     },
                     {
@@ -17332,8 +17332,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     }
                 ],
@@ -17477,14 +17477,14 @@
                                     "invstr": {
                                         "description": "Portal invoice reference",
                                         "type": "string",
-                                        "maxLength": 20,
-                                        "example": "SAMAR/2026-27/00001"
+                                        "example": "SAMAR/2026-27/00001",
+                                        "maxLength": 20
                                     },
                                     "erp_invstr": {
                                         "description": "ERP-side invoice number",
                                         "type": "string",
-                                        "maxLength": 20,
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 20
                                     },
                                     "pdfstr": {
                                         "description": "Base64-encoded PDF",
@@ -17636,8 +17636,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -17708,8 +17708,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 10,
-                            "example": 10
+                            "example": 10,
+                            "default": 10
                         }
                     }
                 ],
@@ -17774,13 +17774,13 @@
                                 "properties": {
                                     "status": {
                                         "type": "string",
+                                        "example": "resolved",
                                         "enum": [
                                             "active",
                                             "resolved",
                                             "ignored",
                                             "archived"
-                                        ],
-                                        "example": "resolved"
+                                        ]
                                     },
                                     "assignedTo": {
                                         "description": "User ID to assign this error group to",
@@ -17975,8 +17975,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -18111,14 +18111,14 @@
                                 "properties": {
                                     "status": {
                                         "type": "string",
+                                        "example": "resolved",
                                         "enum": [
                                             "new",
                                             "investigating",
                                             "resolved",
                                             "ignored",
                                             "archived"
-                                        ],
-                                        "example": "resolved"
+                                        ]
                                     },
                                     "resolutionNotes": {
                                         "type": "string",
@@ -18184,8 +18184,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 30,
-                            "example": 30
+                            "example": 30,
+                            "default": 30
                         }
                     }
                 ],
@@ -18477,22 +18477,22 @@
                                 "properties": {
                                     "sector": {
                                         "type": "string",
+                                        "example": "manufacturing",
                                         "enum": [
                                             "manufacturing",
                                             "service"
-                                        ],
-                                        "example": "manufacturing"
+                                        ]
                                     },
                                     "enterpriseSize": {
                                         "type": "string",
+                                        "example": "micro",
                                         "enum": [
                                             "startup",
                                             "micro",
                                             "small",
                                             "medium",
                                             "large"
-                                        ],
-                                        "example": "micro"
+                                        ]
                                     },
                                     "baseCertificationFee": {
                                         "description": "Base certification fee amount",
@@ -18821,22 +18821,22 @@
                                 "properties": {
                                     "sector": {
                                         "type": "string",
+                                        "example": "manufacturing",
                                         "enum": [
                                             "manufacturing",
                                             "service"
-                                        ],
-                                        "example": "manufacturing"
+                                        ]
                                     },
                                     "enterpriseSize": {
                                         "type": "string",
+                                        "example": "micro",
                                         "enum": [
                                             "startup",
                                             "micro",
                                             "small",
                                             "medium",
                                             "large"
-                                        ],
-                                        "example": "micro"
+                                        ]
                                     },
                                     "baseCertificationFee": {
                                         "type": "number",
@@ -19161,23 +19161,23 @@
                                     "questionText": {
                                         "description": "The question text",
                                         "type": "string",
-                                        "maxLength": 1000,
-                                        "example": "How satisfied are you with the assessment process?"
+                                        "example": "How satisfied are you with the assessment process?",
+                                        "maxLength": 1000
                                     },
                                     "type": {
                                         "description": "Question type",
                                         "type": "string",
+                                        "example": "rating",
                                         "enum": [
                                             "rating",
                                             "yes_no"
-                                        ],
-                                        "example": "rating"
+                                        ]
                                     },
                                     "displayOrder": {
                                         "description": "Display order (optional)",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "example": 1
+                                        "example": 1,
+                                        "minimum": 0
                                     },
                                     "isActive": {
                                         "description": "Active status (optional)",
@@ -19426,21 +19426,21 @@
                                 "properties": {
                                     "questionText": {
                                         "type": "string",
-                                        "maxLength": 1000,
-                                        "example": "How satisfied are you with the assessment process?"
+                                        "example": "How satisfied are you with the assessment process?",
+                                        "maxLength": 1000
                                     },
                                     "type": {
                                         "type": "string",
+                                        "example": "rating",
                                         "enum": [
                                             "rating",
                                             "yes_no"
-                                        ],
-                                        "example": "rating"
+                                        ]
                                     },
                                     "displayOrder": {
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "example": 1
+                                        "example": 1,
+                                        "minimum": 0
                                     },
                                     "isActive": {
                                         "type": "boolean",
@@ -19840,8 +19840,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -19999,8 +19999,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -20346,8 +20346,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -20639,8 +20639,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -20932,8 +20932,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -21225,8 +21225,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -21517,8 +21517,8 @@
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "ABC Manufacturing Pvt Ltd"
+                                        "example": "ABC Manufacturing Pvt Ltd",
+                                        "maxLength": 255
                                     },
                                     "email": {
                                         "type": "string",
@@ -21650,9 +21650,9 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "ABC Manufacturing",
                             "maxLength": 100,
-                            "minLength": 2,
-                            "example": "ABC Manufacturing"
+                            "minLength": 2
                         }
                     },
                     {
@@ -21662,13 +21662,13 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "active",
                             "enum": [
                                 "active",
                                 "inactive",
                                 "pending",
                                 "suspended"
-                            ],
-                            "example": "active"
+                            ]
                         }
                     },
                     {
@@ -21698,14 +21698,14 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "certified",
                             "enum": [
                                 "certified",
                                 "expired",
                                 "never_certified",
                                 "suspended",
                                 "revoked"
-                            ],
-                            "example": "certified"
+                            ]
                         }
                     },
                     {
@@ -21715,8 +21715,8 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "maxLength": 100,
-                            "example": "Maharashtra"
+                            "example": "Maharashtra",
+                            "maxLength": 100
                         }
                     },
                     {
@@ -22252,9 +22252,9 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "ABC Manufacturing",
                             "maxLength": 100,
-                            "minLength": 2,
-                            "example": "ABC Manufacturing"
+                            "minLength": 2
                         }
                     },
                     {
@@ -22264,13 +22264,13 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "active",
                             "enum": [
                                 "active",
                                 "inactive",
                                 "pending",
                                 "suspended"
-                            ],
-                            "example": "active"
+                            ]
                         }
                     },
                     {
@@ -22300,14 +22300,14 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "certified",
                             "enum": [
                                 "certified",
                                 "expired",
                                 "never_certified",
                                 "suspended",
                                 "revoked"
-                            ],
-                            "example": "certified"
+                            ]
                         }
                     },
                     {
@@ -22317,8 +22317,8 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "maxLength": 100,
-                            "example": "Maharashtra"
+                            "example": "Maharashtra",
+                            "maxLength": 100
                         }
                     }
                 ],
@@ -22754,9 +22754,9 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "SAMAR-19",
                             "maxLength": 100,
-                            "minLength": 2,
-                            "example": "SAMAR-19"
+                            "minLength": 2
                         }
                     },
                     {
@@ -22776,14 +22776,14 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "application_fee",
                             "enum": [
                                 "application_fee",
                                 "assessment_fee",
                                 "certification_fee",
                                 "surveillance_fee",
                                 "other"
-                            ],
-                            "example": "application_fee"
+                            ]
                         }
                     },
                     {
@@ -22815,8 +22815,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 15,
-                            "example": 15
+                            "example": 15,
+                            "default": 15
                         }
                     }
                 ],
@@ -23593,8 +23593,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -23890,8 +23890,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -24187,8 +24187,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -24485,8 +24485,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -24788,8 +24788,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -25086,8 +25086,8 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "default": false,
-                            "example": true
+                            "example": true,
+                            "default": false
                         }
                     },
                     {
@@ -25367,13 +25367,13 @@
                                     "priority": {
                                         "description": "Priority level",
                                         "type": "string",
+                                        "example": "medium",
                                         "enum": [
                                             "low",
                                             "medium",
                                             "high",
                                             "urgent"
-                                        ],
-                                        "example": "medium"
+                                        ]
                                     },
                                     "user_role": {
                                         "description": "User role (mandatory)",
@@ -25655,8 +25655,8 @@
                                     "key": {
                                         "description": "Unique setting key",
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "site_name"
+                                        "example": "site_name",
+                                        "maxLength": 100
                                     },
                                     "value": {
                                         "description": "Setting value",
@@ -25666,8 +25666,8 @@
                                     "description": {
                                         "description": "Optional description of the setting",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "The name of the site"
+                                        "example": "The name of the site",
+                                        "maxLength": 255
                                     }
                                 },
                                 "type": "object"
@@ -25922,8 +25922,8 @@
                                     "description": {
                                         "description": "Optional updated description",
                                         "type": "string",
-                                        "maxLength": 255,
-                                        "example": "Updated description"
+                                        "example": "Updated description",
+                                        "maxLength": 255
                                     }
                                 },
                                 "type": "object"
@@ -26125,8 +26125,8 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "minimum": 1,
-                            "example": 1
+                            "example": 1,
+                            "minimum": 1
                         }
                     },
                     {
@@ -26136,9 +26136,9 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
+                            "example": 15,
                             "maximum": 100,
-                            "minimum": 1,
-                            "example": 15
+                            "minimum": 1
                         }
                     },
                     {
@@ -26988,20 +26988,20 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 320,
-                                        "example": "new.spoke@example.com"
+                                        "example": "new.spoke@example.com",
+                                        "maxLength": 320
                                     },
                                     "name": {
                                         "type": "string",
-                                        "maxLength": 100,
                                         "example": "Jane Doe",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "designation": {
                                         "type": "string",
-                                        "maxLength": 100,
                                         "example": "Plant Manager",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "mobile": {
                                         "description": "10 digit mobile number",
@@ -27187,12 +27187,12 @@
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "example": "active",
                             "enum": [
                                 "active",
                                 "inactive",
                                 "suspended"
-                            ],
-                            "example": "active"
+                            ]
                         }
                     },
                     {
@@ -27467,19 +27467,19 @@
                                 "properties": {
                                     "first_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "John"
+                                        "example": "John",
+                                        "maxLength": 100
                                     },
                                     "last_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Doe"
+                                        "example": "Doe",
+                                        "maxLength": 100
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 255,
-                                        "example": "john.doe@example.com"
+                                        "example": "john.doe@example.com",
+                                        "maxLength": 255
                                     },
                                     "mobile_number": {
                                         "type": "string",
@@ -27492,32 +27492,32 @@
                                     },
                                     "designation": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Manager"
+                                        "example": "Manager",
+                                        "maxLength": 100
                                     },
                                     "district": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Mumbai"
+                                        "example": "Mumbai",
+                                        "maxLength": 100
                                     },
                                     "state": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Maharashtra"
+                                        "example": "Maharashtra",
+                                        "maxLength": 100
                                     },
                                     "address": {
                                         "description": "Full street address",
                                         "type": "string",
-                                        "maxLength": 500,
                                         "example": "123 Main Street, Building A",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "city": {
                                         "description": "City name",
                                         "type": "string",
-                                        "maxLength": 100,
                                         "example": "Mumbai",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "pincode": {
                                         "description": "6-digit Indian PIN code",
@@ -27528,8 +27528,8 @@
                                     },
                                     "password": {
                                         "type": "string",
-                                        "minLength": 7,
-                                        "example": "password123"
+                                        "example": "password123",
+                                        "minLength": 7
                                     },
                                     "password_confirmation": {
                                         "type": "string",
@@ -27537,14 +27537,14 @@
                                     },
                                     "status": {
                                         "type": "string",
+                                        "example": "invited",
                                         "enum": [
                                             "invited",
                                             "pending_verification",
                                             "active",
                                             "inactive",
                                             "suspended"
-                                        ],
-                                        "example": "invited"
+                                        ]
                                     },
                                     "roles": {
                                         "description": "Array of role assignments. A single user can be assigned to multiple units by providing multiple role objects.",
@@ -27979,19 +27979,19 @@
                                 "properties": {
                                     "first_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "John"
+                                        "example": "John",
+                                        "maxLength": 100
                                     },
                                     "last_name": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Doe"
+                                        "example": "Doe",
+                                        "maxLength": 100
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "maxLength": 255,
-                                        "example": "john.doe@example.com"
+                                        "example": "john.doe@example.com",
+                                        "maxLength": 255
                                     },
                                     "mobile_number": {
                                         "type": "string",
@@ -28000,32 +28000,32 @@
                                     },
                                     "designation": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Senior Manager"
+                                        "example": "Senior Manager",
+                                        "maxLength": 100
                                     },
                                     "district": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Mumbai"
+                                        "example": "Mumbai",
+                                        "maxLength": 100
                                     },
                                     "state": {
                                         "type": "string",
-                                        "maxLength": 100,
-                                        "example": "Maharashtra"
+                                        "example": "Maharashtra",
+                                        "maxLength": 100
                                     },
                                     "address": {
                                         "description": "Full street address",
                                         "type": "string",
-                                        "maxLength": 500,
                                         "example": "123 Main Street, Building A",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 500
                                     },
                                     "city": {
                                         "description": "City name",
                                         "type": "string",
-                                        "maxLength": 100,
                                         "example": "Mumbai",
-                                        "nullable": true
+                                        "nullable": true,
+                                        "maxLength": 100
                                     },
                                     "pincode": {
                                         "description": "6-digit Indian PIN code",
@@ -28037,8 +28037,8 @@
                                     "password": {
                                         "description": "Only for self-update or admin",
                                         "type": "string",
-                                        "minLength": 7,
-                                        "example": "newPassword123"
+                                        "example": "newPassword123",
+                                        "minLength": 7
                                     },
                                     "password_confirmation": {
                                         "type": "string",
@@ -28052,12 +28052,12 @@
                                     "status": {
                                         "description": "Admin only",
                                         "type": "string",
+                                        "example": "active",
                                         "enum": [
                                             "active",
                                             "inactive",
                                             "suspended"
-                                        ],
-                                        "example": "active"
+                                        ]
                                     },
                                     "organization_id": {
                                         "description": "Admin only",

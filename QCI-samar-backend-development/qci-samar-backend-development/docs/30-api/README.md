@@ -642,6 +642,8 @@ php artisan l5-swagger:generate
 **View**:
 - Swagger UI: `/api/documentation`
 
+**Documenting an endpoint**: use swagger-php PHP attributes (`use OpenApi\Attributes as OA;`, then `#[OA\Get(...)]` etc.) on the controller method. swagger-php 6 (l5-swagger 11) no longer reads `@OA\...` docblock annotations, so an endpoint documented in a docblock is silently left out of the spec.
+
 ---
 
 ### Postman Collection

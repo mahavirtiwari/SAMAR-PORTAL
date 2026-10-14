@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
 class ErpDocumentController extends Controller
 {
@@ -19,33 +20,49 @@ class ErpDocumentController extends Controller
      * replaces the file in place (idempotent on invstr + pdffor). It is served
      * only through InvoiceController's organisation-scoped endpoints, never the
      * generic documents list.
-     *
-     * @OA\Post(
-     *     path="/api/v1/erp/documents/upload",
-     *     summary="Receive an invoice or receipt PDF from the ERP (Business Central)",
-     *     tags={"ERP Integration"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"invstr","pdfstr","pdffor"},
-     *
-     *             @OA\Property(property="invstr", type="string", maxLength=20, example="SAMAR/2026-27/00001", description="Portal invoice reference"),
-     *             @OA\Property(property="erp_invstr", type="string", maxLength=20, nullable=true, description="ERP-side invoice number"),
-     *             @OA\Property(property="pdfstr", type="string", description="Base64-encoded PDF"),
-     *             @OA\Property(property="pdffor", type="string", enum={"i","r"}, description="i = invoice PDF, r = receipt PDF")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="PDF attached"),
-     *     @OA\Response(response=200, description="PDF replaced"),
-     *     @OA\Response(response=422, description="Validation failed"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not the ERP service account")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/erp/documents/upload',
+        summary: 'Receive an invoice or receipt PDF from the ERP (Business Central)',
+        tags: ['ERP Integration'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['invstr', 'pdfstr', 'pdffor'],
+                properties: [
+                    new OA\Property(
+                        property: 'invstr',
+                        type: 'string',
+                        maxLength: 20,
+                        example: 'SAMAR/2026-27/00001',
+                        description: 'Portal invoice reference',
+                    ),
+                    new OA\Property(
+                        property: 'erp_invstr',
+                        type: 'string',
+                        maxLength: 20,
+                        nullable: true,
+                        description: 'ERP-side invoice number',
+                    ),
+                    new OA\Property(property: 'pdfstr', type: 'string', description: 'Base64-encoded PDF'),
+                    new OA\Property(
+                        property: 'pdffor',
+                        type: 'string',
+                        enum: ['i', 'r'],
+                        description: 'i = invoice PDF, r = receipt PDF',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'PDF attached'),
+            new OA\Response(response: 200, description: 'PDF replaced'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not the ERP service account'),
+        ],
+    )]
     public function upload(ErpDocumentUploadRequest $request): JsonResponse
     {
         $data = $request->validated();

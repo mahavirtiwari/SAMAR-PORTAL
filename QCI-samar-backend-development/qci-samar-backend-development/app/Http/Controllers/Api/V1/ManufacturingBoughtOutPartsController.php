@@ -13,78 +13,77 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Manufacturing Master Data",
- *     description="Manufacturing sector master data management (System Admin only)"
- * )
- */
+#[OA\Tag(
+    name: 'Manufacturing Master Data',
+    description: 'Manufacturing sector master data management (System Admin only)',
+)]
 class ManufacturingBoughtOutPartsController extends Controller
 {
     /**
      * List all manufacturing bought-out parts.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts",
-     *     summary="List all manufacturing bought-out parts",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by part name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of bought-out parts",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Bought-out parts retrieved successfully"),
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object")),
-     *             @OA\Property(
-     *                 property="pagination",
-     *                 type="object",
-     *                 @OA\Property(property="currentPage", type="integer", example=1),
-     *                 @OA\Property(property="perPage", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=0),
-     *                 @OA\Property(property="lastPage", type="integer", example=1),
-     *                 @OA\Property(property="from", type="integer", nullable=true, example=null),
-     *                 @OA\Property(property="to", type="integer", nullable=true, example=null)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts',
+        summary: 'List all manufacturing bought-out parts',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by part name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of bought-out parts',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Bought-out parts retrieved successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(type: 'object')),
+                        new OA\Property(
+                            property: 'pagination',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                                new OA\Property(property: 'perPage', type: 'integer', example: 15),
+                                new OA\Property(property: 'total', type: 'integer', example: 0),
+                                new OA\Property(property: 'lastPage', type: 'integer', example: 1),
+                                new OA\Property(property: 'from', type: 'integer', nullable: true, example: null),
+                                new OA\Property(property: 'to', type: 'integer', nullable: true, example: null),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -119,29 +118,28 @@ class ManufacturingBoughtOutPartsController extends Controller
 
     /**
      * Create a new manufacturing bought-out part.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts",
-     *     summary="Create a new manufacturing bought-out part",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"part_name"},
-     *
-     *             @OA\Property(property="partName", type="string", example="Adaptors"),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Part created successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts',
+        summary: 'Create a new manufacturing bought-out part',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['part_name'],
+                properties: [
+                    new OA\Property(property: 'partName', type: 'string', example: 'Adaptors'),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Part created successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -179,19 +177,20 @@ class ManufacturingBoughtOutPartsController extends Controller
 
     /**
      * Get a specific manufacturing bought-out part.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts/{id}",
-     *     summary="Get a specific manufacturing bought-out part",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Part details"),
-     *     @OA\Response(response=404, description="Part not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts/{id}',
+        summary: 'Get a specific manufacturing bought-out part',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Part details'),
+            new OA\Response(response: 404, description: 'Part not found'),
+        ],
+    )]
     public function show(ManufacturingBoughtOutPart $boughtOutPart): JsonResponse
     {
         try {
@@ -205,30 +204,30 @@ class ManufacturingBoughtOutPartsController extends Controller
 
     /**
      * Update a manufacturing bought-out part.
-     *
-     * @OA\Put(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts/{id}",
-     *     summary="Update a manufacturing bought-out part",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="partName", type="string"),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Part updated successfully"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Part not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts/{id}',
+        summary: 'Update a manufacturing bought-out part',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'partName', type: 'string'),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Part updated successfully'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Part not found'),
+        ],
+    )]
     public function update(Request $request, ManufacturingBoughtOutPart $boughtOutPart): JsonResponse
     {
         try {
@@ -264,23 +263,24 @@ class ManufacturingBoughtOutPartsController extends Controller
 
     /**
      * Activate a manufacturing bought-out part.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts/{id}/activate",
-     *     summary="Activate a manufacturing bought-out part",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Bought-out part activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Bought-out part is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Bought-out part not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts/{id}/activate',
+        summary: 'Activate a manufacturing bought-out part',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Bought-out part activated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Bought-out part is already active'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Bought-out part not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -317,23 +317,24 @@ class ManufacturingBoughtOutPartsController extends Controller
 
     /**
      * Deactivate a manufacturing bought-out part.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/bought-out-parts/{id}/deactivate",
-     *     summary="Deactivate a manufacturing bought-out part",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Bought-out part deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Bought-out part is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Bought-out part not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/bought-out-parts/{id}/deactivate',
+        summary: 'Deactivate a manufacturing bought-out part',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Bought-out part deactivated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Bought-out part is already inactive'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Bought-out part not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

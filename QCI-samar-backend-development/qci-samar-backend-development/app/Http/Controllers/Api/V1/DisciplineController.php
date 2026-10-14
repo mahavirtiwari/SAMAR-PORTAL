@@ -16,86 +16,62 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Disciplines",
- *     description="Discipline management endpoints"
- * )
- */
+#[OA\Tag(name: 'Disciplines', description: 'Discipline management endpoints')]
 class DisciplineController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/disciplines",
-     *     summary="List all disciplines",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Disciplines retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - conflicting parameters"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/disciplines',
+        summary: 'List all disciplines',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Disciplines retrieved successfully'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -130,38 +106,32 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/disciplines",
-     *     summary="Create a new discipline",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"name", "sector"},
-     *
-     *             @OA\Property(property="name", type="string", example="Leadership & Management"),
-     *             @OA\Property(property="sector", type="string", enum={"manufacturing", "service"}, example="manufacturing")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Discipline created successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/disciplines',
+        summary: 'Create a new discipline',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name', 'sector'],
+                properties: [
+                    new OA\Property(property: 'name', type: 'string', example: 'Leadership & Management'),
+                    new OA\Property(
+                        property: 'sector',
+                        type: 'string',
+                        enum: ['manufacturing', 'service'],
+                        example: 'manufacturing',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Discipline created successfully'),
+            new OA\Response(response: 400, description: 'Validation error'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function store(StoreDisciplineRequest $request): JsonResponse
     {
         try {
@@ -183,39 +153,25 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/disciplines/{id}",
-     *     summary="Get discipline details with parameters",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="includeParameters",
-     *         in="query",
-     *         description="Include related parameters",
-     *
-     *         @OA\Schema(type="boolean", default=false)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Discipline retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Discipline not found"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/disciplines/{id}',
+        summary: 'Get discipline details with parameters',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(
+                name: 'includeParameters',
+                in: 'query',
+                description: 'Include related parameters',
+                schema: new OA\Schema(type: 'boolean', default: false),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Discipline retrieved successfully'),
+            new OA\Response(response: 404, description: 'Discipline not found'),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         try {
@@ -234,45 +190,29 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/disciplines/{id}",
-     *     summary="Update a discipline",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="sector", type="string", enum={"manufacturing", "service"})
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Discipline updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Discipline not found"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/disciplines/{id}',
+        summary: 'Update a discipline',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'name', type: 'string'),
+                    new OA\Property(property: 'sector', type: 'string', enum: ['manufacturing', 'service']),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Discipline updated successfully'),
+            new OA\Response(response: 404, description: 'Discipline not found'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function update(UpdateDisciplineRequest $request, int $id): JsonResponse
     {
         try {
@@ -296,39 +236,41 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Patch(
-     *     path="/api/v1/disciplines/{id}/activate",
-     *     summary="Activate a discipline",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Discipline ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Discipline activated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Discipline activated successfully."),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Discipline is already active"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Discipline not found")
-     * )
-     */
+    #[OA\Patch(
+        path: '/api/v1/disciplines/{id}/activate',
+        summary: 'Activate a discipline',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Discipline ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Discipline activated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Discipline activated successfully.',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Discipline is already active'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Discipline not found'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -363,39 +305,41 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Patch(
-     *     path="/api/v1/disciplines/{id}/deactivate",
-     *     summary="Deactivate a discipline",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Discipline ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Discipline deactivated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Discipline deactivated successfully."),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Discipline is already inactive"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Discipline not found")
-     * )
-     */
+    #[OA\Patch(
+        path: '/api/v1/disciplines/{id}/deactivate',
+        summary: 'Deactivate a discipline',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Discipline ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Discipline deactivated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Discipline deactivated successfully.',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Discipline is already inactive'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Discipline not found'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {
@@ -430,50 +374,43 @@ class DisciplineController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/disciplines/export",
-     *     summary="Export disciplines to CSV",
-     *     tags={"Disciplines", "System Admin - Disciplines", "DRDO Admin - Disciplines"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="is_active",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/csv"
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/disciplines/export',
+        summary: 'Export disciplines to CSV',
+        tags: ['Disciplines', 'System Admin - Disciplines', 'DRDO Admin - Disciplines'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'is_active',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(mediaType: 'text/csv'),
+                ],
+            ),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function export(DisciplineExportRequest $request): StreamedResponse|JsonResponse
     {
         Gate::authorize('viewAny', Discipline::class);

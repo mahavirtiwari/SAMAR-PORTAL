@@ -33,14 +33,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Applications",
- *     description="Application management endpoints"
- * )
- */
+#[OA\Tag(name: 'Applications', description: 'Application management endpoints')]
 class ApplicationController extends Controller
 {
     /**
@@ -179,159 +175,136 @@ class ApplicationController extends Controller
         return true;
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications",
-     *     summary="List all applications",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by status",
-     *
-     *         @OA\Schema(type="string", enum={"draft", "drdo_approval_pending", "payment_pending", "payment_completed", "in_progress", "certified", "rejected"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="enterprise_classification",
-     *         in="query",
-     *         description="Filter by enterprise classification",
-     *
-     *         @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="query",
-     *         description="Filter by application type (new/renewal)",
-     *
-     *         @OA\Schema(type="string", enum={"new", "renewal"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="unitId",
-     *         in="query",
-     *         description="Filter to a single unit's applications",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="q",
-     *         in="query",
-     *         description="Search by application number",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="applicationDateFrom",
-     *         in="query",
-     *         description="Filter applications submitted from this date (format: Y-m-d, e.g., 2025-01-15)",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-01-15")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="applicationDateTo",
-     *         in="query",
-     *         description="Filter applications submitted up to this date (format: Y-m-d, e.g., 2025-01-31)",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-01-31")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessmentStartFrom",
-     *         in="query",
-     *         description="Filter assessments starting from this date (format: Y-m-d, e.g., 2025-02-01). Uses actual_start_date if available, otherwise scheduled_start_date",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-02-01")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessmentStartTo",
-     *         in="query",
-     *         description="Filter assessments starting up to this date (format: Y-m-d, e.g., 2025-02-15). Uses actual_start_date if available, otherwise scheduled_start_date",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-02-15")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessmentEndFrom",
-     *         in="query",
-     *         description="Filter assessments ending from this date (format: Y-m-d, e.g., 2025-02-20). Uses actual_end_date if available, otherwise scheduled_end_date",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-02-20")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessmentEndTo",
-     *         in="query",
-     *         description="Filter assessments ending up to this date (format: Y-m-d, e.g., 2025-02-28). Uses actual_end_date if available, otherwise scheduled_end_date",
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-02-28")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="paymentStatus",
-     *         in="query",
-     *         description="Filter by payment status",
-     *
-     *         @OA\Schema(type="string", enum={"pending", "success", "failed"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="ratingMin",
-     *         in="query",
-     *         description="Filter applications with minimum percentage score (0-100)",
-     *
-     *         @OA\Schema(type="number", format="float", minimum=0, maximum=100, example=75.0)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="ratingMax",
-     *         in="query",
-     *         description="Filter applications with maximum percentage score (0-100)",
-     *
-     *         @OA\Schema(type="number", format="float", minimum=0, maximum=100, example=95.0)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Applications retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications',
+        summary: 'List all applications',
+        tags: [
+            'Application',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by status',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: [
+                        'draft',
+                        'drdo_approval_pending',
+                        'payment_pending',
+                        'payment_completed',
+                        'in_progress',
+                        'certified',
+                        'rejected',
+                    ],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'enterprise_classification',
+                in: 'query',
+                description: 'Filter by enterprise classification',
+                schema: new OA\Schema(type: 'string', enum: ['startup', 'micro', 'small', 'medium', 'large']),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'query',
+                description: 'Filter by application type (new/renewal)',
+                schema: new OA\Schema(type: 'string', enum: ['new', 'renewal']),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'unitId',
+                in: 'query',
+                description: 'Filter to a single unit\'s applications',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                description: 'Search by application number',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'applicationDateFrom',
+                in: 'query',
+                description: 'Filter applications submitted from this date (format: Y-m-d, e.g., 2025-01-15)',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-01-15'),
+            ),
+            new OA\Parameter(
+                name: 'applicationDateTo',
+                in: 'query',
+                description: 'Filter applications submitted up to this date (format: Y-m-d, e.g., 2025-01-31)',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-01-31'),
+            ),
+            new OA\Parameter(
+                name: 'assessmentStartFrom',
+                in: 'query',
+                description: 'Filter assessments starting from this date (format: Y-m-d, e.g., 2025-02-01). Uses actual_start_date if available, otherwise scheduled_start_date',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-02-01'),
+            ),
+            new OA\Parameter(
+                name: 'assessmentStartTo',
+                in: 'query',
+                description: 'Filter assessments starting up to this date (format: Y-m-d, e.g., 2025-02-15). Uses actual_start_date if available, otherwise scheduled_start_date',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-02-15'),
+            ),
+            new OA\Parameter(
+                name: 'assessmentEndFrom',
+                in: 'query',
+                description: 'Filter assessments ending from this date (format: Y-m-d, e.g., 2025-02-20). Uses actual_end_date if available, otherwise scheduled_end_date',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-02-20'),
+            ),
+            new OA\Parameter(
+                name: 'assessmentEndTo',
+                in: 'query',
+                description: 'Filter assessments ending up to this date (format: Y-m-d, e.g., 2025-02-28). Uses actual_end_date if available, otherwise scheduled_end_date',
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-02-28'),
+            ),
+            new OA\Parameter(
+                name: 'paymentStatus',
+                in: 'query',
+                description: 'Filter by payment status',
+                schema: new OA\Schema(type: 'string', enum: ['pending', 'success', 'failed']),
+            ),
+            new OA\Parameter(
+                name: 'ratingMin',
+                in: 'query',
+                description: 'Filter applications with minimum percentage score (0-100)',
+                schema: new OA\Schema(type: 'number', format: 'float', minimum: 0, maximum: 100, example: 75.0),
+            ),
+            new OA\Parameter(
+                name: 'ratingMax',
+                in: 'query',
+                description: 'Filter applications with maximum percentage score (0-100)',
+                schema: new OA\Schema(type: 'number', format: 'float', minimum: 0, maximum: 100, example: 95.0),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Applications retrieved successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -535,187 +508,639 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/manufacturing/draft",
-     *     summary="Save partial manufacturing application as draft",
-     *     description="Save a manufacturing application draft with minimal validation. All fields are optional. A unit is automatically created from application data. If a draft already exists for the organization and sector, it will be updated.",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *
-     *                 @OA\Property(property="organizationId", type="integer", nullable=true, description="Organization ID (auto-derived from authenticated user if not provided)"),
-     *                 @OA\Property(property="applicationType", type="string", enum={"new", "renewal"}, nullable=true, description="Application type"),
-     *                 @OA\Property(property="isExistingDrdoVendor", type="boolean", nullable=true, description="Is existing DRDO vendor"),
-     *                 @OA\Property(property="vendorCategory", type="string", maxLength=100, nullable=true, description="DRDO vendor category"),
-     *                 @OA\Property(property="mfgDrdoVendorStores", type="array", @OA\Items(type="object", @OA\Property(property="storeName", type="string")), nullable=true, description="DRDO vendor stores (manufacturing only) - array of objects with storeName"),
-     *                 @OA\Property(property="drdoRegistrationNumber", type="string", maxLength=255, nullable=true, description="DRDO registration number"),
-     *                 @OA\Property(property="drdoCertificateFile", type="string", format="binary", nullable=true, description="DRDO certificate file"),
-     *                 @OA\Property(property="enterpriseClassification", type="string", enum={"startup", "micro", "small", "medium", "large"}, nullable=true, description="Enterprise classification"),
-     *                 @OA\Property(property="enterpriseName", type="string", maxLength=255, nullable=true, description="Enterprise name"),
-     *                 @OA\Property(property="registeredOfficeAddress", type="string", maxLength=500, nullable=true, description="Registered office address"),
-     *                 @OA\Property(property="registeredOfficeState", type="string", maxLength=100, nullable=true, description="Registered office state (used in application number generation)"),
-     *                 @OA\Property(property="registeredOfficeDistrict", type="string", maxLength=100, nullable=true, description="Registered office district"),
-     *                 @OA\Property(property="registeredOfficePinCode", type="string", maxLength=10, nullable=true, description="Registered office PIN code"),
-     *                 @OA\Property(property="registeredOfficeMobile", type="string", maxLength=10, nullable=true, description="Registered office mobile"),
-     *                 @OA\Property(property="registeredOfficeLandline", type="string", maxLength=12, nullable=true, description="Registered office landline"),
-     *                 @OA\Property(property="registeredOfficeEmail", type="string", format="email", maxLength=320, nullable=true, description="Registered office email"),
-     *                 @OA\Property(property="registeredOfficeAlternateEmail", type="string", format="email", maxLength=320, nullable=true, description="Registered office alternate email"),
-     *                 @OA\Property(property="unitAddress", type="string", maxLength=500, nullable=true, description="Unit address"),
-     *                 @OA\Property(property="unitState", type="string", maxLength=100, nullable=true, description="Unit state"),
-     *                 @OA\Property(property="unitDistrict", type="string", maxLength=100, nullable=true, description="Unit district"),
-     *                 @OA\Property(property="unitPinCode", type="string", maxLength=10, nullable=true, description="Unit PIN code"),
-     *                 @OA\Property(property="unitMobile", type="string", maxLength=10, nullable=true, description="Unit mobile"),
-     *                 @OA\Property(property="unitLandline", type="string", maxLength=12, nullable=true, description="Unit landline"),
-     *                 @OA\Property(property="unitEmail", type="string", format="email", maxLength=320, nullable=true, description="Unit email"),
-     *                 @OA\Property(property="unitAlternateEmail", type="string", format="email", maxLength=320, nullable=true, description="Unit alternate email"),
-     *                 @OA\Property(property="unitCommencementDate", type="string", format="date", nullable=true, description="Unit commencement date (YYYY-MM-DD)"),
-     *                 @OA\Property(property="siteExteriorPhoto", type="string", format="binary", nullable=true, description="Site exterior photo"),
-     *                 @OA\Property(property="contactPersonName", type="string", maxLength=255, nullable=true, description="Contact person name"),
-     *                 @OA\Property(property="contactPersonDesignation", type="string", maxLength=255, nullable=true, description="Contact person designation"),
-     *                 @OA\Property(property="contactPersonMobile", type="string", maxLength=10, nullable=true, description="Contact person mobile"),
-     *                 @OA\Property(property="contactPersonEmail", type="string", format="email", maxLength=320, nullable=true, description="Contact person email"),
-     *                 @OA\Property(property="ownershipType", type="string", enum={"proprietorship", "partnership", "private_limited", "public_limited", "joint_venture", "limited_liability_partnership", "other"}, nullable=true, description="Ownership type"),
-
-     *                 @OA\Property(property="maleEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of male employees"),
-     *                 @OA\Property(property="femaleEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of female employees"),
-     *                 @OA\Property(property="otherEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of other gender employees"),
-     *                 @OA\Property(property="technicalStaffCount", type="integer", minimum=0, nullable=true, description="Number of technical staff"),
-     *                 @OA\Property(property="hasGst", type="boolean", nullable=true, description="Has GST registration"),
-     *                 @OA\Property(property="gstNumber", type="string", maxLength=15, nullable=true, description="GST number"),
-     *                 @OA\Property(property="gstCertificateFile", type="string", format="binary", nullable=true, description="GST certificate file"),
-     *                 @OA\Property(property="hasGovtRegistration", type="boolean", nullable=true, description="Has government registration"),
-     *                 @OA\Property(property="govtOrganisationName", type="string", maxLength=255, nullable=true, description="Government organization name"),
-     *                 @OA\Property(property="govtRegistrationCertificate", type="string", format="binary", nullable=true, description="Government registration certificate"),
-     *                 @OA\Property(property="dpiitRegistrationNumber", type="string", maxLength=255, nullable=true, description="DPIIT registration number"),
-     *                 @OA\Property(property="dpiitCertificateFile", type="string", format="binary", nullable=true, description="DPIIT certificate file"),
-     *                 @OA\Property(property="udyamRegistrationNumber", type="string", maxLength=255, nullable=true, description="Udyam registration number"),
-     *                 @OA\Property(property="udyamCertificateFile", type="string", format="binary", nullable=true, description="Udyam certificate file"),
-     *                 @OA\Property(property="incorporationCertificateFile", type="string", format="binary", nullable=true, description="Incorporation certificate file"),
-     *                 @OA\Property(property="productionCapacity", type="number", format="float", minimum=0, nullable=true, description="Production capacity"),
-     *                 @OA\Property(property="capacityUnit", type="string", maxLength=50, nullable=true, description="Capacity unit"),
-     *                 @OA\Property(property="thirdPartyCertifications", type="array", @OA\Items(type="string"), nullable=true, description="List of third party certifications"),
-     *                 @OA\Property(property="isBlacklisted", type="boolean", nullable=true, description="Is blacklisted by any organization"),
-     *                 @OA\Property(property="blacklistedOrganizations", type="array", @OA\Items(type="string"), nullable=true, description="List of organizations that blacklisted"),
-     *                 @OA\Property(property="hasOngoingEnquiry", type="boolean", nullable=true, description="Has ongoing enquiry/investigation"),
-     *                 @OA\Property(
-     *                     property="mfgProducts",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Manufacturing products array (productName required per item if provided)",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *                         required={"productName"},
-     *
-     *                         @OA\Property(property="productName", type="string", maxLength=255, description="Product name (required)"),
-     *                         @OA\Property(property="totalProductionCapacity", type="number", format="float", minimum=0, nullable=true, description="Total production capacity"),
-     *                         @OA\Property(property="capacityUnit", type="string", maxLength=50, nullable=true, description="Capacity unit"),
-     *                         @OA\Property(property="currentUtilizedCapacity", type="number", format="float", minimum=0, nullable=true, description="Current utilized capacity"),
-     *                         @OA\Property(property="commencementDate", type="string", format="date", nullable=true, description="Production commencement date"),
-     *                         @OA\Property(property="isExported", type="boolean", nullable=true, description="Is product exported"),
-     *                         @OA\Property(property="exportCountries", type="array", @OA\Items(type="string"), nullable=true, description="Export destination countries"),
-     *                         @OA\Property(property="exportPercentage", type="number", format="float", minimum=0, maximum=100, nullable=true, description="Export percentage (0-100)")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="mfgRawMaterials",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Manufacturing raw materials array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="materialName", type="string", maxLength=100, nullable=true, description="Material name"),
-     *                         @OA\Property(property="isImported", type="boolean", nullable=true, description="Is material imported"),
-     *                         @OA\Property(property="importCountry", type="string", maxLength=100, nullable=true, description="Import country name"),
-     *                         @OA\Property(property="importPercentage", type="number", format="float", minimum=0, maximum=100, nullable=true, description="Import percentage (0-100)")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="mfgBoughtOutParts",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Manufacturing bought out parts array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="partName", type="string", maxLength=100, nullable=true, description="Part name"),
-     *                         @OA\Property(property="isImported", type="boolean", nullable=true, description="Is part imported"),
-     *                         @OA\Property(property="importCountry", type="string", maxLength=100, nullable=true, description="Import country name"),
-     *                         @OA\Property(property="importPercentage", type="number", format="float", minimum=0, maximum=100, nullable=true, description="Import percentage (0-100)")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="mfgKeyProcesses",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Manufacturing key processes array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="processName", type="string", maxLength=100, nullable=true, description="Process name")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="mfgOutsourcedProcesses",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Manufacturing outsourced processes array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="processName", type="string", maxLength=100, nullable=true, description="Process name")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="customers",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Customers array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="customerName", type="string", maxLength=255, nullable=true, description="Customer name"),
-     *                         @OA\Property(property="customerType", type="string", enum={"domestic", "international"}, nullable=true, description="Customer type"),
-     *                         @OA\Property(property="country", type="string", maxLength=100, nullable=true, description="Country name")
-     *                     )
-     *                 ),
-     *                 description="All fields are optional. Unit is auto-created from application data."
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Manufacturing draft created successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Manufacturing draft updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to create applications"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/manufacturing/draft',
+        summary: 'Save partial manufacturing application as draft',
+        description: 'Save a manufacturing application draft with minimal validation. All fields are optional. A unit is automatically created from application data. If a draft already exists for the organization and sector, it will be updated.',
+        tags: [
+            'Application',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        description: 'All fields are optional. Unit is auto-created from application data.',
+                        properties: [
+                            new OA\Property(
+                                property: 'organizationId',
+                                type: 'integer',
+                                nullable: true,
+                                description: 'Organization ID (auto-derived from authenticated user if not provided)',
+                            ),
+                            new OA\Property(
+                                property: 'applicationType',
+                                type: 'string',
+                                enum: ['new', 'renewal'],
+                                nullable: true,
+                                description: 'Application type',
+                            ),
+                            new OA\Property(
+                                property: 'isExistingDrdoVendor',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Is existing DRDO vendor',
+                            ),
+                            new OA\Property(
+                                property: 'vendorCategory',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'DRDO vendor category',
+                            ),
+                            new OA\Property(
+                                property: 'mfgDrdoVendorStores',
+                                type: 'array',
+                                nullable: true,
+                                description: 'DRDO vendor stores (manufacturing only) - array of objects with storeName',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'storeName', type: 'string'),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'drdoRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'DRDO registration number',
+                            ),
+                            new OA\Property(
+                                property: 'drdoCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'DRDO certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'enterpriseClassification',
+                                type: 'string',
+                                enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                                nullable: true,
+                                description: 'Enterprise classification',
+                            ),
+                            new OA\Property(
+                                property: 'enterpriseName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Enterprise name',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeAddress',
+                                type: 'string',
+                                maxLength: 500,
+                                nullable: true,
+                                description: 'Registered office address',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeState',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Registered office state (used in application number generation)',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeDistrict',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Registered office district',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficePinCode',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Registered office PIN code',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Registered office mobile',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeLandline',
+                                type: 'string',
+                                maxLength: 12,
+                                nullable: true,
+                                description: 'Registered office landline',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Registered office email',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeAlternateEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Registered office alternate email',
+                            ),
+                            new OA\Property(
+                                property: 'unitAddress',
+                                type: 'string',
+                                maxLength: 500,
+                                nullable: true,
+                                description: 'Unit address',
+                            ),
+                            new OA\Property(
+                                property: 'unitState',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Unit state',
+                            ),
+                            new OA\Property(
+                                property: 'unitDistrict',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Unit district',
+                            ),
+                            new OA\Property(
+                                property: 'unitPinCode',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Unit PIN code',
+                            ),
+                            new OA\Property(
+                                property: 'unitMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Unit mobile',
+                            ),
+                            new OA\Property(
+                                property: 'unitLandline',
+                                type: 'string',
+                                maxLength: 12,
+                                nullable: true,
+                                description: 'Unit landline',
+                            ),
+                            new OA\Property(
+                                property: 'unitEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Unit email',
+                            ),
+                            new OA\Property(
+                                property: 'unitAlternateEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Unit alternate email',
+                            ),
+                            new OA\Property(
+                                property: 'unitCommencementDate',
+                                type: 'string',
+                                format: 'date',
+                                nullable: true,
+                                description: 'Unit commencement date (YYYY-MM-DD)',
+                            ),
+                            new OA\Property(
+                                property: 'siteExteriorPhoto',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Site exterior photo',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Contact person name',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonDesignation',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Contact person designation',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Contact person mobile',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Contact person email',
+                            ),
+                            new OA\Property(
+                                property: 'ownershipType',
+                                type: 'string',
+                                enum: [
+                                    'proprietorship',
+                                    'partnership',
+                                    'private_limited',
+                                    'public_limited',
+                                    'joint_venture',
+                                    'limited_liability_partnership',
+                                    'other',
+                                ],
+                                nullable: true,
+                                description: 'Ownership type',
+                            ),
+                            new OA\Property(
+                                property: 'maleEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of male employees',
+                            ),
+                            new OA\Property(
+                                property: 'femaleEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of female employees',
+                            ),
+                            new OA\Property(
+                                property: 'otherEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of other gender employees',
+                            ),
+                            new OA\Property(
+                                property: 'technicalStaffCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of technical staff',
+                            ),
+                            new OA\Property(
+                                property: 'hasGst',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has GST registration',
+                            ),
+                            new OA\Property(
+                                property: 'gstNumber',
+                                type: 'string',
+                                maxLength: 15,
+                                nullable: true,
+                                description: 'GST number',
+                            ),
+                            new OA\Property(
+                                property: 'gstCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'GST certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'hasGovtRegistration',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has government registration',
+                            ),
+                            new OA\Property(
+                                property: 'govtOrganisationName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Government organization name',
+                            ),
+                            new OA\Property(
+                                property: 'govtRegistrationCertificate',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Government registration certificate',
+                            ),
+                            new OA\Property(
+                                property: 'dpiitRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'DPIIT registration number',
+                            ),
+                            new OA\Property(
+                                property: 'dpiitCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'DPIIT certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'udyamRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Udyam registration number',
+                            ),
+                            new OA\Property(
+                                property: 'udyamCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Udyam certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'incorporationCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Incorporation certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'productionCapacity',
+                                type: 'number',
+                                format: 'float',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Production capacity',
+                            ),
+                            new OA\Property(
+                                property: 'capacityUnit',
+                                type: 'string',
+                                maxLength: 50,
+                                nullable: true,
+                                description: 'Capacity unit',
+                            ),
+                            new OA\Property(
+                                property: 'thirdPartyCertifications',
+                                type: 'array',
+                                nullable: true,
+                                description: 'List of third party certifications',
+                                items: new OA\Items(type: 'string'),
+                            ),
+                            new OA\Property(
+                                property: 'isBlacklisted',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Is blacklisted by any organization',
+                            ),
+                            new OA\Property(
+                                property: 'blacklistedOrganizations',
+                                type: 'array',
+                                nullable: true,
+                                description: 'List of organizations that blacklisted',
+                                items: new OA\Items(type: 'string'),
+                            ),
+                            new OA\Property(
+                                property: 'hasOngoingEnquiry',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has ongoing enquiry/investigation',
+                            ),
+                            new OA\Property(
+                                property: 'mfgProducts',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Manufacturing products array (productName required per item if provided)',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    required: ['productName'],
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'productName',
+                                            type: 'string',
+                                            maxLength: 255,
+                                            description: 'Product name (required)',
+                                        ),
+                                        new OA\Property(
+                                            property: 'totalProductionCapacity',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            nullable: true,
+                                            description: 'Total production capacity',
+                                        ),
+                                        new OA\Property(
+                                            property: 'capacityUnit',
+                                            type: 'string',
+                                            maxLength: 50,
+                                            nullable: true,
+                                            description: 'Capacity unit',
+                                        ),
+                                        new OA\Property(
+                                            property: 'currentUtilizedCapacity',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            nullable: true,
+                                            description: 'Current utilized capacity',
+                                        ),
+                                        new OA\Property(
+                                            property: 'commencementDate',
+                                            type: 'string',
+                                            format: 'date',
+                                            nullable: true,
+                                            description: 'Production commencement date',
+                                        ),
+                                        new OA\Property(
+                                            property: 'isExported',
+                                            type: 'boolean',
+                                            nullable: true,
+                                            description: 'Is product exported',
+                                        ),
+                                        new OA\Property(
+                                            property: 'exportCountries',
+                                            type: 'array',
+                                            nullable: true,
+                                            description: 'Export destination countries',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'exportPercentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            maximum: 100,
+                                            nullable: true,
+                                            description: 'Export percentage (0-100)',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'mfgRawMaterials',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Manufacturing raw materials array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'materialName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Material name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'isImported',
+                                            type: 'boolean',
+                                            nullable: true,
+                                            description: 'Is material imported',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importCountry',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Import country name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importPercentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            maximum: 100,
+                                            nullable: true,
+                                            description: 'Import percentage (0-100)',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'mfgBoughtOutParts',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Manufacturing bought out parts array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'partName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Part name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'isImported',
+                                            type: 'boolean',
+                                            nullable: true,
+                                            description: 'Is part imported',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importCountry',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Import country name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importPercentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            maximum: 100,
+                                            nullable: true,
+                                            description: 'Import percentage (0-100)',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'mfgKeyProcesses',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Manufacturing key processes array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'processName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Process name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'mfgOutsourcedProcesses',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Manufacturing outsourced processes array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'processName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Process name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'customers',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Customers array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'customerName',
+                                            type: 'string',
+                                            maxLength: 255,
+                                            nullable: true,
+                                            description: 'Customer name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'customerType',
+                                            type: 'string',
+                                            enum: ['domestic', 'international'],
+                                            nullable: true,
+                                            description: 'Customer type',
+                                        ),
+                                        new OA\Property(
+                                            property: 'country',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Country name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Manufacturing draft created successfully'),
+            new OA\Response(response: 200, description: 'Manufacturing draft updated successfully'),
+            new OA\Response(response: 403, description: 'Unauthorized to create applications'),
+            new OA\Response(response: 400, description: 'Validation error'),
+        ],
+    )]
     public function storeManufacturingDraft(ManufacturingApplicationDraftRequest $request): JsonResponse
     {
         try {
@@ -746,170 +1171,579 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/services/draft",
-     *     summary="Save partial services application as draft",
-     *     description="Save a services application draft with minimal validation. All fields are optional. A unit is automatically created from application data. If a draft already exists for the organization and sector, it will be updated.",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *
-     *                 @OA\Property(property="organizationId", type="integer", nullable=true, description="Organization ID (auto-derived from authenticated user if not provided)"),
-     *                 @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}, nullable=true, description="Service provider type"),
-     *                 @OA\Property(property="applicationType", type="string", enum={"new", "renewal"}, nullable=true, description="Application type"),
-     *                 @OA\Property(property="isExistingDrdoVendor", type="boolean", nullable=true, description="Is existing DRDO vendor"),
-     *                 @OA\Property(property="vendorCategory", type="string", maxLength=100, nullable=true, description="DRDO vendor category"),
-     *                 @OA\Property(property="drdoRegistrationNumber", type="string", maxLength=255, nullable=true, description="DRDO registration number"),
-     *                 @OA\Property(property="drdoCertificateFile", type="string", format="binary", nullable=true, description="DRDO certificate file"),
-     *                 @OA\Property(property="enterpriseClassification", type="string", enum={"startup", "micro", "small", "medium", "large"}, nullable=true, description="Enterprise classification"),
-     *                 @OA\Property(property="enterpriseName", type="string", maxLength=255, nullable=true, description="Enterprise name"),
-     *                 @OA\Property(property="registeredOfficeAddress", type="string", maxLength=500, nullable=true, description="Registered office address"),
-     *                 @OA\Property(property="registeredOfficeState", type="string", maxLength=100, nullable=true, description="Registered office state (used in application number generation)"),
-     *                 @OA\Property(property="registeredOfficeDistrict", type="string", maxLength=100, nullable=true, description="Registered office district"),
-     *                 @OA\Property(property="registeredOfficePinCode", type="string", maxLength=10, nullable=true, description="Registered office PIN code"),
-     *                 @OA\Property(property="registeredOfficeMobile", type="string", maxLength=10, nullable=true, description="Registered office mobile"),
-     *                 @OA\Property(property="registeredOfficeLandline", type="string", maxLength=12, nullable=true, description="Registered office landline"),
-     *                 @OA\Property(property="registeredOfficeEmail", type="string", format="email", maxLength=320, nullable=true, description="Registered office email"),
-     *                 @OA\Property(property="registeredOfficeAlternateEmail", type="string", format="email", maxLength=320, nullable=true, description="Registered office alternate email"),
-     *                 @OA\Property(property="unitAddress", type="string", maxLength=500, nullable=true, description="Unit address"),
-     *                 @OA\Property(property="unitState", type="string", maxLength=100, nullable=true, description="Unit state"),
-     *                 @OA\Property(property="unitDistrict", type="string", maxLength=100, nullable=true, description="Unit district"),
-     *                 @OA\Property(property="unitPinCode", type="string", maxLength=10, nullable=true, description="Unit PIN code"),
-     *                 @OA\Property(property="unitMobile", type="string", maxLength=10, nullable=true, description="Unit mobile"),
-     *                 @OA\Property(property="unitLandline", type="string", maxLength=12, nullable=true, description="Unit landline"),
-     *                 @OA\Property(property="unitEmail", type="string", format="email", maxLength=320, nullable=true, description="Unit email"),
-     *                 @OA\Property(property="unitAlternateEmail", type="string", format="email", maxLength=320, nullable=true, description="Unit alternate email"),
-     *                 @OA\Property(property="unitCommencementDate", type="string", format="date", nullable=true, description="Unit commencement date (YYYY-MM-DD)"),
-     *                 @OA\Property(property="siteExteriorPhoto", type="string", format="binary", nullable=true, description="Site exterior photo"),
-     *                 @OA\Property(property="contactPersonName", type="string", maxLength=255, nullable=true, description="Contact person name"),
-     *                 @OA\Property(property="contactPersonDesignation", type="string", maxLength=255, nullable=true, description="Contact person designation"),
-     *                 @OA\Property(property="contactPersonMobile", type="string", maxLength=10, nullable=true, description="Contact person mobile"),
-     *                 @OA\Property(property="contactPersonEmail", type="string", format="email", maxLength=320, nullable=true, description="Contact person email"),
-     *                 @OA\Property(property="ownershipType", type="string", enum={"proprietorship", "partnership", "private_limited", "public_limited", "joint_venture", "limited_liability_partnership", "other"}, nullable=true, description="Ownership type"),
-
-     *                 @OA\Property(property="maleEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of male employees"),
-     *                 @OA\Property(property="femaleEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of female employees"),
-     *                 @OA\Property(property="otherEmployeesCount", type="integer", minimum=0, nullable=true, description="Number of other gender employees"),
-     *                 @OA\Property(property="technicalStaffCount", type="integer", minimum=0, nullable=true, description="Number of technical staff"),
-     *                 @OA\Property(property="hasGst", type="boolean", nullable=true, description="Has GST registration"),
-     *                 @OA\Property(property="gstNumber", type="string", maxLength=15, nullable=true, description="GST number"),
-     *                 @OA\Property(property="gstCertificateFile", type="string", format="binary", nullable=true, description="GST certificate file"),
-     *                 @OA\Property(property="hasGovtRegistration", type="boolean", nullable=true, description="Has government registration"),
-     *                 @OA\Property(property="govtOrganisationName", type="string", maxLength=255, nullable=true, description="Government organization name"),
-     *                 @OA\Property(property="govtRegistrationCertificate", type="string", format="binary", nullable=true, description="Government registration certificate"),
-     *                 @OA\Property(property="dpiitRegistrationNumber", type="string", maxLength=255, nullable=true, description="DPIIT registration number"),
-     *                 @OA\Property(property="dpiitCertificateFile", type="string", format="binary", nullable=true, description="DPIIT certificate file"),
-     *                 @OA\Property(property="udyamRegistrationNumber", type="string", maxLength=255, nullable=true, description="Udyam registration number"),
-     *                 @OA\Property(property="udyamCertificateFile", type="string", format="binary", nullable=true, description="Udyam certificate file"),
-     *                 @OA\Property(property="incorporationCertificateFile", type="string", format="binary", nullable=true, description="Incorporation certificate file"),
-     *                 @OA\Property(property="thirdPartyCertifications", type="array", @OA\Items(type="string"), nullable=true, description="List of third party certifications"),
-     *                 @OA\Property(property="isBlacklisted", type="boolean", nullable=true, description="Is blacklisted by any organization"),
-     *                 @OA\Property(property="blacklistedOrganizations", type="array", @OA\Items(type="string"), nullable=true, description="List of organizations that blacklisted"),
-     *                 @OA\Property(property="hasOngoingEnquiry", type="boolean", nullable=true, description="Has ongoing enquiry/investigation"),
-     *                 @OA\Property(
-     *                     property="svcServices",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Services array (serviceName required per item if provided)",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *                         required={"serviceName"},
-     *
-     *                         @OA\Property(property="serviceName", type="string", maxLength=255, description="Service name (required)"),
-     *                         @OA\Property(property="totalServicesCapacity", type="number", format="float", minimum=0, nullable=true, description="Total services capacity"),
-     *                         @OA\Property(property="capacityUnit", type="string", maxLength=50, nullable=true, description="Capacity unit"),
-     *                         @OA\Property(property="currentUtilizedCapacity", type="number", format="float", minimum=0, nullable=true, description="Current utilized capacity"),
-     *                         @OA\Property(property="commencementDate", type="string", format="date", nullable=true, description="Service commencement date"),
-     *                         @OA\Property(property="isSuppliedInternationally", type="boolean", nullable=true, description="Is service supplied internationally"),
-     *                         @OA\Property(property="destinationCountries", type="array", @OA\Items(type="string"), nullable=true, description="Destination countries"),
-     *                         @OA\Property(property="supplyPercentage", type="number", format="float", minimum=0, maximum=100, nullable=true, description="Supply percentage (0-100)")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="svcKeyResources",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Service key resources array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="resourceName", type="string", maxLength=100, nullable=true, description="Resource name"),
-     *                         @OA\Property(property="isImported", type="boolean", nullable=true, description="Is resource imported"),
-     *                         @OA\Property(property="importCountry", type="string", maxLength=100, nullable=true, description="Import country name"),
-     *                         @OA\Property(property="importPercentage", type="number", format="float", minimum=0, maximum=100, nullable=true, description="Import percentage (0-100)")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="svcKeyProcesses",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Service key processes array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="processName", type="string", maxLength=100, nullable=true, description="Process name")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="svcOutsourcedProcesses",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Service outsourced processes array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="processName", type="string", maxLength=100, nullable=true, description="Process name")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="customers",
-     *                     type="array",
-     *                     nullable=true,
-     *                     description="Customers array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="customerName", type="string", maxLength=255, nullable=true, description="Customer name"),
-     *                         @OA\Property(property="customerType", type="string", enum={"domestic", "international"}, nullable=true, description="Customer type"),
-     *                         @OA\Property(property="country", type="string", maxLength=100, nullable=true, description="Country name")
-     *                     )
-     *                 ),
-     *                 description="All fields are optional. Unit is auto-created from application data."
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Services draft created successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Services draft updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to create applications"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/services/draft',
+        summary: 'Save partial services application as draft',
+        description: 'Save a services application draft with minimal validation. All fields are optional. A unit is automatically created from application data. If a draft already exists for the organization and sector, it will be updated.',
+        tags: [
+            'Application',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        description: 'All fields are optional. Unit is auto-created from application data.',
+                        properties: [
+                            new OA\Property(
+                                property: 'organizationId',
+                                type: 'integer',
+                                nullable: true,
+                                description: 'Organization ID (auto-derived from authenticated user if not provided)',
+                            ),
+                            new OA\Property(
+                                property: 'serviceProviderType',
+                                type: 'string',
+                                enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                                nullable: true,
+                                description: 'Service provider type',
+                            ),
+                            new OA\Property(
+                                property: 'applicationType',
+                                type: 'string',
+                                enum: ['new', 'renewal'],
+                                nullable: true,
+                                description: 'Application type',
+                            ),
+                            new OA\Property(
+                                property: 'isExistingDrdoVendor',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Is existing DRDO vendor',
+                            ),
+                            new OA\Property(
+                                property: 'vendorCategory',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'DRDO vendor category',
+                            ),
+                            new OA\Property(
+                                property: 'drdoRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'DRDO registration number',
+                            ),
+                            new OA\Property(
+                                property: 'drdoCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'DRDO certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'enterpriseClassification',
+                                type: 'string',
+                                enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                                nullable: true,
+                                description: 'Enterprise classification',
+                            ),
+                            new OA\Property(
+                                property: 'enterpriseName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Enterprise name',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeAddress',
+                                type: 'string',
+                                maxLength: 500,
+                                nullable: true,
+                                description: 'Registered office address',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeState',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Registered office state (used in application number generation)',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeDistrict',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Registered office district',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficePinCode',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Registered office PIN code',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Registered office mobile',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeLandline',
+                                type: 'string',
+                                maxLength: 12,
+                                nullable: true,
+                                description: 'Registered office landline',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Registered office email',
+                            ),
+                            new OA\Property(
+                                property: 'registeredOfficeAlternateEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Registered office alternate email',
+                            ),
+                            new OA\Property(
+                                property: 'unitAddress',
+                                type: 'string',
+                                maxLength: 500,
+                                nullable: true,
+                                description: 'Unit address',
+                            ),
+                            new OA\Property(
+                                property: 'unitState',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Unit state',
+                            ),
+                            new OA\Property(
+                                property: 'unitDistrict',
+                                type: 'string',
+                                maxLength: 100,
+                                nullable: true,
+                                description: 'Unit district',
+                            ),
+                            new OA\Property(
+                                property: 'unitPinCode',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Unit PIN code',
+                            ),
+                            new OA\Property(
+                                property: 'unitMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Unit mobile',
+                            ),
+                            new OA\Property(
+                                property: 'unitLandline',
+                                type: 'string',
+                                maxLength: 12,
+                                nullable: true,
+                                description: 'Unit landline',
+                            ),
+                            new OA\Property(
+                                property: 'unitEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Unit email',
+                            ),
+                            new OA\Property(
+                                property: 'unitAlternateEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Unit alternate email',
+                            ),
+                            new OA\Property(
+                                property: 'unitCommencementDate',
+                                type: 'string',
+                                format: 'date',
+                                nullable: true,
+                                description: 'Unit commencement date (YYYY-MM-DD)',
+                            ),
+                            new OA\Property(
+                                property: 'siteExteriorPhoto',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Site exterior photo',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Contact person name',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonDesignation',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Contact person designation',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonMobile',
+                                type: 'string',
+                                maxLength: 10,
+                                nullable: true,
+                                description: 'Contact person mobile',
+                            ),
+                            new OA\Property(
+                                property: 'contactPersonEmail',
+                                type: 'string',
+                                format: 'email',
+                                maxLength: 320,
+                                nullable: true,
+                                description: 'Contact person email',
+                            ),
+                            new OA\Property(
+                                property: 'ownershipType',
+                                type: 'string',
+                                enum: [
+                                    'proprietorship',
+                                    'partnership',
+                                    'private_limited',
+                                    'public_limited',
+                                    'joint_venture',
+                                    'limited_liability_partnership',
+                                    'other',
+                                ],
+                                nullable: true,
+                                description: 'Ownership type',
+                            ),
+                            new OA\Property(
+                                property: 'maleEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of male employees',
+                            ),
+                            new OA\Property(
+                                property: 'femaleEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of female employees',
+                            ),
+                            new OA\Property(
+                                property: 'otherEmployeesCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of other gender employees',
+                            ),
+                            new OA\Property(
+                                property: 'technicalStaffCount',
+                                type: 'integer',
+                                minimum: 0,
+                                nullable: true,
+                                description: 'Number of technical staff',
+                            ),
+                            new OA\Property(
+                                property: 'hasGst',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has GST registration',
+                            ),
+                            new OA\Property(
+                                property: 'gstNumber',
+                                type: 'string',
+                                maxLength: 15,
+                                nullable: true,
+                                description: 'GST number',
+                            ),
+                            new OA\Property(
+                                property: 'gstCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'GST certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'hasGovtRegistration',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has government registration',
+                            ),
+                            new OA\Property(
+                                property: 'govtOrganisationName',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Government organization name',
+                            ),
+                            new OA\Property(
+                                property: 'govtRegistrationCertificate',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Government registration certificate',
+                            ),
+                            new OA\Property(
+                                property: 'dpiitRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'DPIIT registration number',
+                            ),
+                            new OA\Property(
+                                property: 'dpiitCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'DPIIT certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'udyamRegistrationNumber',
+                                type: 'string',
+                                maxLength: 255,
+                                nullable: true,
+                                description: 'Udyam registration number',
+                            ),
+                            new OA\Property(
+                                property: 'udyamCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Udyam certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'incorporationCertificateFile',
+                                type: 'string',
+                                format: 'binary',
+                                nullable: true,
+                                description: 'Incorporation certificate file',
+                            ),
+                            new OA\Property(
+                                property: 'thirdPartyCertifications',
+                                type: 'array',
+                                nullable: true,
+                                description: 'List of third party certifications',
+                                items: new OA\Items(type: 'string'),
+                            ),
+                            new OA\Property(
+                                property: 'isBlacklisted',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Is blacklisted by any organization',
+                            ),
+                            new OA\Property(
+                                property: 'blacklistedOrganizations',
+                                type: 'array',
+                                nullable: true,
+                                description: 'List of organizations that blacklisted',
+                                items: new OA\Items(type: 'string'),
+                            ),
+                            new OA\Property(
+                                property: 'hasOngoingEnquiry',
+                                type: 'boolean',
+                                nullable: true,
+                                description: 'Has ongoing enquiry/investigation',
+                            ),
+                            new OA\Property(
+                                property: 'svcServices',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Services array (serviceName required per item if provided)',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    required: ['serviceName'],
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'serviceName',
+                                            type: 'string',
+                                            maxLength: 255,
+                                            description: 'Service name (required)',
+                                        ),
+                                        new OA\Property(
+                                            property: 'totalServicesCapacity',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            nullable: true,
+                                            description: 'Total services capacity',
+                                        ),
+                                        new OA\Property(
+                                            property: 'capacityUnit',
+                                            type: 'string',
+                                            maxLength: 50,
+                                            nullable: true,
+                                            description: 'Capacity unit',
+                                        ),
+                                        new OA\Property(
+                                            property: 'currentUtilizedCapacity',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            nullable: true,
+                                            description: 'Current utilized capacity',
+                                        ),
+                                        new OA\Property(
+                                            property: 'commencementDate',
+                                            type: 'string',
+                                            format: 'date',
+                                            nullable: true,
+                                            description: 'Service commencement date',
+                                        ),
+                                        new OA\Property(
+                                            property: 'isSuppliedInternationally',
+                                            type: 'boolean',
+                                            nullable: true,
+                                            description: 'Is service supplied internationally',
+                                        ),
+                                        new OA\Property(
+                                            property: 'destinationCountries',
+                                            type: 'array',
+                                            nullable: true,
+                                            description: 'Destination countries',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'supplyPercentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            maximum: 100,
+                                            nullable: true,
+                                            description: 'Supply percentage (0-100)',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'svcKeyResources',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Service key resources array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'resourceName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Resource name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'isImported',
+                                            type: 'boolean',
+                                            nullable: true,
+                                            description: 'Is resource imported',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importCountry',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Import country name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'importPercentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            minimum: 0,
+                                            maximum: 100,
+                                            nullable: true,
+                                            description: 'Import percentage (0-100)',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'svcKeyProcesses',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Service key processes array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'processName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Process name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'svcOutsourcedProcesses',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Service outsourced processes array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'processName',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Process name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                            new OA\Property(
+                                property: 'customers',
+                                type: 'array',
+                                nullable: true,
+                                description: 'Customers array',
+                                items: new OA\Items(
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'customerName',
+                                            type: 'string',
+                                            maxLength: 255,
+                                            nullable: true,
+                                            description: 'Customer name',
+                                        ),
+                                        new OA\Property(
+                                            property: 'customerType',
+                                            type: 'string',
+                                            enum: ['domestic', 'international'],
+                                            nullable: true,
+                                            description: 'Customer type',
+                                        ),
+                                        new OA\Property(
+                                            property: 'country',
+                                            type: 'string',
+                                            maxLength: 100,
+                                            nullable: true,
+                                            description: 'Country name',
+                                        ),
+                                    ],
+                                ),
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Services draft created successfully'),
+            new OA\Response(response: 200, description: 'Services draft updated successfully'),
+            new OA\Response(response: 403, description: 'Unauthorized to create applications'),
+            new OA\Response(response: 400, description: 'Validation error'),
+        ],
+    )]
     public function storeServicesDraft(ServicesApplicationDraftRequest $request): JsonResponse
     {
         try {
@@ -936,31 +1770,24 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{id}",
-     *     summary="Get application details",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application not found"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{id}',
+        summary: 'Get application details',
+        tags: [
+            'Application',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Application retrieved successfully'),
+            new OA\Response(response: 404, description: 'Application not found'),
+        ],
+    )]
     public function show(int $id): JsonResponse
     {
         try {
@@ -1003,23 +1830,32 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{id}/renew",
-     *     summary="Initiate a certificate renewal",
-     *     description="Clones a certified application into a fresh, fully editable renewal draft prefilled from the source. Enterprise Admin only. Idempotent: returns the existing renewal draft if one already exists.",
-     *     tags={"Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Certified source application id", @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=201, description="Renewal draft created"),
-     *     @OA\Response(response=200, description="Existing renewal draft returned (idempotent)"),
-     *     @OA\Response(response=403, description="Forbidden - not authorized to renew this application"),
-     *     @OA\Response(response=404, description="Application not found"),
-     *     @OA\Response(response=422, description="Not eligible for renewal (outside renewal window or an application is already in progress)")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{id}/renew',
+        summary: 'Initiate a certificate renewal',
+        description: 'Clones a certified application into a fresh, fully editable renewal draft prefilled from the source. Enterprise Admin only. Idempotent: returns the existing renewal draft if one already exists.',
+        tags: ['Enterprise Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Certified source application id',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 201, description: 'Renewal draft created'),
+            new OA\Response(response: 200, description: 'Existing renewal draft returned (idempotent)'),
+            new OA\Response(response: 403, description: 'Forbidden - not authorized to renew this application'),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(
+                response: 422,
+                description: 'Not eligible for renewal (outside renewal window or an application is already in progress)',
+            ),
+        ],
+    )]
     public function renew(Request $request, int $id): JsonResponse
     {
         try {
@@ -1143,40 +1979,45 @@ class ApplicationController extends Controller
      *     )
      * )
      */
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{id}/files/{field}",
-     *     summary="Download an application file from private storage",
-     *     description="Streams a whitelisted application file inline. Pass ?download=1 to force attachment.",
-     *     tags={"Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(
-     *         name="field",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="string", enum={
-     *             "drdo_certificate_file",
-     *             "site_exterior_photo",
-     *             "gst_certificate_file",
-     *             "govt_registration_certificate",
-     *             "dpiit_certificate_file",
-     *             "udyam_certificate_file",
-     *             "incorporation_certificate_file"
-     *         })
-     *     ),
-     *
-     *     @OA\Parameter(name="download", in="query", required=false, @OA\Schema(type="boolean")),
-     *
-     *     @OA\Response(response=200, description="File stream"),
-     *     @OA\Response(response=400, description="Invalid file field"),
-     *     @OA\Response(response=403, description="No access to this application"),
-     *     @OA\Response(response=404, description="Application or file not found")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{id}/files/{field}',
+        summary: 'Download an application file from private storage',
+        description: 'Streams a whitelisted application file inline. Pass ?download=1 to force attachment.',
+        tags: ['Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(
+                name: 'field',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: [
+                        'drdo_certificate_file',
+                        'site_exterior_photo',
+                        'gst_certificate_file',
+                        'govt_registration_certificate',
+                        'dpiit_certificate_file',
+                        'udyam_certificate_file',
+                        'incorporation_certificate_file',
+                    ],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'download',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'File stream'),
+            new OA\Response(response: 400, description: 'Invalid file field'),
+            new OA\Response(response: 403, description: 'No access to this application'),
+            new OA\Response(response: 404, description: 'Application or file not found'),
+        ],
+    )]
     public function downloadFile(Request $request, int $id, string $field)
     {
         $allowedFields = [
@@ -1244,31 +2085,24 @@ class ApplicationController extends Controller
         return $this->fileStorage->stream($filePath, $filename);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{id}/submit",
-     *     summary="Submit application for review",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application submitted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed - missing required data"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{id}/submit',
+        summary: 'Submit application for review',
+        tags: [
+            'Application',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Application submitted successfully'),
+            new OA\Response(response: 400, description: 'Validation failed - missing required data'),
+        ],
+    )]
     public function submit(int $id): JsonResponse
     {
         try {
@@ -1357,44 +2191,33 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{id}/drdo-approve",
-     *     summary="Approve application (DRDO Admin only)",
-     *     tags={"Application", "DRDO Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="remarks", type="string", maxLength=500, description="Optional approval remarks")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application approved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Application cannot be approved"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{id}/drdo-approve',
+        summary: 'Approve application (DRDO Admin only)',
+        tags: ['Application', 'DRDO Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        maxLength: 500,
+                        description: 'Optional approval remarks',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Application approved successfully'),
+            new OA\Response(response: 400, description: 'Application cannot be approved'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+        ],
+    )]
     public function drdoApprove(Request $request, int $id): JsonResponse
     {
         try {
@@ -1448,45 +2271,35 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{id}/drdo-reject",
-     *     summary="Reject application (DRDO Admin only)",
-     *     tags={"Application", "DRDO Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"reason"},
-     *
-     *             @OA\Property(property="reason", type="string", minLength=10, maxLength=500, description="Reason for rejection")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application rejected successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Application cannot be rejected"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{id}/drdo-reject',
+        summary: 'Reject application (DRDO Admin only)',
+        tags: ['Application', 'DRDO Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['reason'],
+                properties: [
+                    new OA\Property(
+                        property: 'reason',
+                        type: 'string',
+                        minLength: 10,
+                        maxLength: 500,
+                        description: 'Reason for rejection',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Application rejected successfully'),
+            new OA\Response(response: 400, description: 'Application cannot be rejected'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+        ],
+    )]
     public function drdoReject(Request $request, int $id): JsonResponse
     {
         try {
@@ -2168,27 +2981,26 @@ class ApplicationController extends Controller
      * The portal calls this when the GST field loses focus so the same rule the submit
      * gate enforces is surfaced inline immediately, instead of only at draft-save/submit.
      * Validates the supplied GSTIN against the authenticated user's own organisation.
-     *
-     * @OA\Post(
-     *     path="/api/v1/applications/validate-gstin",
-     *     summary="Live GSTIN consistency check (blur-time)",
-     *     tags={"Enterprise Admin - Application", "Unit Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="gstNumber", type="string", example="06AAAAA0000A1Z5")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Consistency checked (valid=false with errorCode/message when inconsistent)"
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/applications/validate-gstin',
+        summary: 'Live GSTIN consistency check (blur-time)',
+        tags: ['Enterprise Admin - Application', 'Unit Admin - Application'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'gstNumber', type: 'string', example: '06AAAAA0000A1Z5'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Consistency checked (valid=false with errorCode/message when inconsistent)',
+            ),
+        ],
+    )]
     public function validateGstin(Request $request): JsonResponse
     {
         // Incoming keys are snake_cased by the ConvertRequestToSnakeCase middleware, so the
@@ -2366,75 +3178,70 @@ class ApplicationController extends Controller
 
     /**
      * Export applications data.
-     *
-     * @OA\Get(
-     *     path="/api/v1/applications/export",
-     *     summary="Export applications data",
-     *     description="Exports applications data as CSV. Supports filtering by search, status, and sector.",
-     *     tags={"Application", "System Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by application number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", minLength=2, maxLength=100)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by application status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"draft", "drdo_approval_pending", "payment_pending", "payment_completed", "in_progress", "certified", "rejected"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="query",
-     *         description="Filter by application type (Fresh = new / Renewal = renewal)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"new", "renewal"})
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/csv",
-     *
-     *             @OA\Schema(type="string", format="binary")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Insufficient permissions"
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/applications/export',
+        summary: 'Export applications data',
+        description: 'Exports applications data as CSV. Supports filtering by search, status, and sector.',
+        tags: ['Application', 'System Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by application number',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by application status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: [
+                        'draft',
+                        'drdo_approval_pending',
+                        'payment_pending',
+                        'payment_completed',
+                        'in_progress',
+                        'certified',
+                        'rejected',
+                    ],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'query',
+                description: 'Filter by application type (Fresh = new / Renewal = renewal)',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['new', 'renewal']),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(
+                        mediaType: 'text/csv',
+                        schema: new OA\Schema(type: 'string', format: 'binary'),
+                    ),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden - Insufficient permissions'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function export(ApplicationExportRequest $request): StreamedResponse|JsonResponse
     {
         $user = Auth::user();
@@ -2583,43 +3390,44 @@ class ApplicationController extends Controller
 
     /**
      * Set preferred assessment date for an application.
-     *
-     * @OA\Put(
-     *     path="/api/v1/applications/{id}/preferred-assessment-date",
-     *     summary="Set preferred assessment date",
-     *     description="Allows enterprise admin and unit admin to set the preferred assessment date after payment",
-     *     operationId="setPreferredAssessmentDate",
-     *     tags={"Applications"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"preferredAssessmentDate"},
-     *
-     *             @OA\Property(property="preferredAssessmentDate", type="string", format="date", example="2025-12-15")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Preferred assessment date updated successfully"
-     *     ),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Application not found"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/applications/{id}/preferred-assessment-date',
+        summary: 'Set preferred assessment date',
+        description: 'Allows enterprise admin and unit admin to set the preferred assessment date after payment',
+        operationId: 'setPreferredAssessmentDate',
+        tags: ['Applications'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['preferredAssessmentDate'],
+                properties: [
+                    new OA\Property(
+                        property: 'preferredAssessmentDate',
+                        type: 'string',
+                        format: 'date',
+                        example: '2025-12-15',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Preferred assessment date updated successfully'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function setPreferredAssessmentDate(Request $request, int $id): JsonResponse
     {
         $application = Application::find($id);
@@ -2652,64 +3460,121 @@ class ApplicationController extends Controller
 
     /**
      * Update application contact person details.
-     *
-     * @OA\Put(
-     *     path="/api/v1/applications/{id}/contact-person",
-     *     summary="Update application contact person",
-     *     description="Allows enterprise admin and unit admin to update contact person details for applications in editable status (draft, drdo_approval_pending, payment_pending)",
-     *     operationId="updateContactPerson",
-     *     tags={"Application", "Enterprise Admin - Application", "Unit Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="contactPersonName", type="string", maxLength=255, nullable=true, example="John Doe"),
-     *             @OA\Property(property="contactPersonDesignation", type="string", maxLength=255, nullable=true, example="Manager"),
-     *             @OA\Property(property="contactPersonMobile", type="string", maxLength=10, nullable=true, example="9876543210"),
-     *             @OA\Property(property="contactPersonEmail", type="string", format="email", maxLength=320, nullable=true, example="john.doe@example.com")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Contact person updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Contact person updated successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="applicationNumber", type="string", example="APP-2025-001"),
-     *                 @OA\Property(property="contactPersonName", type="string", example="John Doe"),
-     *                 @OA\Property(property="contactPersonDesignation", type="string", example="Manager"),
-     *                 @OA\Property(property="contactPersonMobile", type="string", example="9876543210"),
-     *                 @OA\Property(property="contactPersonEmail", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="updatedAt", type="string", format="date-time", example="2025-02-07T10:30:00.000000Z")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Application cannot be edited in current status"),
-     *     @OA\Response(response=403, description="Forbidden - User not authorized to update this application"),
-     *     @OA\Response(response=404, description="Application not found"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/applications/{id}/contact-person',
+        summary: 'Update application contact person',
+        description: 'Allows enterprise admin and unit admin to update contact person details for applications in editable status (draft, drdo_approval_pending, payment_pending)',
+        operationId: 'updateContactPerson',
+        tags: ['Application', 'Enterprise Admin - Application', 'Unit Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'contactPersonName',
+                        type: 'string',
+                        maxLength: 255,
+                        nullable: true,
+                        example: 'John Doe',
+                    ),
+                    new OA\Property(
+                        property: 'contactPersonDesignation',
+                        type: 'string',
+                        maxLength: 255,
+                        nullable: true,
+                        example: 'Manager',
+                    ),
+                    new OA\Property(
+                        property: 'contactPersonMobile',
+                        type: 'string',
+                        maxLength: 10,
+                        nullable: true,
+                        example: '9876543210',
+                    ),
+                    new OA\Property(
+                        property: 'contactPersonEmail',
+                        type: 'string',
+                        format: 'email',
+                        maxLength: 320,
+                        nullable: true,
+                        example: 'john.doe@example.com',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Contact person updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Contact person updated successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(
+                                    property: 'applicationNumber',
+                                    type: 'string',
+                                    example: 'APP-2025-001',
+                                ),
+                                new OA\Property(
+                                    property: 'contactPersonName',
+                                    type: 'string',
+                                    example: 'John Doe',
+                                ),
+                                new OA\Property(
+                                    property: 'contactPersonDesignation',
+                                    type: 'string',
+                                    example: 'Manager',
+                                ),
+                                new OA\Property(
+                                    property: 'contactPersonMobile',
+                                    type: 'string',
+                                    example: '9876543210',
+                                ),
+                                new OA\Property(
+                                    property: 'contactPersonEmail',
+                                    type: 'string',
+                                    example: 'john.doe@example.com',
+                                ),
+                                new OA\Property(
+                                    property: 'updatedAt',
+                                    type: 'string',
+                                    format: 'date-time',
+                                    example: '2025-02-07T10:30:00.000000Z',
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Application cannot be edited in current status'),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - User not authorized to update this application',
+            ),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function updateContactPerson(UpdateApplicationContactPersonRequest $request, int $id): JsonResponse
     {
         try {

@@ -8,141 +8,126 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Error Logs",
- *     description="Internal error logging and monitoring endpoints for system administrators"
- * )
- */
+#[OA\Tag(
+    name: 'Error Logs',
+    description: 'Internal error logging and monitoring endpoints for system administrators',
+)]
 class ErrorLogController extends Controller
 {
     /**
      * Get list of error logs with filters.
-     *
-     * @OA\Get(
-     *     path="/api/v1/admin/error-logs",
-     *     summary="Get list of error logs",
-     *     description="Retrieves paginated list of error logs with optional filters",
-     *     tags={"System Admin - Error Logs"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="severity",
-     *         in="query",
-     *         description="Filter by severity",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"error", "critical", "emergency"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="level",
-     *         in="query",
-     *         description="Alias for severity",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"error", "critical", "emergency"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="source",
-     *         in="query",
-     *         description="Filter by subsystem the failure came from",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"http", "queue", "scheduler", "business_central", "payment", "email", "database"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Free-text search across exception class, message and request URL",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="TimeoutException")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"new", "investigating", "resolved", "ignored", "archived"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="endpoint",
-     *         in="query",
-     *         description="Filter by endpoint pattern",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="/api/v1/users/{id}")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="exceptionClass",
-     *         in="query",
-     *         description="Filter by exception class",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="Illuminate\\Database\\QueryException")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="userId",
-     *         in="query",
-     *         description="Filter by user ID",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="startDate",
-     *         in="query",
-     *         description="Filter from date (Y-m-d format)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-01-01")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="endDate",
-     *         in="query",
-     *         description="Filter to date (Y-m-d format)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2025-01-31")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", default=15, example=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Error logs retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Error logs retrieved successfully"),
-     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin role required"),
-     *     @OA\Response(response=422, description="Validation error - invalid filter value")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/admin/error-logs',
+        summary: 'Get list of error logs',
+        description: 'Retrieves paginated list of error logs with optional filters',
+        tags: ['System Admin - Error Logs'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'severity',
+                in: 'query',
+                description: 'Filter by severity',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['error', 'critical', 'emergency']),
+            ),
+            new OA\Parameter(
+                name: 'level',
+                in: 'query',
+                description: 'Alias for severity',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['error', 'critical', 'emergency']),
+            ),
+            new OA\Parameter(
+                name: 'source',
+                in: 'query',
+                description: 'Filter by subsystem the failure came from',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['http', 'queue', 'scheduler', 'business_central', 'payment', 'email', 'database'],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Free-text search across exception class, message and request URL',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'TimeoutException'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by status',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['new', 'investigating', 'resolved', 'ignored', 'archived']),
+            ),
+            new OA\Parameter(
+                name: 'endpoint',
+                in: 'query',
+                description: 'Filter by endpoint pattern',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: '/api/v1/users/{id}'),
+            ),
+            new OA\Parameter(
+                name: 'exceptionClass',
+                in: 'query',
+                description: 'Filter by exception class',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'Illuminate\\\\Database\\\\QueryException'),
+            ),
+            new OA\Parameter(
+                name: 'userId',
+                in: 'query',
+                description: 'Filter by user ID',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'startDate',
+                in: 'query',
+                description: 'Filter from date (Y-m-d format)',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-01-01'),
+            ),
+            new OA\Parameter(
+                name: 'endDate',
+                in: 'query',
+                description: 'Filter to date (Y-m-d format)',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2025-01-31'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 15, example: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Error logs retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Error logs retrieved successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'array', items: new OA\Items(type: 'object')),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin role required'),
+            new OA\Response(response: 422, description: 'Validation error - invalid filter value'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -218,40 +203,43 @@ class ErrorLogController extends Controller
 
     /**
      * Get single error log with full details.
-     *
-     * @OA\Get(
-     *     path="/api/v1/admin/error-logs/{id}",
-     *     summary="Get error log details",
-     *     description="Retrieves full details of a specific error log including context snapshot",
-     *     tags={"System Admin - Error Logs"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Error log ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Error log retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Error log retrieved successfully"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Error log not found"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/admin/error-logs/{id}',
+        summary: 'Get error log details',
+        description: 'Retrieves full details of a specific error log including context snapshot',
+        tags: ['System Admin - Error Logs'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Error log ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Error log retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Error log retrieved successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Error log not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function show(int $id): JsonResponse
     {
         $errorLog = ErrorLog::with([
@@ -266,49 +254,60 @@ class ErrorLogController extends Controller
 
     /**
      * Update error log status and resolution.
-     *
-     * @OA\Patch(
-     *     path="/api/v1/admin/error-logs/{id}",
-     *     summary="Update error log",
-     *     description="Updates error log status and resolution notes",
-     *     tags={"System Admin - Error Logs"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Error log ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="status", type="string", enum={"new", "investigating", "resolved", "ignored", "archived"}, example="resolved"),
-     *             @OA\Property(property="resolutionNotes", type="string", example="Fixed by deploying hotfix v1.2.3")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Error log updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Error log updated successfully"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=422, description="Validation error"),
-     *     @OA\Response(response=404, description="Error log not found")
-     * )
      */
+    #[OA\Patch(
+        path: '/api/v1/admin/error-logs/{id}',
+        summary: 'Update error log',
+        description: 'Updates error log status and resolution notes',
+        tags: ['System Admin - Error Logs'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Error log ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'status',
+                        type: 'string',
+                        enum: ['new', 'investigating', 'resolved', 'ignored', 'archived'],
+                        example: 'resolved',
+                    ),
+                    new OA\Property(
+                        property: 'resolutionNotes',
+                        type: 'string',
+                        example: 'Fixed by deploying hotfix v1.2.3',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Error log updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Error log updated successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 422, description: 'Validation error'),
+            new OA\Response(response: 404, description: 'Error log not found'),
+        ],
+    )]
     public function update(Request $request, int $id): JsonResponse
     {
         $errorLog = ErrorLog::findOrFail($id);
@@ -345,36 +344,40 @@ class ErrorLogController extends Controller
 
     /**
      * Get error statistics.
-     *
-     * @OA\Get(
-     *     path="/api/v1/admin/error-logs/stats",
-     *     summary="Get error statistics",
-     *     description="Retrieves comprehensive error statistics including counts, trends, and breakdowns",
-     *     tags={"System Admin - Error Logs"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="days",
-     *         in="query",
-     *         description="Number of days to analyze",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", default=30, example=30)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Statistics retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Statistics retrieved successfully"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/admin/error-logs/stats',
+        summary: 'Get error statistics',
+        description: 'Retrieves comprehensive error statistics including counts, trends, and breakdowns',
+        tags: ['System Admin - Error Logs'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'days',
+                in: 'query',
+                description: 'Number of days to analyze',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 30, example: 30),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Statistics retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Statistics retrieved successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function statistics(Request $request): JsonResponse
     {
         $days = $request->input('days', 30);
@@ -406,40 +409,51 @@ class ErrorLogController extends Controller
 
     /**
      * Bulk archive resolved errors.
-     *
-     * @OA\Post(
-     *     path="/api/v1/admin/error-logs/archive",
-     *     summary="Bulk archive errors",
-     *     description="Archives resolved errors older than specified days",
-     *     tags={"System Admin - Error Logs"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="days", type="integer", example=90, description="Archive errors resolved more than X days ago")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Errors archived successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Errors archived successfully"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="archivedCount", type="integer", example=150)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=422, description="Validation error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/admin/error-logs/archive',
+        summary: 'Bulk archive errors',
+        description: 'Archives resolved errors older than specified days',
+        tags: ['System Admin - Error Logs'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'days',
+                        type: 'integer',
+                        example: 90,
+                        description: 'Archive errors resolved more than X days ago',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Errors archived successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Errors archived successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'archivedCount', type: 'integer', example: 150),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function bulkArchive(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

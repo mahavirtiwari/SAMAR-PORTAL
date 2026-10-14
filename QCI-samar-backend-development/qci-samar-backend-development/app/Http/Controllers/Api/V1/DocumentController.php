@@ -15,13 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Documents",
- *     description="Document management endpoints"
- * )
- */
+#[OA\Tag(name: 'Documents', description: 'Document management endpoints')]
 class DocumentController extends Controller
 {
     protected DocumentService $documentService;
@@ -33,181 +29,208 @@ class DocumentController extends Controller
 
     /**
      * List documents with pagination and filtering.
-     *
-     * @OA\Get(
-     *     path="/api/v1/documents",
-     *     summary="List documents",
-     *     description="Retrieves a paginated list of documents with optional filtering and sorting. Admins see all documents, other users see only their own.",
-     *     tags={"Documents", "System Admin - Documents"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by title, name, or original filename",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", minLength=2, maxLength=100, example="contract")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="mimeType",
-     *         in="query",
-     *         description="Filter by MIME type",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="application/pdf")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="extension",
-     *         in="query",
-     *         description="Filter by file extension",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="pdf")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sortBy",
-     *         in="query",
-     *         description="Sort by field",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"created_at", "size", "original_filename"}, default="created_at")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sortOrder",
-     *         in="query",
-     *         description="Sort order",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", minimum=5, maximum=100, default=15)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", minimum=1, default=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Documents retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Documents retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="string", format="uuid"),
-     *                     @OA\Property(property="title", type="string", example="Project Contract Document"),
-     *                     @OA\Property(property="name", type="string", example="document.pdf"),
-     *                     @OA\Property(property="original_filename", type="string", example="original.pdf"),
-     *                     @OA\Property(property="mime_type", type="string", example="application/pdf"),
-     *                     @OA\Property(property="size", type="integer", example=1024000),
-     *                     @OA\Property(property="is_active", type="boolean", example=true),
-     *                     @OA\Property(property="size_human", type="string", example="1.00 MB"),
-     *                     @OA\Property(property="extension", type="string", example="pdf"),
-     *                     @OA\Property(
-     *                         property="uploaded_by",
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="name", type="string", example="John Doe"),
-     *                         @OA\Property(property="email", type="string", example="john@example.com")
-     *                     ),
-     *                     @OA\Property(property="uploaded_at", type="string", format="date-time")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="pagination",
-     *                 type="object",
-     *                 @OA\Property(property="total", type="integer", example=100),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="last_page", type="integer", example=7),
-     *                 @OA\Property(property="from", type="integer", example=1),
-     *                 @OA\Property(property="to", type="integer", example=15)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="search", type="array", @OA\Items(type="string", example="Search term must be at least 2 characters."))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to retrieve documents.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/documents',
+        summary: 'List documents',
+        description: 'Retrieves a paginated list of documents with optional filtering and sorting. Admins see all documents, other users see only their own.',
+        tags: ['Documents', 'System Admin - Documents'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by title, name, or original filename',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100, example: 'contract'),
+            ),
+            new OA\Parameter(
+                name: 'mimeType',
+                in: 'query',
+                description: 'Filter by MIME type',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'application/pdf'),
+            ),
+            new OA\Parameter(
+                name: 'extension',
+                in: 'query',
+                description: 'Filter by file extension',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'pdf'),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                required: false,
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(
+                name: 'sortBy',
+                in: 'query',
+                description: 'Sort by field',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['created_at', 'size', 'original_filename'],
+                    default: 'created_at',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'sortOrder',
+                in: 'query',
+                description: 'Sort order',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'], default: 'desc'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 5, maximum: 100, default: 15),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, default: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Documents retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Documents retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'string', format: 'uuid'),
+                                    new OA\Property(
+                                        property: 'title',
+                                        type: 'string',
+                                        example: 'Project Contract Document',
+                                    ),
+                                    new OA\Property(property: 'name', type: 'string', example: 'document.pdf'),
+                                    new OA\Property(
+                                        property: 'original_filename',
+                                        type: 'string',
+                                        example: 'original.pdf',
+                                    ),
+                                    new OA\Property(
+                                        property: 'mime_type',
+                                        type: 'string',
+                                        example: 'application/pdf',
+                                    ),
+                                    new OA\Property(property: 'size', type: 'integer', example: 1024000),
+                                    new OA\Property(property: 'is_active', type: 'boolean', example: true),
+                                    new OA\Property(property: 'size_human', type: 'string', example: '1.00 MB'),
+                                    new OA\Property(property: 'extension', type: 'string', example: 'pdf'),
+                                    new OA\Property(
+                                        property: 'uploaded_by',
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                                            new OA\Property(
+                                                property: 'email',
+                                                type: 'string',
+                                                example: 'john@example.com',
+                                            ),
+                                        ],
+                                    ),
+                                    new OA\Property(property: 'uploaded_at', type: 'string', format: 'date-time'),
+                                ],
+                            ),
+                        ),
+                        new OA\Property(
+                            property: 'pagination',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'total', type: 'integer', example: 100),
+                                new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                new OA\Property(property: 'last_page', type: 'integer', example: 7),
+                                new OA\Property(property: 'from', type: 'integer', example: 1),
+                                new OA\Property(property: 'to', type: 'integer', example: 15),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'search',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'string',
+                                        example: 'Search term must be at least 2 characters.',
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to retrieve documents.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(DocumentListRequest $request): JsonResponse
     {
         // Outside the try: the sole catch below is \Exception, which would turn a
@@ -283,62 +306,103 @@ class DocumentController extends Controller
 
     /**
      * Upload a document.
-     *
-     * @OA\Post(
-     *     path="/api/v1/documents",
-     *     summary="Upload a document",
-     *     tags={"Document", "System Admin - Document", "DRDO Admin - Document", "Operations Manager - Document", "Operations Admin - Document", "Assessor - Document", "Unit Admin - Document", "Enterprise Admin - Document"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"file"},
-     *
-     *                 @OA\Property(property="file", type="string", format="binary", description="File to upload (Maximum size: 50 MB. Allowed types: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX, ZIP)"),
-     *                 @OA\Property(property="title", type="string", example="Project Plan", description="Optional title for the document"),
-     *                 @OA\Property(property="name", type="string", example="project_plan.pdf", description="Optional client-specified name for the document"),
-     *                 @OA\Property(property="is_active", type="boolean", example=true, description="Active status (defaults to true)"),
-
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Document uploaded successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Document uploaded successfully"),
-     *                 @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="uuid", type="string", format="uuid"),
-     *                 @OA\Property(property="title", type="string", example="Project Plan"),
-     *                 @OA\Property(property="name", type="string", example="project_plan.pdf"),
-     *                 @OA\Property(property="original_filename", type="string", example="project_plan_original.pdf"),
-     *                 @OA\Property(property="file_path", type="string", example="documents/2025/11/project_plan.pdf"),
-     *                 @OA\Property(property="disk", type="string", example="private"),
-     *                 @OA\Property(property="mime_type", type="string", example="application/pdf"),
-     *                 @OA\Property(property="size", type="integer", example=1024000),
-     *                 @OA\Property(property="extension", type="string", example="pdf"),
-     *                 @OA\Property(property="is_active", type="boolean", example=true),
-     *                 @OA\Property(property="uploaded_by", type="integer", example=1)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Invalid file or validation error"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/documents',
+        summary: 'Upload a document',
+        tags: [
+            'Document',
+            'System Admin - Document',
+            'DRDO Admin - Document',
+            'Operations Manager - Document',
+            'Operations Admin - Document',
+            'Assessor - Document',
+            'Unit Admin - Document',
+            'Enterprise Admin - Document',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['file'],
+                        properties: [
+                            new OA\Property(
+                                property: 'file',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'File to upload (Maximum size: 50 MB. Allowed types: PDF, JPG, PNG, DOC, DOCX, XLS, XLSX, ZIP)',
+                            ),
+                            new OA\Property(
+                                property: 'title',
+                                type: 'string',
+                                example: 'Project Plan',
+                                description: 'Optional title for the document',
+                            ),
+                            new OA\Property(
+                                property: 'name',
+                                type: 'string',
+                                example: 'project_plan.pdf',
+                                description: 'Optional client-specified name for the document',
+                            ),
+                            new OA\Property(
+                                property: 'is_active',
+                                type: 'boolean',
+                                example: true,
+                                description: 'Active status (defaults to true)',
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Document uploaded successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Document uploaded successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'uuid', type: 'string', format: 'uuid'),
+                                new OA\Property(property: 'title', type: 'string', example: 'Project Plan'),
+                                new OA\Property(property: 'name', type: 'string', example: 'project_plan.pdf'),
+                                new OA\Property(
+                                    property: 'original_filename',
+                                    type: 'string',
+                                    example: 'project_plan_original.pdf',
+                                ),
+                                new OA\Property(
+                                    property: 'file_path',
+                                    type: 'string',
+                                    example: 'documents/2025/11/project_plan.pdf',
+                                ),
+                                new OA\Property(property: 'disk', type: 'string', example: 'private'),
+                                new OA\Property(property: 'mime_type', type: 'string', example: 'application/pdf'),
+                                new OA\Property(property: 'size', type: 'integer', example: 1024000),
+                                new OA\Property(property: 'extension', type: 'string', example: 'pdf'),
+                                new OA\Property(property: 'is_active', type: 'boolean', example: true),
+                                new OA\Property(property: 'uploaded_by', type: 'integer', example: 1),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Invalid file or validation error'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function store(UploadDocumentRequest $request): JsonResponse
     {
         // Outside the try, same reason as index().
@@ -374,46 +438,42 @@ class DocumentController extends Controller
 
     /**
      * Download or view a document.
-     *
-     * @OA\Get(
-     *     path="/api/v1/documents/{uuid}",
-     *     summary="View or download a document",
-     *     description="Serves document inline by default (viewable in browser). Use ?download=true to force download.",
-     *     tags={"Documents"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="uuid",
-     *         in="path",
-     *         required=true,
-     *         description="Document UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="download",
-     *         in="query",
-     *         required=false,
-     *         description="Set to true to force download instead of inline view",
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Document file stream",
-     *
-     *         @OA\MediaType(
-     *             mediaType="application/octet-stream"
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Document not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/documents/{uuid}',
+        summary: 'View or download a document',
+        description: 'Serves document inline by default (viewable in browser). Use ?download=true to force download.',
+        tags: ['Documents'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'uuid',
+                in: 'path',
+                required: true,
+                description: 'Document UUID',
+                schema: new OA\Schema(type: 'string', format: 'uuid'),
+            ),
+            new OA\Parameter(
+                name: 'download',
+                in: 'query',
+                required: false,
+                description: 'Set to true to force download instead of inline view',
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Document file stream',
+                content: [
+                    new OA\MediaType(mediaType: 'application/octet-stream'),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Document not found'),
+        ],
+    )]
     public function show(Request $request, Document $document)
     {
         // Same gap as download(): route-model-bound, auth-only middleware, and no
@@ -559,21 +619,37 @@ class DocumentController extends Controller
 
     /**
      * Activate a document (set is_active = true).
-     *
-     * @OA\Post(
-     *     path="/api/v1/documents/{id}/activate",
-     *     summary="Activate a document",
-     *     tags={"Document", "System Admin - Document", "DRDO Admin - Document", "Operations Manager - Document", "Operations Admin - Document", "Assessor - Document", "Unit Admin - Document", "Enterprise Admin - Document"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Document ID or UUID", @OA\Schema(type="string")),
-     *
-     *     @OA\Response(response=200, description="Document activated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Document not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/documents/{id}/activate',
+        summary: 'Activate a document',
+        tags: [
+            'Document',
+            'System Admin - Document',
+            'DRDO Admin - Document',
+            'Operations Manager - Document',
+            'Operations Admin - Document',
+            'Assessor - Document',
+            'Unit Admin - Document',
+            'Enterprise Admin - Document',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Document ID or UUID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Document activated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Document not found'),
+        ],
+    )]
     public function activate(Request $request, $id): JsonResponse
     {
         try {
@@ -609,21 +685,37 @@ class DocumentController extends Controller
 
     /**
      * Deactivate a document (set is_active = false).
-     *
-     * @OA\Post(
-     *     path="/api/v1/documents/{id}/deactivate",
-     *     summary="Deactivate a document",
-     *     tags={"Document", "System Admin - Document", "DRDO Admin - Document", "Operations Manager - Document", "Operations Admin - Document", "Assessor - Document", "Unit Admin - Document", "Enterprise Admin - Document"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Document ID or UUID", @OA\Schema(type="string")),
-     *
-     *     @OA\Response(response=200, description="Document deactivated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Document not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/documents/{id}/deactivate',
+        summary: 'Deactivate a document',
+        tags: [
+            'Document',
+            'System Admin - Document',
+            'DRDO Admin - Document',
+            'Operations Manager - Document',
+            'Operations Admin - Document',
+            'Assessor - Document',
+            'Unit Admin - Document',
+            'Enterprise Admin - Document',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Document ID or UUID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Document deactivated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Document not found'),
+        ],
+    )]
     public function deactivate(Request $request, $id): JsonResponse
     {
         try {

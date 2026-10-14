@@ -13,14 +13,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @OA\Tag(
- *     name="Certificates",
- *     description="Certificate management endpoints - Issue, approve, suspend, revoke, and verify certificates"
- * )
- */
+#[OA\Tag(
+    name: 'Certificates',
+    description: 'Certificate management endpoints - Issue, approve, suspend, revoke, and verify certificates',
+)]
 class CertificateController extends Controller
 {
     /**
@@ -32,100 +31,141 @@ class CertificateController extends Controller
 
     /**
      * Get all certificates.
-     *
-     * @OA\Get(
-     *     path="/api/v1/certificates",
-     *     summary="Get all certificates",
-     *     description="Retrieves a paginated list of certificates. System admins see all certificates, while enterprise/unit admins only see certificates from their organization.",
-     *     tags={"Certificate", "System Admin - Certificate", "DRDO Admin - Certificate", "Operations Manager - Certificate", "Operations Admin - Certificate", "Enterprise Admin - Certificate"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="query",
-     *         description="Filter by application ID",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by certificate status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"draft", "active", "suspended", "revoked", "expired"}, example="active")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="certificateType",
-     *         in="query",
-     *         description="Filter by certificate type",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"initial", "renewal", "upgrade", "surveillance"}, example="initial")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="q",
-     *         in="query",
-     *         description="Search by certificate number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="CERT-I-2024")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=15, default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Certificates retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="certificates", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="certificate_number", type="string", example="CERT-I-2024-000001"),
-     *                     @OA\Property(property="certificate_type", type="string", example="initial"),
-     *                     @OA\Property(property="status", type="string", example="active"),
-     *                     @OA\Property(property="valid_from", type="string", format="date", example="2024-01-01"),
-     *                     @OA\Property(property="valid_until", type="string", format="date", example="2027-01-01"),
-     *                     @OA\Property(property="is_valid", type="boolean", example=true),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T10:00:00Z")
-     *                 )),
-     *                 @OA\Property(property="pagination", type="object",
-     *                     @OA\Property(property="total", type="integer", example=50),
-     *                     @OA\Property(property="per_page", type="integer", example=15),
-     *                     @OA\Property(property="current_page", type="integer", example=1),
-     *                     @OA\Property(property="last_page", type="integer", example=4)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/certificates',
+        summary: 'Get all certificates',
+        description: 'Retrieves a paginated list of certificates. System admins see all certificates, while enterprise/unit admins only see certificates from their organization.',
+        tags: [
+            'Certificate',
+            'System Admin - Certificate',
+            'DRDO Admin - Certificate',
+            'Operations Manager - Certificate',
+            'Operations Admin - Certificate',
+            'Enterprise Admin - Certificate',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'query',
+                description: 'Filter by application ID',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by certificate status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['draft', 'active', 'suspended', 'revoked', 'expired'],
+                    example: 'active',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'certificateType',
+                in: 'query',
+                description: 'Filter by certificate type',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['initial', 'renewal', 'upgrade', 'surveillance'],
+                    example: 'initial',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                description: 'Search by certificate number',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'CERT-I-2024'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 15, default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Certificates retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'certificates',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'certificate_number',
+                                                type: 'string',
+                                                example: 'CERT-I-2024-000001',
+                                            ),
+                                            new OA\Property(
+                                                property: 'certificate_type',
+                                                type: 'string',
+                                                example: 'initial',
+                                            ),
+                                            new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                            new OA\Property(
+                                                property: 'valid_from',
+                                                type: 'string',
+                                                format: 'date',
+                                                example: '2024-01-01',
+                                            ),
+                                            new OA\Property(
+                                                property: 'valid_until',
+                                                type: 'string',
+                                                format: 'date',
+                                                example: '2027-01-01',
+                                            ),
+                                            new OA\Property(property: 'is_valid', type: 'boolean', example: true),
+                                            new OA\Property(
+                                                property: 'created_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                example: '2024-01-01T10:00:00Z',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'pagination',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total', type: 'integer', example: 50),
+                                        new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                        new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                        new OA\Property(property: 'last_page', type: 'integer', example: 4),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -193,99 +233,194 @@ class CertificateController extends Controller
 
     /**
      * Get a single certificate.
-     *
-     * @OA\Get(
-     *     path="/api/v1/certificates/{id}",
-     *     summary="Get certificate details",
-     *     description="Retrieves detailed information about a specific certificate including application, organization, and approval information.",
-     *     tags={"Certificate", "System Admin - Certificate", "DRDO Admin - Certificate", "Operations Manager - Certificate", "Operations Admin - Certificate", "Enterprise Admin - Certificate"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Certificate ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Certificate retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="certificate", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="certificate_number", type="string", example="CERT-I-2024-000001"),
-     *                     @OA\Property(property="certificate_type", type="string", example="initial"),
-     *                     @OA\Property(property="status", type="string", example="active"),
-     *                     @OA\Property(property="valid_from", type="string", format="date", example="2024-01-01"),
-     *                     @OA\Property(property="valid_until", type="string", format="date", example="2027-01-01"),
-     *                     @OA\Property(property="is_valid", type="boolean", example=true),
-     *                     @OA\Property(property="scope_of_certification", type="string", example="Manufacturing of electronic components"),
-     *                     @OA\Property(property="standards_covered", type="array", @OA\Items(type="string")),
-     *                     @OA\Property(property="special_conditions", type="string", nullable=true),
-     *                     @OA\Property(property="application", type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="application_number", type="string", example="APP-2024-0001"),
-     *                         @OA\Property(property="organization", type="object",
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="name", type="string", example="Tech Corp Ltd")
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="issued_by", type="object",
-     *                         @OA\Property(property="id", type="integer", example=2),
-     *                         @OA\Property(property="name", type="string", example="John Doe")
-     *                     ),
-     *                     @OA\Property(property="approved_by", type="object", nullable=true,
-     *                         @OA\Property(property="id", type="integer", example=3),
-     *                         @OA\Property(property="name", type="string", example="Jane Smith")
-     *                     ),
-     *                     @OA\Property(property="approved_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-01-01T10:00:00Z")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this certificate",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to view this certificate.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Certificate not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\Certificate].")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/certificates/{id}',
+        summary: 'Get certificate details',
+        description: 'Retrieves detailed information about a specific certificate including application, organization, and approval information.',
+        tags: [
+            'Certificate',
+            'System Admin - Certificate',
+            'DRDO Admin - Certificate',
+            'Operations Manager - Certificate',
+            'Operations Admin - Certificate',
+            'Enterprise Admin - Certificate',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Certificate ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Certificate retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'certificate',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'certificate_number',
+                                            type: 'string',
+                                            example: 'CERT-I-2024-000001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'certificate_type',
+                                            type: 'string',
+                                            example: 'initial',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                        new OA\Property(
+                                            property: 'valid_from',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2024-01-01',
+                                        ),
+                                        new OA\Property(
+                                            property: 'valid_until',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2027-01-01',
+                                        ),
+                                        new OA\Property(property: 'is_valid', type: 'boolean', example: true),
+                                        new OA\Property(
+                                            property: 'scope_of_certification',
+                                            type: 'string',
+                                            example: 'Manufacturing of electronic components',
+                                        ),
+                                        new OA\Property(
+                                            property: 'standards_covered',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'special_conditions',
+                                            type: 'string',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'application',
+                                            type: 'object',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'application_number',
+                                                    type: 'string',
+                                                    example: 'APP-2024-0001',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'organization',
+                                                    type: 'object',
+                                                    properties: [
+                                                        new OA\Property(
+                                                            property: 'id',
+                                                            type: 'integer',
+                                                            example: 1,
+                                                        ),
+                                                        new OA\Property(
+                                                            property: 'name',
+                                                            type: 'string',
+                                                            example: 'Tech Corp Ltd',
+                                                        ),
+                                                    ],
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'issued_by',
+                                            type: 'object',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 2),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'John Doe',
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'approved_by',
+                                            type: 'object',
+                                            nullable: true,
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 3),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'Jane Smith',
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'approved_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'created_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2024-01-01T10:00:00Z',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to view this certificate',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to view this certificate.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Certificate not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No query results for model [App\\\\Models\\\\Certificate].',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $certificate = Certificate::with([
@@ -319,105 +454,143 @@ class CertificateController extends Controller
 
     /**
      * Verify certificate authenticity.
-     *
-     * @OA\Post(
-     *     path="/api/verify-certificate",
-     *     summary="Verify certificate authenticity (POST)",
-     *     description="Verifies the authenticity of a certificate by its certificate number. Public endpoint, no auth required.",
-     *     tags={"Certificates"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"certificate_number"},
-     *
-     *             @OA\Property(property="certificate_number", type="string", example="CERT-I-2024-000001")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Certificate verification result",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="valid", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="certificate_number", type="string", example="CERT-I-2024-000001"),
-     *                 @OA\Property(property="organization_name", type="string", example="Tech Corp Ltd"),
-     *                 @OA\Property(property="status", type="string", example="active"),
-     *                 @OA\Property(property="valid_from", type="string", format="date", example="2024-01-01"),
-     *                 @OA\Property(property="valid_until", type="string", format="date", example="2027-01-01"),
-     *                 @OA\Property(property="scope", type="string", example="Manufacturing of electronic components")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Certificate not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Certificate not found."),
-     *             @OA\Property(property="valid", type="boolean", example=false)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
-     *
-     * @OA\Get(
-     *     path="/api/verify-certificate",
-     *     summary="Verify certificate authenticity (GET, QR-friendly)",
-     *     description="GET variant for QR-code deep links. Public endpoint, no auth required.",
-     *     tags={"Certificates"},
-     *
-     *     @OA\Parameter(
-     *         name="certificate_number",
-     *         in="query",
-     *         required=true,
-     *         description="Certificate number printed on the certificate / encoded in the QR",
-     *
-     *         @OA\Schema(type="string", example="CERT-I-2024-000001")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Certificate verification result",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="valid", type="boolean", example=true),
-     *             @OA\Property(property="certificate_number", type="string", example="CERT-I-2024-000001"),
-     *             @OA\Property(property="organization_name", type="string", example="Tech Corp Ltd"),
-     *             @OA\Property(property="status", type="string", example="active"),
-     *             @OA\Property(property="valid_from", type="string", format="date", example="2024-01-01"),
-     *             @OA\Property(property="valid_until", type="string", format="date", example="2027-01-01"),
-     *             @OA\Property(property="scope", type="string", example="Manufacturing of electronic components")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Certificate not found"),
-     *     @OA\Response(response=400, description="Validation failed")
-     * )
      */
+    #[OA\Post(
+        path: '/api/verify-certificate',
+        summary: 'Verify certificate authenticity (POST)',
+        description: 'Verifies the authenticity of a certificate by its certificate number. Public endpoint, no auth required.',
+        tags: ['Certificates'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['certificate_number'],
+                properties: [
+                    new OA\Property(property: 'certificate_number', type: 'string', example: 'CERT-I-2024-000001'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Certificate verification result',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'valid', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'certificate_number',
+                                    type: 'string',
+                                    example: 'CERT-I-2024-000001',
+                                ),
+                                new OA\Property(
+                                    property: 'organization_name',
+                                    type: 'string',
+                                    example: 'Tech Corp Ltd',
+                                ),
+                                new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                new OA\Property(
+                                    property: 'valid_from',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2024-01-01',
+                                ),
+                                new OA\Property(
+                                    property: 'valid_until',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2027-01-01',
+                                ),
+                                new OA\Property(
+                                    property: 'scope',
+                                    type: 'string',
+                                    example: 'Manufacturing of electronic components',
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Certificate not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Certificate not found.'),
+                        new OA\Property(property: 'valid', type: 'boolean', example: false),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
+    #[OA\Get(
+        path: '/api/verify-certificate',
+        summary: 'Verify certificate authenticity (GET, QR-friendly)',
+        description: 'GET variant for QR-code deep links. Public endpoint, no auth required.',
+        tags: ['Certificates'],
+        parameters: [
+            new OA\Parameter(
+                name: 'certificate_number',
+                in: 'query',
+                required: true,
+                description: 'Certificate number printed on the certificate / encoded in the QR',
+                schema: new OA\Schema(type: 'string', example: 'CERT-I-2024-000001'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Certificate verification result',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'valid', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'certificate_number',
+                            type: 'string',
+                            example: 'CERT-I-2024-000001',
+                        ),
+                        new OA\Property(property: 'organization_name', type: 'string', example: 'Tech Corp Ltd'),
+                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                        new OA\Property(
+                            property: 'valid_from',
+                            type: 'string',
+                            format: 'date',
+                            example: '2024-01-01',
+                        ),
+                        new OA\Property(
+                            property: 'valid_until',
+                            type: 'string',
+                            format: 'date',
+                            example: '2027-01-01',
+                        ),
+                        new OA\Property(
+                            property: 'scope',
+                            type: 'string',
+                            example: 'Manufacturing of electronic components',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Certificate not found'),
+            new OA\Response(response: 400, description: 'Validation failed'),
+        ],
+    )]
     public function verify(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -533,99 +706,111 @@ class CertificateController extends Controller
     /**
      * Download certificate PDF.
      *
-     * @OA\Get(
-     *     path="/api/v1/certificates/{certificateNumber}/download",
-     *     summary="Download certificate PDF",
-     *     description="Generates and downloads the certificate PDF by certificate number. System admins, DRDO admins, Operations Manager, and Operations Admin can download any certificate. Enterprise admins can only download certificates from their organization.",
-     *     tags={"Certificates", "System Admin - Certificate", "DRDO Admin - Certificate", "Operations Manager - Certificate", "Operations Admin - Certificate", "Enterprise Admin - Certificate"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="certificateNumber",
-     *         in="path",
-     *         description="Certificate number (e.g., CERT-I-2024-000001)",
-     *         required=true,
-     *
-     *         @OA\Schema(type="string", example="CERT-I-2024-000001")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="download",
-     *         in="query",
-     *         description="Force download instead of inline display",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", example=true)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Certificate PDF generated successfully",
-     *
-     *         @OA\MediaType(
-     *             mediaType="application/pdf",
-     *
-     *             @OA\Schema(
-     *                 type="string",
-     *                 format="binary",
-     *                 description="PDF file containing the certificate"
-     *             )
-     *         ),
-     *
-     *         @OA\Header(
-     *             header="Content-Disposition",
-     *             description="Attachment filename",
-     *
-     *             @OA\Schema(type="string", example="attachment; filename=certificate_CERT-I-2024-000001.pdf")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to download this certificate",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to download this certificate.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Certificate not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Certificate not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="An error occurred while generating the certificate PDF.")
-     *         )
-     *     )
-     * )
-     *
      * @return Response
      */
+    #[OA\Get(
+        path: '/api/v1/certificates/{certificateNumber}/download',
+        summary: 'Download certificate PDF',
+        description: 'Generates and downloads the certificate PDF by certificate number. System admins, DRDO admins, Operations Manager, and Operations Admin can download any certificate. Enterprise admins can only download certificates from their organization.',
+        tags: [
+            'Certificates',
+            'System Admin - Certificate',
+            'DRDO Admin - Certificate',
+            'Operations Manager - Certificate',
+            'Operations Admin - Certificate',
+            'Enterprise Admin - Certificate',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'certificateNumber',
+                in: 'path',
+                description: 'Certificate number (e.g., CERT-I-2024-000001)',
+                required: true,
+                schema: new OA\Schema(type: 'string', example: 'CERT-I-2024-000001'),
+            ),
+            new OA\Parameter(
+                name: 'download',
+                in: 'query',
+                description: 'Force download instead of inline display',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Certificate PDF generated successfully',
+                content: [
+                    new OA\MediaType(
+                        mediaType: 'application/pdf',
+                        schema: new OA\Schema(
+                            type: 'string',
+                            format: 'binary',
+                            description: 'PDF file containing the certificate',
+                        ),
+                    ),
+                ],
+                headers: [
+                    new OA\Header(
+                        header: 'Content-Disposition',
+                        description: 'Attachment filename',
+                        schema: new OA\Schema(
+                            type: 'string',
+                            example: 'attachment; filename=certificate_CERT-I-2024-000001.pdf',
+                        ),
+                    ),
+                ],
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to download this certificate',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to download this certificate.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Certificate not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Certificate not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Internal server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'An error occurred while generating the certificate PDF.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function download(Request $request, string $certificateNumber, CertificateService $certificateService)
     {
         $certificate = Certificate::with(['application.organization'])

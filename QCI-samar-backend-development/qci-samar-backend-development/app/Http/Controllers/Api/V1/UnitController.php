@@ -12,142 +12,172 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Units",
- *     description="Unit management endpoints for creating and managing organizational units"
- * )
- */
+#[OA\Tag(name: 'Units', description: 'Unit management endpoints for creating and managing organizational units')]
 class UnitController extends Controller
 {
     /**
      * Get all units for the organization.
-     *
-     * @OA\Get(
-     *     path="/api/v1/units",
-     *     summary="Get list of units",
-     *     description="Retrieves all units. Enterprise Admins see their organization's units. Unit Admins see only assigned units. System Admins must specify organization_id.",
-     *     tags={"Unit Management", "System Admin - Unit Management", "Unit Admin - Unit Management", "Enterprise Admin - Unit Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="organizationId",
-     *         in="query",
-     *         description="Filter by organization (required for System Admin)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by unit status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="active")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="unitAdmin",
-     *         in="query",
-     *         description="Filter by unit admin user ID",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=2)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Units retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Units retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="organizationId", type="integer", example=1),
-     *                     @OA\Property(property="unitType", type="string", example="manufacturing"),
-     *                     @OA\Property(property="state", type="string", example="Maharashtra"),
-     *                     @OA\Property(property="status", type="string", example="active"),
-     *                     @OA\Property(
-     *                         property="unitAdmins",
-     *                         type="array",
-     *
-     *                         @OA\Items(
-     *
-     *                             @OA\Property(property="id", type="integer", example=2),
-     *                             @OA\Property(property="name", type="string", example="John Doe"),
-     *                             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                             @OA\Property(property="lastLoginAt", type="string", format="date-time", nullable=true, example="2025-01-15T10:30:00+00:00"),
-     *                             @OA\Property(property="unitAddress", type="string", nullable=true, example="123 Industrial Area, Mumbai, Maharashtra, 400001"),
-     *                             @OA\Property(property="latestApplicationNumber", type="string", nullable=true, example="APP-2025-0001-0001")
-     *                         )
-     *                     )
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="pagination",
-     *                 type="object",
-     *                 @OA\Property(property="currentPage", type="integer", example=1),
-     *                 @OA\Property(property="perPage", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=10),
-     *                 @OA\Property(property="lastPage", type="integer", example=1),
-     *                 @OA\Property(property="from", type="integer", example=1),
-     *                 @OA\Property(property="to", type="integer", example=10)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - organization_id is required for system admins",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="organization_id is required for system admins.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/units',
+        summary: 'Get list of units',
+        description: 'Retrieves all units. Enterprise Admins see their organization\'s units. Unit Admins see only assigned units. System Admins must specify organization_id.',
+        tags: [
+            'Unit Management',
+            'System Admin - Unit Management',
+            'Unit Admin - Unit Management',
+            'Enterprise Admin - Unit Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'organizationId',
+                in: 'query',
+                description: 'Filter by organization (required for System Admin)',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by unit status',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'active'),
+            ),
+            new OA\Parameter(
+                name: 'unitAdmin',
+                in: 'query',
+                description: 'Filter by unit admin user ID',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 2),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Units retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Units retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'organizationId', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'unitType',
+                                        type: 'string',
+                                        example: 'manufacturing',
+                                    ),
+                                    new OA\Property(property: 'state', type: 'string', example: 'Maharashtra'),
+                                    new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                    new OA\Property(
+                                        property: 'unitAdmins',
+                                        type: 'array',
+                                        items: new OA\Items(
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 2),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'John Doe',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'email',
+                                                    type: 'string',
+                                                    example: 'john.doe@example.com',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'lastLoginAt',
+                                                    type: 'string',
+                                                    format: 'date-time',
+                                                    nullable: true,
+                                                    example: '2025-01-15T10:30:00+00:00',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'unitAddress',
+                                                    type: 'string',
+                                                    nullable: true,
+                                                    example: '123 Industrial Area, Mumbai, Maharashtra, 400001',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'latestApplicationNumber',
+                                                    type: 'string',
+                                                    nullable: true,
+                                                    example: 'APP-2025-0001-0001',
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        new OA\Property(
+                            property: 'pagination',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                                new OA\Property(property: 'perPage', type: 'integer', example: 15),
+                                new OA\Property(property: 'total', type: 'integer', example: 10),
+                                new OA\Property(property: 'lastPage', type: 'integer', example: 1),
+                                new OA\Property(property: 'from', type: 'integer', example: 1),
+                                new OA\Property(property: 'to', type: 'integer', example: 10),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - organization_id is required for system admins',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'organization_id is required for system admins.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -215,111 +245,181 @@ class UnitController extends Controller
 
     /**
      * Get a single unit.
-     *
-     * @OA\Get(
-     *     path="/api/v1/units/{id}",
-     *     summary="Get unit details",
-     *     description="Retrieves detailed information about a specific unit including organization and document counts.",
-     *     tags={"Unit Management", "System Admin - Unit Management", "Unit Admin - Unit Management", "Enterprise Admin - Unit Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Unit ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Unit retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="unit",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Manufacturing Unit A"),
-     *                     @OA\Property(property="email", type="string", example="unit-a@example.com"),
-     *                     @OA\Property(property="alternate_email", type="string", example="unit-a-alt@example.com"),
-     *                     @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *                     @OA\Property(property="landline_number", type="string", example="02212345678"),
-     *                     @OA\Property(property="address", type="string", example="123 Industrial Area"),
-     *                     @OA\Property(property="state", type="string", example="Maharashtra"),
-     *                     @OA\Property(property="unit_type", type="string", example="manufacturing"),
-     *                     @OA\Property(property="commencement_date", type="string", format="date", example="2020-01-15"),
-     *                     @OA\Property(property="organization", type="object"),
-     *                     @OA\Property(property="applications_count", type="integer", example=2),
-     *                     @OA\Property(
-     *                         property="unit_admins",
-     *                         type="array",
-     *
-     *                         @OA\Items(
-     *
-     *                             @OA\Property(property="id", type="integer", example=2),
-     *                             @OA\Property(property="name", type="string", example="John Doe"),
-     *                             @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                             @OA\Property(property="last_login_at", type="string", format="date-time", nullable=true, example="2025-01-15T10:30:00+00:00"),
-     *                             @OA\Property(property="unit_address", type="string", nullable=true, example="123 Industrial Area, Mumbai, Maharashtra, 400001"),
-     *                             @OA\Property(property="latest_application_number", type="string", nullable=true, example="APP-2025-0001-0001")
-     *                         )
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to view this unit.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Unit not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unit not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/units/{id}',
+        summary: 'Get unit details',
+        description: 'Retrieves detailed information about a specific unit including organization and document counts.',
+        tags: [
+            'Unit Management',
+            'System Admin - Unit Management',
+            'Unit Admin - Unit Management',
+            'Enterprise Admin - Unit Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Unit ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Unit retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'unit',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'name',
+                                            type: 'string',
+                                            example: 'Manufacturing Unit A',
+                                        ),
+                                        new OA\Property(
+                                            property: 'email',
+                                            type: 'string',
+                                            example: 'unit-a@example.com',
+                                        ),
+                                        new OA\Property(
+                                            property: 'alternate_email',
+                                            type: 'string',
+                                            example: 'unit-a-alt@example.com',
+                                        ),
+                                        new OA\Property(
+                                            property: 'mobile_number',
+                                            type: 'string',
+                                            example: '9876543210',
+                                        ),
+                                        new OA\Property(
+                                            property: 'landline_number',
+                                            type: 'string',
+                                            example: '02212345678',
+                                        ),
+                                        new OA\Property(
+                                            property: 'address',
+                                            type: 'string',
+                                            example: '123 Industrial Area',
+                                        ),
+                                        new OA\Property(property: 'state', type: 'string', example: 'Maharashtra'),
+                                        new OA\Property(
+                                            property: 'unit_type',
+                                            type: 'string',
+                                            example: 'manufacturing',
+                                        ),
+                                        new OA\Property(
+                                            property: 'commencement_date',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2020-01-15',
+                                        ),
+                                        new OA\Property(property: 'organization', type: 'object'),
+                                        new OA\Property(
+                                            property: 'applications_count',
+                                            type: 'integer',
+                                            example: 2,
+                                        ),
+                                        new OA\Property(
+                                            property: 'unit_admins',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 2),
+                                                    new OA\Property(
+                                                        property: 'name',
+                                                        type: 'string',
+                                                        example: 'John Doe',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'email',
+                                                        type: 'string',
+                                                        example: 'john.doe@example.com',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'last_login_at',
+                                                        type: 'string',
+                                                        format: 'date-time',
+                                                        nullable: true,
+                                                        example: '2025-01-15T10:30:00+00:00',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'unit_address',
+                                                        type: 'string',
+                                                        nullable: true,
+                                                        example: '123 Industrial Area, Mumbai, Maharashtra, 400001',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'latest_application_number',
+                                                        type: 'string',
+                                                        nullable: true,
+                                                        example: 'APP-2025-0001-0001',
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to view this unit.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Unit not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Unit not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $unit = Unit::with('organization')->find($id);
@@ -526,104 +626,147 @@ class UnitController extends Controller
      * Enterprise Admin only, scoped to their own organization. The unit's SAMAR ID and
      * data mapping are preserved; only the contact identity + login credentials change,
      * and a credentials email is sent to the new spoke.
-     *
-     * @OA\Post(
-     *     path="/api/v1/units/{id}/change-spoke",
-     *     summary="Change the spoke (Unit Admin) for a unit",
-     *     description="Enterprise Admin only, scoped to their own organization. Keeps the unit's SAMAR ID and data mapping; updates the contact identity and login credentials and emails the new spoke.",
-     *     operationId="changeUnitSpoke",
-     *     tags={"Units"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Unit ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"email"},
-     *
-     *             @OA\Property(property="email", type="string", format="email", maxLength=320, example="new.spoke@example.com"),
-     *             @OA\Property(property="name", type="string", nullable=true, maxLength=100, example="Jane Doe"),
-     *             @OA\Property(property="designation", type="string", nullable=true, maxLength=100, example="Plant Manager"),
-     *             @OA\Property(property="mobile", type="string", nullable=true, example="9876543210", description="10 digit mobile number")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Spoke changed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Spoke changed successfully. Login credentials have been emailed to the new spoke."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="unit_admin",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=42),
-     *                     @OA\Property(property="samar_id", type="string", example="SAMAR-UA-0042"),
-     *                     @OA\Property(property="name", type="string", example="Jane Doe"),
-     *                     @OA\Property(property="email", type="string", example="new.spoke@example.com")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden — outside the caller's organization",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You can only change spokes for units in your organization.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Unit not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unit not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error or no active Unit Admin to replace",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This unit has no active Unit Admin to change.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/units/{id}/change-spoke',
+        summary: 'Change the spoke (Unit Admin) for a unit',
+        description: 'Enterprise Admin only, scoped to their own organization. Keeps the unit\'s SAMAR ID and data mapping; updates the contact identity and login credentials and emails the new spoke.',
+        operationId: 'changeUnitSpoke',
+        tags: ['Units'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Unit ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email'],
+                properties: [
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        maxLength: 320,
+                        example: 'new.spoke@example.com',
+                    ),
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        nullable: true,
+                        maxLength: 100,
+                        example: 'Jane Doe',
+                    ),
+                    new OA\Property(
+                        property: 'designation',
+                        type: 'string',
+                        nullable: true,
+                        maxLength: 100,
+                        example: 'Plant Manager',
+                    ),
+                    new OA\Property(
+                        property: 'mobile',
+                        type: 'string',
+                        nullable: true,
+                        example: '9876543210',
+                        description: '10 digit mobile number',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Spoke changed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Spoke changed successfully. Login credentials have been emailed to the new spoke.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'unit_admin',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 42),
+                                        new OA\Property(
+                                            property: 'samar_id',
+                                            type: 'string',
+                                            example: 'SAMAR-UA-0042',
+                                        ),
+                                        new OA\Property(property: 'name', type: 'string', example: 'Jane Doe'),
+                                        new OA\Property(
+                                            property: 'email',
+                                            type: 'string',
+                                            example: 'new.spoke@example.com',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden — outside the caller\'s organization',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You can only change spokes for units in your organization.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Unit not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Unit not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error or no active Unit Admin to replace',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This unit has no active Unit Admin to change.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function changeSpoke(ChangeSpokeRequest $request, int $id, UserService $userService): JsonResponse
     {
         $user = $request->user();

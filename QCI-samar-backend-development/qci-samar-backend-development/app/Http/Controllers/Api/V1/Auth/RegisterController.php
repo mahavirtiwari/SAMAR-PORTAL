@@ -13,13 +13,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Authentication",
- *     description="User authentication and registration endpoints"
- * )
- */
+#[OA\Tag(name: 'Authentication', description: 'User authentication and registration endpoints')]
 class RegisterController extends Controller
 {
     public function __construct(
@@ -30,52 +26,87 @@ class RegisterController extends Controller
 
     /**
      * Register new organization and enterprise admin.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/register",
-     *     summary="Register new organization and enterprise admin",
-     *     description="Creates a new organization account along with an enterprise admin user. Sends OTP for verification. If the email is already registered but pending verification (user abandoned previous registration), this endpoint will automatically resend a new OTP, generate a new password, and update the user details. Note: Re-registration is NOT allowed for verified organizations.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"organization_name", "first_name", "last_name", "email"},
-     *
-     *             @OA\Property(property="organization_name", type="string", maxLength=255, example="ABC Manufacturing Pvt Ltd"),
-     *             @OA\Property(property="first_name", type="string", maxLength=100, example="John"),
-     *             @OA\Property(property="last_name", type="string", maxLength=100, example="Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
-     *             @OA\Property(property="mobile_number", type="string", pattern="^[0-9]{10}$", example="9876543210")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Registration successful or OTP resent for pending verification. Check is_resend flag to distinguish between new registration and OTP resend.",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Registration successful. Check your email for login credentials and verification OTP."),
-     *             @OA\Property(property="is_resend", type="boolean", example=false, description="True if this was a resend for existing pending verification account, false for new registration")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - validation failed or registration failed (email already registered)",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed or email already registered."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/register',
+        summary: 'Register new organization and enterprise admin',
+        description: 'Creates a new organization account along with an enterprise admin user. Sends OTP for verification. If the email is already registered but pending verification (user abandoned previous registration), this endpoint will automatically resend a new OTP, generate a new password, and update the user details. Note: Re-registration is NOT allowed for verified organizations.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['organization_name', 'first_name', 'last_name', 'email'],
+                properties: [
+                    new OA\Property(
+                        property: 'organization_name',
+                        type: 'string',
+                        maxLength: 255,
+                        example: 'ABC Manufacturing Pvt Ltd',
+                    ),
+                    new OA\Property(property: 'first_name', type: 'string', maxLength: 100, example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', maxLength: 100, example: 'Doe'),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'john.doe@example.com',
+                    ),
+                    new OA\Property(
+                        property: 'mobile_number',
+                        type: 'string',
+                        pattern: '^[0-9]{10}$',
+                        example: '9876543210',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Registration successful or OTP resent for pending verification. Check is_resend flag to distinguish between new registration and OTP resend.',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Registration successful. Check your email for login credentials and verification OTP.',
+                        ),
+                        new OA\Property(
+                            property: 'is_resend',
+                            type: 'boolean',
+                            example: false,
+                            description: 'True if this was a resend for existing pending verification account, false for new registration',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - validation failed or registration failed (email already registered)',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Validation failed or email already registered.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -119,48 +150,70 @@ class RegisterController extends Controller
 
     /**
      * Verify OTP.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/verify-otp",
-     *     summary="Verify OTP for user registration",
-     *     description="Verifies the OTP sent to user's email/phone during registration. Upon successful verification, user account is activated.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"samar_id", "otp"},
-     *
-     *             @OA\Property(property="samar_id", type="string", example="SAMAR-040226-1", description="SAMAR ID received from registration"),
-     *             @OA\Property(property="otp", type="string", minLength=6, maxLength=6, example="123456")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="OTP verified successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="OTP verified successfully. You can now login.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - validation failed or invalid/expired OTP",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Invalid or expired OTP."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/verify-otp',
+        summary: 'Verify OTP for user registration',
+        description: 'Verifies the OTP sent to user\'s email/phone during registration. Upon successful verification, user account is activated.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['samar_id', 'otp'],
+                properties: [
+                    new OA\Property(
+                        property: 'samar_id',
+                        type: 'string',
+                        example: 'SAMAR-040226-1',
+                        description: 'SAMAR ID received from registration',
+                    ),
+                    new OA\Property(
+                        property: 'otp',
+                        type: 'string',
+                        minLength: 6,
+                        maxLength: 6,
+                        example: '123456',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OTP verified successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'OTP verified successfully. You can now login.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - validation failed or invalid/expired OTP',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Invalid or expired OTP.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function verifyOtp(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -186,47 +239,63 @@ class RegisterController extends Controller
 
     /**
      * Resend OTP.
-     *
-     * @OA\Post(
-     *     path="/api/v1/auth/resend-otp",
-     *     summary="Resend OTP for verification",
-     *     description="Resends a new OTP to the user's email/phone for account verification.",
-     *     tags={"Authentication", "System Admin - Authentication", "DRDO Admin - Authentication", "Operations Manager - Authentication", "Operations Admin - Authentication", "Assessor - Authentication", "Unit Admin - Authentication", "Enterprise Admin - Authentication"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"samar_id"},
-     *
-     *             @OA\Property(property="samar_id", type="string", example="SAMAR-040226-1", description="SAMAR ID received from registration")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="OTP resent successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="OTP has been resent. Check your email.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - validation failed or failed to resend OTP",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to resend OTP."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/auth/resend-otp',
+        summary: 'Resend OTP for verification',
+        description: 'Resends a new OTP to the user\'s email/phone for account verification.',
+        tags: [
+            'Authentication',
+            'System Admin - Authentication',
+            'DRDO Admin - Authentication',
+            'Operations Manager - Authentication',
+            'Operations Admin - Authentication',
+            'Assessor - Authentication',
+            'Unit Admin - Authentication',
+            'Enterprise Admin - Authentication',
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['samar_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'samar_id',
+                        type: 'string',
+                        example: 'SAMAR-040226-1',
+                        description: 'SAMAR ID received from registration',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'OTP resent successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'OTP has been resent. Check your email.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - validation failed or failed to resend OTP',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Failed to resend OTP.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function resendOtp(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

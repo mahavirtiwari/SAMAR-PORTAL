@@ -14,14 +14,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Committee Members",
- *     description="Committee review and feedback endpoints"
- * )
- */
+#[OA\Tag(name: 'Committee Members', description: 'Committee review and feedback endpoints')]
 class ApplicationAssessmentQuestionFeedbackController extends Controller
 {
     protected FileStorageService $fileStorage;
@@ -33,101 +29,175 @@ class ApplicationAssessmentQuestionFeedbackController extends Controller
 
     /**
      * Get feedback history for a question.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/questions/{questionId}/feedback-history",
-     *     summary="Get feedback history for a question",
-     *     description="Returns chronological list of all feedback (QC feedback, committee feedback, send back) for a question with assessor clarifications nested inside each feedback",
-     *     tags={"Operations Admin"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Feedback history retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Feedback history retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="feedbacks",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="feedbackType", type="string", example="Committee Feedback"),
-     *                         @OA\Property(property="rcScore", type="number", format="float", example=3.5, nullable=true),
-     *                         @OA\Property(property="comment", type="string", example="Good compliance observed", nullable=true),
-     *                         @OA\Property(
-     *                             property="user",
-     *                             type="object",
-     *                             @OA\Property(property="id", type="integer", example=5),
-     *                             @OA\Property(property="name", type="string", example="John Doe")
-     *                         ),
-     *                         @OA\Property(
-     *                             property="clarification",
-     *                             type="object",
-     *                             nullable=true,
-     *                             description="Assessor's clarification response to this feedback (most recent if multiple exist)",
-     *                             @OA\Property(property="id", type="integer", example=2),
-     *                             @OA\Property(property="comment", type="string", example="Here is the additional evidence requested"),
-     *                             @OA\Property(
-     *                                 property="user",
-     *                                 type="object",
-     *                                 @OA\Property(property="id", type="integer", example=8),
-     *                                 @OA\Property(property="name", type="string", example="Lead Assessor")
-     *                             ),
-     *                             @OA\Property(
-     *                                 property="attachments",
-     *                                 type="array",
-     *
-     *                                 @OA\Items(
-     *                                     type="object",
-     *
-     *                                     @OA\Property(property="id", type="integer", example=1),
-     *                                     @OA\Property(property="fileName", type="string", example="evidence.pdf"),
-     *                                     @OA\Property(property="fileSize", type="integer", example=256000),
-     *                                     @OA\Property(property="formattedSize", type="string", example="250 KB"),
-     *                                     @OA\Property(property="mimeType", type="string", example="application/pdf"),
-     *                                     @OA\Property(property="isImage", type="boolean", example=false)
-     *                                 )
-     *                             ),
-     *                             @OA\Property(property="createdAt", type="string", format="date-time", example="2025-02-02T14:00:00Z")
-     *                         ),
-     *                         @OA\Property(property="createdAt", type="string", format="date-time", example="2025-02-01T10:30:00Z")
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Assessment or question not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/questions/{questionId}/feedback-history',
+        summary: 'Get feedback history for a question',
+        description: 'Returns chronological list of all feedback (QC feedback, committee feedback, send back) for a question with assessor clarifications nested inside each feedback',
+        tags: ['Operations Admin'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Feedback history retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Feedback history retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'feedbacks',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'feedbackType',
+                                                type: 'string',
+                                                example: 'Committee Feedback',
+                                            ),
+                                            new OA\Property(
+                                                property: 'rcScore',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 3.5,
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'comment',
+                                                type: 'string',
+                                                example: 'Good compliance observed',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'user',
+                                                type: 'object',
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 5),
+                                                    new OA\Property(
+                                                        property: 'name',
+                                                        type: 'string',
+                                                        example: 'John Doe',
+                                                    ),
+                                                ],
+                                            ),
+                                            new OA\Property(
+                                                property: 'clarification',
+                                                type: 'object',
+                                                nullable: true,
+                                                description: 'Assessor\'s clarification response to this feedback (most recent if multiple exist)',
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 2),
+                                                    new OA\Property(
+                                                        property: 'comment',
+                                                        type: 'string',
+                                                        example: 'Here is the additional evidence requested',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'user',
+                                                        type: 'object',
+                                                        properties: [
+                                                            new OA\Property(
+                                                                property: 'id',
+                                                                type: 'integer',
+                                                                example: 8,
+                                                            ),
+                                                            new OA\Property(
+                                                                property: 'name',
+                                                                type: 'string',
+                                                                example: 'Lead Assessor',
+                                                            ),
+                                                        ],
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'attachments',
+                                                        type: 'array',
+                                                        items: new OA\Items(
+                                                            type: 'object',
+                                                            properties: [
+                                                                new OA\Property(
+                                                                    property: 'id',
+                                                                    type: 'integer',
+                                                                    example: 1,
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'fileName',
+                                                                    type: 'string',
+                                                                    example: 'evidence.pdf',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'fileSize',
+                                                                    type: 'integer',
+                                                                    example: 256000,
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'formattedSize',
+                                                                    type: 'string',
+                                                                    example: '250 KB',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'mimeType',
+                                                                    type: 'string',
+                                                                    example: 'application/pdf',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'isImage',
+                                                                    type: 'boolean',
+                                                                    example: false,
+                                                                ),
+                                                            ],
+                                                        ),
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'createdAt',
+                                                        type: 'string',
+                                                        format: 'date-time',
+                                                        example: '2025-02-02T14:00:00Z',
+                                                    ),
+                                                ],
+                                            ),
+                                            new OA\Property(
+                                                property: 'createdAt',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                example: '2025-02-01T10:30:00Z',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Assessment or question not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function feedbackHistory(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -156,71 +226,87 @@ class ApplicationAssessmentQuestionFeedbackController extends Controller
 
     /**
      * Update response during committee review.
-     *
-     * @OA\Put(
-     *     path="/api/v1/application-assessments/{assessmentId}/questions/{questionId}/response",
-     *     summary="Update response during committee review",
-     *     description="Allows committee to update the selected option and remarks for a question during review",
-     *     tags={"Operations Admin"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"selected_option"},
-     *
-     *             @OA\Property(property="selected_option", type="integer", example=3, description="Selected option (1-5)"),
-     *             @OA\Property(property="assessor_remarks", type="string", example="Updated during committee review", description="Optional remarks")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Response updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Response updated successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="response", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="selectedOption", type="integer"),
-     *                     @OA\Property(property="selectedScore", type="number"),
-     *                     @OA\Property(property="weightedScore", type="number"),
-     *                     @OA\Property(property="assessorRemarks", type="string")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Assessment, question, or response not found"),
-     *     @OA\Response(response=422, description="Validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/application-assessments/{assessmentId}/questions/{questionId}/response',
+        summary: 'Update response during committee review',
+        description: 'Allows committee to update the selected option and remarks for a question during review',
+        tags: ['Operations Admin'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['selected_option'],
+                properties: [
+                    new OA\Property(
+                        property: 'selected_option',
+                        type: 'integer',
+                        example: 3,
+                        description: 'Selected option (1-5)',
+                    ),
+                    new OA\Property(
+                        property: 'assessor_remarks',
+                        type: 'string',
+                        example: 'Updated during committee review',
+                        description: 'Optional remarks',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Response updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Response updated successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'response',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer'),
+                                        new OA\Property(property: 'selectedOption', type: 'integer'),
+                                        new OA\Property(property: 'selectedScore', type: 'number'),
+                                        new OA\Property(property: 'weightedScore', type: 'number'),
+                                        new OA\Property(property: 'assessorRemarks', type: 'string'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Assessment, question, or response not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+        ],
+    )]
     public function updateResponse(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -283,113 +369,181 @@ class ApplicationAssessmentQuestionFeedbackController extends Controller
 
     /**
      * Submit clarification response from assessor.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/questions/{questionId}/clarification",
-     *     summary="Submit assessor clarification response",
-     *     description="Allows assessors to submit clarification responses (comment + attachments) for flagged questions during QC or committee review",
-     *     tags={"Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"comment"},
-     *
-     *                 @OA\Property(property="comment", type="string", maxLength=2000, description="Clarification comment", example="Attaching additional evidence as requested"),
-     *                 @OA\Property(property="parent_feedback_id", type="integer", nullable=true, description="ID of the feedback being replied to. If omitted, auto-detected from the most recent QC/committee feedback for this question.", example=12),
-     *                 @OA\Property(
-     *                     property="attachments",
-     *                     type="array",
-     *                     description="Optional file attachments (max 5 files, 10MB each, jpeg/jpg/png/gif/pdf)",
-     *
-     *                     @OA\Items(type="string", format="binary")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Clarification submitted successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Clarification submitted successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="feedback",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="feedbackType", type="string", example="Assessor Clarification"),
-     *                     @OA\Property(property="comment", type="string", example="Attaching additional evidence as requested"),
-     *                     @OA\Property(
-     *                         property="inReplyTo",
-     *                         type="object",
-     *                         nullable=true,
-     *                         description="The parent feedback this clarification replies to",
-     *                         @OA\Property(property="id", type="integer", example=12),
-     *                         @OA\Property(property="feedbackType", type="string", example="QC Feedback"),
-     *                         @OA\Property(
-     *                             property="user",
-     *                             type="object",
-     *                             @OA\Property(property="id", type="integer", example=5),
-     *                             @OA\Property(property="name", type="string", example="QC Reviewer")
-     *                         )
-     *                     ),
-     *                     @OA\Property(
-     *                         property="attachments",
-     *                         type="array",
-     *
-     *                         @OA\Items(
-     *                             type="object",
-     *
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="fileName", type="string", example="evidence.pdf"),
-     *                             @OA\Property(property="fileSize", type="integer", example=256000),
-     *                             @OA\Property(property="formattedSize", type="string", example="250 KB"),
-     *                             @OA\Property(property="mimeType", type="string", example="application/pdf"),
-     *                             @OA\Property(property="isImage", type="boolean", example=false)
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="createdAt", type="string", format="date-time", example="2026-02-11T10:30:00Z")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment is not in feedback status or question is not flagged"),
-     *     @OA\Response(response=403, description="Unauthorized - assessor not assigned to this assessment"),
-     *     @OA\Response(response=404, description="Assessment or question not found"),
-     *     @OA\Response(response=422, description="Validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/questions/{questionId}/clarification',
+        summary: 'Submit assessor clarification response',
+        description: 'Allows assessors to submit clarification responses (comment + attachments) for flagged questions during QC or committee review',
+        tags: ['Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['comment'],
+                        properties: [
+                            new OA\Property(
+                                property: 'comment',
+                                type: 'string',
+                                maxLength: 2000,
+                                description: 'Clarification comment',
+                                example: 'Attaching additional evidence as requested',
+                            ),
+                            new OA\Property(
+                                property: 'parent_feedback_id',
+                                type: 'integer',
+                                nullable: true,
+                                description: 'ID of the feedback being replied to. If omitted, auto-detected from the most recent QC/committee feedback for this question.',
+                                example: 12,
+                            ),
+                            new OA\Property(
+                                property: 'attachments',
+                                type: 'array',
+                                description: 'Optional file attachments (max 5 files, 10MB each, jpeg/jpg/png/gif/pdf)',
+                                items: new OA\Items(type: 'string', format: 'binary'),
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Clarification submitted successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Clarification submitted successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'feedback',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'feedbackType',
+                                            type: 'string',
+                                            example: 'Assessor Clarification',
+                                        ),
+                                        new OA\Property(
+                                            property: 'comment',
+                                            type: 'string',
+                                            example: 'Attaching additional evidence as requested',
+                                        ),
+                                        new OA\Property(
+                                            property: 'inReplyTo',
+                                            type: 'object',
+                                            nullable: true,
+                                            description: 'The parent feedback this clarification replies to',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 12),
+                                                new OA\Property(
+                                                    property: 'feedbackType',
+                                                    type: 'string',
+                                                    example: 'QC Feedback',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'user',
+                                                    type: 'object',
+                                                    properties: [
+                                                        new OA\Property(
+                                                            property: 'id',
+                                                            type: 'integer',
+                                                            example: 5,
+                                                        ),
+                                                        new OA\Property(
+                                                            property: 'name',
+                                                            type: 'string',
+                                                            example: 'QC Reviewer',
+                                                        ),
+                                                    ],
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'attachments',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                type: 'object',
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                    new OA\Property(
+                                                        property: 'fileName',
+                                                        type: 'string',
+                                                        example: 'evidence.pdf',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'fileSize',
+                                                        type: 'integer',
+                                                        example: 256000,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'formattedSize',
+                                                        type: 'string',
+                                                        example: '250 KB',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'mimeType',
+                                                        type: 'string',
+                                                        example: 'application/pdf',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'isImage',
+                                                        type: 'boolean',
+                                                        example: false,
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                        new OA\Property(
+                                            property: 'createdAt',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2026-02-11T10:30:00Z',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment is not in feedback status or question is not flagged',
+            ),
+            new OA\Response(response: 403, description: 'Unauthorized - assessor not assigned to this assessment'),
+            new OA\Response(response: 404, description: 'Assessment or question not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function submitClarification(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         // Validate assessment exists
@@ -537,116 +691,161 @@ class ApplicationAssessmentQuestionFeedbackController extends Controller
 
     /**
      * Update assessor clarification response.
-     *
-     * @OA\Put(
-     *     path="/api/v1/application-assessments/{assessmentId}/questions/{questionId}/clarification/{feedbackId}",
-     *     summary="Update assessor clarification response",
-     *     description="Allows assessors to edit their clarification responses (comment + attachments) for flagged questions during QC or committee review",
-     *     tags={"Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="feedbackId",
-     *         in="path",
-     *         required=true,
-     *         description="Feedback ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"comment"},
-     *
-     *                 @OA\Property(property="comment", type="string", maxLength=2000, description="Updated clarification comment", example="Updated explanation with new evidence"),
-     *                 @OA\Property(
-     *                     property="attachments",
-     *                     type="array",
-     *                     description="Optional new file attachments (max 5 total, 10MB each, jpeg/jpg/png/gif/pdf)",
-     *
-     *                     @OA\Items(type="string", format="binary")
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="remove_attachment_ids",
-     *                     type="array",
-     *                     description="Array of attachment IDs to remove",
-     *
-     *                     @OA\Items(type="integer"),
-     *                     example={1, 3}
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Clarification updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Clarification updated successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="feedback",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="feedbackType", type="string", example="Assessor Clarification"),
-     *                     @OA\Property(property="comment", type="string", example="Updated explanation with new evidence"),
-     *                     @OA\Property(
-     *                         property="attachments",
-     *                         type="array",
-     *
-     *                         @OA\Items(
-     *                             type="object",
-     *
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="fileName", type="string", example="evidence.pdf"),
-     *                             @OA\Property(property="fileSize", type="integer", example=256000),
-     *                             @OA\Property(property="formattedSize", type="string", example="250 KB"),
-     *                             @OA\Property(property="mimeType", type="string", example="application/pdf"),
-     *                             @OA\Property(property="isImage", type="boolean", example=false)
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="createdAt", type="string", format="date-time", example="2026-02-11T10:30:00Z")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment is not in feedback status or question is not flagged"),
-     *     @OA\Response(response=403, description="Unauthorized - assessor not assigned to this assessment or feedback not owned by user"),
-     *     @OA\Response(response=404, description="Assessment, question, or feedback not found"),
-     *     @OA\Response(response=422, description="Validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/application-assessments/{assessmentId}/questions/{questionId}/clarification/{feedbackId}',
+        summary: 'Update assessor clarification response',
+        description: 'Allows assessors to edit their clarification responses (comment + attachments) for flagged questions during QC or committee review',
+        tags: ['Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'feedbackId',
+                in: 'path',
+                required: true,
+                description: 'Feedback ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['comment'],
+                        properties: [
+                            new OA\Property(
+                                property: 'comment',
+                                type: 'string',
+                                maxLength: 2000,
+                                description: 'Updated clarification comment',
+                                example: 'Updated explanation with new evidence',
+                            ),
+                            new OA\Property(
+                                property: 'attachments',
+                                type: 'array',
+                                description: 'Optional new file attachments (max 5 total, 10MB each, jpeg/jpg/png/gif/pdf)',
+                                items: new OA\Items(type: 'string', format: 'binary'),
+                            ),
+                            new OA\Property(
+                                property: 'remove_attachment_ids',
+                                type: 'array',
+                                description: 'Array of attachment IDs to remove',
+                                example: [1, 3],
+                                items: new OA\Items(type: 'integer'),
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Clarification updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Clarification updated successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'feedback',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'feedbackType',
+                                            type: 'string',
+                                            example: 'Assessor Clarification',
+                                        ),
+                                        new OA\Property(
+                                            property: 'comment',
+                                            type: 'string',
+                                            example: 'Updated explanation with new evidence',
+                                        ),
+                                        new OA\Property(
+                                            property: 'attachments',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                type: 'object',
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                    new OA\Property(
+                                                        property: 'fileName',
+                                                        type: 'string',
+                                                        example: 'evidence.pdf',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'fileSize',
+                                                        type: 'integer',
+                                                        example: 256000,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'formattedSize',
+                                                        type: 'string',
+                                                        example: '250 KB',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'mimeType',
+                                                        type: 'string',
+                                                        example: 'application/pdf',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'isImage',
+                                                        type: 'boolean',
+                                                        example: false,
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                        new OA\Property(
+                                            property: 'createdAt',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2026-02-11T10:30:00Z',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment is not in feedback status or question is not flagged',
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized - assessor not assigned to this assessment or feedback not owned by user',
+            ),
+            new OA\Response(response: 404, description: 'Assessment, question, or feedback not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function updateClarification(Request $request, int $assessmentId, int $questionId, int $feedbackId): JsonResponse
     {
         // Validate assessment exists
@@ -790,61 +989,55 @@ class ApplicationAssessmentQuestionFeedbackController extends Controller
 
     /**
      * Download a feedback attachment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/questions/{questionId}/feedback/{feedbackId}/attachments/{attachmentId}/download",
-     *     summary="Download a feedback attachment",
-     *     description="Downloads a file attachment associated with feedback (assessor clarification, etc.)",
-     *     tags={"Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="feedbackId",
-     *         in="path",
-     *         required=true,
-     *         description="Feedback ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="attachmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Attachment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="File downloaded successfully",
-     *
-     *         @OA\MediaType(mediaType="application/octet-stream")
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Assessment, question, feedback, or attachment not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/questions/{questionId}/feedback/{feedbackId}/attachments/{attachmentId}/download',
+        summary: 'Download a feedback attachment',
+        description: 'Downloads a file attachment associated with feedback (assessor clarification, etc.)',
+        tags: ['Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'feedbackId',
+                in: 'path',
+                required: true,
+                description: 'Feedback ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'attachmentId',
+                in: 'path',
+                required: true,
+                description: 'Attachment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'File downloaded successfully',
+                content: [
+                    new OA\MediaType(mediaType: 'application/octet-stream'),
+                ],
+            ),
+            new OA\Response(response: 404, description: 'Assessment, question, feedback, or attachment not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function downloadAttachment(
         Request $request,
         int $assessmentId,

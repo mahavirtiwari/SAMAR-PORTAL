@@ -18,14 +18,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Payments",
- *     description="Payment management endpoints"
- * )
- */
+#[OA\Tag(name: 'Payments', description: 'Payment management endpoints')]
 class PaymentController extends Controller
 {
     public function __construct(
@@ -34,121 +30,163 @@ class PaymentController extends Controller
 
     /**
      * Get all payments for the authenticated user.
-     *
-     * @OA\Get(
-     *     path="/api/v1/payments",
-     *     summary="Get all payments",
-     *     description="Retrieves a paginated list of payments for the authenticated user. System administrators can view all payments, while other users see only payments related to their organization.",
-     *     tags={"Payment", "System Admin - Payment", "DRDO Admin - Payment", "Operations Manager - Payment", "Operations Admin - Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by order ID, transaction ID, or application number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", minLength=2, maxLength=100, example="SAMAR-19")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="query",
-     *         description="Filter payments by application ID",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="paymentType",
-     *         in="query",
-     *         description="Filter payments by type",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"application_fee", "assessment_fee", "certification_fee", "surveillance_fee", "other"}, example="application_fee")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="fromDate",
-     *         in="query",
-     *         description="Include payments created on or after this date. Applies to both the list and the totals.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2026-08-01")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="toDate",
-     *         in="query",
-     *         description="Include payments created on or before this date. Applies to both the list and the totals.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2026-08-31")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=15, default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Payments retrieved successfully. Carries a summary object with successfulCount and failedCount for the whole filtered set, not just the current page.",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="payments",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="payment_number", type="string", example="PAY-2025-000001"),
-     *                         @OA\Property(property="application_id", type="integer", example=1),
-     *                         @OA\Property(property="payment_type", type="string", example="application_fee"),
-     *                         @OA\Property(property="amount", type="number", format="float", example=5000.00),
-     *                         @OA\Property(property="currency", type="string", example="INR"),
-     *                         @OA\Property(property="status", type="string", example="success"),
-     *                         @OA\Property(property="gateway", type="string", example="icici_eazypay"),
-     *                         @OA\Property(property="gateway_payment_id", type="string", example="pay_ABC123XYZ"),
-     *                         @OA\Property(property="paid_at", type="string", format="date-time", example="2025-01-15T10:30:00+05:30"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", example="2025-01-15T10:25:00+05:30")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="pagination",
-     *                     type="object",
-     *                     @OA\Property(property="total", type="integer", example=50),
-     *                     @OA\Property(property="per_page", type="integer", example=15),
-     *                     @OA\Property(property="current_page", type="integer", example=1),
-     *                     @OA\Property(property="last_page", type="integer", example=4)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/payments',
+        summary: 'Get all payments',
+        description: 'Retrieves a paginated list of payments for the authenticated user. System administrators can view all payments, while other users see only payments related to their organization.',
+        tags: [
+            'Payment',
+            'System Admin - Payment',
+            'DRDO Admin - Payment',
+            'Operations Manager - Payment',
+            'Operations Admin - Payment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by order ID, transaction ID, or application number',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100, example: 'SAMAR-19'),
+            ),
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'query',
+                description: 'Filter payments by application ID',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'paymentType',
+                in: 'query',
+                description: 'Filter payments by type',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['application_fee', 'assessment_fee', 'certification_fee', 'surveillance_fee', 'other'],
+                    example: 'application_fee',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'fromDate',
+                in: 'query',
+                description: 'Include payments created on or after this date. Applies to both the list and the totals.',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2026-08-01'),
+            ),
+            new OA\Parameter(
+                name: 'toDate',
+                in: 'query',
+                description: 'Include payments created on or before this date. Applies to both the list and the totals.',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2026-08-31'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 15, default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Payments retrieved successfully. Carries a summary object with successfulCount and failedCount for the whole filtered set, not just the current page.',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'payments',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'payment_number',
+                                                type: 'string',
+                                                example: 'PAY-2025-000001',
+                                            ),
+                                            new OA\Property(
+                                                property: 'application_id',
+                                                type: 'integer',
+                                                example: 1,
+                                            ),
+                                            new OA\Property(
+                                                property: 'payment_type',
+                                                type: 'string',
+                                                example: 'application_fee',
+                                            ),
+                                            new OA\Property(
+                                                property: 'amount',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 5000.00,
+                                            ),
+                                            new OA\Property(property: 'currency', type: 'string', example: 'INR'),
+                                            new OA\Property(
+                                                property: 'status',
+                                                type: 'string',
+                                                example: 'success',
+                                            ),
+                                            new OA\Property(
+                                                property: 'gateway',
+                                                type: 'string',
+                                                example: 'icici_eazypay',
+                                            ),
+                                            new OA\Property(
+                                                property: 'gateway_payment_id',
+                                                type: 'string',
+                                                example: 'pay_ABC123XYZ',
+                                            ),
+                                            new OA\Property(
+                                                property: 'paid_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                example: '2025-01-15T10:30:00+05:30',
+                                            ),
+                                            new OA\Property(
+                                                property: 'created_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                example: '2025-01-15T10:25:00+05:30',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'pagination',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total', type: 'integer', example: 50),
+                                        new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                        new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                        new OA\Property(property: 'last_page', type: 'integer', example: 4),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -198,105 +236,182 @@ class PaymentController extends Controller
 
     /**
      * Get a single payment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/payments/{id}",
-     *     summary="Get payment details",
-     *     description="Retrieves detailed information about a specific payment. Users can only view payments related to their organization unless they have system-wide admin roles.",
-     *     tags={"Payment", "System Admin - Payment", "DRDO Admin - Payment", "Operations Manager - Payment", "Operations Admin - Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Payment ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Payment details retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="payment",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="payment_number", type="string", example="PAY-2025-000001"),
-     *                     @OA\Property(property="application_id", type="integer", example=1),
-     *                     @OA\Property(property="payment_type", type="string", example="application_fee"),
-     *                     @OA\Property(property="amount", type="number", format="float", example=5000.00),
-     *                     @OA\Property(property="currency", type="string", example="INR"),
-     *                     @OA\Property(property="status", type="string", example="success"),
-     *                     @OA\Property(property="gateway", type="string", example="icici_eazypay"),
-     *                     @OA\Property(property="gateway_payment_id", type="string", example="pay_ABC123XYZ"),
-     *                     @OA\Property(property="paid_at", type="string", format="date-time", example="2025-01-15T10:30:00+05:30"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-01-15T10:25:00+05:30"),
-     *                     @OA\Property(
-     *                         property="application",
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="application_number", type="string", example="APP-2025-000001"),
-     *                         @OA\Property(
-     *                             property="organization",
-     *                             type="object",
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="name", type="string", example="ABC Industries Ltd")
-     *                         )
-     *                     ),
-     *                     @OA\Property(
-     *                         property="paid_by",
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="name", type="string", example="John Doe"),
-     *                         @OA\Property(property="email", type="string", example="john.doe@example.com")
-     *                     ),
-     *                     @OA\Property(property="description", type="string", example="Payment for initial application fee"),
-     *                     @OA\Property(property="failure_reason", type="string", nullable=true, example=null)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this payment",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to view this payment.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Payment not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Payment not found.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/payments/{id}',
+        summary: 'Get payment details',
+        description: 'Retrieves detailed information about a specific payment. Users can only view payments related to their organization unless they have system-wide admin roles.',
+        tags: [
+            'Payment',
+            'System Admin - Payment',
+            'DRDO Admin - Payment',
+            'Operations Manager - Payment',
+            'Operations Admin - Payment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Payment ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Payment details retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'payment',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'payment_number',
+                                            type: 'string',
+                                            example: 'PAY-2025-000001',
+                                        ),
+                                        new OA\Property(property: 'application_id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'payment_type',
+                                            type: 'string',
+                                            example: 'application_fee',
+                                        ),
+                                        new OA\Property(
+                                            property: 'amount',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 5000.00,
+                                        ),
+                                        new OA\Property(property: 'currency', type: 'string', example: 'INR'),
+                                        new OA\Property(property: 'status', type: 'string', example: 'success'),
+                                        new OA\Property(
+                                            property: 'gateway',
+                                            type: 'string',
+                                            example: 'icici_eazypay',
+                                        ),
+                                        new OA\Property(
+                                            property: 'gateway_payment_id',
+                                            type: 'string',
+                                            example: 'pay_ABC123XYZ',
+                                        ),
+                                        new OA\Property(
+                                            property: 'paid_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2025-01-15T10:30:00+05:30',
+                                        ),
+                                        new OA\Property(
+                                            property: 'created_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2025-01-15T10:25:00+05:30',
+                                        ),
+                                        new OA\Property(
+                                            property: 'application',
+                                            type: 'object',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'application_number',
+                                                    type: 'string',
+                                                    example: 'APP-2025-000001',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'organization',
+                                                    type: 'object',
+                                                    properties: [
+                                                        new OA\Property(
+                                                            property: 'id',
+                                                            type: 'integer',
+                                                            example: 1,
+                                                        ),
+                                                        new OA\Property(
+                                                            property: 'name',
+                                                            type: 'string',
+                                                            example: 'ABC Industries Ltd',
+                                                        ),
+                                                    ],
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'paid_by',
+                                            type: 'object',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'John Doe',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'email',
+                                                    type: 'string',
+                                                    example: 'john.doe@example.com',
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'description',
+                                            type: 'string',
+                                            example: 'Payment for initial application fee',
+                                        ),
+                                        new OA\Property(
+                                            property: 'failure_reason',
+                                            type: 'string',
+                                            nullable: true,
+                                            example: null,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to view this payment',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to view this payment.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Payment not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Payment not found.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $payment = Payment::with(['application.organization', 'paidBy'])->find($id);
@@ -454,47 +569,66 @@ class PaymentController extends Controller
      *
      * The payment screen renders this instead of deriving the figure itself, so the
      * amount the applicant sees and the amount charged come from one calculation.
-     *
-     * @OA\Get(
-     *     path="/api/v1/applications/{applicationId}/fee",
-     *     summary="Quote the fee payable for an application",
-     *     description="Returns the fee breakdown resolved from fee_configurations for the application's sector and enterprise size. TDS is applied only where the matched configuration enables it.",
-     *     tags={"Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="applicationId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="tdsDeductible", in="query", required=false, @OA\Schema(type="boolean"), description="Whether the applicant elects a TDS deduction"),
-     *     @OA\Parameter(name="tdsPercentage", in="query", required=false, @OA\Schema(type="number", enum={2, 10}), description="TDS rate; required when tdsDeductible is true"),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Fee breakdown",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="baseCertificationFee", type="number", example=35000),
-     *                 @OA\Property(property="foodAccommodation", type="number", example=2000),
-     *                 @OA\Property(property="amountPayable", type="number", example=37000),
-     *                 @OA\Property(property="gstPercentage", type="number", example=18),
-     *                 @OA\Property(property="gstAmount", type="number", example=6660),
-     *                 @OA\Property(property="tdsAvailable", type="boolean", example=true),
-     *                 @OA\Property(property="tdsDeductible", type="boolean", example=false),
-     *                 @OA\Property(property="tdsPercentage", type="number", example=0),
-     *                 @OA\Property(property="tdsAmount", type="number", example=0),
-     *                 @OA\Property(property="totalAmount", type="number", example=43660)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Unauthorized for this application"),
-     *     @OA\Response(response=404, description="Application not found"),
-     *     @OA\Response(response=422, description="No fee configuration matches the application")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/applications/{applicationId}/fee',
+        summary: 'Quote the fee payable for an application',
+        description: 'Returns the fee breakdown resolved from fee_configurations for the application\'s sector and enterprise size. TDS is applied only where the matched configuration enables it.',
+        tags: ['Payment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'tdsDeductible',
+                in: 'query',
+                required: false,
+                description: 'Whether the applicant elects a TDS deduction',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(
+                name: 'tdsPercentage',
+                in: 'query',
+                required: false,
+                description: 'TDS rate; required when tdsDeductible is true',
+                schema: new OA\Schema(type: 'number', enum: [2, 10]),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Fee breakdown',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'baseCertificationFee', type: 'number', example: 35000),
+                                new OA\Property(property: 'foodAccommodation', type: 'number', example: 2000),
+                                new OA\Property(property: 'amountPayable', type: 'number', example: 37000),
+                                new OA\Property(property: 'gstPercentage', type: 'number', example: 18),
+                                new OA\Property(property: 'gstAmount', type: 'number', example: 6660),
+                                new OA\Property(property: 'tdsAvailable', type: 'boolean', example: true),
+                                new OA\Property(property: 'tdsDeductible', type: 'boolean', example: false),
+                                new OA\Property(property: 'tdsPercentage', type: 'number', example: 0),
+                                new OA\Property(property: 'tdsAmount', type: 'number', example: 0),
+                                new OA\Property(property: 'totalAmount', type: 'number', example: 43660),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Unauthorized for this application'),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 422, description: 'No fee configuration matches the application'),
+        ],
+    )]
     public function fee(Request $request, int $applicationId, FeeCalculator $feeCalculator): JsonResponse
     {
         // Query strings carry "true"/"false", which the boolean rule rejects.
@@ -893,38 +1027,79 @@ class PaymentController extends Controller
 
     /**
      * Export the Payment History list as CSV.
-     *
-     * @OA\Get(
-     *     path="/api/v1/payments/export",
-     *     summary="Export payments",
-     *     description="Exports the Payment History list as CSV, honouring the same filters and the same role-based data scoping as the list endpoint. Assessors and DRDO Lab users cannot export payments.",
-     *     tags={"Payment", "System Admin - Payment", "DRDO Admin - Payment", "Operations Manager - Payment", "Operations Admin - Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="search", in="query", required=false, @OA\Schema(type="string", minLength=2, maxLength=100)),
-     *     @OA\Parameter(name="applicationId", in="query", required=false, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="paymentType", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="sector", in="query", required=false, @OA\Schema(type="string", enum={"manufacturing", "service"})),
-     *     @OA\Parameter(name="enterpriseClassification", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="fromDate", in="query", required=false, @OA\Schema(type="string", format="date")),
-     *     @OA\Parameter(name="toDate", in="query", required=false, @OA\Schema(type="string", format="date")),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/csv",
-     *
-     *             @OA\Schema(type="string", format="binary")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not authorized to export payments"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/payments/export',
+        summary: 'Export payments',
+        description: 'Exports the Payment History list as CSV, honouring the same filters and the same role-based data scoping as the list endpoint. Assessors and DRDO Lab users cannot export payments.',
+        tags: [
+            'Payment',
+            'System Admin - Payment',
+            'DRDO Admin - Payment',
+            'Operations Manager - Payment',
+            'Operations Admin - Payment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100),
+            ),
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'paymentType',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'enterpriseClassification',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'fromDate',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'toDate',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(
+                        mediaType: 'text/csv',
+                        schema: new OA\Schema(type: 'string', format: 'binary'),
+                    ),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not authorized to export payments'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function export(PaymentExportRequest $request): StreamedResponse|JsonResponse
     {
         $user = $request->user();

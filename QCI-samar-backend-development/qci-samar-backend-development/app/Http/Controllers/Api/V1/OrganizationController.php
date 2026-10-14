@@ -19,18 +19,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Organizations",
- *     description="Organization profile management endpoints for viewing and updating organization information"
- * )
- * @OA\Tag(
- *     name="System Admin - Organizations",
- *     description="System admin endpoints for managing all organizations"
- * )
- */
+#[OA\Tag(
+    name: 'Organizations',
+    description: 'Organization profile management endpoints for viewing and updating organization information',
+)]
+#[OA\Tag(
+    name: 'System Admin - Organizations',
+    description: 'System admin endpoints for managing all organizations',
+)]
 class OrganizationController extends Controller
 {
     /**
@@ -81,57 +80,83 @@ class OrganizationController extends Controller
 
     /**
      * Update organization profile.
-     *
-     * @OA\Put(
-     *     path="/api/v1/organization",
-     *     summary="Update organization profile",
-     *     description="Updates organization profile information. Automatically marks profile as complete if all required fields are filled.",
-     *     tags={"Organizations", "Enterprise Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="name", type="string", maxLength=255, example="ABC Manufacturing Pvt Ltd"),
-     *             @OA\Property(property="email", type="string", format="email", example="contact@abc.com"),
-     *             @OA\Property(property="alternate_email", type="string", format="email", example="alternate@abc.com"),
-     *             @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *             @OA\Property(property="landline_number", type="string", example="02212345678"),
-     *             @OA\Property(property="pan", type="string", example="ABCDE1234F"),
-     *             @OA\Property(property="registered_address", type="string", example="123 Business Park"),
-     *             @OA\Property(property="registered_state", type="string", example="Maharashtra"),
-     *             @OA\Property(property="registered_district", type="string", example="Mumbai Suburban"),
-     *             @OA\Property(property="registered_pincode", type="string", example="400001"),
-     *             @OA\Property(property="owner_name", type="string", example="John Doe"),
-     *             @OA\Property(property="owner_designation", type="string", example="CEO"),
-     *             @OA\Property(property="owner_email", type="string", format="email", example="john.doe@abc.com"),
-     *             @OA\Property(property="owner_mobile_number", type="string", example="9876543212")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organization updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Organization profile updated successfully."),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="organization", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Validation failed"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Organization not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/organization',
+        summary: 'Update organization profile',
+        description: 'Updates organization profile information. Automatically marks profile as complete if all required fields are filled.',
+        tags: ['Organizations', 'Enterprise Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        maxLength: 255,
+                        example: 'ABC Manufacturing Pvt Ltd',
+                    ),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'contact@abc.com',
+                    ),
+                    new OA\Property(
+                        property: 'alternate_email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'alternate@abc.com',
+                    ),
+                    new OA\Property(property: 'mobile_number', type: 'string', example: '9876543210'),
+                    new OA\Property(property: 'landline_number', type: 'string', example: '02212345678'),
+                    new OA\Property(property: 'pan', type: 'string', example: 'ABCDE1234F'),
+                    new OA\Property(property: 'registered_address', type: 'string', example: '123 Business Park'),
+                    new OA\Property(property: 'registered_state', type: 'string', example: 'Maharashtra'),
+                    new OA\Property(property: 'registered_district', type: 'string', example: 'Mumbai Suburban'),
+                    new OA\Property(property: 'registered_pincode', type: 'string', example: '400001'),
+                    new OA\Property(property: 'owner_name', type: 'string', example: 'John Doe'),
+                    new OA\Property(property: 'owner_designation', type: 'string', example: 'CEO'),
+                    new OA\Property(
+                        property: 'owner_email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'john.doe@abc.com',
+                    ),
+                    new OA\Property(property: 'owner_mobile_number', type: 'string', example: '9876543212'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Organization updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization profile updated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'organization', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Validation failed'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Organization not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function update(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -201,200 +226,261 @@ class OrganizationController extends Controller
 
     /**
      * Get all organizations (System Admin, DRDO Admin, Operations Admin/Manager, DRDO Lab).
-     *
-     * @OA\Get(
-     *     path="/api/v1/organizations",
-     *     summary="List all organizations",
-     *     description="Retrieves a paginated list of all organizations with optional filtering and sorting. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.",
-     *     tags={"Organizations", "System Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by organization name, email, or PAN",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", minLength=2, maxLength=100, example="ABC Manufacturing")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by organization status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"active", "inactive", "pending", "suspended"}, example="active")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isVerified",
-     *         in="query",
-     *         description="Filter by verification status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="profileCompleted",
-     *         in="query",
-     *         description="Filter by profile completion status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="certificationStatus",
-     *         in="query",
-     *         description="Filter by certification status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"certified", "expired", "never_certified", "suspended", "revoked"}, example="certified")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="state",
-     *         in="query",
-     *         description="Filter by registered state",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", maxLength=100, example="Maharashtra")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sortBy",
-     *         in="query",
-     *         description="Sort by field",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"name", "created_at", "updated_at"}, default="name")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sortOrder",
-     *         in="query",
-     *         description="Sort order",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"asc", "desc"}, default="asc")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", minimum=5, maximum=100, default=15)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", minimum=1, default=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organizations retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Organizations retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="organizations",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="name", type="string", example="ABC Manufacturing Pvt Ltd"),
-     *                         @OA\Property(property="email", type="string", example="contact@abc.com"),
-     *                         @OA\Property(property="enterprise_admin", type="string", example="John Doe", nullable=true),
-     *                         @OA\Property(property="units_count", type="integer", example=5),
-     *                         @OA\Property(property="applications_count", type="integer", example=3),
-     *                         @OA\Property(property="registered_state", type="string", example="Maharashtra"),
-     *                         @OA\Property(property="status", type="string", example="active"),
-     *                         @OA\Property(property="is_verified", type="boolean", example=true),
-     *                         @OA\Property(property="is_profile_completed", type="boolean", example=true),
-     *                         @OA\Property(property="certification_status", type="string", example="certified"),
-     *                         @OA\Property(property="certification_date", type="string", format="date", example="2024-01-15", nullable=true),
-     *                         @OA\Property(property="expiry_date", type="string", format="date", example="2027-01-15", nullable=true),
-     *                         @OA\Property(property="certification_level", type="string", example="A", nullable=true)
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="pagination",
-     *                     type="object",
-     *                     @OA\Property(property="total", type="integer", example=100),
-     *                     @OA\Property(property="per_page", type="integer", example=15),
-     *                     @OA\Property(property="current_page", type="integer", example=1),
-     *                     @OA\Property(property="last_page", type="integer", example=7),
-     *                     @OA\Property(property="from", type="integer", example=1),
-     *                     @OA\Property(property="to", type="integer", example=15)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Insufficient permissions",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="search", type="array", @OA\Items(type="string", example="Search term must be at least 2 characters."))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to retrieve organizations.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/organizations',
+        summary: 'List all organizations',
+        description: 'Retrieves a paginated list of all organizations with optional filtering and sorting. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by organization name, email, or PAN',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100, example: 'ABC Manufacturing'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by organization status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['active', 'inactive', 'pending', 'suspended'],
+                    example: 'active',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'isVerified',
+                in: 'query',
+                description: 'Filter by verification status',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true),
+            ),
+            new OA\Parameter(
+                name: 'profileCompleted',
+                in: 'query',
+                description: 'Filter by profile completion status',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true),
+            ),
+            new OA\Parameter(
+                name: 'certificationStatus',
+                in: 'query',
+                description: 'Filter by certification status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['certified', 'expired', 'never_certified', 'suspended', 'revoked'],
+                    example: 'certified',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'state',
+                in: 'query',
+                description: 'Filter by registered state',
+                required: false,
+                schema: new OA\Schema(type: 'string', maxLength: 100, example: 'Maharashtra'),
+            ),
+            new OA\Parameter(
+                name: 'sortBy',
+                in: 'query',
+                description: 'Sort by field',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['name', 'created_at', 'updated_at'], default: 'name'),
+            ),
+            new OA\Parameter(
+                name: 'sortOrder',
+                in: 'query',
+                description: 'Sort order',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['asc', 'desc'], default: 'asc'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 5, maximum: 100, default: 15),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, default: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Organizations retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organizations retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'organizations',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'name',
+                                                type: 'string',
+                                                example: 'ABC Manufacturing Pvt Ltd',
+                                            ),
+                                            new OA\Property(
+                                                property: 'email',
+                                                type: 'string',
+                                                example: 'contact@abc.com',
+                                            ),
+                                            new OA\Property(
+                                                property: 'enterprise_admin',
+                                                type: 'string',
+                                                example: 'John Doe',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(property: 'units_count', type: 'integer', example: 5),
+                                            new OA\Property(
+                                                property: 'applications_count',
+                                                type: 'integer',
+                                                example: 3,
+                                            ),
+                                            new OA\Property(
+                                                property: 'registered_state',
+                                                type: 'string',
+                                                example: 'Maharashtra',
+                                            ),
+                                            new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                            new OA\Property(
+                                                property: 'is_verified',
+                                                type: 'boolean',
+                                                example: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'is_profile_completed',
+                                                type: 'boolean',
+                                                example: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'certification_status',
+                                                type: 'string',
+                                                example: 'certified',
+                                            ),
+                                            new OA\Property(
+                                                property: 'certification_date',
+                                                type: 'string',
+                                                format: 'date',
+                                                example: '2024-01-15',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'expiry_date',
+                                                type: 'string',
+                                                format: 'date',
+                                                example: '2027-01-15',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'certification_level',
+                                                type: 'string',
+                                                example: 'A',
+                                                nullable: true,
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'pagination',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total', type: 'integer', example: 100),
+                                        new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                        new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                        new OA\Property(property: 'last_page', type: 'integer', example: 7),
+                                        new OA\Property(property: 'from', type: 'integer', example: 1),
+                                        new OA\Property(property: 'to', type: 'integer', example: 15),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - Insufficient permissions',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'search',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'string',
+                                        example: 'Search term must be at least 2 characters.',
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to retrieve organizations.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(OrganizationListRequest $request): JsonResponse
     {
         Gate::authorize('viewAny', Organization::class);
@@ -523,111 +609,209 @@ class OrganizationController extends Controller
 
     /**
      * Get organization by ID (System Admin, DRDO Admin, Operations Admin/Manager, DRDO Lab).
-     *
-     * @OA\Get(
-     *     path="/api/v1/organizations/{id}",
-     *     summary="Get organization by ID",
-     *     description="Retrieves a single organization by its ID. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.",
-     *     tags={"Organizations", "System Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Organization ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organization retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Organization retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="organization",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="ABC Manufacturing Pvt Ltd"),
-     *                     @OA\Property(property="email", type="string", example="contact@abc.com"),
-     *                     @OA\Property(property="alternate_email", type="string", example="alternate@abc.com"),
-     *                     @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *                     @OA\Property(property="landline_number", type="string", example="02212345678"),
-     *                     @OA\Property(property="pan", type="string", example="ABCDE1234F"),
-     *                     @OA\Property(property="registered_address", type="string", example="123 Business Park"),
-     *                     @OA\Property(property="registered_state", type="string", example="Maharashtra"),
-     *                     @OA\Property(property="registered_district", type="string", example="Mumbai Suburban"),
-     *                     @OA\Property(property="registered_pincode", type="string", example="400001"),
-     *                     @OA\Property(property="owner_name", type="string", example="John Doe"),
-     *                     @OA\Property(property="owner_designation", type="string", example="CEO"),
-     *                     @OA\Property(property="owner_email", type="string", example="john@abc.com"),
-     *                     @OA\Property(property="owner_mobile_number", type="string", example="9876543212"),
-     *                     @OA\Property(property="enterprise_admin", type="string", example="John Doe", nullable=true),
-     *                     @OA\Property(property="units_count", type="integer", example=5),
-     *                     @OA\Property(property="applications_count", type="integer", example=3),
-     *                     @OA\Property(property="status", type="string", example="active"),
-     *                     @OA\Property(property="is_verified", type="boolean", example=true),
-     *                     @OA\Property(property="is_profile_completed", type="boolean", example=true),
-     *                     @OA\Property(property="certification_status", type="string", example="certified"),
-     *                     @OA\Property(property="certification_date", type="string", format="date", example="2024-01-15", nullable=true),
-     *                     @OA\Property(property="expiry_date", type="string", format="date", example="2027-01-15", nullable=true),
-     *                     @OA\Property(property="certification_level", type="string", example="A", nullable=true)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Insufficient permissions",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Organization not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Organization not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to retrieve organization.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/organizations/{id}',
+        summary: 'Get organization by ID',
+        description: 'Retrieves a single organization by its ID. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Organization ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Organization retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'organization',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'name',
+                                            type: 'string',
+                                            example: 'ABC Manufacturing Pvt Ltd',
+                                        ),
+                                        new OA\Property(
+                                            property: 'email',
+                                            type: 'string',
+                                            example: 'contact@abc.com',
+                                        ),
+                                        new OA\Property(
+                                            property: 'alternate_email',
+                                            type: 'string',
+                                            example: 'alternate@abc.com',
+                                        ),
+                                        new OA\Property(
+                                            property: 'mobile_number',
+                                            type: 'string',
+                                            example: '9876543210',
+                                        ),
+                                        new OA\Property(
+                                            property: 'landline_number',
+                                            type: 'string',
+                                            example: '02212345678',
+                                        ),
+                                        new OA\Property(property: 'pan', type: 'string', example: 'ABCDE1234F'),
+                                        new OA\Property(
+                                            property: 'registered_address',
+                                            type: 'string',
+                                            example: '123 Business Park',
+                                        ),
+                                        new OA\Property(
+                                            property: 'registered_state',
+                                            type: 'string',
+                                            example: 'Maharashtra',
+                                        ),
+                                        new OA\Property(
+                                            property: 'registered_district',
+                                            type: 'string',
+                                            example: 'Mumbai Suburban',
+                                        ),
+                                        new OA\Property(
+                                            property: 'registered_pincode',
+                                            type: 'string',
+                                            example: '400001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'owner_name',
+                                            type: 'string',
+                                            example: 'John Doe',
+                                        ),
+                                        new OA\Property(
+                                            property: 'owner_designation',
+                                            type: 'string',
+                                            example: 'CEO',
+                                        ),
+                                        new OA\Property(
+                                            property: 'owner_email',
+                                            type: 'string',
+                                            example: 'john@abc.com',
+                                        ),
+                                        new OA\Property(
+                                            property: 'owner_mobile_number',
+                                            type: 'string',
+                                            example: '9876543212',
+                                        ),
+                                        new OA\Property(
+                                            property: 'enterprise_admin',
+                                            type: 'string',
+                                            example: 'John Doe',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(property: 'units_count', type: 'integer', example: 5),
+                                        new OA\Property(
+                                            property: 'applications_count',
+                                            type: 'integer',
+                                            example: 3,
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                        new OA\Property(property: 'is_verified', type: 'boolean', example: true),
+                                        new OA\Property(
+                                            property: 'is_profile_completed',
+                                            type: 'boolean',
+                                            example: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'certification_status',
+                                            type: 'string',
+                                            example: 'certified',
+                                        ),
+                                        new OA\Property(
+                                            property: 'certification_date',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2024-01-15',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'expiry_date',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2027-01-15',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'certification_level',
+                                            type: 'string',
+                                            example: 'A',
+                                            nullable: true,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - Insufficient permissions',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Organization not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Organization not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to retrieve organization.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function showById(int $id): JsonResponse
     {
         try {
@@ -841,112 +1025,115 @@ class OrganizationController extends Controller
 
     /**
      * Export organizations data.
-     *
-     * @OA\Get(
-     *     path="/api/v1/organizations/export",
-     *     summary="Export organizations data",
-     *     description="Exports organizations data as CSV. Supports the same filters as the list endpoint. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.",
-     *     tags={"Organizations", "System Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by organization name, email, or PAN",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", minLength=2, maxLength=100, example="ABC Manufacturing")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by organization status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"active", "inactive", "pending", "suspended"}, example="active")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isVerified",
-     *         in="query",
-     *         description="Filter by verification status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="profileCompleted",
-     *         in="query",
-     *         description="Filter by profile completion status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="certificationStatus",
-     *         in="query",
-     *         description="Filter by certification status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"certified", "expired", "never_certified", "suspended", "revoked"}, example="certified")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="state",
-     *         in="query",
-     *         description="Filter by registered state",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", maxLength=100, example="Maharashtra")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/csv",
-     *
-     *             @OA\Schema(type="string", format="binary")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Insufficient permissions",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to export organizations.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/organizations/export',
+        summary: 'Export organizations data',
+        description: 'Exports organizations data as CSV. Supports the same filters as the list endpoint. Accessible by: System Admin, Operations Admin, Operations Manager, DRDO Admin, DRDO Lab.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by organization name, email, or PAN',
+                required: false,
+                schema: new OA\Schema(type: 'string', minLength: 2, maxLength: 100, example: 'ABC Manufacturing'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by organization status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['active', 'inactive', 'pending', 'suspended'],
+                    example: 'active',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'isVerified',
+                in: 'query',
+                description: 'Filter by verification status',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true),
+            ),
+            new OA\Parameter(
+                name: 'profileCompleted',
+                in: 'query',
+                description: 'Filter by profile completion status',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', example: true),
+            ),
+            new OA\Parameter(
+                name: 'certificationStatus',
+                in: 'query',
+                description: 'Filter by certification status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['certified', 'expired', 'never_certified', 'suspended', 'revoked'],
+                    example: 'certified',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'state',
+                in: 'query',
+                description: 'Filter by registered state',
+                required: false,
+                schema: new OA\Schema(type: 'string', maxLength: 100, example: 'Maharashtra'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(
+                        mediaType: 'text/csv',
+                        schema: new OA\Schema(type: 'string', format: 'binary'),
+                    ),
+                ],
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - Insufficient permissions',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to export organizations.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function export(OrganizationExportRequest $request): StreamedResponse|JsonResponse
     {
         Gate::authorize('viewAny', Organization::class);
@@ -1138,100 +1325,119 @@ class OrganizationController extends Controller
 
     /**
      * Activate an organization.
-     *
-     * @OA\Post(
-     *     path="/api/v1/organizations/{id}/activate",
-     *     summary="Activate organization",
-     *     description="Activates an organization by setting its status to 'active'. Only System Admin and Operations Admin can activate organizations.",
-     *     tags={"Organizations", "System Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Organization ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organization activated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Organization activated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="organization",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="ABC Manufacturing Pvt Ltd"),
-     *                     @OA\Property(property="status", type="string", example="active")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Only System Admin and Operations Admin can activate organizations",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Organization not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Organization not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Organization is already active",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Organization is already active.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to activate organization.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/organizations/{id}/activate',
+        summary: 'Activate organization',
+        description: 'Activates an organization by setting its status to \'active\'. Only System Admin and Operations Admin can activate organizations.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Organization ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Organization activated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization activated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'organization',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'name',
+                                            type: 'string',
+                                            example: 'ABC Manufacturing Pvt Ltd',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - Only System Admin and Operations Admin can activate organizations',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Organization not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Organization not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Organization is already active',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization is already active.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to activate organization.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -1292,100 +1498,119 @@ class OrganizationController extends Controller
 
     /**
      * Deactivate an organization.
-     *
-     * @OA\Post(
-     *     path="/api/v1/organizations/{id}/deactivate",
-     *     summary="Deactivate organization",
-     *     description="Deactivates an organization by setting its status to 'inactive'. Only System Admin and Operations Admin can deactivate organizations.",
-     *     tags={"Organizations", "System Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Organization ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organization deactivated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Organization deactivated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="organization",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="ABC Manufacturing Pvt Ltd"),
-     *                     @OA\Property(property="status", type="string", example="inactive")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Only System Admin and Operations Admin can deactivate organizations",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Organization not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Organization not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Organization is already inactive",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Organization is already inactive.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to deactivate organization.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/organizations/{id}/deactivate',
+        summary: 'Deactivate organization',
+        description: 'Deactivates an organization by setting its status to \'inactive\'. Only System Admin and Operations Admin can deactivate organizations.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Organization ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Organization deactivated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization deactivated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'organization',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'name',
+                                            type: 'string',
+                                            example: 'ABC Manufacturing Pvt Ltd',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'inactive'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - Only System Admin and Operations Admin can deactivate organizations',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Organization not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Organization not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Organization is already inactive',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Organization is already inactive.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to deactivate organization.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

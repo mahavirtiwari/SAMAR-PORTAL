@@ -14,35 +14,41 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
 class ServiceKeyResourcesController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/key-resources",
-     *     summary="List all service key resources",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="serviceProviderType", in="query", @OA\Schema(type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"})),
-     *     @OA\Parameter(name="isActive", in="query", @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(response=200, description="List of key resources"),
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/key-resources',
+        summary: 'List all service key resources',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(
+                name: 'serviceProviderType',
+                in: 'query',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                ),
+            ),
+            new OA\Parameter(name: 'isActive', in: 'query', schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'List of key resources'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -77,28 +83,30 @@ class ServiceKeyResourcesController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/key-resources",
-     *     summary="Create a new service key resource",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"resourceName", "serviceProviderType"},
-     *
-     *             @OA\Property(property="resourceName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Resource created successfully")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/key-resources',
+        summary: 'Create a new service key resource',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['resourceName', 'serviceProviderType'],
+                properties: [
+                    new OA\Property(property: 'resourceName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Resource created successfully'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -142,46 +150,49 @@ class ServiceKeyResourcesController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/key-resources/{id}",
-     *     summary="Get a specific service key resource",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Resource details")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/key-resources/{id}',
+        summary: 'Get a specific service key resource',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Resource details'),
+        ],
+    )]
     public function show(ServiceKeyResource $serviceKeyResource): JsonResponse
     {
         return $this->successResponse($serviceKeyResource, 'Service key resource retrieved successfully');
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/master-data/service/key-resources/{id}",
-     *     summary="Update a service key resource",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="resourceName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Resource updated successfully")
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/master-data/service/key-resources/{id}',
+        summary: 'Update a service key resource',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'resourceName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Resource updated successfully'),
+        ],
+    )]
     public function update(Request $request, ServiceKeyResource $serviceKeyResource): JsonResponse
     {
         try {
@@ -228,23 +239,24 @@ class ServiceKeyResourcesController extends Controller
 
     /**
      * Activate a service key resource.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/key-resources/{id}/activate",
-     *     summary="Activate a service key resource",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service key resource activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service key resource is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service key resource not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/key-resources/{id}/activate',
+        summary: 'Activate a service key resource',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service key resource activated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Service key resource is already active'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service key resource not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -281,23 +293,24 @@ class ServiceKeyResourcesController extends Controller
 
     /**
      * Deactivate a service key resource.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/key-resources/{id}/deactivate",
-     *     summary="Deactivate a service key resource",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service key resource deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service key resource is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service key resource not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/key-resources/{id}/deactivate',
+        summary: 'Deactivate a service key resource',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service key resource deactivated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Service key resource is already inactive'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service key resource not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

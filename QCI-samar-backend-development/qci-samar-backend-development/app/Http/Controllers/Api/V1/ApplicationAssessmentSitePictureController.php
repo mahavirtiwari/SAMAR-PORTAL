@@ -12,13 +12,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Site Pictures",
- *     description="Step 2: Site pictures. Manufacturing: assessor team members upload. Service sector: only the applicant (owning unit/enterprise admin) uploads; assessors have read-only access. Minimum 1 picture required to complete this step."
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Site Pictures',
+    description: 'Step 2: Site pictures. Manufacturing: assessor team members upload. Service sector: only the applicant (owning unit/enterprise admin) uploads; assessors have read-only access. Minimum 1 picture required to complete this step.',
+)]
 class ApplicationAssessmentSitePictureController extends Controller
 {
     use AuthorizesAssessmentAccess;
@@ -32,64 +31,111 @@ class ApplicationAssessmentSitePictureController extends Controller
 
     /**
      * Get all site pictures for an assessment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/site-pictures",
-     *     summary="List all site pictures",
-     *     description="Returns all site pictures for the assessment, grouped by team member. Includes step completion status.",
-     *     tags={"Application Assessment Site Pictures", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Site pictures retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="pictures",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="assessment_id", type="integer", example=1),
-     *                         @OA\Property(property="team_member_id", type="integer", example=1),
-     *                         @OA\Property(property="title", type="string", example="Front entrance"),
-     *                         @OA\Property(property="file_path", type="string", example="assessments/1/site-pictures/abc123.jpg"),
-     *                         @OA\Property(property="file_name", type="string", example="entrance.jpg"),
-     *                         @OA\Property(property="file_size", type="integer", example=1024000),
-     *                         @OA\Property(property="latitude", type="number", format="float", example=28.6139),
-     *                         @OA\Property(property="longitude", type="number", format="float", example=77.2090),
-     *                         @OA\Property(property="captured_at", type="string", format="date-time"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="by_team_member", type="object", description="Pictures grouped by team member ID"),
-     *                 @OA\Property(property="total_count", type="integer", example=5),
-     *                 @OA\Property(property="step_completed", type="boolean", example=true)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/site-pictures',
+        summary: 'List all site pictures',
+        description: 'Returns all site pictures for the assessment, grouped by team member. Includes step completion status.',
+        tags: ['Application Assessment Site Pictures', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Site pictures retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'pictures',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'assessment_id',
+                                                type: 'integer',
+                                                example: 1,
+                                            ),
+                                            new OA\Property(
+                                                property: 'team_member_id',
+                                                type: 'integer',
+                                                example: 1,
+                                            ),
+                                            new OA\Property(
+                                                property: 'title',
+                                                type: 'string',
+                                                example: 'Front entrance',
+                                            ),
+                                            new OA\Property(
+                                                property: 'file_path',
+                                                type: 'string',
+                                                example: 'assessments/1/site-pictures/abc123.jpg',
+                                            ),
+                                            new OA\Property(
+                                                property: 'file_name',
+                                                type: 'string',
+                                                example: 'entrance.jpg',
+                                            ),
+                                            new OA\Property(
+                                                property: 'file_size',
+                                                type: 'integer',
+                                                example: 1024000,
+                                            ),
+                                            new OA\Property(
+                                                property: 'latitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 28.6139,
+                                            ),
+                                            new OA\Property(
+                                                property: 'longitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 77.2090,
+                                            ),
+                                            new OA\Property(
+                                                property: 'captured_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                            ),
+                                            new OA\Property(
+                                                property: 'created_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'by_team_member',
+                                    type: 'object',
+                                    description: 'Pictures grouped by team member ID',
+                                ),
+                                new OA\Property(property: 'total_count', type: 'integer', example: 5),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: true),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function index(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -116,43 +162,48 @@ class ApplicationAssessmentSitePictureController extends Controller
 
     /**
      * Get site pictures uploaded by current user.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/site-pictures/mine",
-     *     summary="Get my site pictures",
-     *     description="Returns only the site pictures uploaded by the currently authenticated user.",
-     *     tags={"Application Assessment Site Pictures", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="My site pictures retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="pictures", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="count", type="integer", example=3)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not a team member of this assessment")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/site-pictures/mine',
+        summary: 'Get my site pictures',
+        description: 'Returns only the site pictures uploaded by the currently authenticated user.',
+        tags: ['Application Assessment Site Pictures', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'My site pictures retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'pictures',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(property: 'count', type: 'integer', example: 3),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not a team member of this assessment'),
+        ],
+    )]
     public function mine(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -181,63 +232,95 @@ class ApplicationAssessmentSitePictureController extends Controller
 
     /**
      * Upload a site picture.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/site-pictures",
-     *     summary="Upload a site picture",
-     *     description="Upload a site picture for the assessment. All team members can upload. Required fields: title (mandatory), image. GPS coordinates optional but recommended. Max file size: 10MB.",
-     *     tags={"Application Assessment Site Pictures", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"title", "image"},
-     *
-     *                 @OA\Property(property="title", type="string", description="Mandatory title for the picture", example="Factory entrance"),
-     *                 @OA\Property(property="image", type="string", format="binary", description="Image file (jpg, png, etc). Max 10MB"),
-     *                 @OA\Property(property="latitude", type="number", format="float", description="GPS latitude", example=28.6139),
-     *                 @OA\Property(property="longitude", type="number", format="float", description="GPS longitude", example=77.2090),
-     *                 @OA\Property(property="captured_at", type="string", format="date-time", description="When the photo was taken")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Picture uploaded successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Site picture uploaded successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="picture", type="object"),
-     *                 @OA\Property(property="step_completed", type="boolean", example=true)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in progress or validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not a team member of this assessment")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/site-pictures',
+        summary: 'Upload a site picture',
+        description: 'Upload a site picture for the assessment. All team members can upload. Required fields: title (mandatory), image. GPS coordinates optional but recommended. Max file size: 10MB.',
+        tags: ['Application Assessment Site Pictures', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['title', 'image'],
+                        properties: [
+                            new OA\Property(
+                                property: 'title',
+                                type: 'string',
+                                description: 'Mandatory title for the picture',
+                                example: 'Factory entrance',
+                            ),
+                            new OA\Property(
+                                property: 'image',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Image file (jpg, png, etc). Max 10MB',
+                            ),
+                            new OA\Property(
+                                property: 'latitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS latitude',
+                                example: 28.6139,
+                            ),
+                            new OA\Property(
+                                property: 'longitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS longitude',
+                                example: 77.2090,
+                            ),
+                            new OA\Property(
+                                property: 'captured_at',
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'When the photo was taken',
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Picture uploaded successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Site picture uploaded successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'picture', type: 'object'),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: true),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Assessment not in progress or validation error'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not a team member of this assessment'),
+        ],
+    )]
     public function store(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -411,54 +494,62 @@ class ApplicationAssessmentSitePictureController extends Controller
 
     /**
      * Delete a site picture.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/application-assessments/{assessmentId}/site-pictures/{pictureId}",
-     *     summary="Delete a site picture",
-     *     description="Delete a site picture. Users can only delete their own pictures. Assessment must be in progress.",
-     *     tags={"Application Assessment Site Pictures", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="pictureId",
-     *         in="path",
-     *         required=true,
-     *         description="Site picture ID",
-     *
-     *         @OA\Schema(type="integer", example=5)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Picture deleted successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Site picture deleted successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="step_completed", type="boolean", example=false, description="Whether step 2 is still complete after deletion")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in progress"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not authorized - can only delete your own pictures"),
-     *     @OA\Response(response=404, description="Picture not found")
-     * )
      */
+    #[OA\Delete(
+        path: '/api/v1/application-assessments/{assessmentId}/site-pictures/{pictureId}',
+        summary: 'Delete a site picture',
+        description: 'Delete a site picture. Users can only delete their own pictures. Assessment must be in progress.',
+        tags: ['Application Assessment Site Pictures', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'pictureId',
+                in: 'path',
+                required: true,
+                description: 'Site picture ID',
+                schema: new OA\Schema(type: 'integer', example: 5),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Picture deleted successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Site picture deleted successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'step_completed',
+                                    type: 'boolean',
+                                    example: false,
+                                    description: 'Whether step 2 is still complete after deletion',
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Assessment not in progress'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not authorized - can only delete your own pictures'),
+            new OA\Response(response: 404, description: 'Picture not found'),
+        ],
+    )]
     public function destroy(Request $request, int $assessmentId, int $pictureId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);

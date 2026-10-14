@@ -15,13 +15,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Users",
- *     description="User management endpoints for creating, updating, and managing user accounts"
- * )
- */
+#[OA\Tag(
+    name: 'Users',
+    description: 'User management endpoints for creating, updating, and managing user accounts',
+)]
 class UserController extends Controller
 {
     /**
@@ -34,179 +33,218 @@ class UserController extends Controller
 
     /**
      * Display a listing of users.
-     *
-     * @OA\Get(
-     *     path="/api/v1/users",
-     *     summary="Get list of users",
-     *     description="Retrieves a paginated list of users. Enterprise Admins see users in their organization only. System Admins can filter by organization.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by name, email, or mobile_number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="John")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="role",
-     *         in="query",
-     *         description="Filter by role slug",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="unit-admin")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by user status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"active", "inactive", "suspended"}, example="active")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="samarId",
-     *         in="query",
-     *         description="Filter assessors by SAMAR ID (partial match)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="SAMAR-010226-1")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="domainId",
-     *         in="query",
-     *         description="Filter assessors by assigned assessor-domain id",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="organizationId",
-     *         in="query",
-     *         description="Filter by organization (System Admin only)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=15)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Users retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Users retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="first_name", type="string", example="John"),
-     *                     @OA\Property(property="last_name", type="string", example="Doe"),
-     *                     @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                     @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *                     @OA\Property(property="address", type="string", nullable=true, example="123 Main Street, Building A"),
-     *                     @OA\Property(property="city", type="string", nullable=true, example="Mumbai"),
-     *                     @OA\Property(property="pincode", type="string", nullable=true, example="400001"),
-     *                     @OA\Property(property="status", type="string", example="active"),
-     *                     @OA\Property(
-     *                         property="assessor_domains",
-     *                         type="array",
-     *                         description="Assessor domains (only for users with assessor role)",
-     *
-     *                         @OA\Items(
-     *
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="domain_name", type="string", example="Aerodynamics"),
-     *                             @OA\Property(property="is_active", type="boolean", example=true)
-     *                         )
-     *                     ),
-     *                     @OA\Property(
-     *                         property="assessor_districts",
-     *                         type="array",
-     *                         description="Assessor districts (only for users with assessor role)",
-     *
-     *                         @OA\Items(
-     *
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="name", type="string", example="Mumbai"),
-     *                             @OA\Property(property="state", type="string", example="Maharashtra")
-     *                         )
-     *                     )
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="meta",
-     *                 type="object",
-     *                 @OA\Property(property="total", type="integer", example=100),
-     *                 @OA\Property(property="per_page", type="integer", example=15),
-     *                 @OA\Property(property="current_page", type="integer", example=1),
-     *                 @OA\Property(property="last_page", type="integer", example=7)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/users',
+        summary: 'Get list of users',
+        description: 'Retrieves a paginated list of users. Enterprise Admins see users in their organization only. System Admins can filter by organization.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by name, email, or mobile_number',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'John'),
+            ),
+            new OA\Parameter(
+                name: 'role',
+                in: 'query',
+                description: 'Filter by role slug',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'unit-admin'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by user status',
+                required: false,
+                schema: new OA\Schema(type: 'string', enum: ['active', 'inactive', 'suspended'], example: 'active'),
+            ),
+            new OA\Parameter(
+                name: 'samarId',
+                in: 'query',
+                description: 'Filter assessors by SAMAR ID (partial match)',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'SAMAR-010226-1'),
+            ),
+            new OA\Parameter(
+                name: 'domainId',
+                in: 'query',
+                description: 'Filter assessors by assigned assessor-domain id',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'organizationId',
+                in: 'query',
+                description: 'Filter by organization (System Admin only)',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 15),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Users retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Users retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                    new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                    new OA\Property(
+                                        property: 'email',
+                                        type: 'string',
+                                        example: 'john.doe@example.com',
+                                    ),
+                                    new OA\Property(
+                                        property: 'mobile_number',
+                                        type: 'string',
+                                        example: '9876543210',
+                                    ),
+                                    new OA\Property(
+                                        property: 'address',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: '123 Main Street, Building A',
+                                    ),
+                                    new OA\Property(
+                                        property: 'city',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'Mumbai',
+                                    ),
+                                    new OA\Property(
+                                        property: 'pincode',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: '400001',
+                                    ),
+                                    new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                    new OA\Property(
+                                        property: 'assessor_domains',
+                                        type: 'array',
+                                        description: 'Assessor domains (only for users with assessor role)',
+                                        items: new OA\Items(
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'domain_name',
+                                                    type: 'string',
+                                                    example: 'Aerodynamics',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'is_active',
+                                                    type: 'boolean',
+                                                    example: true,
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                    new OA\Property(
+                                        property: 'assessor_districts',
+                                        type: 'array',
+                                        description: 'Assessor districts (only for users with assessor role)',
+                                        items: new OA\Items(
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'Mumbai',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'state',
+                                                    type: 'string',
+                                                    example: 'Maharashtra',
+                                                ),
+                                            ],
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                        new OA\Property(
+                            property: 'meta',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'total', type: 'integer', example: 100),
+                                new OA\Property(property: 'per_page', type: 'integer', example: 15),
+                                new OA\Property(property: 'current_page', type: 'integer', example: 1),
+                                new OA\Property(property: 'last_page', type: 'integer', example: 7),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         Gate::authorize('viewAny', User::class);
@@ -258,127 +296,205 @@ class UserController extends Controller
 
     /**
      * Store a newly created user.
-     *
-     * @OA\Post(
-     *     path="/api/v1/users",
-     *     summary="Create a new user",
-     *     description="Creates a new user account. Generates temporary password if not provided. Enterprise Admins can only create users in their organization.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"first_name", "last_name", "email", "mobile_number", "organization_id"},
-     *
-     *             @OA\Property(property="first_name", type="string", maxLength=100, example="John"),
-     *             @OA\Property(property="last_name", type="string", maxLength=100, example="Doe"),
-     *             @OA\Property(property="email", type="string", format="email", maxLength=255, example="john.doe@example.com"),
-     *             @OA\Property(property="mobile_number", type="string", pattern="^[0-9]{10}$", example="9876543210"),
-     *             @OA\Property(property="organization_id", type="integer", example=1),
-     *             @OA\Property(property="designation", type="string", maxLength=100, example="Manager"),
-     *             @OA\Property(property="district", type="string", maxLength=100, example="Mumbai"),
-     *             @OA\Property(property="state", type="string", maxLength=100, example="Maharashtra"),
-     *             @OA\Property(property="address", type="string", maxLength=500, nullable=true, example="123 Main Street, Building A", description="Full street address"),
-     *             @OA\Property(property="city", type="string", maxLength=100, nullable=true, example="Mumbai", description="City name"),
-     *             @OA\Property(property="pincode", type="string", pattern="^[0-9]{6}$", nullable=true, example="400001", description="6-digit Indian PIN code"),
-     *             @OA\Property(property="password", type="string", minLength=7, example="password123"),
-     *             @OA\Property(property="password_confirmation", type="string", example="password123"),
-     *             @OA\Property(property="status", type="string", enum={"invited", "pending_verification", "active", "inactive", "suspended"}, example="invited"),
-     *             @OA\Property(
-     *                 property="roles",
-     *                 type="array",
-     *                 description="Array of role assignments. A single user can be assigned to multiple units by providing multiple role objects.",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="slug", type="string", example="unit-admin"),
-     *                     @OA\Property(property="organization_id", type="integer", example=1),
-     *                     @OA\Property(property="unit_id", type="integer", example=1)
-     *                 ),
-     *                 example={
-     *                     {"slug": "unit-admin", "organization_id": 1, "unit_id": 1},
-     *                     {"slug": "unit-admin", "organization_id": 1, "unit_id": 2}
-     *                 }
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="User created successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User created successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="first_name", type="string", example="John"),
-     *                 @OA\Property(property="last_name", type="string", example="Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *                 @OA\Property(property="address", type="string", nullable=true, example="123 Main Street, Building A"),
-     *                 @OA\Property(property="city", type="string", nullable=true, example="Mumbai"),
-     *                 @OA\Property(property="pincode", type="string", nullable=true, example="400001"),
-     *                 @OA\Property(property="status", type="string", example="active")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You can only create users in your organization.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to create user: Validation error"),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="email", type="array", @OA\Items(type="string", example="The email has already been taken."))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/users',
+        summary: 'Create a new user',
+        description: 'Creates a new user account. Generates temporary password if not provided. Enterprise Admins can only create users in their organization.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['first_name', 'last_name', 'email', 'mobile_number', 'organization_id'],
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string', maxLength: 100, example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', maxLength: 100, example: 'Doe'),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        maxLength: 255,
+                        example: 'john.doe@example.com',
+                    ),
+                    new OA\Property(
+                        property: 'mobile_number',
+                        type: 'string',
+                        pattern: '^[0-9]{10}$',
+                        example: '9876543210',
+                    ),
+                    new OA\Property(property: 'organization_id', type: 'integer', example: 1),
+                    new OA\Property(property: 'designation', type: 'string', maxLength: 100, example: 'Manager'),
+                    new OA\Property(property: 'district', type: 'string', maxLength: 100, example: 'Mumbai'),
+                    new OA\Property(property: 'state', type: 'string', maxLength: 100, example: 'Maharashtra'),
+                    new OA\Property(
+                        property: 'address',
+                        type: 'string',
+                        maxLength: 500,
+                        nullable: true,
+                        example: '123 Main Street, Building A',
+                        description: 'Full street address',
+                    ),
+                    new OA\Property(
+                        property: 'city',
+                        type: 'string',
+                        maxLength: 100,
+                        nullable: true,
+                        example: 'Mumbai',
+                        description: 'City name',
+                    ),
+                    new OA\Property(
+                        property: 'pincode',
+                        type: 'string',
+                        pattern: '^[0-9]{6}$',
+                        nullable: true,
+                        example: '400001',
+                        description: '6-digit Indian PIN code',
+                    ),
+                    new OA\Property(property: 'password', type: 'string', minLength: 7, example: 'password123'),
+                    new OA\Property(property: 'password_confirmation', type: 'string', example: 'password123'),
+                    new OA\Property(
+                        property: 'status',
+                        type: 'string',
+                        enum: ['invited', 'pending_verification', 'active', 'inactive', 'suspended'],
+                        example: 'invited',
+                    ),
+                    new OA\Property(
+                        property: 'roles',
+                        type: 'array',
+                        description: 'Array of role assignments. A single user can be assigned to multiple units by providing multiple role objects.',
+                        example: [
+                            ['slug' => 'unit-admin', 'organization_id' => 1, 'unit_id' => 1],
+                            ['slug' => 'unit-admin', 'organization_id' => 1, 'unit_id' => 2],
+                        ],
+                        items: new OA\Items(
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'slug', type: 'string', example: 'unit-admin'),
+                                new OA\Property(property: 'organization_id', type: 'integer', example: 1),
+                                new OA\Property(property: 'unit_id', type: 'integer', example: 1),
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'User created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User created successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(
+                                    property: 'email',
+                                    type: 'string',
+                                    example: 'john.doe@example.com',
+                                ),
+                                new OA\Property(property: 'mobile_number', type: 'string', example: '9876543210'),
+                                new OA\Property(
+                                    property: 'address',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '123 Main Street, Building A',
+                                ),
+                                new OA\Property(
+                                    property: 'city',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: 'Mumbai',
+                                ),
+                                new OA\Property(
+                                    property: 'pincode',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '400001',
+                                ),
+                                new OA\Property(property: 'status', type: 'string', example: 'active'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You can only create users in your organization.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to create user: Validation error',
+                        ),
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'email',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string', example: 'The email has already been taken.'),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function store(StoreUserRequest $request): JsonResponse
     {
         Gate::authorize('create', User::class);
@@ -413,97 +529,137 @@ class UserController extends Controller
 
     /**
      * Display the specified user.
-     *
-     * @OA\Get(
-     *     path="/api/v1/users/{id}",
-     *     summary="Get user details",
-     *     description="Retrieves detailed information about a specific user including roles and permissions.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="User retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User retrieved successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="first_name", type="string", example="John"),
-     *                 @OA\Property(property="last_name", type="string", example="Doe"),
-     *                 @OA\Property(property="full_name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *                 @OA\Property(property="designation", type="string", example="Manager"),
-     *                 @OA\Property(property="district", type="string", example="Mumbai"),
-     *                 @OA\Property(property="state", type="string", example="Maharashtra"),
-     *                 @OA\Property(property="address", type="string", nullable=true, example="123 Main Street, Building A"),
-     *                 @OA\Property(property="city", type="string", nullable=true, example="Mumbai"),
-     *                 @OA\Property(property="pincode", type="string", nullable=true, example="400001"),
-     *                 @OA\Property(property="status", type="string", example="active"),
-     *                 @OA\Property(property="roles", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="permissions", type="array", @OA\Items(type="string"))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="User not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/users/{id}',
+        summary: 'Get user details',
+        description: 'Retrieves detailed information about a specific user including roles and permissions.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'User ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User retrieved successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(property: 'full_name', type: 'string', example: 'John Doe'),
+                                new OA\Property(
+                                    property: 'email',
+                                    type: 'string',
+                                    example: 'john.doe@example.com',
+                                ),
+                                new OA\Property(property: 'mobile_number', type: 'string', example: '9876543210'),
+                                new OA\Property(property: 'designation', type: 'string', example: 'Manager'),
+                                new OA\Property(property: 'district', type: 'string', example: 'Mumbai'),
+                                new OA\Property(property: 'state', type: 'string', example: 'Maharashtra'),
+                                new OA\Property(
+                                    property: 'address',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '123 Main Street, Building A',
+                                ),
+                                new OA\Property(
+                                    property: 'city',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: 'Mumbai',
+                                ),
+                                new OA\Property(
+                                    property: 'pincode',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '400001',
+                                ),
+                                new OA\Property(property: 'status', type: 'string', example: 'active'),
+                                new OA\Property(
+                                    property: 'roles',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(
+                                    property: 'permissions',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string'),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'User not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function show(int $id, Request $request): JsonResponse
     {
         try {
@@ -525,128 +681,227 @@ class UserController extends Controller
 
     /**
      * Update the specified user.
-     *
-     * @OA\Put(
-     *     path="/api/v1/users/{id}",
-     *     summary="Update user",
-     *     description="Updates user information. Users can update their own profile with limited fields. Admins can update more fields including status.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="first_name", type="string", maxLength=100, example="John"),
-     *             @OA\Property(property="last_name", type="string", maxLength=100, example="Doe"),
-     *             @OA\Property(property="email", type="string", format="email", maxLength=255, example="john.doe@example.com"),
-     *             @OA\Property(property="mobile_number", type="string", pattern="^[0-9]{10}$", example="9876543210"),
-     *             @OA\Property(property="designation", type="string", maxLength=100, example="Senior Manager"),
-     *             @OA\Property(property="district", type="string", maxLength=100, example="Mumbai"),
-     *             @OA\Property(property="state", type="string", maxLength=100, example="Maharashtra"),
-     *             @OA\Property(property="address", type="string", maxLength=500, nullable=true, example="123 Main Street, Building A", description="Full street address"),
-     *             @OA\Property(property="city", type="string", maxLength=100, nullable=true, example="Mumbai", description="City name"),
-     *             @OA\Property(property="pincode", type="string", pattern="^[0-9]{6}$", nullable=true, example="400001", description="6-digit Indian PIN code"),
-     *             @OA\Property(property="password", type="string", minLength=7, example="newPassword123", description="Only for self-update or admin"),
-     *             @OA\Property(property="password_confirmation", type="string", example="newPassword123"),
-     *             @OA\Property(property="current_password", type="string", example="oldPassword123", description="Required when changing own password"),
-     *             @OA\Property(property="status", type="string", enum={"active", "inactive", "suspended"}, example="active", description="Admin only"),
-     *             @OA\Property(property="organization_id", type="integer", example=1, description="Admin only")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="User updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User updated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="first_name", type="string", example="John"),
-     *                 @OA\Property(property="last_name", type="string", example="Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="address", type="string", nullable=true, example="123 Main Street, Building A"),
-     *                 @OA\Property(property="city", type="string", nullable=true, example="Mumbai"),
-     *                 @OA\Property(property="pincode", type="string", nullable=true, example="400001")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="User not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to update user: Validation error"),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="object",
-     *                 @OA\Property(property="current_password", type="array", @OA\Items(type="string", example="The provided password is incorrect."))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/users/{id}',
+        summary: 'Update user',
+        description: 'Updates user information. Users can update their own profile with limited fields. Admins can update more fields including status.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'User ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string', maxLength: 100, example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', maxLength: 100, example: 'Doe'),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        maxLength: 255,
+                        example: 'john.doe@example.com',
+                    ),
+                    new OA\Property(
+                        property: 'mobile_number',
+                        type: 'string',
+                        pattern: '^[0-9]{10}$',
+                        example: '9876543210',
+                    ),
+                    new OA\Property(
+                        property: 'designation',
+                        type: 'string',
+                        maxLength: 100,
+                        example: 'Senior Manager',
+                    ),
+                    new OA\Property(property: 'district', type: 'string', maxLength: 100, example: 'Mumbai'),
+                    new OA\Property(property: 'state', type: 'string', maxLength: 100, example: 'Maharashtra'),
+                    new OA\Property(
+                        property: 'address',
+                        type: 'string',
+                        maxLength: 500,
+                        nullable: true,
+                        example: '123 Main Street, Building A',
+                        description: 'Full street address',
+                    ),
+                    new OA\Property(
+                        property: 'city',
+                        type: 'string',
+                        maxLength: 100,
+                        nullable: true,
+                        example: 'Mumbai',
+                        description: 'City name',
+                    ),
+                    new OA\Property(
+                        property: 'pincode',
+                        type: 'string',
+                        pattern: '^[0-9]{6}$',
+                        nullable: true,
+                        example: '400001',
+                        description: '6-digit Indian PIN code',
+                    ),
+                    new OA\Property(
+                        property: 'password',
+                        type: 'string',
+                        minLength: 7,
+                        example: 'newPassword123',
+                        description: 'Only for self-update or admin',
+                    ),
+                    new OA\Property(property: 'password_confirmation', type: 'string', example: 'newPassword123'),
+                    new OA\Property(
+                        property: 'current_password',
+                        type: 'string',
+                        example: 'oldPassword123',
+                        description: 'Required when changing own password',
+                    ),
+                    new OA\Property(
+                        property: 'status',
+                        type: 'string',
+                        enum: ['active', 'inactive', 'suspended'],
+                        example: 'active',
+                        description: 'Admin only',
+                    ),
+                    new OA\Property(
+                        property: 'organization_id',
+                        type: 'integer',
+                        example: 1,
+                        description: 'Admin only',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User updated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(
+                                    property: 'email',
+                                    type: 'string',
+                                    example: 'john.doe@example.com',
+                                ),
+                                new OA\Property(
+                                    property: 'address',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '123 Main Street, Building A',
+                                ),
+                                new OA\Property(
+                                    property: 'city',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: 'Mumbai',
+                                ),
+                                new OA\Property(
+                                    property: 'pincode',
+                                    type: 'string',
+                                    nullable: true,
+                                    example: '400001',
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'User not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to update user: Validation error',
+                        ),
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'current_password',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string', example: 'The provided password is incorrect.'),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function update(UpdateUserRequest $request, int $id): JsonResponse
     {
         try {
@@ -711,97 +966,113 @@ class UserController extends Controller
 
     /**
      * Activate a user account.
-     *
-     * @OA\Post(
-     *     path="/api/v1/users/{id}/activate",
-     *     summary="Activate user account",
-     *     description="Activates a user account. Sets status to active.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="User activated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User activated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="first_name", type="string", example="John"),
-     *                 @OA\Property(property="last_name", type="string", example="Doe"),
-     *                 @OA\Property(property="status", type="string", example="active")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="User not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Failed to activate user",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to activate user: Error message")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/users/{id}/activate',
+        summary: 'Activate user account',
+        description: 'Activates a user account. Sets status to active.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'User ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User activated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User activated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(property: 'status', type: 'string', example: 'active'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'User not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Failed to activate user',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to activate user: Error message',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function activate(int $id, Request $request): JsonResponse
     {
         try {
@@ -822,97 +1093,113 @@ class UserController extends Controller
 
     /**
      * Deactivate a user account.
-     *
-     * @OA\Post(
-     *     path="/api/v1/users/{id}/deactivate",
-     *     summary="Deactivate user account",
-     *     description="Deactivates a user account. Sets status to inactive.",
-     *     tags={"User Management", "System Admin - User Management", "Operations Manager - User Management", "Operations Admin - User Management", "Unit Admin - User Management", "Enterprise Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="User deactivated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User deactivated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="first_name", type="string", example="John"),
-     *                 @OA\Property(property="last_name", type="string", example="Doe"),
-     *                 @OA\Property(property="status", type="string", example="inactive")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="This action is unauthorized.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="User not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="User not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Failed to deactivate user",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to deactivate user: Error message")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Server error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Server error occurred.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/users/{id}/deactivate',
+        summary: 'Deactivate user account',
+        description: 'Deactivates a user account. Sets status to inactive.',
+        tags: [
+            'User Management',
+            'System Admin - User Management',
+            'Operations Manager - User Management',
+            'Operations Admin - User Management',
+            'Unit Admin - User Management',
+            'Enterprise Admin - User Management',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'User ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'User deactivated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User deactivated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                                new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                                new OA\Property(property: 'status', type: 'string', example: 'inactive'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'This action is unauthorized.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'User not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'User not found.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Failed to deactivate user',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to deactivate user: Error message',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Server error occurred.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function deactivate(int $id, Request $request): JsonResponse
     {
         try {
@@ -1114,59 +1401,78 @@ class UserController extends Controller
 
     /**
      * Get assessor's assigned districts.
-     *
-     * @OA\Get(
-     *     path="/api/v1/users/{user}/assessor-districts",
-     *     summary="Get assessor's assigned districts",
-     *     description="Retrieves all districts assigned to an assessor user",
-     *     tags={"Users", "System Admin - User Management"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="user",
-     *         in="path",
-     *         description="User ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Districts retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessor districts retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Mumbai"),
-     *                     @OA\Property(property="code", type="string", example="MH-MUM"),
-     *                     @OA\Property(property="state_id", type="integer", example=1),
-     *                     @OA\Property(
-     *                         property="state",
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="name", type="string", example="Maharashtra"),
-     *                         @OA\Property(property="code", type="string", example="MH")
-     *                     ),
-     *                     @OA\Property(property="assigned_by", type="integer", nullable=true, example=1),
-     *                     @OA\Property(property="assigned_at", type="string", format="date-time", example="2025-12-10T12:00:00Z")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="User not found"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/users/{user}/assessor-districts',
+        summary: 'Get assessor\'s assigned districts',
+        description: 'Retrieves all districts assigned to an assessor user',
+        tags: ['Users', 'System Admin - User Management'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'user',
+                in: 'path',
+                description: 'User ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Districts retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessor districts retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'name', type: 'string', example: 'Mumbai'),
+                                    new OA\Property(property: 'code', type: 'string', example: 'MH-MUM'),
+                                    new OA\Property(property: 'state_id', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'state',
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'name',
+                                                type: 'string',
+                                                example: 'Maharashtra',
+                                            ),
+                                            new OA\Property(property: 'code', type: 'string', example: 'MH'),
+                                        ],
+                                    ),
+                                    new OA\Property(
+                                        property: 'assigned_by',
+                                        type: 'integer',
+                                        nullable: true,
+                                        example: 1,
+                                    ),
+                                    new OA\Property(
+                                        property: 'assigned_at',
+                                        type: 'string',
+                                        format: 'date-time',
+                                        example: '2025-12-10T12:00:00Z',
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'User not found'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function getAssessorDistricts(string $userId): JsonResponse
     {
         $user = User::find($userId);

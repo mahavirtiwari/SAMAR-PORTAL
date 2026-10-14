@@ -12,13 +12,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Attendance",
- *     description="Punch-in/punch-out tracking for assessors during on-site assessments. This is NOT a step - it runs parallel to assessment steps."
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Attendance',
+    description: 'Punch-in/punch-out tracking for assessors during on-site assessments. This is NOT a step - it runs parallel to assessment steps.',
+)]
 class ApplicationAssessmentAttendanceController extends Controller
 {
     use AuthorizesAssessmentAccess;
@@ -32,70 +31,104 @@ class ApplicationAssessmentAttendanceController extends Controller
 
     /**
      * Get attendance records for an assessment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/attendance",
-     *     summary="List all attendance records",
-     *     description="Retrieves all punch-in and punch-out records for an assessment, including a summary showing current status of each team member.",
-     *     tags={"Application Assessment Attendance", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Attendance records retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="attendances",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="type", type="string", enum={"punch_in", "punch_out"}, example="punch_in"),
-     *                         @OA\Property(property="selfie_path", type="string", example="assessments/1/attendance/selfie.jpg"),
-     *                         @OA\Property(property="latitude", type="number", format="float", example=28.6139),
-     *                         @OA\Property(property="longitude", type="number", format="float", example=77.2090),
-     *                         @OA\Property(property="recorded_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="summary",
-     *                     type="array",
-     *                     description="Summary of each team member's attendance status",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="team_member_id", type="integer"),
-     *                         @OA\Property(property="is_punched_in", type="boolean"),
-     *                         @OA\Property(property="last_action", type="string", enum={"punch_in", "punch_out"}, nullable=true),
-     *                         @OA\Property(property="last_action_at", type="string", format="date-time", nullable=true)
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/attendance',
+        summary: 'List all attendance records',
+        description: 'Retrieves all punch-in and punch-out records for an assessment, including a summary showing current status of each team member.',
+        tags: ['Application Assessment Attendance', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Attendance records retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'attendances',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'type',
+                                                type: 'string',
+                                                enum: ['punch_in', 'punch_out'],
+                                                example: 'punch_in',
+                                            ),
+                                            new OA\Property(
+                                                property: 'selfie_path',
+                                                type: 'string',
+                                                example: 'assessments/1/attendance/selfie.jpg',
+                                            ),
+                                            new OA\Property(
+                                                property: 'latitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 28.6139,
+                                            ),
+                                            new OA\Property(
+                                                property: 'longitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 77.2090,
+                                            ),
+                                            new OA\Property(
+                                                property: 'recorded_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'summary',
+                                    type: 'array',
+                                    description: 'Summary of each team member\'s attendance status',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'team_member_id', type: 'integer'),
+                                            new OA\Property(property: 'is_punched_in', type: 'boolean'),
+                                            new OA\Property(
+                                                property: 'last_action',
+                                                type: 'string',
+                                                enum: ['punch_in', 'punch_out'],
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'last_action_at',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                nullable: true,
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function index(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -117,86 +150,129 @@ class ApplicationAssessmentAttendanceController extends Controller
 
     /**
      * Record punch-in for current user.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/attendance/punch-in",
-     *     summary="Record punch-in",
-     *     description="Records a punch-in for the current user. Requires a selfie image with GPS coordinates. User must be a team member of the assessment and not already punched in.",
-     *     tags={"Application Assessment Attendance", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"selfie", "recordedAt"},
-     *
-     *                 @OA\Property(property="selfie", type="string", format="binary", description="Selfie image file (max 5MB)"),
-     *                 @OA\Property(property="recordedAt", type="string", format="date-time", example="2026-06-10T09:15:00Z", description="Device capture time of the punch (required — stored as recorded_at; never defaults to server time)"),
-     *                 @OA\Property(property="clientUuid", type="string", maxLength=64, description="Idempotency key — a replay with the same value returns the already-recorded punch"),
-     *                 @OA\Property(property="latitude", type="number", format="float", example=28.6139, description="GPS latitude (-90 to 90)"),
-     *                 @OA\Property(property="longitude", type="number", format="float", example=77.2090, description="GPS longitude (-180 to 180)"),
-     *                 @OA\Property(
-     *                     property="device_metadata",
-     *                     type="object",
-     *                     description="Optional device information",
-     *                     @OA\Property(property="device_model", type="string", example="iPhone 14"),
-     *                     @OA\Property(property="os_version", type="string", example="iOS 17.0"),
-     *                     @OA\Property(property="app_version", type="string", example="1.0.0")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Punch-in recorded successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Punch-in recorded successfully"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Already punched in",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You have already punched in. Please punch out first.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Not a team member",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You are not a team member of this assessment")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=409, description="The punch key is already in use by another record")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/attendance/punch-in',
+        summary: 'Record punch-in',
+        description: 'Records a punch-in for the current user. Requires a selfie image with GPS coordinates. User must be a team member of the assessment and not already punched in.',
+        tags: ['Application Assessment Attendance', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['selfie', 'recordedAt'],
+                        properties: [
+                            new OA\Property(
+                                property: 'selfie',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Selfie image file (max 5MB)',
+                            ),
+                            new OA\Property(
+                                property: 'recordedAt',
+                                type: 'string',
+                                format: 'date-time',
+                                example: '2026-06-10T09:15:00Z',
+                                description: 'Device capture time of the punch (required — stored as recorded_at; never defaults to server time)',
+                            ),
+                            new OA\Property(
+                                property: 'clientUuid',
+                                type: 'string',
+                                maxLength: 64,
+                                description: 'Idempotency key — a replay with the same value returns the already-recorded punch',
+                            ),
+                            new OA\Property(
+                                property: 'latitude',
+                                type: 'number',
+                                format: 'float',
+                                example: 28.6139,
+                                description: 'GPS latitude (-90 to 90)',
+                            ),
+                            new OA\Property(
+                                property: 'longitude',
+                                type: 'number',
+                                format: 'float',
+                                example: 77.2090,
+                                description: 'GPS longitude (-180 to 180)',
+                            ),
+                            new OA\Property(
+                                property: 'device_metadata',
+                                type: 'object',
+                                description: 'Optional device information',
+                                properties: [
+                                    new OA\Property(
+                                        property: 'device_model',
+                                        type: 'string',
+                                        example: 'iPhone 14',
+                                    ),
+                                    new OA\Property(property: 'os_version', type: 'string', example: 'iOS 17.0'),
+                                    new OA\Property(property: 'app_version', type: 'string', example: '1.0.0'),
+                                ],
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Punch-in recorded successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Punch-in recorded successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Already punched in',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You have already punched in. Please punch out first.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Not a team member',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You are not a team member of this assessment',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 409, description: 'The punch key is already in use by another record'),
+        ],
+    )]
     public function punchIn(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -335,68 +411,100 @@ class ApplicationAssessmentAttendanceController extends Controller
 
     /**
      * Record punch-out for current user.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/attendance/punch-out",
-     *     summary="Record punch-out",
-     *     description="Records a punch-out for the current user. User must have punched in first.",
-     *     tags={"Application Assessment Attendance", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"selfie", "recordedAt"},
-     *
-     *                 @OA\Property(property="selfie", type="string", format="binary", description="Selfie image file (max 5MB)"),
-     *                 @OA\Property(property="recordedAt", type="string", format="date-time", example="2026-06-10T17:45:00Z", description="Device capture time of the punch (required — stored as recorded_at; never defaults to server time)"),
-     *                 @OA\Property(property="clientUuid", type="string", maxLength=64, description="Idempotency key — a replay with the same value returns the already-recorded punch"),
-     *                 @OA\Property(property="latitude", type="number", format="float", example=28.6139),
-     *                 @OA\Property(property="longitude", type="number", format="float", example=77.2090),
-     *                 @OA\Property(property="device_metadata", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Punch-out recorded successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Punch-out recorded successfully")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Not punched in",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You must punch in before punching out.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Not a team member"),
-     *     @OA\Response(response=409, description="The punch key is already in use by another record")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/attendance/punch-out',
+        summary: 'Record punch-out',
+        description: 'Records a punch-out for the current user. User must have punched in first.',
+        tags: ['Application Assessment Attendance', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['selfie', 'recordedAt'],
+                        properties: [
+                            new OA\Property(
+                                property: 'selfie',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Selfie image file (max 5MB)',
+                            ),
+                            new OA\Property(
+                                property: 'recordedAt',
+                                type: 'string',
+                                format: 'date-time',
+                                example: '2026-06-10T17:45:00Z',
+                                description: 'Device capture time of the punch (required — stored as recorded_at; never defaults to server time)',
+                            ),
+                            new OA\Property(
+                                property: 'clientUuid',
+                                type: 'string',
+                                maxLength: 64,
+                                description: 'Idempotency key — a replay with the same value returns the already-recorded punch',
+                            ),
+                            new OA\Property(
+                                property: 'latitude',
+                                type: 'number',
+                                format: 'float',
+                                example: 28.6139,
+                            ),
+                            new OA\Property(
+                                property: 'longitude',
+                                type: 'number',
+                                format: 'float',
+                                example: 77.2090,
+                            ),
+                            new OA\Property(property: 'device_metadata', type: 'object'),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Punch-out recorded successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Punch-out recorded successfully',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Not punched in',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You must punch in before punching out.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Not a team member'),
+            new OA\Response(response: 409, description: 'The punch key is already in use by another record'),
+        ],
+    )]
     public function punchOut(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -532,43 +640,59 @@ class ApplicationAssessmentAttendanceController extends Controller
 
     /**
      * Get current user's attendance status.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/attendance/my-status",
-     *     summary="Get my attendance status",
-     *     description="Returns the current user's punch-in/punch-out status and attendance history for this assessment.",
-     *     tags={"Application Assessment Attendance", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Attendance status retrieved",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="is_punched_in", type="boolean", example=true, description="Whether user is currently punched in"),
-     *                 @OA\Property(property="last_attendance", type="object", nullable=true, description="Last attendance record"),
-     *                 @OA\Property(property="attendance_history", type="array", @OA\Items(type="object"), description="All attendance records for this user")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Not a team member")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/attendance/my-status',
+        summary: 'Get my attendance status',
+        description: 'Returns the current user\'s punch-in/punch-out status and attendance history for this assessment.',
+        tags: ['Application Assessment Attendance', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Attendance status retrieved',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'is_punched_in',
+                                    type: 'boolean',
+                                    example: true,
+                                    description: 'Whether user is currently punched in',
+                                ),
+                                new OA\Property(
+                                    property: 'last_attendance',
+                                    type: 'object',
+                                    nullable: true,
+                                    description: 'Last attendance record',
+                                ),
+                                new OA\Property(
+                                    property: 'attendance_history',
+                                    type: 'array',
+                                    description: 'All attendance records for this user',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Not a team member'),
+        ],
+    )]
     public function myStatus(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);

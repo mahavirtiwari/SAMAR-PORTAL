@@ -18,82 +18,81 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Application Feedbacks",
- *     description="Application feedback management endpoints"
- * )
- */
+#[OA\Tag(name: 'Application Feedbacks', description: 'Application feedback management endpoints')]
 class ApplicationFeedbackController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/feedback-pending",
-     *     summary="List applications pending feedback",
-     *     description="Retrieve all applications that are certified and pending feedback from the current user's organization",
-     *     tags={"Application Feedbacks", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="q",
-     *         in="query",
-     *         description="Search by application number",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *
-     *         @OA\Schema(type="integer", default=10)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Applications pending feedback retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Applications pending feedback retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="application_number", type="string", example="SAMAR-2025-001"),
-     *                     @OA\Property(property="unit", type="object"),
-     *                     @OA\Property(property="sector", type="string", example="manufacturing"),
-     *                     @OA\Property(property="application_date", type="string", format="date"),
-     *                     @OA\Property(property="assessment_date", type="string", format="date"),
-     *                     @OA\Property(property="rating", type="number", nullable=true),
-     *                     @OA\Property(property="feedback_status", type="string", enum={"pending", "completed"})
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/feedback-pending',
+        summary: 'List applications pending feedback',
+        description: 'Retrieve all applications that are certified and pending feedback from the current user\'s organization',
+        tags: ['Application Feedbacks', 'Enterprise Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                description: 'Search by application number',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                schema: new OA\Schema(type: 'integer', default: 10),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Applications pending feedback retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Applications pending feedback retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                type: 'object',
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'application_number',
+                                        type: 'string',
+                                        example: 'SAMAR-2025-001',
+                                    ),
+                                    new OA\Property(property: 'unit', type: 'object'),
+                                    new OA\Property(property: 'sector', type: 'string', example: 'manufacturing'),
+                                    new OA\Property(property: 'application_date', type: 'string', format: 'date'),
+                                    new OA\Property(property: 'assessment_date', type: 'string', format: 'date'),
+                                    new OA\Property(property: 'rating', type: 'number', nullable: true),
+                                    new OA\Property(
+                                        property: 'feedback_status',
+                                        type: 'string',
+                                        enum: ['pending', 'completed'],
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function pendingFeedback(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -190,74 +189,80 @@ class ApplicationFeedbackController extends Controller
         );
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/feedback-submissions",
-     *     summary="List applications with submitted feedback (admin)",
-     *     description="Retrieve all applications that have applicant feedback submitted, for Operations Manager / Operations Admin / System Admin review.",
-     *     tags={"Application Feedbacks", "Operations - Application", "System Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="q",
-     *         in="query",
-     *         description="Search by application number",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="samarId",
-     *         in="query",
-     *         description="Filter by the submitter's SAMAR ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *
-     *         @OA\Schema(type="integer", default=10)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Applications with submitted feedback retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="application_number", type="string", example="SAMAR-030125-11111"),
-     *                     @OA\Property(property="user_samar_id", type="string", nullable=true, example="SAMAR-030125-22222"),
-     *                     @OA\Property(property="feedback_date", type="string", format="date", nullable=true)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/feedback-submissions',
+        summary: 'List applications with submitted feedback (admin)',
+        description: 'Retrieve all applications that have applicant feedback submitted, for Operations Manager / Operations Admin / System Admin review.',
+        tags: ['Application Feedbacks', 'Operations - Application', 'System Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                description: 'Search by application number',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'samarId',
+                in: 'query',
+                description: 'Filter by the submitter\'s SAMAR ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                schema: new OA\Schema(type: 'integer', default: 10),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Applications with submitted feedback retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                type: 'object',
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'application_number',
+                                        type: 'string',
+                                        example: 'SAMAR-030125-11111',
+                                    ),
+                                    new OA\Property(
+                                        property: 'user_samar_id',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'SAMAR-030125-22222',
+                                    ),
+                                    new OA\Property(
+                                        property: 'feedback_date',
+                                        type: 'string',
+                                        format: 'date',
+                                        nullable: true,
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function submittedFeedback(Request $request): JsonResponse
     {
         $query = Application::query()
@@ -303,61 +308,83 @@ class ApplicationFeedbackController extends Controller
         );
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{applicationId}/feedbacks",
-     *     summary="List all feedbacks for an application",
-     *     description="Retrieve all feedback responses submitted for a specific application",
-     *     tags={"Application Feedbacks", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application feedbacks retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Application feedbacks retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="application_id", type="integer", example=1),
-     *                     @OA\Property(property="feedback_question_id", type="integer", example=1),
-     *                     @OA\Property(property="question_text", type="string", example="How satisfied are you with the service?"),
-     *                     @OA\Property(property="question_type", type="string", enum={"rating", "yes_no"}, example="rating"),
-     *                     @OA\Property(property="rating", type="integer", minimum=1, maximum=5, nullable=true, example=4),
-     *                     @OA\Property(property="yes_no_answer", type="boolean", nullable=true),
-     *                     @OA\Property(property="remarks", type="string", nullable=true, example="Good service overall")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application not found"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{applicationId}/feedbacks',
+        summary: 'List all feedbacks for an application',
+        description: 'Retrieve all feedback responses submitted for a specific application',
+        tags: [
+            'Application Feedbacks',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Application feedbacks retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Application feedbacks retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                type: 'object',
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'application_id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'feedback_question_id', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'question_text',
+                                        type: 'string',
+                                        example: 'How satisfied are you with the service?',
+                                    ),
+                                    new OA\Property(
+                                        property: 'question_type',
+                                        type: 'string',
+                                        enum: ['rating', 'yes_no'],
+                                        example: 'rating',
+                                    ),
+                                    new OA\Property(
+                                        property: 'rating',
+                                        type: 'integer',
+                                        minimum: 1,
+                                        maximum: 5,
+                                        nullable: true,
+                                        example: 4,
+                                    ),
+                                    new OA\Property(property: 'yes_no_answer', type: 'boolean', nullable: true),
+                                    new OA\Property(
+                                        property: 'remarks',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'Good service overall',
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request, int $applicationId): JsonResponse
     {
         $application = Application::find($applicationId);
@@ -394,73 +421,97 @@ class ApplicationFeedbackController extends Controller
         );
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{applicationId}/feedbacks",
-     *     summary="Store a single feedback for an application",
-     *     description="Submit a feedback response for a specific question in an application",
-     *     tags={"Application Feedbacks", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"feedback_question_id"},
-     *
-     *             @OA\Property(property="feedback_question_id", type="integer", description="ID of the feedback question", example=1),
-     *             @OA\Property(property="rating", type="integer", minimum=1, maximum=5, nullable=true, description="Rating value (1-5) for rating type questions", example=4),
-     *             @OA\Property(property="yes_no_answer", type="boolean", nullable=true, description="Yes/No answer for yes_no type questions", example=true),
-     *             @OA\Property(property="remarks", type="string", nullable=true, description="Additional remarks or comments", example="Very satisfied with the process")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Application feedback saved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Application feedback saved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="application_id", type="integer", example=1),
-     *                 @OA\Property(property="feedback_question_id", type="integer", example=1),
-     *                 @OA\Property(property="question_text", type="string"),
-     *                 @OA\Property(property="question_type", type="string"),
-     *                 @OA\Property(property="rating", type="integer", nullable=true),
-     *                 @OA\Property(property="yes_no_answer", type="boolean", nullable=true),
-     *                 @OA\Property(property="remarks", type="string", nullable=true)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application or feedback question not found"
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{applicationId}/feedbacks',
+        summary: 'Store a single feedback for an application',
+        description: 'Submit a feedback response for a specific question in an application',
+        tags: [
+            'Application Feedbacks',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['feedback_question_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'feedback_question_id',
+                        type: 'integer',
+                        description: 'ID of the feedback question',
+                        example: 1,
+                    ),
+                    new OA\Property(
+                        property: 'rating',
+                        type: 'integer',
+                        minimum: 1,
+                        maximum: 5,
+                        nullable: true,
+                        description: 'Rating value (1-5) for rating type questions',
+                        example: 4,
+                    ),
+                    new OA\Property(
+                        property: 'yes_no_answer',
+                        type: 'boolean',
+                        nullable: true,
+                        description: 'Yes/No answer for yes_no type questions',
+                        example: true,
+                    ),
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        nullable: true,
+                        description: 'Additional remarks or comments',
+                        example: 'Very satisfied with the process',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Application feedback saved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Application feedback saved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                new OA\Property(property: 'application_id', type: 'integer', example: 1),
+                                new OA\Property(property: 'feedback_question_id', type: 'integer', example: 1),
+                                new OA\Property(property: 'question_text', type: 'string'),
+                                new OA\Property(property: 'question_type', type: 'string'),
+                                new OA\Property(property: 'rating', type: 'integer', nullable: true),
+                                new OA\Property(property: 'yes_no_answer', type: 'boolean', nullable: true),
+                                new OA\Property(property: 'remarks', type: 'string', nullable: true),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Application or feedback question not found'),
+            new OA\Response(response: 400, description: 'Validation error'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function store(StoreApplicationFeedbackRequest $request, int $applicationId): JsonResponse
     {
         $application = Application::find($applicationId);
@@ -511,55 +562,67 @@ class ApplicationFeedbackController extends Controller
         );
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/applications/{applicationId}/feedbacks/submit",
-     *     summary="Submit all feedbacks for an application",
-     *     description="Submit all feedback responses for an application in a single request. Uses upsert logic so existing answers are updated.",
-     *     tags={"Application Feedbacks", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"feedbacks"},
-     *
-     *             @OA\Property(
-     *                 property="feedbacks",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"feedbackQuestionId"},
-     *
-     *                     @OA\Property(property="feedbackQuestionId", type="integer", example=1),
-     *                     @OA\Property(property="rating", type="integer", minimum=1, maximum=5, nullable=true, example=4),
-     *                     @OA\Property(property="yesNoAnswer", type="boolean", nullable=true, example=true)
-     *                 )
-     *             ),
-     *             @OA\Property(property="remarks", type="string", nullable=true, example="Good service overall")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="All feedbacks saved successfully"
-     *     ),
-     *     @OA\Response(response=404, description="Application not found"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=400, description="Validation error")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/applications/{applicationId}/feedbacks/submit',
+        summary: 'Submit all feedbacks for an application',
+        description: 'Submit all feedback responses for an application in a single request. Uses upsert logic so existing answers are updated.',
+        tags: ['Application Feedbacks', 'Unit Admin - Application', 'Enterprise Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['feedbacks'],
+                properties: [
+                    new OA\Property(
+                        property: 'feedbacks',
+                        type: 'array',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['feedbackQuestionId'],
+                            properties: [
+                                new OA\Property(property: 'feedbackQuestionId', type: 'integer', example: 1),
+                                new OA\Property(
+                                    property: 'rating',
+                                    type: 'integer',
+                                    minimum: 1,
+                                    maximum: 5,
+                                    nullable: true,
+                                    example: 4,
+                                ),
+                                new OA\Property(
+                                    property: 'yesNoAnswer',
+                                    type: 'boolean',
+                                    nullable: true,
+                                    example: true,
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        nullable: true,
+                        example: 'Good service overall',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'All feedbacks saved successfully'),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 400, description: 'Validation error'),
+        ],
+    )]
     public function submitAll(BulkStoreApplicationFeedbackRequest $request, int $applicationId): JsonResponse
     {
         $application = Application::find($applicationId);
@@ -650,65 +713,97 @@ class ApplicationFeedbackController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{applicationId}/feedbacks/form",
-     *     summary="Get feedback form for an application",
-     *     description="Retrieve all feedback questions with any existing answers for an application. Use this endpoint to render a feedback form.",
-     *     tags={"Application Feedbacks", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Feedback form retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Feedback form retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="application_id", type="integer", example=1),
-     *                 @OA\Property(
-     *                     property="questions",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="question_id", type="integer", example=1),
-     *                         @OA\Property(property="question_text", type="string", example="How satisfied are you with the service?"),
-     *                         @OA\Property(property="type", type="string", enum={"rating", "yes_no"}, example="rating"),
-     *                         @OA\Property(property="rating", type="integer", nullable=true, description="Existing rating answer if any"),
-     *                         @OA\Property(property="yes_no_answer", type="boolean", nullable=true, description="Existing yes/no answer if any"),
-     *                         @OA\Property(property="remarks", type="string", nullable=true, description="Existing remarks if any"),
-     *                         @OA\Property(property="has_answer", type="boolean", example=false, description="Whether this question has been answered")
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application not found"
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{applicationId}/feedbacks/form',
+        summary: 'Get feedback form for an application',
+        description: 'Retrieve all feedback questions with any existing answers for an application. Use this endpoint to render a feedback form.',
+        tags: [
+            'Application Feedbacks',
+            'System Admin - Application',
+            'Unit Admin - Application',
+            'Enterprise Admin - Application',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Feedback form retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Feedback form retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'application_id', type: 'integer', example: 1),
+                                new OA\Property(
+                                    property: 'questions',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'question_id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'question_text',
+                                                type: 'string',
+                                                example: 'How satisfied are you with the service?',
+                                            ),
+                                            new OA\Property(
+                                                property: 'type',
+                                                type: 'string',
+                                                enum: ['rating', 'yes_no'],
+                                                example: 'rating',
+                                            ),
+                                            new OA\Property(
+                                                property: 'rating',
+                                                type: 'integer',
+                                                nullable: true,
+                                                description: 'Existing rating answer if any',
+                                            ),
+                                            new OA\Property(
+                                                property: 'yes_no_answer',
+                                                type: 'boolean',
+                                                nullable: true,
+                                                description: 'Existing yes/no answer if any',
+                                            ),
+                                            new OA\Property(
+                                                property: 'remarks',
+                                                type: 'string',
+                                                nullable: true,
+                                                description: 'Existing remarks if any',
+                                            ),
+                                            new OA\Property(
+                                                property: 'has_answer',
+                                                type: 'boolean',
+                                                example: false,
+                                                description: 'Whether this question has been answered',
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Application not found'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function form(int $applicationId): JsonResponse
     {
         $application = Application::find($applicationId);

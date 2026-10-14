@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
 class AuditLogController extends Controller
 {
@@ -87,58 +88,142 @@ class AuditLogController extends Controller
 
     /**
      * List authentication audit events (System Admin only).
-     *
-     * @OA\Get(
-     *     path="/api/v1/admin/audit-logs",
-     *     summary="List authentication audit events",
-     *     description="Returns login, password-change and password-reset audit entries for every user, newest first. Restricted to System Admin.",
-     *     tags={"System Admin - Audit Log"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="search", in="query", required=false, description="Match against user name or email", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="event", in="query", required=false, description="Filter to one event type", @OA\Schema(type="string", enum={"login", "password_change", "password_reset"})),
-     *     @OA\Parameter(name="dateFrom", in="query", required=false, description="Start date (YYYY-MM-DD, IST calendar day)", @OA\Schema(type="string", format="date")),
-     *     @OA\Parameter(name="dateTo", in="query", required=false, description="End date (YYYY-MM-DD, IST calendar day)", @OA\Schema(type="string", format="date")),
-     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", minimum=1)),
-     *     @OA\Parameter(name="perPage", in="query", required=false, @OA\Schema(type="integer", minimum=1, maximum=100)),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Audit entries",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Audit logs retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="id", type="integer", example=42),
-     *                     @OA\Property(property="user_id", type="integer", nullable=true, example=7),
-     *                     @OA\Property(property="user_name", type="string", nullable=true, example="John Doe"),
-     *                     @OA\Property(property="user_email", type="string", nullable=true, example="john.doe@example.com"),
-     *                     @OA\Property(property="user_roles", type="array", nullable=true, @OA\Items(type="string"), example={"assessor"}),
-     *                     @OA\Property(property="event", type="string", example="login"),
-     *                     @OA\Property(property="ip_address", type="string", nullable=true, example="203.0.113.7"),
-     *                     @OA\Property(property="user_agent", type="string", nullable=true, example="Mozilla/5.0 ..."),
-     *                     @OA\Property(property="device_type", type="string", nullable=true, example="web"),
-     *                     @OA\Property(property="device_name", type="string", nullable=true, example="Chrome on Windows"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2026-07-16T09:30:00+00:00")
-     *                 )
-     *             ),
-     *             @OA\Property(property="pagination", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=400, description="Validation failed")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/admin/audit-logs',
+        summary: 'List authentication audit events',
+        description: 'Returns login, password-change and password-reset audit entries for every user, newest first. Restricted to System Admin.',
+        tags: ['System Admin - Audit Log'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                description: 'Match against user name or email',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'event',
+                in: 'query',
+                required: false,
+                description: 'Filter to one event type',
+                schema: new OA\Schema(type: 'string', enum: ['login', 'password_change', 'password_reset']),
+            ),
+            new OA\Parameter(
+                name: 'dateFrom',
+                in: 'query',
+                required: false,
+                description: 'Start date (YYYY-MM-DD, IST calendar day)',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'dateTo',
+                in: 'query',
+                required: false,
+                description: 'End date (YYYY-MM-DD, IST calendar day)',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Audit entries',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Audit logs retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                type: 'object',
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 42),
+                                    new OA\Property(
+                                        property: 'user_id',
+                                        type: 'integer',
+                                        nullable: true,
+                                        example: 7,
+                                    ),
+                                    new OA\Property(
+                                        property: 'user_name',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'John Doe',
+                                    ),
+                                    new OA\Property(
+                                        property: 'user_email',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'john.doe@example.com',
+                                    ),
+                                    new OA\Property(
+                                        property: 'user_roles',
+                                        type: 'array',
+                                        nullable: true,
+                                        example: ['assessor'],
+                                        items: new OA\Items(type: 'string'),
+                                    ),
+                                    new OA\Property(property: 'event', type: 'string', example: 'login'),
+                                    new OA\Property(
+                                        property: 'ip_address',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: '203.0.113.7',
+                                    ),
+                                    new OA\Property(
+                                        property: 'user_agent',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'Mozilla/5.0 ...',
+                                    ),
+                                    new OA\Property(
+                                        property: 'device_type',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'web',
+                                    ),
+                                    new OA\Property(
+                                        property: 'device_name',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'Chrome on Windows',
+                                    ),
+                                    new OA\Property(
+                                        property: 'created_at',
+                                        type: 'string',
+                                        format: 'date-time',
+                                        example: '2026-07-16T09:30:00+00:00',
+                                    ),
+                                ],
+                            ),
+                        ),
+                        new OA\Property(property: 'pagination', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 400, description: 'Validation failed'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -193,29 +278,76 @@ class AuditLogController extends Controller
     /**
      * List the full audit/activity trail — data changes, authentication, and
      * security events (System Admin only).
-     *
-     * @OA\Get(
-     *     path="/api/v1/admin/activity-logs",
-     *     summary="List the full audit/activity trail",
-     *     description="Returns every audit entry — data changes (created/updated/deleted), authentication, and security events — newest first. Restricted to System Admin.",
-     *     tags={"System Admin - Audit Log"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="search", in="query", required=false, description="Match against user name or email", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="category", in="query", required=false, description="Event category", @OA\Schema(type="string", enum={"all", "data", "security", "authentication", "workflow"})),
-     *     @OA\Parameter(name="event", in="query", required=false, description="Filter to one effective event name (e.g. updated, login_failed)", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="entity_type", in="query", required=false, description="Model short name, e.g. User, Application, Assessment", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="dateFrom", in="query", required=false, description="Start date (YYYY-MM-DD, IST calendar day)", @OA\Schema(type="string", format="date")),
-     *     @OA\Parameter(name="dateTo", in="query", required=false, description="End date (YYYY-MM-DD, IST calendar day)", @OA\Schema(type="string", format="date")),
-     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer", minimum=1)),
-     *     @OA\Parameter(name="perPage", in="query", required=false, @OA\Schema(type="integer", minimum=1, maximum=100)),
-     *
-     *     @OA\Response(response=200, description="Activity entries"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=400, description="Validation failed")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/admin/activity-logs',
+        summary: 'List the full audit/activity trail',
+        description: 'Returns every audit entry — data changes (created/updated/deleted), authentication, and security events — newest first. Restricted to System Admin.',
+        tags: ['System Admin - Audit Log'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                required: false,
+                description: 'Match against user name or email',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'category',
+                in: 'query',
+                required: false,
+                description: 'Event category',
+                schema: new OA\Schema(type: 'string', enum: ['all', 'data', 'security', 'authentication', 'workflow']),
+            ),
+            new OA\Parameter(
+                name: 'event',
+                in: 'query',
+                required: false,
+                description: 'Filter to one effective event name (e.g. updated, login_failed)',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'entity_type',
+                in: 'query',
+                required: false,
+                description: 'Model short name, e.g. User, Application, Assessment',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'dateFrom',
+                in: 'query',
+                required: false,
+                description: 'Start date (YYYY-MM-DD, IST calendar day)',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'dateTo',
+                in: 'query',
+                required: false,
+                description: 'End date (YYYY-MM-DD, IST calendar day)',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', minimum: 1, maximum: 100),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Activity entries'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 400, description: 'Validation failed'),
+        ],
+    )]
     public function activity(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

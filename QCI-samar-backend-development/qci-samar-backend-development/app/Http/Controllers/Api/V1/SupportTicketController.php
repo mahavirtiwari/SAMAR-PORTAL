@@ -11,13 +11,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Support Tickets",
- *     description="Support ticket management endpoints (Zoho Help integration)"
- * )
- */
+#[OA\Tag(name: 'Support Tickets', description: 'Support ticket management endpoints (Zoho Help integration)')]
 class SupportTicketController extends Controller
 {
     private SupportPlatformInterface $platform;
@@ -66,57 +62,61 @@ class SupportTicketController extends Controller
 
     /**
      * Display a listing of support tickets.
-     *
-     * @OA\Get(
-     *     path="/api/v1/support/tickets",
-     *     summary="Get all support tickets",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by status",
-     *
-     *         @OA\Schema(type="string", enum={"open", "in_progress", "waiting_for_response", "resolved", "closed"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="priority",
-     *         in="query",
-     *         description="Filter by priority",
-     *
-     *         @OA\Schema(type="string", enum={"low", "medium", "high", "urgent"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="category",
-     *         in="query",
-     *         description="Filter by category",
-     *
-     *         @OA\Schema(type="string", enum={"technical", "billing", "general", "application_query"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search in ticket subject and description",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Success"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/support/tickets',
+        summary: 'Get all support tickets',
+        tags: [
+            'Support Tickets',
+            'System Admin - Support Tickets',
+            'DRDO Admin - Support Tickets',
+            'Operations Manager - Support Tickets',
+            'Operations Admin - Support Tickets',
+            'Assessor - Support Tickets',
+            'Unit Admin - Support Tickets',
+            'Enterprise Admin - Support Tickets',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by status',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['open', 'in_progress', 'waiting_for_response', 'resolved', 'closed'],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'priority',
+                in: 'query',
+                description: 'Filter by priority',
+                schema: new OA\Schema(type: 'string', enum: ['low', 'medium', 'high', 'urgent']),
+            ),
+            new OA\Parameter(
+                name: 'category',
+                in: 'query',
+                description: 'Filter by category',
+                schema: new OA\Schema(type: 'string', enum: ['technical', 'billing', 'general', 'application_query']),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search in ticket subject and description',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         if (! $this->platform->isEnabled()) {
@@ -214,47 +214,94 @@ class SupportTicketController extends Controller
      *
      * Organization data is auto-populated from the authenticated user's organization
      * for proper segregation (tickets from one org cannot be accessed by another).
-     *
-     * @OA\Post(
-     *     path="/api/v1/support/tickets",
-     *     summary="Create a new support ticket",
-     *     description="Creates a support ticket in Zoho Desk NDIE Department. Organization is auto-populated from user's profile for segregation. Supports optional file attachments (max 5 files, 10MB each).",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"subject", "description", "user_role", "issue_category", "issue_type", "issue_sub_category"},
-     *
-     *                 @OA\Property(property="subject", type="string", description="Ticket subject", example="Issue with certification process"),
-     *                 @OA\Property(property="description", type="string", description="Detailed description of the issue"),
-     *                 @OA\Property(property="priority", type="string", enum={"low", "medium", "high", "urgent"}, description="Priority level", example="medium"),
-     *                 @OA\Property(property="user_role", type="string", description="User role (mandatory)", example="MSME"),
-     *                 @OA\Property(property="issue_category", type="string", description="Issue category (mandatory)", example="Against Consultant Organisations"),
-     *                 @OA\Property(property="issue_type", type="string", description="Issue type (mandatory)", example="Complaint"),
-     *                 @OA\Property(property="issue_sub_category", type="string", description="Issue sub-category (mandatory)", example="Lack of systems"),
-     *                 @OA\Property(property="udyam_number", type="string", description="Udyam registration number (optional)"),
-     *                 @OA\Property(
-     *                     property="attachments[]",
-     *                     type="array",
-     *                     description="File attachments (optional, max 5 files, 10MB each)",
-     *
-     *                     @OA\Items(type="string", format="binary")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Ticket created successfully"),
-     *     @OA\Response(response=400, description="Validation error"),
-     *     @OA\Response(response=503, description="Service unavailable")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/support/tickets',
+        summary: 'Create a new support ticket',
+        description: 'Creates a support ticket in Zoho Desk NDIE Department. Organization is auto-populated from user\'s profile for segregation. Supports optional file attachments (max 5 files, 10MB each).',
+        tags: [
+            'Support Tickets',
+            'System Admin - Support Tickets',
+            'DRDO Admin - Support Tickets',
+            'Operations Manager - Support Tickets',
+            'Operations Admin - Support Tickets',
+            'Assessor - Support Tickets',
+            'Unit Admin - Support Tickets',
+            'Enterprise Admin - Support Tickets',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['subject', 'description', 'user_role', 'issue_category', 'issue_type', 'issue_sub_category'],
+                        properties: [
+                            new OA\Property(
+                                property: 'subject',
+                                type: 'string',
+                                description: 'Ticket subject',
+                                example: 'Issue with certification process',
+                            ),
+                            new OA\Property(
+                                property: 'description',
+                                type: 'string',
+                                description: 'Detailed description of the issue',
+                            ),
+                            new OA\Property(
+                                property: 'priority',
+                                type: 'string',
+                                enum: ['low', 'medium', 'high', 'urgent'],
+                                description: 'Priority level',
+                                example: 'medium',
+                            ),
+                            new OA\Property(
+                                property: 'user_role',
+                                type: 'string',
+                                description: 'User role (mandatory)',
+                                example: 'MSME',
+                            ),
+                            new OA\Property(
+                                property: 'issue_category',
+                                type: 'string',
+                                description: 'Issue category (mandatory)',
+                                example: 'Against Consultant Organisations',
+                            ),
+                            new OA\Property(
+                                property: 'issue_type',
+                                type: 'string',
+                                description: 'Issue type (mandatory)',
+                                example: 'Complaint',
+                            ),
+                            new OA\Property(
+                                property: 'issue_sub_category',
+                                type: 'string',
+                                description: 'Issue sub-category (mandatory)',
+                                example: 'Lack of systems',
+                            ),
+                            new OA\Property(
+                                property: 'udyam_number',
+                                type: 'string',
+                                description: 'Udyam registration number (optional)',
+                            ),
+                            new OA\Property(
+                                property: 'attachments[]',
+                                type: 'array',
+                                description: 'File attachments (optional, max 5 files, 10MB each)',
+                                items: new OA\Items(type: 'string', format: 'binary'),
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Ticket created successfully'),
+            new OA\Response(response: 400, description: 'Validation error'),
+            new OA\Response(response: 503, description: 'Service unavailable'),
+        ],
+    )]
     public function store(StoreTicketRequest $request): JsonResponse
     {
         if (! $this->platform->isEnabled()) {
@@ -415,28 +462,37 @@ class SupportTicketController extends Controller
 
     /**
      * Display the specified support ticket.
-     *
-     * @OA\Get(
-     *     path="/api/v1/support/tickets/{id}",
-     *     summary="Get support ticket details",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Zoho Help ticket ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Success"),
-     *     @OA\Response(response=400, description="Bad request - Invalid ticket ID format"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Ticket not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/support/tickets/{id}',
+        summary: 'Get support ticket details',
+        tags: [
+            'Support Tickets',
+            'System Admin - Support Tickets',
+            'DRDO Admin - Support Tickets',
+            'Operations Manager - Support Tickets',
+            'Operations Admin - Support Tickets',
+            'Assessor - Support Tickets',
+            'Unit Admin - Support Tickets',
+            'Enterprise Admin - Support Tickets',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Zoho Help ticket ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+            new OA\Response(response: 400, description: 'Bad request - Invalid ticket ID format'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Ticket not found'),
+        ],
+    )]
     public function show(Request $request, string $id): JsonResponse
     {
         // Validate ticket ID format
@@ -491,38 +547,50 @@ class SupportTicketController extends Controller
 
     /**
      * Update the specified support ticket.
-     *
-     * @OA\Put(
-     *     path="/api/v1/support/tickets/{id}",
-     *     summary="Update support ticket (Admin only)",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Zoho Help ticket ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="status", type="string", enum={"open", "in_progress", "waiting_for_response", "resolved", "closed"}),
-     *             @OA\Property(property="priority", type="string", enum={"low", "medium", "high", "urgent"}),
-     *             @OA\Property(property="assigned_to_email", type="string", format="email")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Success"),
-     *     @OA\Response(response=400, description="Bad request - Invalid ticket ID format"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Ticket not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/support/tickets/{id}',
+        summary: 'Update support ticket (Admin only)',
+        tags: [
+            'Support Tickets',
+            'System Admin - Support Tickets',
+            'Operations Manager - Support Tickets',
+            'Operations Admin - Support Tickets',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Zoho Help ticket ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'status',
+                        type: 'string',
+                        enum: ['open', 'in_progress', 'waiting_for_response', 'resolved', 'closed'],
+                    ),
+                    new OA\Property(
+                        property: 'priority',
+                        type: 'string',
+                        enum: ['low', 'medium', 'high', 'urgent'],
+                    ),
+                    new OA\Property(property: 'assigned_to_email', type: 'string', format: 'email'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Success'),
+            new OA\Response(response: 400, description: 'Bad request - Invalid ticket ID format'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Ticket not found'),
+        ],
+    )]
     public function update(UpdateTicketRequest $request, string $id): JsonResponse
     {
         // Validate ticket ID format

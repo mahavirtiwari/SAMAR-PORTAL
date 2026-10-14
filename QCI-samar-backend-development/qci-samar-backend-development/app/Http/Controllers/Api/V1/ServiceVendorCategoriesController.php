@@ -14,44 +14,46 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Service Master Data",
- *     description="Service sector master data management (System Admin only)"
- * )
- */
+#[OA\Tag(name: 'Service Master Data', description: 'Service sector master data management (System Admin only)')]
 class ServiceVendorCategoriesController extends Controller
 {
     /**
      * List all service DRDO vendor categories.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/vendor-categories",
-     *     summary="List all service DRDO vendor categories",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="serviceProviderType", in="query", @OA\Schema(type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"})),
-     *     @OA\Parameter(name="isActive", in="query", @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(response=200, description="List of DRDO vendor categories"),
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/vendor-categories',
+        summary: 'List all service DRDO vendor categories',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(
+                name: 'serviceProviderType',
+                in: 'query',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                ),
+            ),
+            new OA\Parameter(name: 'isActive', in: 'query', schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'List of DRDO vendor categories'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -86,28 +88,30 @@ class ServiceVendorCategoriesController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/vendor-categories",
-     *     summary="Create a new service DRDO vendor category",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"categoryName", "serviceProviderType"},
-     *
-     *             @OA\Property(property="categoryName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Category created successfully"),
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/vendor-categories',
+        summary: 'Create a new service DRDO vendor category',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['categoryName', 'serviceProviderType'],
+                properties: [
+                    new OA\Property(property: 'categoryName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Category created successfully'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -151,47 +155,50 @@ class ServiceVendorCategoriesController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/vendor-categories/{id}",
-     *     summary="Get a specific service DRDO vendor category",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Category details"),
-     *     @OA\Response(response=404, description="Category not found")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/vendor-categories/{id}',
+        summary: 'Get a specific service DRDO vendor category',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Category details'),
+            new OA\Response(response: 404, description: 'Category not found'),
+        ],
+    )]
     public function show(ServiceVendorCategory $serviceVendorCategory): JsonResponse
     {
         return $this->successResponse($serviceVendorCategory, 'Service DRDO vendor category retrieved successfully');
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/master-data/service/vendor-categories/{id}",
-     *     summary="Update a service DRDO vendor category",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="categoryName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Category updated successfully")
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/master-data/service/vendor-categories/{id}',
+        summary: 'Update a service DRDO vendor category',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'categoryName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Category updated successfully'),
+        ],
+    )]
     public function update(Request $request, ServiceVendorCategory $serviceVendorCategory): JsonResponse
     {
         try {
@@ -238,23 +245,27 @@ class ServiceVendorCategoriesController extends Controller
 
     /**
      * Activate a service DRDO vendor category.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/vendor-categories/{id}/activate",
-     *     summary="Activate a service DRDO vendor category",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service DRDO vendor category activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service DRDO vendor category is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service DRDO vendor category not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/vendor-categories/{id}/activate',
+        summary: 'Activate a service DRDO vendor category',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service DRDO vendor category activated successfully'),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Service DRDO vendor category is already active',
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service DRDO vendor category not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -291,23 +302,27 @@ class ServiceVendorCategoriesController extends Controller
 
     /**
      * Deactivate a service DRDO vendor category.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/vendor-categories/{id}/deactivate",
-     *     summary="Deactivate a service DRDO vendor category",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service DRDO vendor category deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service DRDO vendor category is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service DRDO vendor category not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/vendor-categories/{id}/deactivate',
+        summary: 'Deactivate a service DRDO vendor category',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service DRDO vendor category deactivated successfully'),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Service DRDO vendor category is already inactive',
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service DRDO vendor category not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

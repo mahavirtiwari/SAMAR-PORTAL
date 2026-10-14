@@ -10,14 +10,13 @@ use App\Models\Role;
 use App\Services\FileStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Summary",
- *     description="Read-only endpoint for enterprise and unit admins to view assessment data"
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Summary',
+    description: 'Read-only endpoint for enterprise and unit admins to view assessment data',
+)]
 class ApplicationAssessmentSummaryController extends Controller
 {
     /**
@@ -33,145 +32,318 @@ class ApplicationAssessmentSummaryController extends Controller
         $this->fileStorage = $fileStorage;
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{applicationId}/assessment-summary",
-     *     summary="Get assessment summary for an application",
-     *     description="Retrieve assessment summary including site tour pictures, basic information, and evidences. Only available when assessment is in submitted_for_qc or later states. Restricted to Enterprise Admin (own org) and Unit Admin (own units).",
-     *     tags={"Application Assessment Summary", "Enterprise Admin - Application", "Unit Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment summary retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessment summary retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessmentId", type="integer", example=12),
-     *                 @OA\Property(property="status", type="string", example="submitted_for_qc"),
-     *                 @OA\Property(property="totalScore", type="number", format="float", example=3.75, nullable=true),
-     *                 @OA\Property(
-     *                     property="siteTour",
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="pictures",
-     *                         type="array",
-     *
-     *                         @OA\Items(
-     *                             type="object",
-     *
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="title", type="string", example="Production floor"),
-     *                             @OA\Property(property="fileName", type="string", example="floor.jpg"),
-     *                             @OA\Property(property="fileSize", type="integer", example=1024000),
-     *                             @OA\Property(property="latitude", type="number", format="float", example=28.6139, nullable=true),
-     *                             @OA\Property(property="longitude", type="number", format="float", example=77.2090, nullable=true),
-     *                             @OA\Property(property="capturedAt", type="string", format="date-time", example="2024-01-15T10:30:00+00:00", nullable=true),
-     *                             @OA\Property(property="downloadUrl", type="string", example="http://localhost:8000/api/v1/assessments/1/site-tour-pictures/1/download"),
-     *                             @OA\Property(
-     *                                 property="uploadedBy",
-     *                                 type="object",
-     *                                 nullable=true,
-     *                                 @OA\Property(property="id", type="integer", example=1),
-     *                                 @OA\Property(property="name", type="string", example="John Doe")
-     *                             )
-     *                         )
-     *                     ),
-     *                     @OA\Property(property="totalCount", type="integer", example=5)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="basicInformation",
-     *                     type="object",
-     *                     nullable=true,
-     *                     description="Basic information captured during assessment. Contains sector-specific fields (mfg_* for manufacturing, svc_* for services).",
-     *                     @OA\Property(property="category", type="string", example="manufacturing"),
-     *                     @OA\Property(property="customers", type="array", @OA\Items(type="string")),
-     *                     @OA\Property(property="thirdPartyCertificationNames", type="array", @OA\Items(type="string")),
-     *                     @OA\Property(property="mfgDrdoVendorStores", type="array", @OA\Items(type="string"), description="Manufacturing: DRDO vendor stores"),
-     *                     @OA\Property(property="mfgProducts", type="array", @OA\Items(type="string"), description="Manufacturing: Products"),
-     *                     @OA\Property(property="mfgRawMaterials", type="array", @OA\Items(type="string"), description="Manufacturing: Raw materials"),
-     *                     @OA\Property(property="mfgBoughtOutParts", type="array", @OA\Items(type="string"), description="Manufacturing: Bought out parts"),
-     *                     @OA\Property(property="mfgKeyProcesses", type="array", @OA\Items(type="string"), description="Manufacturing: Key processes"),
-     *                     @OA\Property(property="svcDrdoVendorLabs", type="array", @OA\Items(type="string"), description="Services: DRDO vendor labs"),
-     *                     @OA\Property(property="svcServices", type="array", @OA\Items(type="string"), description="Services: Services offered"),
-     *                     @OA\Property(property="svcKeyProcesses", type="array", @OA\Items(type="string"), description="Services: Key processes")
-     *                 ),
-     *                 @OA\Property(
-     *                     property="evidences",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="questionCode", type="string", example="Q-00001", nullable=true),
-     *                         @OA\Property(property="questionText", type="string", example="Does the organization have ISO 9001 certification?", nullable=true),
-     *                         @OA\Property(property="parameterName", type="string", example="Quality Management", nullable=true),
-     *                         @OA\Property(property="fileName", type="string", example="evidence.pdf"),
-     *                         @OA\Property(property="fileSize", type="integer", example=2048000),
-     *                         @OA\Property(property="formattedSize", type="string", example="2 MB"),
-     *                         @OA\Property(property="mimeType", type="string", example="application/pdf"),
-     *                         @OA\Property(property="description", type="string", example="Quality certificate", nullable=true),
-     *                         @OA\Property(property="isImage", type="boolean", example=false),
-     *                         @OA\Property(property="downloadUrl", type="string", example="http://localhost:8000/api/v1/assessments/1/responses/questions/1/evidences/1/download"),
-     *                         @OA\Property(property="latitude", type="number", format="float", example=28.6139, nullable=true),
-     *                         @OA\Property(property="longitude", type="number", format="float", example=77.2090, nullable=true),
-     *                         @OA\Property(property="capturedAt", type="string", format="date-time", example="2024-01-15T10:30:00+00:00", nullable=true),
-     *                         @OA\Property(
-     *                             property="uploadedBy",
-     *                             type="object",
-     *                             nullable=true,
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="name", type="string", example="John Doe")
-     *                         )
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User not authorized or assessment not in eligible state",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You are not authorized to view this assessment summary")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Application not found")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized - Invalid or missing token"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{applicationId}/assessment-summary',
+        summary: 'Get assessment summary for an application',
+        description: 'Retrieve assessment summary including site tour pictures, basic information, and evidences. Only available when assessment is in submitted_for_qc or later states. Restricted to Enterprise Admin (own org) and Unit Admin (own units).',
+        tags: ['Application Assessment Summary', 'Enterprise Admin - Application', 'Unit Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment summary retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment summary retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessmentId', type: 'integer', example: 12),
+                                new OA\Property(property: 'status', type: 'string', example: 'submitted_for_qc'),
+                                new OA\Property(
+                                    property: 'totalScore',
+                                    type: 'number',
+                                    format: 'float',
+                                    example: 3.75,
+                                    nullable: true,
+                                ),
+                                new OA\Property(
+                                    property: 'siteTour',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'pictures',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                type: 'object',
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                    new OA\Property(
+                                                        property: 'title',
+                                                        type: 'string',
+                                                        example: 'Production floor',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'fileName',
+                                                        type: 'string',
+                                                        example: 'floor.jpg',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'fileSize',
+                                                        type: 'integer',
+                                                        example: 1024000,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'latitude',
+                                                        type: 'number',
+                                                        format: 'float',
+                                                        example: 28.6139,
+                                                        nullable: true,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'longitude',
+                                                        type: 'number',
+                                                        format: 'float',
+                                                        example: 77.2090,
+                                                        nullable: true,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'capturedAt',
+                                                        type: 'string',
+                                                        format: 'date-time',
+                                                        example: '2024-01-15T10:30:00+00:00',
+                                                        nullable: true,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'downloadUrl',
+                                                        type: 'string',
+                                                        example: 'http://localhost:8000/api/v1/assessments/1/site-tour-pictures/1/download',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'uploadedBy',
+                                                        type: 'object',
+                                                        nullable: true,
+                                                        properties: [
+                                                            new OA\Property(
+                                                                property: 'id',
+                                                                type: 'integer',
+                                                                example: 1,
+                                                            ),
+                                                            new OA\Property(
+                                                                property: 'name',
+                                                                type: 'string',
+                                                                example: 'John Doe',
+                                                            ),
+                                                        ],
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                        new OA\Property(property: 'totalCount', type: 'integer', example: 5),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'basicInformation',
+                                    type: 'object',
+                                    nullable: true,
+                                    description: 'Basic information captured during assessment. Contains sector-specific fields (mfg_* for manufacturing, svc_* for services).',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'category',
+                                            type: 'string',
+                                            example: 'manufacturing',
+                                        ),
+                                        new OA\Property(
+                                            property: 'customers',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'thirdPartyCertificationNames',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfgDrdoVendorStores',
+                                            type: 'array',
+                                            description: 'Manufacturing: DRDO vendor stores',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfgProducts',
+                                            type: 'array',
+                                            description: 'Manufacturing: Products',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfgRawMaterials',
+                                            type: 'array',
+                                            description: 'Manufacturing: Raw materials',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfgBoughtOutParts',
+                                            type: 'array',
+                                            description: 'Manufacturing: Bought out parts',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfgKeyProcesses',
+                                            type: 'array',
+                                            description: 'Manufacturing: Key processes',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svcDrdoVendorLabs',
+                                            type: 'array',
+                                            description: 'Services: DRDO vendor labs',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svcServices',
+                                            type: 'array',
+                                            description: 'Services: Services offered',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svcKeyProcesses',
+                                            type: 'array',
+                                            description: 'Services: Key processes',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'evidences',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'questionCode',
+                                                type: 'string',
+                                                example: 'Q-00001',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'questionText',
+                                                type: 'string',
+                                                example: 'Does the organization have ISO 9001 certification?',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'parameterName',
+                                                type: 'string',
+                                                example: 'Quality Management',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'fileName',
+                                                type: 'string',
+                                                example: 'evidence.pdf',
+                                            ),
+                                            new OA\Property(
+                                                property: 'fileSize',
+                                                type: 'integer',
+                                                example: 2048000,
+                                            ),
+                                            new OA\Property(
+                                                property: 'formattedSize',
+                                                type: 'string',
+                                                example: '2 MB',
+                                            ),
+                                            new OA\Property(
+                                                property: 'mimeType',
+                                                type: 'string',
+                                                example: 'application/pdf',
+                                            ),
+                                            new OA\Property(
+                                                property: 'description',
+                                                type: 'string',
+                                                example: 'Quality certificate',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(property: 'isImage', type: 'boolean', example: false),
+                                            new OA\Property(
+                                                property: 'downloadUrl',
+                                                type: 'string',
+                                                example: 'http://localhost:8000/api/v1/assessments/1/responses/questions/1/evidences/1/download',
+                                            ),
+                                            new OA\Property(
+                                                property: 'latitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 28.6139,
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'longitude',
+                                                type: 'number',
+                                                format: 'float',
+                                                example: 77.2090,
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'capturedAt',
+                                                type: 'string',
+                                                format: 'date-time',
+                                                example: '2024-01-15T10:30:00+00:00',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'uploadedBy',
+                                                type: 'object',
+                                                nullable: true,
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                    new OA\Property(
+                                                        property: 'name',
+                                                        type: 'string',
+                                                        example: 'John Doe',
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - User not authorized or assessment not in eligible state',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You are not authorized to view this assessment summary',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Application not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Application not found'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized - Invalid or missing token'),
+        ],
+    )]
     public function show(Request $request, int $applicationId): JsonResponse
     {
         $user = $request->user();
@@ -309,78 +481,70 @@ class ApplicationAssessmentSummaryController extends Controller
         return $this->successResponse($data, 'Assessment summary retrieved successfully');
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{applicationId}/assessment-summary/evidences/{evidenceId}/download",
-     *     summary="Download evidence file from assessment summary",
-     *     description="Download an evidence file for enterprise admin (own org) or unit admin (own units). Only available when assessment is in eligible state (submitted_for_qc or later).",
-     *     tags={"Application Assessment Summary", "Enterprise Admin - Application", "Unit Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="applicationId",
-     *         in="path",
-     *         required=true,
-     *         description="Application ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="evidenceId",
-     *         in="path",
-     *         required=true,
-     *         description="Evidence ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="download",
-     *         in="query",
-     *         required=false,
-     *         description="Force download (true) or stream inline (false, default)",
-     *
-     *         @OA\Schema(type="boolean", default=false)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="File download/stream successful",
-     *
-     *         @OA\MediaType(
-     *             mediaType="application/octet-stream"
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User not authorized or assessment not in eligible state",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="You are not authorized to download this evidence")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application, evidence, or file not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Evidence not found")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized - Invalid or missing token"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/applications/{applicationId}/assessment-summary/evidences/{evidenceId}/download',
+        summary: 'Download evidence file from assessment summary',
+        description: 'Download an evidence file for enterprise admin (own org) or unit admin (own units). Only available when assessment is in eligible state (submitted_for_qc or later).',
+        tags: ['Application Assessment Summary', 'Enterprise Admin - Application', 'Unit Admin - Application'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'applicationId',
+                in: 'path',
+                required: true,
+                description: 'Application ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'evidenceId',
+                in: 'path',
+                required: true,
+                description: 'Evidence ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'download',
+                in: 'query',
+                required: false,
+                description: 'Force download (true) or stream inline (false, default)',
+                schema: new OA\Schema(type: 'boolean', default: false),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'File download/stream successful',
+                content: [
+                    new OA\MediaType(mediaType: 'application/octet-stream'),
+                ],
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Forbidden - User not authorized or assessment not in eligible state',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'You are not authorized to download this evidence',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Application, evidence, or file not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Evidence not found'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized - Invalid or missing token'),
+        ],
+    )]
     public function downloadEvidence(Request $request, int $applicationId, int $evidenceId): StreamedResponse|JsonResponse
     {
         $user = $request->user();

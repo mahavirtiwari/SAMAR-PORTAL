@@ -6,4 +6,7 @@ parameters:
     paths:
         - app
 
+    bootstrapFiles:
+        - phpstan-constants.php
+
     level: 5

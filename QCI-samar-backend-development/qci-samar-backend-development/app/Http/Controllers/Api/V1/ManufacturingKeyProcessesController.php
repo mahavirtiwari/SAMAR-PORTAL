@@ -13,51 +13,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
 class ManufacturingKeyProcessesController extends Controller
 {
     /**
      * List all manufacturing key processes.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/key-processes",
-     *     summary="List all manufacturing key processes",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by process name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(response=200, description="List of key processes"),
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/key-processes',
+        summary: 'List all manufacturing key processes',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by process name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'List of key processes'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -92,29 +88,28 @@ class ManufacturingKeyProcessesController extends Controller
 
     /**
      * Create a new manufacturing key process.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/key-processes",
-     *     summary="Create a new manufacturing key process",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"processName"},
-     *
-     *             @OA\Property(property="processName", type="string", example="Welding"),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Process created successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/key-processes',
+        summary: 'Create a new manufacturing key process',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['processName'],
+                properties: [
+                    new OA\Property(property: 'processName', type: 'string', example: 'Welding'),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Process created successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -154,19 +149,20 @@ class ManufacturingKeyProcessesController extends Controller
 
     /**
      * Get a specific manufacturing key process.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/key-processes/{id}",
-     *     summary="Get a specific manufacturing key process",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Process details"),
-     *     @OA\Response(response=404, description="Process not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/key-processes/{id}',
+        summary: 'Get a specific manufacturing key process',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Process details'),
+            new OA\Response(response: 404, description: 'Process not found'),
+        ],
+    )]
     public function show(ManufacturingKeyProcess $keyProcess): JsonResponse
     {
         try {
@@ -182,30 +178,30 @@ class ManufacturingKeyProcessesController extends Controller
 
     /**
      * Update a manufacturing key process.
-     *
-     * @OA\Put(
-     *     path="/api/v1/master-data/manufacturing/key-processes/{id}",
-     *     summary="Update a manufacturing key process",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="processName", type="string"),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Process updated successfully"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Process not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/master-data/manufacturing/key-processes/{id}',
+        summary: 'Update a manufacturing key process',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'processName', type: 'string'),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Process updated successfully'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Process not found'),
+        ],
+    )]
     public function update(Request $request, ManufacturingKeyProcess $keyProcess): JsonResponse
     {
         try {
@@ -243,23 +239,24 @@ class ManufacturingKeyProcessesController extends Controller
 
     /**
      * Activate a manufacturing key process.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/key-processes/{id}/activate",
-     *     summary="Activate a manufacturing key process",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Key process activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Key process is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Key process not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/key-processes/{id}/activate',
+        summary: 'Activate a manufacturing key process',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Key process activated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Key process is already active'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Key process not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -296,23 +293,24 @@ class ManufacturingKeyProcessesController extends Controller
 
     /**
      * Deactivate a manufacturing key process.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/key-processes/{id}/deactivate",
-     *     summary="Deactivate a manufacturing key process",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Key process deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Key process is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Key process not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/key-processes/{id}/deactivate',
+        summary: 'Deactivate a manufacturing key process',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Key process deactivated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Key process is already inactive'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Key process not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

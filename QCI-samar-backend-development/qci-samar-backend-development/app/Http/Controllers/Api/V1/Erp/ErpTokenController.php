@@ -7,6 +7,7 @@ use App\Services\Auth\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use OpenApi\Attributes as OA;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class ErpTokenController extends Controller
@@ -22,29 +23,42 @@ class ErpTokenController extends Controller
      * authentication and session handling reuse the standard login flow. The
      * response carries the token under several common key spellings because the
      * exact field BC's parser reads is not published.
-     *
-     * @OA\Post(
-     *     path="/api/v1/erp/tokens",
-     *     summary="Issue an access token for the ERP document-sync caller",
-     *     tags={"ERP Integration"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"userName","password"},
-     *
-     *             @OA\Property(property="userName", type="string", description="ERP service account (SAMAR ID or email)"),
-     *             @OA\Property(property="password", type="string"),
-     *             @OA\Property(property="grant_type", type="string", example="password", description="Accepted for compatibility; ignored"),
-     *             @OA\Property(property="refreshToken", type="string", example="", description="Accepted for compatibility; ignored")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Token issued"),
-     *     @OA\Response(response=401, description="Invalid credentials")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/erp/tokens',
+        summary: 'Issue an access token for the ERP document-sync caller',
+        tags: ['ERP Integration'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['userName', 'password'],
+                properties: [
+                    new OA\Property(
+                        property: 'userName',
+                        type: 'string',
+                        description: 'ERP service account (SAMAR ID or email)',
+                    ),
+                    new OA\Property(property: 'password', type: 'string'),
+                    new OA\Property(
+                        property: 'grant_type',
+                        type: 'string',
+                        example: 'password',
+                        description: 'Accepted for compatibility; ignored',
+                    ),
+                    new OA\Property(
+                        property: 'refreshToken',
+                        type: 'string',
+                        example: '',
+                        description: 'Accepted for compatibility; ignored',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Token issued'),
+            new OA\Response(response: 401, description: 'Invalid credentials'),
+        ],
+    )]
     public function token(Request $request): JsonResponse
     {
         $validated = $request->validate([

@@ -16,13 +16,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Meetings",
- *     description="Steps 3 & 7: Opening and Closing meeting management. Lead assessor creates meetings with a photo. All team members must add mandatory comments. External participants can be added."
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Meetings',
+    description: 'Steps 3 & 7: Opening and Closing meeting management. Lead assessor creates meetings with a photo. All team members must add mandatory comments. External participants can be added.',
+)]
 class ApplicationAssessmentMeetingController extends Controller
 {
     use AuthorizesAssessmentAccess;
@@ -36,67 +35,103 @@ class ApplicationAssessmentMeetingController extends Controller
 
     /**
      * Get meeting details.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/meetings/{type}",
-     *     summary="Get meeting details",
-     *     description="Returns meeting details including participants, comments, and pending comment status. Shows which team members still need to comment.",
-     *     tags={"Application Assessment Meetings", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="path",
-     *         required=true,
-     *         description="Meeting type",
-     *
-     *         @OA\Schema(type="string", enum={"opening", "closing"}, example="opening")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting details retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="meeting",
-     *                     type="object",
-     *                     nullable=true,
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="type", type="string", example="opening"),
-     *                     @OA\Property(property="image_path", type="string", example="assessments/1/meetings/abc123.jpg"),
-     *                     @OA\Property(property="latitude", type="number", format="float", example=28.6139),
-     *                     @OA\Property(property="longitude", type="number", format="float", example=77.2090),
-     *                     @OA\Property(property="conducted_at", type="string", format="date-time"),
-     *                     @OA\Property(property="participants", type="array", @OA\Items(type="object")),
-     *                     @OA\Property(property="comments", type="array", @OA\Items(type="object"))
-     *                 ),
-     *                 @OA\Property(property="team_members", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="pending_comments_from", type="array", @OA\Items(type="object"), description="Team members who haven't commented yet"),
-     *                 @OA\Property(property="step_completed", type="boolean", example=false)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Invalid meeting type"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/meetings/{type}',
+        summary: 'Get meeting details',
+        description: 'Returns meeting details including participants, comments, and pending comment status. Shows which team members still need to comment.',
+        tags: ['Application Assessment Meetings', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'path',
+                required: true,
+                description: 'Meeting type',
+                schema: new OA\Schema(type: 'string', enum: ['opening', 'closing'], example: 'opening'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting details retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    nullable: true,
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(property: 'type', type: 'string', example: 'opening'),
+                                        new OA\Property(
+                                            property: 'image_path',
+                                            type: 'string',
+                                            example: 'assessments/1/meetings/abc123.jpg',
+                                        ),
+                                        new OA\Property(
+                                            property: 'latitude',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 28.6139,
+                                        ),
+                                        new OA\Property(
+                                            property: 'longitude',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 77.2090,
+                                        ),
+                                        new OA\Property(
+                                            property: 'conducted_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                        ),
+                                        new OA\Property(
+                                            property: 'participants',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'comments',
+                                            type: 'array',
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'team_members',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(
+                                    property: 'pending_comments_from',
+                                    type: 'array',
+                                    description: 'Team members who haven\'t commented yet',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: false),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Invalid meeting type'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function show(Request $request, int $assessmentId, string $type): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -140,82 +175,113 @@ class ApplicationAssessmentMeetingController extends Controller
 
     /**
      * Create or update a meeting (Lead Assessor only for creation).
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/meetings/{type}",
-     *     summary="Create or update meeting",
-     *     description="Create or update an opening/closing meeting. Only the lead assessor can perform this action. Image is required for creation. All team members are automatically added as default participants.",
-     *     tags={"Application Assessment Meetings", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="path",
-     *         required=true,
-     *         description="Meeting type",
-     *
-     *         @OA\Schema(type="string", enum={"opening", "closing"}, example="opening")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"image"},
-     *
-     *                 @OA\Property(property="image", type="string", format="binary", description="Meeting photo (required for creation, optional for update). Max 10MB"),
-     *                 @OA\Property(property="latitude", type="number", format="float", description="GPS latitude", example=28.6139),
-     *                 @OA\Property(property="longitude", type="number", format="float", description="GPS longitude", example=77.2090),
-     *                 @OA\Property(property="conducted_at", type="string", format="date-time", description="When the meeting was conducted")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Meeting created successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Meeting created successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object"),
-     *                 @OA\Property(property="step_completed", type="boolean", example=false)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Meeting updated successfully")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in progress, invalid meeting type, or validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Only the lead assessor can create/update meetings")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/meetings/{type}',
+        summary: 'Create or update meeting',
+        description: 'Create or update an opening/closing meeting. Only the lead assessor can perform this action. Image is required for creation. All team members are automatically added as default participants.',
+        tags: ['Application Assessment Meetings', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'path',
+                required: true,
+                description: 'Meeting type',
+                schema: new OA\Schema(type: 'string', enum: ['opening', 'closing'], example: 'opening'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['image'],
+                        properties: [
+                            new OA\Property(
+                                property: 'image',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Meeting photo (required for creation, optional for update). Max 10MB',
+                            ),
+                            new OA\Property(
+                                property: 'latitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS latitude',
+                                example: 28.6139,
+                            ),
+                            new OA\Property(
+                                property: 'longitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS longitude',
+                                example: 77.2090,
+                            ),
+                            new OA\Property(
+                                property: 'conducted_at',
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'When the meeting was conducted',
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Meeting created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting created successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'meeting', type: 'object'),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: false),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 200,
+                description: 'Meeting updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting updated successfully',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment not in progress, invalid meeting type, or validation error',
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Only the lead assessor can create/update meetings'),
+        ],
+    )]
     public function store(Request $request, int $assessmentId, string $type): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -420,68 +486,84 @@ class ApplicationAssessmentMeetingController extends Controller
 
     /**
      * Add an external participant to meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/meetings/{type}/participants",
-     *     summary="Add external participant",
-     *     description="Add an external participant (non-team member) to the meeting. Only the lead assessor can add external participants. Team members are automatically added when the meeting is created.",
-     *     tags={"Application Assessment Meetings", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="path",
-     *         required=true,
-     *         description="Meeting type",
-     *
-     *         @OA\Schema(type="string", enum={"opening", "closing"}, example="opening")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"name", "designation"},
-     *
-     *             @OA\Property(property="name", type="string", description="Participant name", example="John Smith"),
-     *             @OA\Property(property="designation", type="string", description="Participant designation/role", example="Quality Manager")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Participant added successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Participant added successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=5),
-     *                 @OA\Property(property="meeting_id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Smith"),
-     *                 @OA\Property(property="designation", type="string", example="Quality Manager"),
-     *                 @OA\Property(property="is_default", type="boolean", example=false)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Only the lead assessor can add participants"),
-     *     @OA\Response(response=404, description="Meeting not found"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/meetings/{type}/participants',
+        summary: 'Add external participant',
+        description: 'Add an external participant (non-team member) to the meeting. Only the lead assessor can add external participants. Team members are automatically added when the meeting is created.',
+        tags: ['Application Assessment Meetings', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'path',
+                required: true,
+                description: 'Meeting type',
+                schema: new OA\Schema(type: 'string', enum: ['opening', 'closing'], example: 'opening'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['name', 'designation'],
+                properties: [
+                    new OA\Property(
+                        property: 'name',
+                        type: 'string',
+                        description: 'Participant name',
+                        example: 'John Smith',
+                    ),
+                    new OA\Property(
+                        property: 'designation',
+                        type: 'string',
+                        description: 'Participant designation/role',
+                        example: 'Quality Manager',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Participant added successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Participant added successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'id', type: 'integer', example: 5),
+                                new OA\Property(property: 'meeting_id', type: 'integer', example: 1),
+                                new OA\Property(property: 'name', type: 'string', example: 'John Smith'),
+                                new OA\Property(
+                                    property: 'designation',
+                                    type: 'string',
+                                    example: 'Quality Manager',
+                                ),
+                                new OA\Property(property: 'is_default', type: 'boolean', example: false),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Only the lead assessor can add participants'),
+            new OA\Response(response: 404, description: 'Meeting not found'),
+        ],
+    )]
     public function addParticipant(Request $request, int $assessmentId, string $type): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -533,58 +615,57 @@ class ApplicationAssessmentMeetingController extends Controller
 
     /**
      * Remove an external participant from meeting.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/application-assessments/{assessmentId}/meetings/{type}/participants/{participantId}",
-     *     summary="Remove external participant",
-     *     description="Remove an external participant from the meeting. Only the lead assessor can remove participants. Default participants (team members) cannot be removed.",
-     *     tags={"Application Assessment Meetings", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="path",
-     *         required=true,
-     *         description="Meeting type",
-     *
-     *         @OA\Schema(type="string", enum={"opening", "closing"}, example="opening")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="participantId",
-     *         in="path",
-     *         required=true,
-     *         description="Participant ID to remove",
-     *
-     *         @OA\Schema(type="integer", example=5)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Participant removed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Participant removed successfully")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Cannot remove default participants (assessors)"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Only the lead assessor can remove participants"),
-     *     @OA\Response(response=404, description="Meeting or participant not found")
-     * )
      */
+    #[OA\Delete(
+        path: '/api/v1/application-assessments/{assessmentId}/meetings/{type}/participants/{participantId}',
+        summary: 'Remove external participant',
+        description: 'Remove an external participant from the meeting. Only the lead assessor can remove participants. Default participants (team members) cannot be removed.',
+        tags: ['Application Assessment Meetings', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'path',
+                required: true,
+                description: 'Meeting type',
+                schema: new OA\Schema(type: 'string', enum: ['opening', 'closing'], example: 'opening'),
+            ),
+            new OA\Parameter(
+                name: 'participantId',
+                in: 'path',
+                required: true,
+                description: 'Participant ID to remove',
+                schema: new OA\Schema(type: 'integer', example: 5),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Participant removed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Participant removed successfully',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Cannot remove default participants (assessors)'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Only the lead assessor can remove participants'),
+            new OA\Response(response: 404, description: 'Meeting or participant not found'),
+        ],
+    )]
     public function removeParticipant(Request $request, int $assessmentId, string $type, int $participantId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -626,64 +707,80 @@ class ApplicationAssessmentMeetingController extends Controller
 
     /**
      * Add a comment to meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/meetings/{type}/comments",
-     *     summary="Add comment to meeting",
-     *     description="Add a comment to the meeting. Each team member has one comment per meeting; re-posting from the same member updates the existing comment (idempotent for offline sync). Minimum 10 characters required.",
-     *     tags={"Application Assessment Meetings", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="path",
-     *         required=true,
-     *         description="Meeting type",
-     *
-     *         @OA\Schema(type="string", enum={"opening", "closing"}, example="opening")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"comment"},
-     *
-     *             @OA\Property(property="comment", type="string", minLength=10, description="Mandatory comment text (min 10 characters)", example="Meeting conducted successfully with all stakeholders present.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Comment added successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Comment added successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="comment", type="object"),
-     *                 @OA\Property(property="step_completed", type="boolean", example=true, description="Whether all team members have commented")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in progress, meeting not created yet, or validation error"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Not a team member of this assessment")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/meetings/{type}/comments',
+        summary: 'Add comment to meeting',
+        description: 'Add a comment to the meeting. Each team member has one comment per meeting; re-posting from the same member updates the existing comment (idempotent for offline sync). Minimum 10 characters required.',
+        tags: ['Application Assessment Meetings', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'path',
+                required: true,
+                description: 'Meeting type',
+                schema: new OA\Schema(type: 'string', enum: ['opening', 'closing'], example: 'opening'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['comment'],
+                properties: [
+                    new OA\Property(
+                        property: 'comment',
+                        type: 'string',
+                        minLength: 10,
+                        description: 'Mandatory comment text (min 10 characters)',
+                        example: 'Meeting conducted successfully with all stakeholders present.',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Comment added successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Comment added successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'comment', type: 'object'),
+                                new OA\Property(
+                                    property: 'step_completed',
+                                    type: 'boolean',
+                                    example: true,
+                                    description: 'Whether all team members have commented',
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment not in progress, meeting not created yet, or validation error',
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Not a team member of this assessment'),
+        ],
+    )]
     public function addComment(Request $request, int $assessmentId, string $type): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);

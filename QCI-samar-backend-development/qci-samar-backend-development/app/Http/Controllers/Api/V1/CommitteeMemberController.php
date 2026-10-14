@@ -11,44 +11,37 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Committee Members",
- *     description="Manage committee members - the pool of members available for meetings"
- * )
- */
+#[OA\Tag(
+    name: 'Committee Members',
+    description: 'Manage committee members - the pool of members available for meetings',
+)]
 class CommitteeMemberController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/committee-members",
-     *     summary="List all committee members",
-     *     tags={"Committee Members", "Operations Admin - Rating Committee"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by name, email or contact number",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Committee members retrieved successfully"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/committee-members',
+        summary: 'List all committee members',
+        tags: ['Committee Members', 'Operations Admin - Rating Committee'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by name, email or contact number',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Committee members retrieved successfully'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         // View access: DRDO Admin, Operations Manager, Operations Admin, Assessor
@@ -86,25 +79,19 @@ class CommitteeMemberController extends Controller
         ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/committee-members/{id}",
-     *     summary="Get a single committee member",
-     *     tags={"Committee Members", "Operations Admin - Rating Committee"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Committee member retrieved successfully"),
-     *     @OA\Response(response=404, description="Committee member not found")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/committee-members/{id}',
+        summary: 'Get a single committee member',
+        tags: ['Committee Members', 'Operations Admin - Rating Committee'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Committee member retrieved successfully'),
+            new OA\Response(response: 404, description: 'Committee member not found'),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         // View access: DRDO Admin, Operations Manager, Operations Admin, Assessor
@@ -124,33 +111,36 @@ class CommitteeMemberController extends Controller
         );
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/committee-members",
-     *     summary="Create a new committee member",
-     *     tags={"Committee Members", "Operations Admin - Rating Committee"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"first_name", "last_name", "email", "mobile_number", "designation", "organisation"},
-     *
-     *             @OA\Property(property="first_name", type="string", example="John"),
-     *             @OA\Property(property="last_name", type="string", example="Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="mobile_number", type="string", example="9876543210"),
-     *             @OA\Property(property="designation", type="string", example="Technical Expert"),
-     *             @OA\Property(property="organisation", type="string", example="DRDO")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Committee member added successfully"),
-     *     @OA\Response(response=400, description="Email already exists"),
-     *     @OA\Response(response=422, description="Validation failed")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/committee-members',
+        summary: 'Create a new committee member',
+        tags: ['Committee Members', 'Operations Admin - Rating Committee'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['first_name', 'last_name', 'email', 'mobile_number', 'designation', 'organisation'],
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string', example: 'John'),
+                    new OA\Property(property: 'last_name', type: 'string', example: 'Doe'),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'john@example.com',
+                    ),
+                    new OA\Property(property: 'mobile_number', type: 'string', example: '9876543210'),
+                    new OA\Property(property: 'designation', type: 'string', example: 'Technical Expert'),
+                    new OA\Property(property: 'organisation', type: 'string', example: 'DRDO'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Committee member added successfully'),
+            new OA\Response(response: 400, description: 'Email already exists'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         // Only Operations Admin can add committee members
@@ -196,38 +186,31 @@ class CommitteeMemberController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/committee-members/{id}",
-     *     summary="Update a committee member",
-     *     tags={"Committee Members", "Operations Admin - Rating Committee"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="first_name", type="string"),
-     *             @OA\Property(property="last_name", type="string"),
-     *             @OA\Property(property="email", type="string", format="email"),
-     *             @OA\Property(property="mobile_number", type="string"),
-     *             @OA\Property(property="designation", type="string"),
-     *             @OA\Property(property="organisation", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Committee member updated successfully"),
-     *     @OA\Response(response=404, description="Committee member not found")
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/committee-members/{id}',
+        summary: 'Update a committee member',
+        tags: ['Committee Members', 'Operations Admin - Rating Committee'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'first_name', type: 'string'),
+                    new OA\Property(property: 'last_name', type: 'string'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email'),
+                    new OA\Property(property: 'mobile_number', type: 'string'),
+                    new OA\Property(property: 'designation', type: 'string'),
+                    new OA\Property(property: 'organisation', type: 'string'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Committee member updated successfully'),
+            new OA\Response(response: 404, description: 'Committee member not found'),
+        ],
+    )]
     public function update(Request $request, int $id): JsonResponse
     {
         // Only Operations Admin can update committee members
@@ -287,25 +270,19 @@ class CommitteeMemberController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/committee-members/{id}",
-     *     summary="Delete a committee member",
-     *     tags={"Committee Members", "Operations Admin - Rating Committee"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Committee member removed successfully"),
-     *     @OA\Response(response=404, description="Committee member not found")
-     * )
-     */
+    #[OA\Delete(
+        path: '/api/v1/committee-members/{id}',
+        summary: 'Delete a committee member',
+        tags: ['Committee Members', 'Operations Admin - Rating Committee'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Committee member removed successfully'),
+            new OA\Response(response: 404, description: 'Committee member not found'),
+        ],
+    )]
     public function destroy(Request $request, int $id): JsonResponse
     {
         // Only Operations Admin can remove committee members

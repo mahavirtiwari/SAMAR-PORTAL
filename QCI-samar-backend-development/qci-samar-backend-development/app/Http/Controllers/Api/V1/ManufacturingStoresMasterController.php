@@ -13,51 +13,47 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
 class ManufacturingStoresMasterController extends Controller
 {
     /**
      * List all manufacturing stores.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/stores",
-     *     summary="List all manufacturing stores",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by store name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(response=200, description="List of manufacturing stores"),
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/stores',
+        summary: 'List all manufacturing stores',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by store name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'List of manufacturing stores'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -92,29 +88,28 @@ class ManufacturingStoresMasterController extends Controller
 
     /**
      * Create a new manufacturing store.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/stores",
-     *     summary="Create a new manufacturing store",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"storeName"},
-     *
-     *             @OA\Property(property="storeName", type="string", example="Tool Room"),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Store created successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/stores',
+        summary: 'Create a new manufacturing store',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['storeName'],
+                properties: [
+                    new OA\Property(property: 'storeName', type: 'string', example: 'Tool Room'),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Store created successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -154,19 +149,20 @@ class ManufacturingStoresMasterController extends Controller
 
     /**
      * Get a specific manufacturing store.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/manufacturing/stores/{id}",
-     *     summary="Get a specific manufacturing store",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Store details"),
-     *     @OA\Response(response=404, description="Store not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/manufacturing/stores/{id}',
+        summary: 'Get a specific manufacturing store',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Store details'),
+            new OA\Response(response: 404, description: 'Store not found'),
+        ],
+    )]
     public function show(ManufacturingStore $manufacturingStore): JsonResponse
     {
         try {
@@ -182,30 +178,30 @@ class ManufacturingStoresMasterController extends Controller
 
     /**
      * Update a manufacturing store.
-     *
-     * @OA\Put(
-     *     path="/api/v1/master-data/manufacturing/stores/{id}",
-     *     summary="Update a manufacturing store",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="storeName", type="string"),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Store updated successfully"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Store not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/master-data/manufacturing/stores/{id}',
+        summary: 'Update a manufacturing store',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'storeName', type: 'string'),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Store updated successfully'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Store not found'),
+        ],
+    )]
     public function update(Request $request, ManufacturingStore $manufacturingStore): JsonResponse
     {
         try {
@@ -243,23 +239,24 @@ class ManufacturingStoresMasterController extends Controller
 
     /**
      * Activate a manufacturing store.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/stores/{id}/activate",
-     *     summary="Activate a manufacturing store",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Manufacturing store activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Manufacturing store is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Manufacturing store not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/stores/{id}/activate',
+        summary: 'Activate a manufacturing store',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Manufacturing store activated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Manufacturing store is already active'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Manufacturing store not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -296,23 +293,24 @@ class ManufacturingStoresMasterController extends Controller
 
     /**
      * Deactivate a manufacturing store.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/manufacturing/stores/{id}/deactivate",
-     *     summary="Deactivate a manufacturing store",
-     *     tags={"Manufacturing Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Manufacturing store deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Manufacturing store is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Manufacturing store not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/manufacturing/stores/{id}/deactivate',
+        summary: 'Deactivate a manufacturing store',
+        tags: ['Manufacturing Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Manufacturing store deactivated successfully'),
+            new OA\Response(response: 400, description: 'Bad request - Manufacturing store is already inactive'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Manufacturing store not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {

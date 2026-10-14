@@ -23,121 +23,164 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Committee Meetings",
- *     description="Committee meeting management endpoints - Create, update, start, and complete committee meetings"
- * )
- */
+#[OA\Tag(
+    name: 'Committee Meetings',
+    description: 'Committee meeting management endpoints - Create, update, start, and complete committee meetings',
+)]
 class CommitteeMeetingController extends Controller
 {
     /**
      * Get all committee meetings.
-     *
-     * @OA\Get(
-     *     path="/api/v1/committee-meetings",
-     *     summary="Get all committee meetings",
-     *     description="Retrieves a paginated list of committee meetings. System admins and operations team see all meetings. Committee members only see meetings they're part of.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by meeting status",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", enum={"scheduled", "rescheduled", "in_progress", "completed", "cancelled"}, example="scheduled")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="meetingDateFrom",
-     *         in="query",
-     *         description="Filter meetings from this date",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2024-01-01")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="meetingDateTo",
-     *         in="query",
-     *         description="Filter meetings until this date",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", format="date", example="2024-12-31")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by meeting title or meeting number",
-     *         required=false,
-     *
-     *         @OA\Schema(type="string", example="Quarterly")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=15, default=15)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meetings retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee meetings retrieved successfully"),
-     *             @OA\Property(property="data", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="meetingNumber", type="string", example="COM-2024-0001"),
-     *                 @OA\Property(property="title", type="string", example="Quarterly Application Review"),
-     *                 @OA\Property(property="meetingDate", type="string", format="date", example="2024-03-15"),
-     *                 @OA\Property(property="meetingTime", type="string", example="14:00"),
-     *                 @OA\Property(property="venue", type="string", example="Conference Room A"),
-     *                 @OA\Property(property="status", type="string", example="scheduled"),
-     *                 @OA\Property(property="startedAt", type="string", format="date-time", nullable=true),
-     *                 @OA\Property(property="completedAt", type="string", format="date-time", nullable=true),
-     *                 @OA\Property(property="createdAt", type="string", format="date-time", example="2024-01-01T10:00:00Z")
-     *             )),
-     *             @OA\Property(property="pagination", type="object",
-     *                 @OA\Property(property="currentPage", type="integer", example=1),
-     *                 @OA\Property(property="perPage", type="integer", example=15),
-     *                 @OA\Property(property="total", type="integer", example=25),
-     *                 @OA\Property(property="lastPage", type="integer", example=2)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view committee meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to view committee meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/committee-meetings',
+        summary: 'Get all committee meetings',
+        description: 'Retrieves a paginated list of committee meetings. System admins and operations team see all meetings. Committee members only see meetings they\'re part of.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by meeting status',
+                required: false,
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['scheduled', 'rescheduled', 'in_progress', 'completed', 'cancelled'],
+                    example: 'scheduled',
+                ),
+            ),
+            new OA\Parameter(
+                name: 'meetingDateFrom',
+                in: 'query',
+                description: 'Filter meetings from this date',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2024-01-01'),
+            ),
+            new OA\Parameter(
+                name: 'meetingDateTo',
+                in: 'query',
+                description: 'Filter meetings until this date',
+                required: false,
+                schema: new OA\Schema(type: 'string', format: 'date', example: '2024-12-31'),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by meeting title or meeting number',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'Quarterly'),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Number of items per page',
+                required: false,
+                schema: new OA\Schema(type: 'integer', example: 15, default: 15),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meetings retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meetings retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(
+                                        property: 'meetingNumber',
+                                        type: 'string',
+                                        example: 'COM-2024-0001',
+                                    ),
+                                    new OA\Property(
+                                        property: 'title',
+                                        type: 'string',
+                                        example: 'Quarterly Application Review',
+                                    ),
+                                    new OA\Property(
+                                        property: 'meetingDate',
+                                        type: 'string',
+                                        format: 'date',
+                                        example: '2024-03-15',
+                                    ),
+                                    new OA\Property(property: 'meetingTime', type: 'string', example: '14:00'),
+                                    new OA\Property(
+                                        property: 'venue',
+                                        type: 'string',
+                                        example: 'Conference Room A',
+                                    ),
+                                    new OA\Property(property: 'status', type: 'string', example: 'scheduled'),
+                                    new OA\Property(
+                                        property: 'startedAt',
+                                        type: 'string',
+                                        format: 'date-time',
+                                        nullable: true,
+                                    ),
+                                    new OA\Property(
+                                        property: 'completedAt',
+                                        type: 'string',
+                                        format: 'date-time',
+                                        nullable: true,
+                                    ),
+                                    new OA\Property(
+                                        property: 'createdAt',
+                                        type: 'string',
+                                        format: 'date-time',
+                                        example: '2024-01-01T10:00:00Z',
+                                    ),
+                                ],
+                            ),
+                        ),
+                        new OA\Property(
+                            property: 'pagination',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'currentPage', type: 'integer', example: 1),
+                                new OA\Property(property: 'perPage', type: 'integer', example: 15),
+                                new OA\Property(property: 'total', type: 'integer', example: 25),
+                                new OA\Property(property: 'lastPage', type: 'integer', example: 2),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to view committee meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to view committee meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -188,103 +231,195 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Get a single committee meeting.
-     *
-     * @OA\Get(
-     *     path="/api/v1/committee-meetings/{id}",
-     *     summary="Get committee meeting details",
-     *     description="Retrieves detailed information about a specific committee meeting including members, applications, and decisions.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meeting_number", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="title", type="string", example="Quarterly Application Review"),
-     *                     @OA\Property(property="meeting_date", type="string", format="date", example="2024-03-15"),
-     *                     @OA\Property(property="meeting_time", type="string", example="14:00"),
-     *                     @OA\Property(property="venue", type="string", example="Conference Room A"),
-     *                     @OA\Property(property="status", type="string", example="scheduled"),
-     *                     @OA\Property(property="agenda", type="string", nullable=true),
-     *                     @OA\Property(property="minutes", type="string", nullable=true),
-     *                     @OA\Property(property="summary", type="string", nullable=true),
-     *                     @OA\Property(property="organizer", type="object",
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="name", type="string", example="John Doe"),
-     *                         @OA\Property(property="email", type="string", example="john@example.com")
-     *                     ),
-     *                     @OA\Property(property="members", type="array", @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=2),
-     *                         @OA\Property(property="name", type="string", example="Jane Smith"),
-     *                         @OA\Property(property="email", type="string", example="jane@example.com"),
-     *                         @OA\Property(property="role", type="string", example="member"),
-     *                         @OA\Property(property="attendance_status", type="string", nullable=true),
-     *                         @OA\Property(property="invitation_status", type="string", example="pending")
-     *                     )),
-     *                     @OA\Property(property="applications", type="array", @OA\Items(
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="application_number", type="string", example="APP-2024-0001"),
-     *                         @OA\Property(property="organization", type="object",
-     *                             @OA\Property(property="id", type="integer", example=1),
-     *                             @OA\Property(property="name", type="string", example="Tech Corp")
-     *                         )
-     *                     )),
-     *                     @OA\Property(property="decisions_count", type="integer", example=5)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to view this meeting.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\CommitteeMeeting].")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/committee-meetings/{id}',
+        summary: 'Get committee meeting details',
+        description: 'Retrieves detailed information about a specific committee meeting including members, applications, and decisions.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meeting_number',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'title',
+                                            type: 'string',
+                                            example: 'Quarterly Application Review',
+                                        ),
+                                        new OA\Property(
+                                            property: 'meeting_date',
+                                            type: 'string',
+                                            format: 'date',
+                                            example: '2024-03-15',
+                                        ),
+                                        new OA\Property(
+                                            property: 'meeting_time',
+                                            type: 'string',
+                                            example: '14:00',
+                                        ),
+                                        new OA\Property(
+                                            property: 'venue',
+                                            type: 'string',
+                                            example: 'Conference Room A',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'scheduled'),
+                                        new OA\Property(property: 'agenda', type: 'string', nullable: true),
+                                        new OA\Property(property: 'minutes', type: 'string', nullable: true),
+                                        new OA\Property(property: 'summary', type: 'string', nullable: true),
+                                        new OA\Property(
+                                            property: 'organizer',
+                                            type: 'object',
+                                            properties: [
+                                                new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                new OA\Property(
+                                                    property: 'name',
+                                                    type: 'string',
+                                                    example: 'John Doe',
+                                                ),
+                                                new OA\Property(
+                                                    property: 'email',
+                                                    type: 'string',
+                                                    example: 'john@example.com',
+                                                ),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'members',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 2),
+                                                    new OA\Property(
+                                                        property: 'name',
+                                                        type: 'string',
+                                                        example: 'Jane Smith',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'email',
+                                                        type: 'string',
+                                                        example: 'jane@example.com',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'role',
+                                                        type: 'string',
+                                                        example: 'member',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'attendance_status',
+                                                        type: 'string',
+                                                        nullable: true,
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'invitation_status',
+                                                        type: 'string',
+                                                        example: 'pending',
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                        new OA\Property(
+                                            property: 'applications',
+                                            type: 'array',
+                                            items: new OA\Items(
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                                    new OA\Property(
+                                                        property: 'application_number',
+                                                        type: 'string',
+                                                        example: 'APP-2024-0001',
+                                                    ),
+                                                    new OA\Property(
+                                                        property: 'organization',
+                                                        type: 'object',
+                                                        properties: [
+                                                            new OA\Property(
+                                                                property: 'id',
+                                                                type: 'integer',
+                                                                example: 1,
+                                                            ),
+                                                            new OA\Property(
+                                                                property: 'name',
+                                                                type: 'string',
+                                                                example: 'Tech Corp',
+                                                            ),
+                                                        ],
+                                                    ),
+                                                ],
+                                            ),
+                                        ),
+                                        new OA\Property(property: 'decisions_count', type: 'integer', example: 5),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to view this meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to view this meeting.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No query results for model [App\\\\Models\\\\CommitteeMeeting].',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::with([
@@ -312,97 +447,159 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Create a new committee meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/committee-meetings",
-     *     summary="Create a committee meeting",
-     *     description="Creates a new committee meeting with members and applications. Only Operations Admins can create meetings. Requires minimum 3 committee members.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"committeeId", "title", "meetingDate", "meetingTime", "venue"},
-     *
-     *             @OA\Property(property="committeeId", type="integer", example=1, description="ID of the committee this meeting belongs to"),
-     *             @OA\Property(property="title", type="string", example="Quarterly Application Review", maxLength=255),
-     *             @OA\Property(property="meetingDate", type="string", format="date", example="2024-03-15", description="Must be after today"),
-     *             @OA\Property(property="meetingTime", type="string", example="14:00", description="Time in HH:mm format"),
-     *             @OA\Property(property="venue", type="string", example="Conference Room A", maxLength=255),
-     *             @OA\Property(property="agenda", type="string", nullable=true, example="Review applications for Q1 2024"),
-     *             @OA\Property(property="applicationIds", type="array", nullable=true, @OA\Items(type="integer"), example={1, 2, 3})
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Meeting created successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee meeting created successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meeting_number", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="title", type="string", example="Quarterly Application Review"),
-     *                     @OA\Property(property="status", type="string", example="scheduled")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - User is not a committee member or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="User John Doe is not a committee member."),
-     *             @OA\Property(property="errors", type="object", nullable=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Admins can create committee meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only Operations Admins can create committee meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to create meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to create committee meeting."),
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/committee-meetings',
+        summary: 'Create a committee meeting',
+        description: 'Creates a new committee meeting with members and applications. Only Operations Admins can create meetings. Requires minimum 3 committee members.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['committeeId', 'title', 'meetingDate', 'meetingTime', 'venue'],
+                properties: [
+                    new OA\Property(
+                        property: 'committeeId',
+                        type: 'integer',
+                        example: 1,
+                        description: 'ID of the committee this meeting belongs to',
+                    ),
+                    new OA\Property(
+                        property: 'title',
+                        type: 'string',
+                        example: 'Quarterly Application Review',
+                        maxLength: 255,
+                    ),
+                    new OA\Property(
+                        property: 'meetingDate',
+                        type: 'string',
+                        format: 'date',
+                        example: '2024-03-15',
+                        description: 'Must be after today',
+                    ),
+                    new OA\Property(
+                        property: 'meetingTime',
+                        type: 'string',
+                        example: '14:00',
+                        description: 'Time in HH:mm format',
+                    ),
+                    new OA\Property(
+                        property: 'venue',
+                        type: 'string',
+                        example: 'Conference Room A',
+                        maxLength: 255,
+                    ),
+                    new OA\Property(
+                        property: 'agenda',
+                        type: 'string',
+                        nullable: true,
+                        example: 'Review applications for Q1 2024',
+                    ),
+                    new OA\Property(
+                        property: 'applicationIds',
+                        type: 'array',
+                        nullable: true,
+                        example: [1, 2, 3],
+                        items: new OA\Items(type: 'integer'),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Meeting created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting created successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meeting_number',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'title',
+                                            type: 'string',
+                                            example: 'Quarterly Application Review',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'scheduled'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - User is not a committee member or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'User John Doe is not a committee member.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object', nullable: true),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Admins can create committee meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only Operations Admins can create committee meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to create meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to create committee meeting.',
+                        ),
+                        new OA\Property(property: 'error', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         // Only Operations Admin can create meetings
@@ -578,112 +775,155 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Update committee meeting.
-     *
-     * @OA\Put(
-     *     path="/api/v1/committee-meetings/{id}",
-     *     summary="Update a committee meeting",
-     *     description="Updates a scheduled or rescheduled committee meeting. Operations Managers and Operations Admins can update meetings.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="title", type="string", example="Updated Meeting Title", maxLength=255),
-     *             @OA\Property(property="meeting_date", type="string", format="date", example="2024-03-20"),
-     *             @OA\Property(property="meeting_time", type="string", example="15:00"),
-     *             @OA\Property(property="venue", type="string", example="Conference Room B", maxLength=255),
-     *             @OA\Property(property="agenda", type="string", nullable=true, example="Updated agenda")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee meeting updated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meeting_number", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="title", type="string", example="Updated Meeting Title")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Can only update scheduled or rescheduled meetings or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Can only update scheduled or rescheduled meetings."),
-     *             @OA\Property(property="errors", type="object", nullable=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Managers can update committee meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only Operations Managers can update committee meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\CommitteeMeeting].")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to update meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to update committee meeting."),
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/committee-meetings/{id}',
+        summary: 'Update a committee meeting',
+        description: 'Updates a scheduled or rescheduled committee meeting. Operations Managers and Operations Admins can update meetings.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'title',
+                        type: 'string',
+                        example: 'Updated Meeting Title',
+                        maxLength: 255,
+                    ),
+                    new OA\Property(
+                        property: 'meeting_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2024-03-20',
+                    ),
+                    new OA\Property(property: 'meeting_time', type: 'string', example: '15:00'),
+                    new OA\Property(
+                        property: 'venue',
+                        type: 'string',
+                        example: 'Conference Room B',
+                        maxLength: 255,
+                    ),
+                    new OA\Property(property: 'agenda', type: 'string', nullable: true, example: 'Updated agenda'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting updated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meeting_number',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'title',
+                                            type: 'string',
+                                            example: 'Updated Meeting Title',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Can only update scheduled or rescheduled meetings or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Can only update scheduled or rescheduled meetings.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object', nullable: true),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Managers can update committee meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only Operations Managers can update committee meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No query results for model [App\\\\Models\\\\CommitteeMeeting].',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to update meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to update committee meeting.',
+                        ),
+                        new OA\Property(property: 'error', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function update(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::find($id);
@@ -886,98 +1126,123 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Start committee meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/committee-meetings/{id}/start",
-     *     summary="Start a committee meeting",
-     *     description="Starts a scheduled committee meeting. Operations Managers and Operations Admins can start meetings.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting started successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Meeting started successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meeting_number", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="status", type="string", example="in_progress")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Meeting must be in scheduled status",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Meeting must be in scheduled status.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Managers and Operations Admins can start meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only Operations Managers and Operations Admins can start meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\CommitteeMeeting].")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to start meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to start meeting."),
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/committee-meetings/{id}/start',
+        summary: 'Start a committee meeting',
+        description: 'Starts a scheduled committee meeting. Operations Managers and Operations Admins can start meetings.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting started successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting started successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meeting_number',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(
+                                            property: 'status',
+                                            type: 'string',
+                                            example: 'in_progress',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Meeting must be in scheduled status',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting must be in scheduled status.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Managers and Operations Admins can start meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only Operations Managers and Operations Admins can start meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No query results for model [App\\\\Models\\\\CommitteeMeeting].',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to start meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Failed to start meeting.'),
+                        new OA\Property(property: 'error', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function start(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::find($id);
@@ -1038,109 +1303,143 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Complete committee meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/committee-meetings/{id}/complete",
-     *     summary="Complete a committee meeting",
-     *     description="Completes an in-progress committee meeting with optional minutes and summary. Operations Managers and Operations Admins can complete meetings.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="minutes", type="string", nullable=true, example="Discussion on applications APP-2024-0001, APP-2024-0002..."),
-     *             @OA\Property(property="summary", type="string", nullable=true, example="5 applications reviewed, 3 approved, 2 deferred")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting completed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Meeting completed successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meeting_number", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="status", type="string", example="completed")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Meeting must be in progress or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Meeting must be in progress."),
-     *             @OA\Property(property="errors", type="object", nullable=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Managers and Operations Admins can complete meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only Operations Managers and Operations Admins can complete meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\CommitteeMeeting].")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to complete meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to complete meeting."),
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/committee-meetings/{id}/complete',
+        summary: 'Complete a committee meeting',
+        description: 'Completes an in-progress committee meeting with optional minutes and summary. Operations Managers and Operations Admins can complete meetings.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'minutes',
+                        type: 'string',
+                        nullable: true,
+                        example: 'Discussion on applications APP-2024-0001, APP-2024-0002...',
+                    ),
+                    new OA\Property(
+                        property: 'summary',
+                        type: 'string',
+                        nullable: true,
+                        example: '5 applications reviewed, 3 approved, 2 deferred',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting completed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting completed successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meeting_number',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'completed'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Meeting must be in progress or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Meeting must be in progress.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object', nullable: true),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Managers and Operations Admins can complete meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only Operations Managers and Operations Admins can complete meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No query results for model [App\\\\Models\\\\CommitteeMeeting].',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to complete meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to complete meeting.',
+                        ),
+                        new OA\Property(property: 'error', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function complete(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::find($id);
@@ -1305,110 +1604,139 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Cancel a scheduled committee meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/committee-meetings/{id}/cancel",
-     *     summary="Cancel a committee meeting",
-     *     description="Cancels a scheduled or rescheduled committee meeting. Reverts associated pending assessments from 'Committee Review Scheduled' back to 'Ready for Committee Review'. Only Operations Admins can cancel meetings.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"reason"},
-     *
-     *             @OA\Property(property="reason", type="string", example="Unavoidable circumstances require postponement.", description="Reason for cancelling the meeting")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting cancelled successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee meeting cancelled successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="meeting", type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="meetingNumber", type="string", example="COM-2024-0001"),
-     *                     @OA\Property(property="status", type="string", example="cancelled")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Meeting is not in a cancellable state or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only scheduled or rescheduled meetings can be cancelled."),
-     *             @OA\Property(property="errors", type="object", nullable=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Admins can cancel meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Only Operations Admins can cancel committee meetings.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Committee meeting not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to cancel meeting",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to cancel committee meeting."),
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/committee-meetings/{id}/cancel',
+        summary: 'Cancel a committee meeting',
+        description: 'Cancels a scheduled or rescheduled committee meeting. Reverts associated pending assessments from \'Committee Review Scheduled\' back to \'Ready for Committee Review\'. Only Operations Admins can cancel meetings.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['reason'],
+                properties: [
+                    new OA\Property(
+                        property: 'reason',
+                        type: 'string',
+                        example: 'Unavoidable circumstances require postponement.',
+                        description: 'Reason for cancelling the meeting',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting cancelled successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting cancelled successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'meeting',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'meetingNumber',
+                                            type: 'string',
+                                            example: 'COM-2024-0001',
+                                        ),
+                                        new OA\Property(property: 'status', type: 'string', example: 'cancelled'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Meeting is not in a cancellable state or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only scheduled or rescheduled meetings can be cancelled.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object', nullable: true),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Admins can cancel meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Only Operations Admins can cancel committee meetings.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting not found.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to cancel meeting',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to cancel committee meeting.',
+                        ),
+                        new OA\Property(property: 'error', type: 'string'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function cancel(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::find($id);
@@ -1482,70 +1810,82 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Delete a committee meeting.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/committee-meetings/{id}",
-     *     summary="Delete a committee meeting",
-     *     description="Soft deletes a committee meeting. Can only delete meetings with status: scheduled, cancelled, or postponed. Cannot delete in-progress or completed meetings.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Meeting deleted successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee meeting deleted successfully")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Cannot delete in-progress or completed meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Cannot delete in-progress or completed meetings")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only Operations Managers and Admins can delete meetings",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to delete committee meetings")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Meeting not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Committee meeting not found")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Delete(
+        path: '/api/v1/committee-meetings/{id}',
+        summary: 'Delete a committee meeting',
+        description: 'Soft deletes a committee meeting. Can only delete meetings with status: scheduled, cancelled, or postponed. Cannot delete in-progress or completed meetings.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Meeting deleted successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting deleted successfully',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Cannot delete in-progress or completed meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Cannot delete in-progress or completed meetings',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Only Operations Managers and Admins can delete meetings',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to delete committee meetings',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Meeting not found',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee meeting not found',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function destroy(Request $request, int $id): JsonResponse
     {
         $meeting = CommitteeMeeting::find($id);
@@ -1575,51 +1915,85 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Get members list for a meeting.
-     *
-     * @OA\Get(
-     *     path="/api/v1/committee-meetings/{meetingId}/members",
-     *     summary="Get meeting members",
-     *     description="Retrieves the members list for a committee meeting.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="meetingId",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Members retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Members retrieved successfully."),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="members", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="userId", type="integer", example=5),
-     *                     @OA\Property(property="name", type="string", example="John Doe"),
-     *                     @OA\Property(property="email", type="string", example="john@example.com"),
-     *                     @OA\Property(property="phone", type="string", example="9876543210"),
-     *                     @OA\Property(property="organization", type="string", example="ABC Corp"),
-     *                     @OA\Property(property="designation", type="string", example="Technical Lead"),
-     *                     @OA\Property(property="role", type="string", example="member"),
-     *                     @OA\Property(property="attended", type="boolean", nullable=true, example=true)
-     *                 ))
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=404, description="Meeting not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/committee-meetings/{meetingId}/members',
+        summary: 'Get meeting members',
+        description: 'Retrieves the members list for a committee meeting.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'meetingId',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Members retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Members retrieved successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'members',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(property: 'userId', type: 'integer', example: 5),
+                                            new OA\Property(property: 'name', type: 'string', example: 'John Doe'),
+                                            new OA\Property(
+                                                property: 'email',
+                                                type: 'string',
+                                                example: 'john@example.com',
+                                            ),
+                                            new OA\Property(
+                                                property: 'phone',
+                                                type: 'string',
+                                                example: '9876543210',
+                                            ),
+                                            new OA\Property(
+                                                property: 'organization',
+                                                type: 'string',
+                                                example: 'ABC Corp',
+                                            ),
+                                            new OA\Property(
+                                                property: 'designation',
+                                                type: 'string',
+                                                example: 'Technical Lead',
+                                            ),
+                                            new OA\Property(property: 'role', type: 'string', example: 'member'),
+                                            new OA\Property(
+                                                property: 'attended',
+                                                type: 'boolean',
+                                                nullable: true,
+                                                example: true,
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 404, description: 'Meeting not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function getMembers(Request $request, int $meetingId): JsonResponse
     {
         // View access: DRDO Admin, Operations Manager, Operations Admin, Assessor
@@ -1647,56 +2021,68 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Add a member to a meeting.
-     *
-     * @OA\Post(
-     *     path="/api/v1/committee-meetings/{meetingId}/members",
-     *     summary="Add member to meeting",
-     *     description="Adds a new member to a committee meeting. Creates user if not exists.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="meetingId",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"firstName", "lastName", "email", "mobile", "designation", "organisation"},
-     *
-     *             @OA\Property(property="firstName", type="string", example="John"),
-     *             @OA\Property(property="lastName", type="string", example="Doe"),
-     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="mobile", type="string", example="9876543210"),
-     *             @OA\Property(property="designation", type="string", example="Technical Lead"),
-     *             @OA\Property(property="organisation", type="string", example="ABC Corp"),
-     *             @OA\Property(property="role", type="string", enum={"chair", "convenor", "member"}, example="member")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Member added successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Member added successfully.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Validation failed or user already a member"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Meeting not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/committee-meetings/{meetingId}/members',
+        summary: 'Add member to meeting',
+        description: 'Adds a new member to a committee meeting. Creates user if not exists.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'meetingId',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['firstName', 'lastName', 'email', 'mobile', 'designation', 'organisation'],
+                properties: [
+                    new OA\Property(property: 'firstName', type: 'string', example: 'John'),
+                    new OA\Property(property: 'lastName', type: 'string', example: 'Doe'),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        example: 'john@example.com',
+                    ),
+                    new OA\Property(property: 'mobile', type: 'string', example: '9876543210'),
+                    new OA\Property(property: 'designation', type: 'string', example: 'Technical Lead'),
+                    new OA\Property(property: 'organisation', type: 'string', example: 'ABC Corp'),
+                    new OA\Property(
+                        property: 'role',
+                        type: 'string',
+                        enum: ['chair', 'convenor', 'member'],
+                        example: 'member',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Member added successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Member added successfully.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Validation failed or user already a member'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Meeting not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function addMember(Request $request, int $meetingId): JsonResponse
     {
         $meeting = CommitteeMeeting::find($meetingId);
@@ -1799,60 +2185,70 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Update a member in a meeting.
-     *
-     * @OA\Put(
-     *     path="/api/v1/committee-meetings/{meetingId}/members/{memberId}",
-     *     summary="Update meeting member",
-     *     description="Updates a member's details or attendance status in a meeting.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="meetingId",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="memberId",
-     *         in="path",
-     *         description="Member ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=5)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="role", type="string", enum={"chair", "convenor", "member"}, example="convenor"),
-     *             @OA\Property(property="attended", type="boolean", example=true),
-     *             @OA\Property(property="attendanceNotes", type="string", nullable=true, example="Joined late")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Member updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Member updated successfully.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Validation failed"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Meeting or member not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/committee-meetings/{meetingId}/members/{memberId}',
+        summary: 'Update meeting member',
+        description: 'Updates a member\'s details or attendance status in a meeting.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'meetingId',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'memberId',
+                in: 'path',
+                description: 'Member ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 5),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'role',
+                        type: 'string',
+                        enum: ['chair', 'convenor', 'member'],
+                        example: 'convenor',
+                    ),
+                    new OA\Property(property: 'attended', type: 'boolean', example: true),
+                    new OA\Property(
+                        property: 'attendanceNotes',
+                        type: 'string',
+                        nullable: true,
+                        example: 'Joined late',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Member updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Member updated successfully.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Validation failed'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Meeting or member not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function updateMember(Request $request, int $meetingId, int $memberId): JsonResponse
     {
         $meeting = CommitteeMeeting::find($meetingId);
@@ -1910,49 +2306,50 @@ class CommitteeMeetingController extends Controller
 
     /**
      * Remove a member from a meeting.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/committee-meetings/{meetingId}/members/{memberId}",
-     *     summary="Remove member from meeting",
-     *     description="Removes a member from a committee meeting.",
-     *     tags={"Committee Meetings"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="meetingId",
-     *         in="path",
-     *         description="Meeting ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="memberId",
-     *         in="path",
-     *         description="Member ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=5)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Member removed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Member removed successfully.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Cannot remove from completed/cancelled meeting"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Meeting or member not found"),
-     *     @OA\Response(response=401, description="Unauthenticated")
-     * )
      */
+    #[OA\Delete(
+        path: '/api/v1/committee-meetings/{meetingId}/members/{memberId}',
+        summary: 'Remove member from meeting',
+        description: 'Removes a member from a committee meeting.',
+        tags: ['Committee Meetings'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'meetingId',
+                in: 'path',
+                description: 'Meeting ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+            new OA\Parameter(
+                name: 'memberId',
+                in: 'path',
+                description: 'Member ID',
+                required: true,
+                schema: new OA\Schema(type: 'integer', example: 5),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Member removed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Member removed successfully.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Cannot remove from completed/cancelled meeting'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Meeting or member not found'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+    )]
     public function deleteMember(Request $request, int $meetingId, int $memberId): JsonResponse
     {
         $meeting = CommitteeMeeting::find($meetingId);

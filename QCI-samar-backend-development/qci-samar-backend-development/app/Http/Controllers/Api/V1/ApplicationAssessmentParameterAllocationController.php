@@ -10,98 +10,122 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Step 1 - Parameter Allocation",
- *     description="Step 1: Lead assessor assigns parameters to team members. Each parameter must be assigned to exactly one assessor. All mandatory parameters must be assigned before proceeding."
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Step 1 - Parameter Allocation',
+    description: 'Step 1: Lead assessor assigns parameters to team members. Each parameter must be assigned to exactly one assessor. All mandatory parameters must be assigned before proceeding.',
+)]
 class ApplicationAssessmentParameterAllocationController extends Controller
 {
     /**
      * Get all parameters for an assessment with their assignments.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/parameters",
-     *     summary="List all parameters with assignments",
-     *     description="Returns all parameters for the assessment, grouped by mandatory and optional, including current assignments and team members available for assignment.",
-     *     tags={"Application Assessment Step 1 - Parameter Allocation", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameters retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="mandatory_parameters",
-     *                     type="array",
-     *                     description="Parameters that must be assigned",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="code", type="string", example="PARAM-001"),
-     *                         @OA\Property(property="name", type="string", example="Quality Management"),
-     *                         @OA\Property(property="is_mandatory", type="boolean", example=true),
-     *                         @OA\Property(property="assigned_to_team_member_id", type="integer", nullable=true),
-     *                         @OA\Property(property="assigned_team_member", type="object", nullable=true)
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="optional_parameters",
-     *                     type="array",
-     *                     description="Parameters that can be selected or skipped",
-     *
-     *                     @OA\Items(type="object")
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="summary",
-     *                     type="object",
-     *                     @OA\Property(property="total", type="integer", example=10),
-     *                     @OA\Property(property="mandatory_count", type="integer", example=7),
-     *                     @OA\Property(property="optional_count", type="integer", example=3),
-     *                     @OA\Property(property="assigned_count", type="integer", example=5),
-     *                     @OA\Property(property="unassigned_count", type="integer", example=5)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="team_members",
-     *                     type="array",
-     *                     description="Available team members for assignment",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="role", type="string", enum={"lead_assessor", "co_assessor"})
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/parameters',
+        summary: 'List all parameters with assignments',
+        description: 'Returns all parameters for the assessment, grouped by mandatory and optional, including current assignments and team members available for assignment.',
+        tags: ['Application Assessment Step 1 - Parameter Allocation', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Parameters retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'mandatory_parameters',
+                                    type: 'array',
+                                    description: 'Parameters that must be assigned',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'code',
+                                                type: 'string',
+                                                example: 'PARAM-001',
+                                            ),
+                                            new OA\Property(
+                                                property: 'name',
+                                                type: 'string',
+                                                example: 'Quality Management',
+                                            ),
+                                            new OA\Property(
+                                                property: 'is_mandatory',
+                                                type: 'boolean',
+                                                example: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'assigned_to_team_member_id',
+                                                type: 'integer',
+                                                nullable: true,
+                                            ),
+                                            new OA\Property(
+                                                property: 'assigned_team_member',
+                                                type: 'object',
+                                                nullable: true,
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'optional_parameters',
+                                    type: 'array',
+                                    description: 'Parameters that can be selected or skipped',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(
+                                    property: 'summary',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total', type: 'integer', example: 10),
+                                        new OA\Property(property: 'mandatory_count', type: 'integer', example: 7),
+                                        new OA\Property(property: 'optional_count', type: 'integer', example: 3),
+                                        new OA\Property(property: 'assigned_count', type: 'integer', example: 5),
+                                        new OA\Property(property: 'unassigned_count', type: 'integer', example: 5),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'team_members',
+                                    type: 'array',
+                                    description: 'Available team members for assignment',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer'),
+                                            new OA\Property(property: 'user_id', type: 'integer'),
+                                            new OA\Property(
+                                                property: 'role',
+                                                type: 'string',
+                                                enum: ['lead_assessor', 'co_assessor'],
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function index(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -140,42 +164,47 @@ class ApplicationAssessmentParameterAllocationController extends Controller
 
     /**
      * Get parameters assigned to the current user.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/parameters/my-assignments",
-     *     summary="Get my assigned parameters",
-     *     description="Returns all parameters assigned to the current user, including questions for each parameter.",
-     *     tags={"Application Assessment Step 1 - Parameter Allocation", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assigned parameters retrieved",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="parameters", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="count", type="integer", example=5)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Not a team member")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/parameters/my-assignments',
+        summary: 'Get my assigned parameters',
+        description: 'Returns all parameters assigned to the current user, including questions for each parameter.',
+        tags: ['Application Assessment Step 1 - Parameter Allocation', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assigned parameters retrieved',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'parameters',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(property: 'count', type: 'integer', example: 5),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Not a team member'),
+        ],
+    )]
     public function myAssignments(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -202,85 +231,96 @@ class ApplicationAssessmentParameterAllocationController extends Controller
 
     /**
      * Bulk assign all parameters at once.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/parameters/bulk-assign",
-     *     summary="Bulk assign all parameters",
-     *     description="Assigns all parameters at once. Supports two formats: (1) Object format: {parameterId: teamMemberId} or (2) Array format: [{parameterId, teamMemberId}, ...]. Useful for saving all assignments in one API call.",
-     *     tags={"Application Assessment Step 1 - Parameter Allocation", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"assignments"},
-     *
-     *             @OA\Property(
-     *                 property="assignments",
-     *                 type="array",
-     *                 description="Array of parameter assignments",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"parameterId", "teamMemberId"},
-     *
-     *                     @OA\Property(property="parameterId", type="integer", example=1),
-     *                     @OA\Property(property="teamMemberId", type="integer", example=5)
-     *                 ),
-     *                 example={{"parameterId": 1, "teamMemberId": 5}, {"parameterId": 2, "teamMemberId": 6}}
-     *             ),
-     *             @OA\Property(
-     *                 property="skipOptionalUnassigned",
-     *                 type="boolean",
-     *                 description="If true, optional parameters without assignments are skipped (not set to null)",
-     *                 example=false
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameters assigned successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="8 parameters assigned successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assigned_count", type="integer", example=8),
-     *                 @OA\Property(property="warnings", type="array", @OA\Items(type="string")),
-     *                 @OA\Property(property="step_completed", type="boolean", example=true)
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Assessment not in correct status or mandatory parameters not assigned",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="All mandatory parameters must be assigned"),
-     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"))
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Not the lead assessor")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/parameters/bulk-assign',
+        summary: 'Bulk assign all parameters',
+        description: 'Assigns all parameters at once. Supports two formats: (1) Object format: {parameterId: teamMemberId} or (2) Array format: [{parameterId, teamMemberId}, ...]. Useful for saving all assignments in one API call.',
+        tags: ['Application Assessment Step 1 - Parameter Allocation', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['assignments'],
+                properties: [
+                    new OA\Property(
+                        property: 'assignments',
+                        type: 'array',
+                        description: 'Array of parameter assignments',
+                        example: [['parameterId' => 1, 'teamMemberId' => 5], ['parameterId' => 2, 'teamMemberId' => 6]],
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['parameterId', 'teamMemberId'],
+                            properties: [
+                                new OA\Property(property: 'parameterId', type: 'integer', example: 1),
+                                new OA\Property(property: 'teamMemberId', type: 'integer', example: 5),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'skipOptionalUnassigned',
+                        type: 'boolean',
+                        description: 'If true, optional parameters without assignments are skipped (not set to null)',
+                        example: false,
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Parameters assigned successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: '8 parameters assigned successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assigned_count', type: 'integer', example: 8),
+                                new OA\Property(
+                                    property: 'warnings',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string'),
+                                ),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: true),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment not in correct status or mandatory parameters not assigned',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'All mandatory parameters must be assigned',
+                        ),
+                        new OA\Property(property: 'errors', type: 'array', items: new OA\Items(type: 'string')),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Not the lead assessor'),
+        ],
+    )]
     public function bulkAssign(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);

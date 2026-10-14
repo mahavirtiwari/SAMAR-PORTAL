@@ -18,13 +18,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Assessment Responses",
- *     description="Assessment response management endpoints - answering assessment questions"
- * )
- */
+#[OA\Tag(
+    name: 'Assessment Responses',
+    description: 'Assessment response management endpoints - answering assessment questions',
+)]
 class ApplicationAssessmentResponseController extends Controller
 {
     protected FileStorageService $fileStorage;
@@ -66,118 +65,210 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Get all questions with responses for an assessment, grouped by parameters.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses",
-     *     summary="List all questions with responses grouped by parameters",
-     *     description="Retrieves all parameters with their questions and responses. Each parameter includes assigned assessor, weighted score, and questions with simplified response format.",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameters with questions and responses retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="parameters",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="code", type="string", example="PARAM-0004"),
-     *                         @OA\Property(property="name", type="string", example="Document Control"),
-     *                         @OA\Property(property="disciplineName", type="string", example="Quality Management System"),
-     *                         @OA\Property(property="isMandatory", type="boolean", example=true, description="Whether this parameter is mandatory for step completion"),
-     *                         @OA\Property(
-     *                             property="assignedAssessor",
-     *                             type="object",
-     *                             nullable=true,
-     *                             @OA\Property(property="id", type="integer", example=14),
-     *                             @OA\Property(property="name", type="string", example="Abhay Assessor")
-     *                         ),
-     *                         @OA\Property(property="score", type="number", format="float", nullable=true, example=4.25, description="Assessor weighted score on the 0-5 scale; null until every question in the parameter is answered"),
-     *                         @OA\Property(property="rcScore", type="number", format="float", nullable=true, example=4.00, description="Committee weighted score on the 0-5 scale; null until every question in the parameter is answered"),
-     *                         @OA\Property(property="totalQuestions", type="integer", example=7, description="Total questions in this parameter"),
-     *                         @OA\Property(property="completedQuestions", type="integer", example=7, description="Number of questions with responses"),
-     *                         @OA\Property(
-     *                             property="questions",
-     *                             type="array",
-     *
-     *                             @OA\Items(
-     *                                 type="object",
-     *
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="code", type="string"),
-     *                                 @OA\Property(property="questionText", type="string"),
-     *                                 @OA\Property(property="category", type="string"),
-     *                                 @OA\Property(property="weightage", type="integer"),
-     *                                 @OA\Property(property="options", type="object"),
-     *                                 @OA\Property(
-     *                                     property="response",
-     *                                     type="object",
-     *                                     nullable=true,
-     *                                     @OA\Property(property="id", type="integer"),
-     *                                     @OA\Property(property="selectedOption", type="integer", example=3),
-     *                                     @OA\Property(property="score", type="integer", example=3),
-     *                                     @OA\Property(property="rcScore", type="number", format="float", nullable=true, example=2.5, description="RC (Review Committee) score"),
-     *                                     @OA\Property(property="assessorRemarks", type="string"),
-     *                                     @OA\Property(property="assessedAt", type="string"),
-     *                                     @OA\Property(property="evidences", type="array", @OA\Items(type="object")),
-     *                                     @OA\Property(
-     *                                         property="assessor",
-     *                                         type="object",
-     *                                         nullable=true,
-     *                                         @OA\Property(property="id", type="integer", example=18),
-     *                                         @OA\Property(property="name", type="string", example="Abhay Lead"),
-     *                                         @OA\Property(property="role", type="string", nullable=true, example="Lead Assessor")
-     *                                     )
-     *                                 )
-     *                             )
-     *                         )
-     *                     )
-     *                 ),
-     *                 @OA\Property(
-     *                     property="summary",
-     *                     type="object",
-     *                     @OA\Property(property="total_questions", type="integer", example=50),
-     *                     @OA\Property(property="answered_questions", type="integer", example=30),
-     *                     @OA\Property(property="completion_percentage", type="number", format="float", example=60.0)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this assessment"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Assessment not found"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/responses',
+        summary: 'List all questions with responses grouped by parameters',
+        description: 'Retrieves all parameters with their questions and responses. Each parameter includes assigned assessor, weighted score, and questions with simplified response format.',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Parameters with questions and responses retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'parameters',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                                            new OA\Property(
+                                                property: 'code',
+                                                type: 'string',
+                                                example: 'PARAM-0004',
+                                            ),
+                                            new OA\Property(
+                                                property: 'name',
+                                                type: 'string',
+                                                example: 'Document Control',
+                                            ),
+                                            new OA\Property(
+                                                property: 'disciplineName',
+                                                type: 'string',
+                                                example: 'Quality Management System',
+                                            ),
+                                            new OA\Property(
+                                                property: 'isMandatory',
+                                                type: 'boolean',
+                                                example: true,
+                                                description: 'Whether this parameter is mandatory for step completion',
+                                            ),
+                                            new OA\Property(
+                                                property: 'assignedAssessor',
+                                                type: 'object',
+                                                nullable: true,
+                                                properties: [
+                                                    new OA\Property(property: 'id', type: 'integer', example: 14),
+                                                    new OA\Property(
+                                                        property: 'name',
+                                                        type: 'string',
+                                                        example: 'Abhay Assessor',
+                                                    ),
+                                                ],
+                                            ),
+                                            new OA\Property(
+                                                property: 'score',
+                                                type: 'number',
+                                                format: 'float',
+                                                nullable: true,
+                                                example: 4.25,
+                                                description: 'Assessor weighted score on the 0-5 scale; null until every question in the parameter is answered',
+                                            ),
+                                            new OA\Property(
+                                                property: 'rcScore',
+                                                type: 'number',
+                                                format: 'float',
+                                                nullable: true,
+                                                example: 4.00,
+                                                description: 'Committee weighted score on the 0-5 scale; null until every question in the parameter is answered',
+                                            ),
+                                            new OA\Property(
+                                                property: 'totalQuestions',
+                                                type: 'integer',
+                                                example: 7,
+                                                description: 'Total questions in this parameter',
+                                            ),
+                                            new OA\Property(
+                                                property: 'completedQuestions',
+                                                type: 'integer',
+                                                example: 7,
+                                                description: 'Number of questions with responses',
+                                            ),
+                                            new OA\Property(
+                                                property: 'questions',
+                                                type: 'array',
+                                                items: new OA\Items(
+                                                    type: 'object',
+                                                    properties: [
+                                                        new OA\Property(property: 'id', type: 'integer'),
+                                                        new OA\Property(property: 'code', type: 'string'),
+                                                        new OA\Property(property: 'questionText', type: 'string'),
+                                                        new OA\Property(property: 'category', type: 'string'),
+                                                        new OA\Property(property: 'weightage', type: 'integer'),
+                                                        new OA\Property(property: 'options', type: 'object'),
+                                                        new OA\Property(
+                                                            property: 'response',
+                                                            type: 'object',
+                                                            nullable: true,
+                                                            properties: [
+                                                                new OA\Property(property: 'id', type: 'integer'),
+                                                                new OA\Property(
+                                                                    property: 'selectedOption',
+                                                                    type: 'integer',
+                                                                    example: 3,
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'score',
+                                                                    type: 'integer',
+                                                                    example: 3,
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'rcScore',
+                                                                    type: 'number',
+                                                                    format: 'float',
+                                                                    nullable: true,
+                                                                    example: 2.5,
+                                                                    description: 'RC (Review Committee) score',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'assessorRemarks',
+                                                                    type: 'string',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'assessedAt',
+                                                                    type: 'string',
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'evidences',
+                                                                    type: 'array',
+                                                                    items: new OA\Items(type: 'object'),
+                                                                ),
+                                                                new OA\Property(
+                                                                    property: 'assessor',
+                                                                    type: 'object',
+                                                                    nullable: true,
+                                                                    properties: [
+                                                                        new OA\Property(
+                                                                            property: 'id',
+                                                                            type: 'integer',
+                                                                            example: 18,
+                                                                        ),
+                                                                        new OA\Property(
+                                                                            property: 'name',
+                                                                            type: 'string',
+                                                                            example: 'Abhay Lead',
+                                                                        ),
+                                                                        new OA\Property(
+                                                                            property: 'role',
+                                                                            type: 'string',
+                                                                            nullable: true,
+                                                                            example: 'Lead Assessor',
+                                                                        ),
+                                                                    ],
+                                                                ),
+                                                            ],
+                                                        ),
+                                                    ],
+                                                ),
+                                            ),
+                                        ],
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'summary',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total_questions', type: 'integer', example: 50),
+                                        new OA\Property(
+                                            property: 'answered_questions',
+                                            type: 'integer',
+                                            example: 30,
+                                        ),
+                                        new OA\Property(
+                                            property: 'completion_percentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 60.0,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to view this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function index(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -224,61 +315,51 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Get a single question with response.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}",
-     *     summary="Get question with response details",
-     *     description="Retrieves detailed information about a specific question including all options and the assessor's response.",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Question with response retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="question", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this assessment"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Assessment or question not found"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}',
+        summary: 'Get question with response details',
+        description: 'Retrieves detailed information about a specific question including all options and the assessor\'s response.',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Question with response retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'question', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to view this assessment'),
+            new OA\Response(response: 404, description: 'Assessment or question not found'),
+        ],
+    )]
     public function show(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -303,76 +384,86 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Update or create response for a question.
-     *
-     * @OA\Put(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}",
-     *     summary="Update response for a question",
-     *     description="Updates or creates a response for an assessment question. Only assessors assigned to the assessment can update. Assessment must be in 'in_progress' or 'mobile_complete' status.",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *         description="Question ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"selected_option"},
-     *
-     *             @OA\Property(property="selected_option", type="integer", example=3, description="Selected option (1-5)"),
-     *             @OA\Property(property="assessor_remarks", type="string", example="Organization demonstrates strong quality management practices")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Response updated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Response updated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="response", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - assessment not in progress, invalid option, or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to conduct this assessment"),
-     *     @OA\Response(response=404, description="Assessment or question not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}',
+        summary: 'Update response for a question',
+        description: 'Updates or creates a response for an assessment question. Only assessors assigned to the assessment can update. Assessment must be in \'in_progress\' or \'mobile_complete\' status.',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                description: 'Question ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['selected_option'],
+                properties: [
+                    new OA\Property(
+                        property: 'selected_option',
+                        type: 'integer',
+                        example: 3,
+                        description: 'Selected option (1-5)',
+                    ),
+                    new OA\Property(
+                        property: 'assessor_remarks',
+                        type: 'string',
+                        example: 'Organization demonstrates strong quality management practices',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Response updated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Response updated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'response', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - assessment not in progress, invalid option, or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to conduct this assessment'),
+            new OA\Response(response: 404, description: 'Assessment or question not found'),
+        ],
+    )]
     public function update(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -613,58 +704,83 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Upload evidence for a response.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences",
-     *     summary="Upload evidence for a response",
-     *     description="Upload an image or document as evidence for an assessment question response.",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="questionId",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"file"},
-     *
-     *                 @OA\Property(property="file", type="string", format="binary", description="Evidence file (image or PDF, max 10MB)"),
-     *                 @OA\Property(property="description", type="string", description="Optional description"),
-     *                 @OA\Property(property="latitude", type="number", format="float", description="GPS latitude", example=28.6139),
-     *                 @OA\Property(property="longitude", type="number", format="float", description="GPS longitude", example=77.2090),
-     *                 @OA\Property(property="capturedAt", type="string", format="date-time", description="When the evidence was captured"),
-     *                 @OA\Property(property="sourceSiteTourPictureId", type="integer", description="Site tour picture this evidence was created from, when it came from the site tour picker. Must belong to the same assessment.")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Evidence uploaded successfully"
-     *     ),
-     *     @OA\Response(response=400, description="Invalid request or validation failed"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Response not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences',
+        summary: 'Upload evidence for a response',
+        description: 'Upload an image or document as evidence for an assessment question response.',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['file'],
+                        properties: [
+                            new OA\Property(
+                                property: 'file',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Evidence file (image or PDF, max 10MB)',
+                            ),
+                            new OA\Property(
+                                property: 'description',
+                                type: 'string',
+                                description: 'Optional description',
+                            ),
+                            new OA\Property(
+                                property: 'latitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS latitude',
+                                example: 28.6139,
+                            ),
+                            new OA\Property(
+                                property: 'longitude',
+                                type: 'number',
+                                format: 'float',
+                                description: 'GPS longitude',
+                                example: 77.2090,
+                            ),
+                            new OA\Property(
+                                property: 'capturedAt',
+                                type: 'string',
+                                format: 'date-time',
+                                description: 'When the evidence was captured',
+                            ),
+                            new OA\Property(
+                                property: 'sourceSiteTourPictureId',
+                                type: 'integer',
+                                description: 'Site tour picture this evidence was created from, when it came from the site tour picker. Must belong to the same assessment.',
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Evidence uploaded successfully'),
+            new OA\Response(response: 400, description: 'Invalid request or validation failed'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Response not found'),
+        ],
+    )]
     public function uploadEvidence(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -774,20 +890,31 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * List evidences for a response.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences",
-     *     summary="List evidences for a response",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="assessmentId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="questionId", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Evidences retrieved successfully"),
-     *     @OA\Response(response=404, description="Response not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences',
+        summary: 'List evidences for a response',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Evidences retrieved successfully'),
+            new OA\Response(response: 404, description: 'Response not found'),
+        ],
+    )]
     public function listEvidences(Request $request, int $assessmentId, int $questionId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -810,22 +937,38 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Delete evidence.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences/{evidenceId}",
-     *     summary="Delete evidence",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="assessmentId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="questionId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="evidenceId", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Evidence deleted successfully"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Evidence not found")
-     * )
      */
+    #[OA\Delete(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences/{evidenceId}',
+        summary: 'Delete evidence',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'evidenceId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Evidence deleted successfully'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Evidence not found'),
+        ],
+    )]
     public function deleteEvidence(Request $request, int $assessmentId, int $questionId, int $evidenceId): JsonResponse
     {
         $assessment = Assessment::findOrFail($assessmentId);
@@ -864,23 +1007,45 @@ class ApplicationAssessmentResponseController extends Controller
 
     /**
      * Download evidence file.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences/{evidenceId}/download",
-     *     summary="Download evidence file",
-     *     tags={"Assessment Responses", "Assessor - Assessment Responses"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="assessmentId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="questionId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="evidenceId", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="download", in="query", required=false, description="Set to true to force download", @OA\Schema(type="boolean", default=false)),
-     *
-     *     @OA\Response(response=200, description="File stream"),
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Evidence not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/responses/{questionId}/evidences/{evidenceId}/download',
+        summary: 'Download evidence file',
+        tags: ['Assessment Responses', 'Assessor - Assessment Responses'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'questionId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'evidenceId',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'download',
+                in: 'query',
+                required: false,
+                description: 'Set to true to force download',
+                schema: new OA\Schema(type: 'boolean', default: false),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'File stream'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Evidence not found'),
+        ],
+    )]
     public function downloadEvidence(Request $request, int $assessmentId, int $questionId, int $evidenceId)
     {
         $assessment = Assessment::findOrFail($assessmentId);

@@ -14,13 +14,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Payment Webhooks",
- *     description="Payment gateway webhook endpoints for handling payment notifications"
- * )
- */
+#[OA\Tag(
+    name: 'Payment Webhooks',
+    description: 'Payment gateway webhook endpoints for handling payment notifications',
+)]
 class PaymentWebhookController extends Controller
 {
     public function __construct(
@@ -29,35 +28,38 @@ class PaymentWebhookController extends Controller
 
     /**
      * Handle ICICI EazyPay push notification webhook.
-     *
-     * @OA\Post(
-     *     path="/api/v1/webhooks/payments/icici-eazypay",
-     *     summary="Handle ICICI EazyPay webhook",
-     *     description="Receives and processes real-time push notifications from ICICI EazyPay. This endpoint receives encrypted XML data which is decrypted and processed to update payment status. No authentication required as this is called by the payment gateway.",
-     *     tags={"Payment Webhooks"},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/plain",
-     *
-     *             @OA\Schema(type="string", description="Encrypted XML data from ICICI EazyPay")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Webhook processed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Webhook processed successfully")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/webhooks/payments/icici-eazypay',
+        summary: 'Handle ICICI EazyPay webhook',
+        description: 'Receives and processes real-time push notifications from ICICI EazyPay. This endpoint receives encrypted XML data which is decrypted and processed to update payment status. No authentication required as this is called by the payment gateway.',
+        tags: ['Payment Webhooks'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'text/plain',
+                    schema: new OA\Schema(type: 'string', description: 'Encrypted XML data from ICICI EazyPay'),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Webhook processed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Webhook processed successfully',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function iciciEazyPay(Request $request): JsonResponse
     {
         try {
@@ -136,31 +138,88 @@ class PaymentWebhookController extends Controller
 
     /**
      * Handle ICICI EazyPay return URL callback.
-     *
-     * @OA\Get(
-     *     path="/api/v1/payments/icici-eazypay/callback",
-     *     summary="Handle ICICI EazyPay return callback",
-     *     description="Handles the return URL callback from ICICI EazyPay after payment completion. This endpoint validates the response signature and updates payment status.",
-     *     tags={"Payment Webhooks"},
-     *
-     *     @OA\Parameter(name="Response Code", in="query", required=true, @OA\Schema(type="string"), description="E000 for success"),
-     *     @OA\Parameter(name="Unique Ref Number", in="query", required=true, @OA\Schema(type="string"), description="EazyPay Transaction ID"),
-     *     @OA\Parameter(name="Transaction Amount", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="Total Amount", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="Service Tax Amount", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="Processing Fee Amount", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="Payment Mode", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="ReferenceNo", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="SubMerchantId", in="query", required=true, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="ID", in="query", required=true, @OA\Schema(type="string"), description="Merchant EazyPay ID"),
-     *     @OA\Parameter(name="RS", in="query", required=true, @OA\Schema(type="string"), description="SHA512 Signature"),
-     *
-     *     @OA\Response(
-     *         response=302,
-     *         description="Redirects to frontend with payment status"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/payments/icici-eazypay/callback',
+        summary: 'Handle ICICI EazyPay return callback',
+        description: 'Handles the return URL callback from ICICI EazyPay after payment completion. This endpoint validates the response signature and updates payment status.',
+        tags: ['Payment Webhooks'],
+        parameters: [
+            new OA\Parameter(
+                name: 'Response Code',
+                in: 'query',
+                required: true,
+                description: 'E000 for success',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Unique Ref Number',
+                in: 'query',
+                required: true,
+                description: 'EazyPay Transaction ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Transaction Amount',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Total Amount',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Service Tax Amount',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Processing Fee Amount',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'Payment Mode',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'ReferenceNo',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'SubMerchantId',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'ID',
+                in: 'query',
+                required: true,
+                description: 'Merchant EazyPay ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'RS',
+                in: 'query',
+                required: true,
+                description: 'SHA512 Signature',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 302, description: 'Redirects to frontend with payment status'),
+        ],
+    )]
     public function iciciEazyPayCallback(Request $request): RedirectResponse|JsonResponse
     {
         try {

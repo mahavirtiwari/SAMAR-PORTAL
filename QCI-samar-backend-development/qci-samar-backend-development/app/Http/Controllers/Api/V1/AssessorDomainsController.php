@@ -10,79 +10,73 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Master Data",
- *     description="Master data management for system configuration (System Admin only)"
- * )
- */
+#[OA\Tag(
+    name: 'Master Data',
+    description: 'Master data management for system configuration (System Admin only)',
+)]
 class AssessorDomainsController extends Controller
 {
     /**
      * List all assessor domains.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/assessor-domains",
-     *     summary="List all assessor domains",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by domain name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *     @OA\Parameter(
-     *         name="isActive",
-     *         in="query",
-     *         description="Filter by active status",
-     *
-     *         @OA\Schema(type="boolean")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of assessor domains",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="domain_name", type="string"),
-     *                     @OA\Property(property="is_active", type="boolean"),
-     *                     @OA\Property(property="created_at", type="string")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/assessor-domains',
+        summary: 'List all assessor domains',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by domain name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+            new OA\Parameter(
+                name: 'isActive',
+                in: 'query',
+                description: 'Filter by active status',
+                schema: new OA\Schema(type: 'boolean'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of assessor domains',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                type: 'object',
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer'),
+                                    new OA\Property(property: 'domain_name', type: 'string'),
+                                    new OA\Property(property: 'is_active', type: 'boolean'),
+                                    new OA\Property(property: 'created_at', type: 'string'),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function index(Request $request)
     {
         try {
@@ -118,40 +112,46 @@ class AssessorDomainsController extends Controller
 
     /**
      * Create a new assessor domain.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/assessor-domains",
-     *     summary="Create a new assessor domain",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"domain_name"},
-     *
-     *             @OA\Property(property="domain_name", type="string", example="Aerodynamics and Air-frame Design"),
-     *             @OA\Property(property="is_active", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Assessor domain created successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessor domain created successfully"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/assessor-domains',
+        summary: 'Create a new assessor domain',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['domain_name'],
+                properties: [
+                    new OA\Property(
+                        property: 'domain_name',
+                        type: 'string',
+                        example: 'Aerodynamics and Air-frame Design',
+                    ),
+                    new OA\Property(property: 'is_active', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Assessor domain created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessor domain created successfully',
+                        ),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+        ],
+    )]
     public function store(Request $request)
     {
         try {
@@ -181,20 +181,27 @@ class AssessorDomainsController extends Controller
 
     /**
      * Get a specific assessor domain.
-     *
-     * @OA\Get(
-     *     path="/api/v1/master-data/assessor-domains/{id}",
-     *     summary="Get a specific assessor domain",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Assessor Domain ID", @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Assessor domain details"),
-     *     @OA\Response(response=404, description="Not found"),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/master-data/assessor-domains/{id}',
+        summary: 'Get a specific assessor domain',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessor Domain ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessor domain details'),
+            new OA\Response(response: 404, description: 'Not found'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ],
+    )]
     public function show(AssessorDomain $assessorDomain)
     {
         try {
@@ -210,31 +217,37 @@ class AssessorDomainsController extends Controller
 
     /**
      * Update an assessor domain.
-     *
-     * @OA\Put(
-     *     path="/api/v1/master-data/assessor-domains/{id}",
-     *     summary="Update an assessor domain",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Assessor Domain ID", @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"domain_name"},
-     *
-     *             @OA\Property(property="domain_name", type="string"),
-     *             @OA\Property(property="is_active", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Updated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/master-data/assessor-domains/{id}',
+        summary: 'Update an assessor domain',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessor Domain ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['domain_name'],
+                properties: [
+                    new OA\Property(property: 'domain_name', type: 'string'),
+                    new OA\Property(property: 'is_active', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Updated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+        ],
+    )]
     public function update(Request $request, AssessorDomain $assessorDomain)
     {
         try {
@@ -261,23 +274,23 @@ class AssessorDomainsController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/master-data/assessor-domains/{id}/activate",
-     *     summary="Activate assessor domain",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Assessor domain activated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Assessor domain not found"),
-     *     @OA\Response(response=400, description="Assessor domain is already active"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/master-data/assessor-domains/{id}/activate',
+        summary: 'Activate assessor domain',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessor domain activated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Assessor domain not found'),
+            new OA\Response(response: 400, description: 'Assessor domain is already active'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(AssessorDomain $assessorDomain): JsonResponse
     {
         try {
@@ -309,23 +322,23 @@ class AssessorDomainsController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/master-data/assessor-domains/{id}/deactivate",
-     *     summary="Deactivate assessor domain",
-     *     tags={"Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Assessor domain deactivated successfully"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Assessor domain not found"),
-     *     @OA\Response(response=400, description="Assessor domain is already inactive"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/master-data/assessor-domains/{id}/deactivate',
+        summary: 'Deactivate assessor domain',
+        tags: ['Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessor domain deactivated successfully'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 404, description: 'Assessor domain not found'),
+            new OA\Response(response: 400, description: 'Assessor domain is already inactive'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(AssessorDomain $assessorDomain): JsonResponse
     {
         try {

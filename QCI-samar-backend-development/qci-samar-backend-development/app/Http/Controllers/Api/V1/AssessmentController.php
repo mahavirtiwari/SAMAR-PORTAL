@@ -26,14 +26,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @OA\Tag(
- *     name="Assessments",
- *     description="Assessment management endpoints"
- * )
- */
+#[OA\Tag(name: 'Assessments', description: 'Assessment management endpoints')]
 class AssessmentController extends Controller
 {
     /**
@@ -45,171 +41,162 @@ class AssessmentController extends Controller
 
     /**
      * Get all assessments with filtering.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments",
-     *     summary="List all assessments",
-     *     description="Retrieves a paginated list of assessments with comprehensive filtering. Results are automatically filtered based on user role (Lead Assessor, Assessor, Enterprise Admin, Unit Admin).",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by application number or enterprise name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filter by assessment status",
-     *
-     *         @OA\Schema(type="string", enum={"allocation_pending", "scheduled", "in_progress", "mobile_complete", "submitted_for_qc", "qc_feedback", "ready_for_committee", "committee_review", "committee_feedback", "certified"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="enterprise_size",
-     *         in="query",
-     *         description="Filter by enterprise size",
-     *
-     *         @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="vendor_category",
-     *         in="query",
-     *         description="Filter by vendor category",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="query",
-     *         description="Filter by application type (Fresh = new / Renewal = renewal)",
-     *
-     *         @OA\Schema(type="string", enum={"new", "renewal"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessor_id",
-     *         in="query",
-     *         description="Filter by assessor ID (matches both lead and co-assessor roles)",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="start_date",
-     *         in="query",
-     *         description="Start date for date range filter",
-     *
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="end_date",
-     *         in="query",
-     *         description="End date for date range filter",
-     *
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="date_type",
-     *         in="query",
-     *         description="Type of date to filter on (scheduled_start, actual_start, review, certified)",
-     *
-     *         @OA\Schema(type="string", enum={"scheduled_start", "actual_start", "review", "certified"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="certification_level",
-     *         in="query",
-     *         description="Filter by certification level/grade (for certified assessments)",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="application_id",
-     *         in="query",
-     *         description="Filter by application ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="has_incomplete_steps",
-     *         in="query",
-     *         description="Filter assessments with at least one incomplete step",
-     *
-     *         @OA\Schema(type="boolean", default=false)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="perPage",
-     *         in="query",
-     *         description="Items per page (max 100)",
-     *
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number",
-     *
-     *         @OA\Schema(type="integer", default=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessments retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessments", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(
-     *                     property="pagination",
-     *                     type="object",
-     *                     @OA\Property(property="total", type="integer"),
-     *                     @OA\Property(property="per_page", type="integer"),
-     *                     @OA\Property(property="current_page", type="integer"),
-     *                     @OA\Property(property="last_page", type="integer")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view assessments"
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments',
+        summary: 'List all assessments',
+        description: 'Retrieves a paginated list of assessments with comprehensive filtering. Results are automatically filtered based on user role (Lead Assessor, Assessor, Enterprise Admin, Unit Admin).',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by application number or enterprise name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Filter by assessment status',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: [
+                        'allocation_pending',
+                        'scheduled',
+                        'in_progress',
+                        'mobile_complete',
+                        'submitted_for_qc',
+                        'qc_feedback',
+                        'ready_for_committee',
+                        'committee_review',
+                        'committee_feedback',
+                        'certified',
+                    ],
+                ),
+            ),
+            new OA\Parameter(
+                name: 'enterprise_size',
+                in: 'query',
+                description: 'Filter by enterprise size',
+                schema: new OA\Schema(type: 'string', enum: ['startup', 'micro', 'small', 'medium', 'large']),
+            ),
+            new OA\Parameter(
+                name: 'vendor_category',
+                in: 'query',
+                description: 'Filter by vendor category',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'query',
+                description: 'Filter by application type (Fresh = new / Renewal = renewal)',
+                schema: new OA\Schema(type: 'string', enum: ['new', 'renewal']),
+            ),
+            new OA\Parameter(
+                name: 'assessor_id',
+                in: 'query',
+                description: 'Filter by assessor ID (matches both lead and co-assessor roles)',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'start_date',
+                in: 'query',
+                description: 'Start date for date range filter',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'end_date',
+                in: 'query',
+                description: 'End date for date range filter',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'date_type',
+                in: 'query',
+                description: 'Type of date to filter on (scheduled_start, actual_start, review, certified)',
+                schema: new OA\Schema(type: 'string', enum: ['scheduled_start', 'actual_start', 'review', 'certified']),
+            ),
+            new OA\Parameter(
+                name: 'certification_level',
+                in: 'query',
+                description: 'Filter by certification level/grade (for certified assessments)',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'application_id',
+                in: 'query',
+                description: 'Filter by application ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'has_incomplete_steps',
+                in: 'query',
+                description: 'Filter assessments with at least one incomplete step',
+                schema: new OA\Schema(type: 'boolean', default: false),
+            ),
+            new OA\Parameter(
+                name: 'perPage',
+                in: 'query',
+                description: 'Items per page (max 100)',
+                schema: new OA\Schema(type: 'integer', default: 15),
+            ),
+            new OA\Parameter(
+                name: 'page',
+                in: 'query',
+                description: 'Page number',
+                schema: new OA\Schema(type: 'integer', default: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessments retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'assessments',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'object'),
+                                ),
+                                new OA\Property(
+                                    property: 'pagination',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total', type: 'integer'),
+                                        new OA\Property(property: 'per_page', type: 'integer'),
+                                        new OA\Property(property: 'current_page', type: 'integer'),
+                                        new OA\Property(property: 'last_page', type: 'integer'),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to view assessments'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function index(ListAssessmentsRequest $request): JsonResponse
     {
         Gate::authorize('viewAny', Assessment::class);
@@ -233,133 +220,116 @@ class AssessmentController extends Controller
 
     /**
      * Export assessments to CSV.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments/export",
-     *     summary="Export assessments",
-     *     description="Exports assessments to CSV using the same filters as the assessment list, so the file matches what the screen shows. Omit status to export every stage the caller may see. Results are automatically filtered based on user role.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="search",
-     *         in="query",
-     *         description="Search by application number or organization name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Assessment status, or a comma-separated list of them. Omit to export every stage.",
-     *
-     *         @OA\Schema(type="string", example="certified")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="enterprise_size",
-     *         in="query",
-     *         description="Filter by enterprise classification",
-     *
-     *         @OA\Schema(type="string", enum={"startup", "micro", "small", "medium", "large"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="vendor_category",
-     *         in="query",
-     *         description="Filter by vendor category name",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="sector",
-     *         in="query",
-     *         description="Filter by sector",
-     *
-     *         @OA\Schema(type="string", enum={"manufacturing", "service"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="type",
-     *         in="query",
-     *         description="Filter by application type",
-     *
-     *         @OA\Schema(type="string", enum={"new", "renewal"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="assessor_id",
-     *         in="query",
-     *         description="Filter by assessor on the assessment team",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="start_date",
-     *         in="query",
-     *         description="Start of the date range, interpreted per date_type",
-     *
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="end_date",
-     *         in="query",
-     *         description="End of the date range, interpreted per date_type",
-     *
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="date_type",
-     *         in="query",
-     *         description="Which date the range applies to",
-     *
-     *         @OA\Schema(type="string", enum={"scheduled_start", "actual_start", "review", "certified"})
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="certification_level",
-     *         in="query",
-     *         description="Filter by certificate grade",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="CSV file download",
-     *
-     *         @OA\MediaType(
-     *             mediaType="text/csv",
-     *
-     *             @OA\Schema(type="string", format="binary")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to export assessments"
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Export failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to export assessments.")
-     *         )
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/export',
+        summary: 'Export assessments',
+        description: 'Exports assessments to CSV using the same filters as the assessment list, so the file matches what the screen shows. Omit status to export every stage the caller may see. Results are automatically filtered based on user role.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'search',
+                in: 'query',
+                description: 'Search by application number or organization name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'status',
+                in: 'query',
+                description: 'Assessment status, or a comma-separated list of them. Omit to export every stage.',
+                schema: new OA\Schema(type: 'string', example: 'certified'),
+            ),
+            new OA\Parameter(
+                name: 'enterprise_size',
+                in: 'query',
+                description: 'Filter by enterprise classification',
+                schema: new OA\Schema(type: 'string', enum: ['startup', 'micro', 'small', 'medium', 'large']),
+            ),
+            new OA\Parameter(
+                name: 'vendor_category',
+                in: 'query',
+                description: 'Filter by vendor category name',
+                schema: new OA\Schema(type: 'string'),
+            ),
+            new OA\Parameter(
+                name: 'sector',
+                in: 'query',
+                description: 'Filter by sector',
+                schema: new OA\Schema(type: 'string', enum: ['manufacturing', 'service']),
+            ),
+            new OA\Parameter(
+                name: 'type',
+                in: 'query',
+                description: 'Filter by application type',
+                schema: new OA\Schema(type: 'string', enum: ['new', 'renewal']),
+            ),
+            new OA\Parameter(
+                name: 'assessor_id',
+                in: 'query',
+                description: 'Filter by assessor on the assessment team',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+            new OA\Parameter(
+                name: 'start_date',
+                in: 'query',
+                description: 'Start of the date range, interpreted per date_type',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'end_date',
+                in: 'query',
+                description: 'End of the date range, interpreted per date_type',
+                schema: new OA\Schema(type: 'string', format: 'date'),
+            ),
+            new OA\Parameter(
+                name: 'date_type',
+                in: 'query',
+                description: 'Which date the range applies to',
+                schema: new OA\Schema(type: 'string', enum: ['scheduled_start', 'actual_start', 'review', 'certified']),
+            ),
+            new OA\Parameter(
+                name: 'certification_level',
+                in: 'query',
+                description: 'Filter by certificate grade',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'CSV file download',
+                content: [
+                    new OA\MediaType(
+                        mediaType: 'text/csv',
+                        schema: new OA\Schema(type: 'string', format: 'binary'),
+                    ),
+                ],
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to export assessments'),
+            new OA\Response(
+                response: 500,
+                description: 'Export failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to export assessments.',
+                        ),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function export(ListAssessmentsRequest $request): StreamedResponse|JsonResponse
     {
         Gate::authorize('viewAny', Assessment::class);
@@ -457,52 +427,51 @@ class AssessmentController extends Controller
 
     /**
      * Get a single assessment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments/{id}",
-     *     summary="Get assessment details",
-     *     description="Retrieves detailed information about a specific assessment including application, assessors, and scorecards.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment details retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to view this assessment"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Assessment not found"
-     *     )
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/{id}',
+        summary: 'Get assessment details',
+        description: 'Retrieves detailed information about a specific assessment including application, assessors, and scorecards.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment details retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to view this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function show(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -527,72 +496,118 @@ class AssessmentController extends Controller
 
     /**
      * Allocate assessors to an assessment.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/schedule",
-     *     summary="Allocate or update assessors for assessment",
-     *     description="Assigns or updates lead assessor and team assessors for an assessment. Can be used for initial allocation (allocation_pending status) or to update existing allocation (scheduled status). Requires QCI Admin role.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"lead_assessor_id", "scheduled_start_date", "scheduled_end_date"},
-     *
-     *             @OA\Property(property="lead_assessor_id", type="integer", example=5, description="User ID with Lead Assessor role"),
-     *             @OA\Property(property="team_assessor_ids", type="array", @OA\Items(type="integer"), example={6, 7}, description="Array of user IDs with Assessor role"),
-     *             @OA\Property(property="scheduled_start_date", type="string", format="date", example="2024-02-15", description="Assessment scheduled start date (must be today or later)"),
-     *             @OA\Property(property="scheduled_end_date", type="string", format="date", example="2024-02-20", description="Assessment scheduled end date (must be after start date)"),
-     *             @OA\Property(property="meeting_link", type="string", format="uri", example="https://meet.google.com/abc-defg-hij", description="Online meeting link shown to operations manager, assessors and applicant users (service-sector assessments)"),
-     *             @OA\Property(property="remarks", type="string", example="Allocated based on expertise in ISO 9001")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment allocated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessment allocated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - assessment status invalid, user not assessor, or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Assessment must be in allocation_pending or scheduled status."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to allocate assessments"),
-     *     @OA\Response(response=404, description="Assessment not found"),
-     *     @OA\Response(response=500, description="Failed to allocate assessment")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/schedule',
+        summary: 'Allocate or update assessors for assessment',
+        description: 'Assigns or updates lead assessor and team assessors for an assessment. Can be used for initial allocation (allocation_pending status) or to update existing allocation (scheduled status). Requires QCI Admin role.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['lead_assessor_id', 'scheduled_start_date', 'scheduled_end_date'],
+                properties: [
+                    new OA\Property(
+                        property: 'lead_assessor_id',
+                        type: 'integer',
+                        example: 5,
+                        description: 'User ID with Lead Assessor role',
+                    ),
+                    new OA\Property(
+                        property: 'team_assessor_ids',
+                        type: 'array',
+                        example: [6, 7],
+                        description: 'Array of user IDs with Assessor role',
+                        items: new OA\Items(type: 'integer'),
+                    ),
+                    new OA\Property(
+                        property: 'scheduled_start_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2024-02-15',
+                        description: 'Assessment scheduled start date (must be today or later)',
+                    ),
+                    new OA\Property(
+                        property: 'scheduled_end_date',
+                        type: 'string',
+                        format: 'date',
+                        example: '2024-02-20',
+                        description: 'Assessment scheduled end date (must be after start date)',
+                    ),
+                    new OA\Property(
+                        property: 'meeting_link',
+                        type: 'string',
+                        format: 'uri',
+                        example: 'https://meet.google.com/abc-defg-hij',
+                        description: 'Online meeting link shown to operations manager, assessors and applicant users (service-sector assessments)',
+                    ),
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Allocated based on expertise in ISO 9001',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment allocated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment allocated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - assessment status invalid, user not assessor, or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment must be in allocation_pending or scheduled status.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to allocate assessments'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+            new OA\Response(response: 500, description: 'Failed to allocate assessment'),
+        ],
+    )]
     public function allocate(Request $request, int $id): JsonResponse
     {
         Gate::authorize('allocate', Assessment::class);
@@ -840,64 +855,70 @@ class AssessmentController extends Controller
 
     /**
      * Start the assessment.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/start",
-     *     summary="Start an assessment",
-     *     description="Marks a scheduled assessment as started. Only lead assessors or team assessors can start their assigned assessments.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment started successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessment started successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Assessment must be in scheduled status to start",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Assessment must be in scheduled status to start.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to conduct this assessment"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Assessment not found"
-     *     )
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/start',
+        summary: 'Start an assessment',
+        description: 'Marks a scheduled assessment as started. Only lead assessors or team assessors can start their assigned assessments.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment started successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment started successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment must be in scheduled status to start',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment must be in scheduled status to start.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to conduct this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function start(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -916,60 +937,93 @@ class AssessmentController extends Controller
 
     /**
      * Validate if assessment can be submitted for QC.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments/{id}/can-submit-for-qc",
-     *     summary="Validate assessment readiness for QC submission",
-     *     description="Checks if an assessment can be submitted for QC review. Returns validation status, list of unanswered questions, and completion progress. Use this endpoint before attempting submission to provide user feedback.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Validation check completed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Validation check completed."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="can_submit", type="boolean", example=false, description="Whether the assessment can be submitted for QC"),
-     *                 @OA\Property(
-     *                     property="errors",
-     *                     type="array",
-     *                     description="List of validation errors (empty if can_submit is true)",
-     *
-     *                     @OA\Items(type="string", example="Question 'Q-00123' has not been answered")
-     *                 ),
-     *
-     *                 @OA\Property(
-     *                     property="progress",
-     *                     type="object",
-     *                     @OA\Property(property="total_questions", type="integer", example=50),
-     *                     @OA\Property(property="answered_questions", type="integer", example=48),
-     *                     @OA\Property(property="unanswered_questions", type="integer", example=2),
-     *                     @OA\Property(property="completion_percentage", type="number", format="float", example=96.0)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to access this assessment"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/{id}/can-submit-for-qc',
+        summary: 'Validate assessment readiness for QC submission',
+        description: 'Checks if an assessment can be submitted for QC review. Returns validation status, list of unanswered questions, and completion progress. Use this endpoint before attempting submission to provide user feedback.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Validation check completed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Validation check completed.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'can_submit',
+                                    type: 'boolean',
+                                    example: false,
+                                    description: 'Whether the assessment can be submitted for QC',
+                                ),
+                                new OA\Property(
+                                    property: 'errors',
+                                    type: 'array',
+                                    description: 'List of validation errors (empty if can_submit is true)',
+                                    items: new OA\Items(
+                                        type: 'string',
+                                        example: 'Question \'Q-00123\' has not been answered',
+                                    ),
+                                ),
+                                new OA\Property(
+                                    property: 'progress',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'total_questions', type: 'integer', example: 50),
+                                        new OA\Property(
+                                            property: 'answered_questions',
+                                            type: 'integer',
+                                            example: 48,
+                                        ),
+                                        new OA\Property(
+                                            property: 'unanswered_questions',
+                                            type: 'integer',
+                                            example: 2,
+                                        ),
+                                        new OA\Property(
+                                            property: 'completion_percentage',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 96.0,
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to access this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function canSubmitForQc(int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1014,66 +1068,88 @@ class AssessmentController extends Controller
 
     /**
      * Submit assessment for QC.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/submit-for-qc",
-     *     summary="Submit assessment for QC review",
-     *     description="Submits a started assessment for quality control review. All mandatory scorecards must be completed. Only lead assessors can submit.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="remarks", type="string", example="Assessment completed as per schedule"),
-     *             @OA\Property(property="recommendations", type="string", example="Organization demonstrates strong quality management practices")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment submitted for QC successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Assessment submitted for QC successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - assessment not started, incomplete mandatory questions, or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="There are 5 incomplete mandatory questions."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to submit this assessment"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/submit-for-qc',
+        summary: 'Submit assessment for QC review',
+        description: 'Submits a started assessment for quality control review. All mandatory scorecards must be completed. Only lead assessors can submit.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Assessment completed as per schedule',
+                    ),
+                    new OA\Property(
+                        property: 'recommendations',
+                        type: 'string',
+                        example: 'Organization demonstrates strong quality management practices',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment submitted for QC successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Assessment submitted for QC successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - assessment not started, incomplete mandatory questions, or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'There are 5 incomplete mandatory questions.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to submit this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function submitForQc(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1109,31 +1185,41 @@ class AssessmentController extends Controller
 
     /**
      * Record the requesting co-assessor's web submission.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/co-assessor-submit",
-     *     summary="Co-assessor web submit",
-     *     description="A co-assessor signs off their portion on the web after the assessment is mobile-complete. The lead assessor can only submit for QC once every co-assessor has web-submitted. Idempotent.",
-     *     tags={"Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, description="Assessment ID", @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="device_metadata", type="object", description="Optional device/client info")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Web submission recorded"),
-     *     @OA\Response(response=400, description="Assessment not mobile-complete"),
-     *     @OA\Response(response=403, description="Not a co-assessor of this assessment"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/co-assessor-submit',
+        summary: 'Co-assessor web submit',
+        description: 'A co-assessor signs off their portion on the web after the assessment is mobile-complete. The lead assessor can only submit for QC once every co-assessor has web-submitted. Idempotent.',
+        tags: ['Assessment', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'device_metadata',
+                        type: 'object',
+                        description: 'Optional device/client info',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Web submission recorded'),
+            new OA\Response(response: 400, description: 'Assessment not mobile-complete'),
+            new OA\Response(response: 403, description: 'Not a co-assessor of this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function coAssessorSubmit(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1173,67 +1259,90 @@ class AssessmentController extends Controller
 
     /**
      * Perform QC review.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/qc-decision",
-     *     summary="Perform QC review on assessment",
-     *     description="Quality control review of a submitted assessment. Only Operations Manager can perform QC review. Can either approve for committee or provide feedback.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"action"},
-     *
-     *             @OA\Property(property="action", type="string", enum={"approve_for_committee", "provide_feedback"}, example="approve_for_committee", description="QC action to take"),
-     *             @OA\Property(property="feedback", type="array", @OA\Items(type="object"), description="Optional feedback for assessor if action is provide_feedback")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="QC review completed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="QC review completed successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - QC review failed or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to perform QC review (requires Operations Manager role)"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/qc-decision',
+        summary: 'Perform QC review on assessment',
+        description: 'Quality control review of a submitted assessment. Only Operations Manager can perform QC review. Can either approve for committee or provide feedback.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['action'],
+                properties: [
+                    new OA\Property(
+                        property: 'action',
+                        type: 'string',
+                        enum: ['approve_for_committee', 'provide_feedback'],
+                        example: 'approve_for_committee',
+                        description: 'QC action to take',
+                    ),
+                    new OA\Property(
+                        property: 'feedback',
+                        type: 'array',
+                        description: 'Optional feedback for assessor if action is provide_feedback',
+                        items: new OA\Items(type: 'object'),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'QC review completed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'QC review completed successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - QC review failed or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to perform QC review (requires Operations Manager role)',
+            ),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function qcDecision(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1325,50 +1434,56 @@ class AssessmentController extends Controller
 
     /**
      * Address QC feedback and move assessment to committee review.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/address-qc-feedback",
-     *     summary="Address QC feedback",
-     *     description="Lead assessor addresses QC feedback and assessment moves to ready for committee review.",
-     *     tags={"Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=false,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="remarks", type="string", example="Addressed all QC feedback points"),
-     *             @OA\Property(property="changes_made", type="string", example="Updated responses for Q-123, Q-456")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment resubmitted for QC successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in qc_feedback status"),
-     *     @OA\Response(response=403, description="Unauthorized - not lead assessor"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/address-qc-feedback',
+        summary: 'Address QC feedback',
+        description: 'Lead assessor addresses QC feedback and assessment moves to ready for committee review.',
+        tags: ['Assessment', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: false,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Addressed all QC feedback points',
+                    ),
+                    new OA\Property(
+                        property: 'changes_made',
+                        type: 'string',
+                        example: 'Updated responses for Q-123, Q-456',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment resubmitted for QC successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Assessment not in qc_feedback status'),
+            new OA\Response(response: 403, description: 'Unauthorized - not lead assessor'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function addressQcFeedback(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1422,51 +1537,64 @@ class AssessmentController extends Controller
 
     /**
      * Schedule assessment for committee review.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/schedule-committee",
-     *     summary="Schedule assessment for committee review",
-     *     description="Schedule an approved assessment for committee review meeting. Only Operations Manager or Operations Admin can perform this action.",
-     *     tags={"Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"committee_meeting_id"},
-     *
-     *             @OA\Property(property="committee_meeting_id", type="integer", example=42, description="Committee meeting ID to schedule this assessment for"),
-     *             @OA\Property(property="remarks", type="string", example="Scheduled for March 2024 committee meeting")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment scheduled for committee review successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in ready_for_committee status or validation failed"),
-     *     @OA\Response(response=403, description="Unauthorized - requires Operations Manager or Operations Admin role"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/schedule-committee',
+        summary: 'Schedule assessment for committee review',
+        description: 'Schedule an approved assessment for committee review meeting. Only Operations Manager or Operations Admin can perform this action.',
+        tags: ['Assessment', 'Operations Manager - Assessment', 'Operations Admin - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['committee_meeting_id'],
+                properties: [
+                    new OA\Property(
+                        property: 'committee_meeting_id',
+                        type: 'integer',
+                        example: 42,
+                        description: 'Committee meeting ID to schedule this assessment for',
+                    ),
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Scheduled for March 2024 committee meeting',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment scheduled for committee review successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Assessment not in ready_for_committee status or validation failed',
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized - requires Operations Manager or Operations Admin role',
+            ),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function scheduleCommittee(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1527,68 +1655,94 @@ class AssessmentController extends Controller
 
     /**
      * Perform committee decision on assessment.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/committee-decision",
-     *     summary="Record committee decision on assessment",
-     *     description="Record the committee's decision on an assessment. Only Operations Admin can perform this action. Can either certify the assessment or provide feedback for revision.",
-     *     tags={"Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"action"},
-     *
-     *             @OA\Property(property="action", type="string", enum={"certify", "provide_feedback"}, example="certify", description="Committee decision action"),
-     *             @OA\Property(property="remarks", type="string", example="Assessment meets all criteria for certification", description="Optional remarks for the decision"),
-     *             @OA\Property(property="feedback", type="array", @OA\Items(type="object"), description="Feedback details if action is provide_feedback")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Committee decision recorded successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Committee decision recorded successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="assessment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Decision failed or validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="No active committee meeting is awaiting a decision on this assessment."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to perform committee decision (requires Operations Admin role)"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/committee-decision',
+        summary: 'Record committee decision on assessment',
+        description: 'Record the committee\'s decision on an assessment. Only Operations Admin can perform this action. Can either certify the assessment or provide feedback for revision.',
+        tags: ['Assessment', 'Operations Admin - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['action'],
+                properties: [
+                    new OA\Property(
+                        property: 'action',
+                        type: 'string',
+                        enum: ['certify', 'provide_feedback'],
+                        example: 'certify',
+                        description: 'Committee decision action',
+                    ),
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Assessment meets all criteria for certification',
+                        description: 'Optional remarks for the decision',
+                    ),
+                    new OA\Property(
+                        property: 'feedback',
+                        type: 'array',
+                        description: 'Feedback details if action is provide_feedback',
+                        items: new OA\Items(type: 'object'),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Committee decision recorded successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Committee decision recorded successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'assessment', type: 'object'),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Decision failed or validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No active committee meeting is awaiting a decision on this assessment.',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to perform committee decision (requires Operations Admin role)',
+            ),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function committeeDecision(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1730,54 +1884,60 @@ class AssessmentController extends Controller
 
     /**
      * Bulk update RC scores for assessment responses.
-     *
-     * @OA\Put(
-     *     path="/api/v1/assessments/{id}/rc-scores",
-     *     summary="Bulk update RC scores for assessment responses",
-     *     description="Operations Admin can update Rating Committee scores for multiple questions at once. Automatically recalculates weighted_score per response and assessment total score. Assessment must be in committee_review status.",
-     *     tags={"Assessment", "Operations Admin - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"scores"},
-     *
-     *             @OA\Property(
-     *                 property="scores",
-     *                 type="array",
-     *                 description="Array of RC score updates",
-     *
-     *                 @OA\Items(
-     *                     required={"question_id", "rc_score"},
-     *
-     *                     @OA\Property(property="question_id", type="integer", description="ApplicationAssessmentQuestion ID"),
-     *                     @OA\Property(property="rc_score", type="number", format="float", description="Rating Committee score (0-5)", example=3.5)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="RC scores updated successfully"
-     *     ),
-     *     @OA\Response(response=400, description="Validation error or assessment not in correct status"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized (requires Operations Admin role)"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Put(
+        path: '/api/v1/assessments/{id}/rc-scores',
+        summary: 'Bulk update RC scores for assessment responses',
+        description: 'Operations Admin can update Rating Committee scores for multiple questions at once. Automatically recalculates weighted_score per response and assessment total score. Assessment must be in committee_review status.',
+        tags: ['Assessment', 'Operations Admin - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['scores'],
+                properties: [
+                    new OA\Property(
+                        property: 'scores',
+                        type: 'array',
+                        description: 'Array of RC score updates',
+                        items: new OA\Items(
+                            required: ['question_id', 'rc_score'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'question_id',
+                                    type: 'integer',
+                                    description: 'ApplicationAssessmentQuestion ID',
+                                ),
+                                new OA\Property(
+                                    property: 'rc_score',
+                                    type: 'number',
+                                    format: 'float',
+                                    description: 'Rating Committee score (0-5)',
+                                    example: 3.5,
+                                ),
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'RC scores updated successfully'),
+            new OA\Response(response: 400, description: 'Validation error or assessment not in correct status'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized (requires Operations Admin role)'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function updateRcScores(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1857,51 +2017,57 @@ class AssessmentController extends Controller
 
     /**
      * Address committee feedback and resubmit assessment for QC review.
-     *
-     * @OA\Post(
-     *     path="/api/v1/assessments/{id}/address-committee-feedback",
-     *     summary="Address committee feedback",
-     *     description="Lead assessor addresses committee feedback. Assessment is resubmitted for QC review before going back to committee.",
-     *     tags={"Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"remarks"},
-     *
-     *             @OA\Property(property="remarks", type="string", example="Addressed all committee feedback"),
-     *             @OA\Property(property="changes_summary", type="string", example="Added requested documentation for parameters X, Y, Z")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment resubmitted for QC review successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="data", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in committee_feedback status"),
-     *     @OA\Response(response=403, description="Unauthorized - not lead assessor"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/assessments/{id}/address-committee-feedback',
+        summary: 'Address committee feedback',
+        description: 'Lead assessor addresses committee feedback. Assessment is resubmitted for QC review before going back to committee.',
+        tags: ['Assessment', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['remarks'],
+                properties: [
+                    new OA\Property(
+                        property: 'remarks',
+                        type: 'string',
+                        example: 'Addressed all committee feedback',
+                    ),
+                    new OA\Property(
+                        property: 'changes_summary',
+                        type: 'string',
+                        example: 'Added requested documentation for parameters X, Y, Z',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment resubmitted for QC review successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string'),
+                        new OA\Property(property: 'data', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Assessment not in committee_feedback status'),
+            new OA\Response(response: 403, description: 'Unauthorized - not lead assessor'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function addressCommitteeFeedback(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -1958,57 +2124,69 @@ class AssessmentController extends Controller
 
     /**
      * Get available transitions for an assessment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments/{id}/available-transitions",
-     *     summary="Get available status transitions",
-     *     description="Retrieves the list of available status transitions for the assessment based on current status and user permissions.",
-     *     tags={"Assessment", "System Admin - Assessment", "DRDO Admin - Assessment", "Operations Manager - Assessment", "Operations Admin - Assessment", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Available transitions retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="current_status", type="string", example="scheduled"),
-     *                 @OA\Property(property="current_status_label", type="string", example="Scheduled"),
-     *                 @OA\Property(
-     *                     property="available_transitions",
-     *                     type="array",
-     *
-     *                     @OA\Items(
-     *                         type="object",
-     *
-     *                         @OA\Property(property="name", type="string"),
-     *                         @OA\Property(property="label", type="string"),
-     *                         @OA\Property(property="to_state", type="string"),
-     *                         @OA\Property(property="can_execute", type="boolean")
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Unauthorized to view this assessment"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/{id}/available-transitions',
+        summary: 'Get available status transitions',
+        description: 'Retrieves the list of available status transitions for the assessment based on current status and user permissions.',
+        tags: [
+            'Assessment',
+            'System Admin - Assessment',
+            'DRDO Admin - Assessment',
+            'Operations Manager - Assessment',
+            'Operations Admin - Assessment',
+            'Assessor - Assessment',
+        ],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Available transitions retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'current_status', type: 'string', example: 'scheduled'),
+                                new OA\Property(
+                                    property: 'current_status_label',
+                                    type: 'string',
+                                    example: 'Scheduled',
+                                ),
+                                new OA\Property(
+                                    property: 'available_transitions',
+                                    type: 'array',
+                                    items: new OA\Items(
+                                        type: 'object',
+                                        properties: [
+                                            new OA\Property(property: 'name', type: 'string'),
+                                            new OA\Property(property: 'label', type: 'string'),
+                                            new OA\Property(property: 'to_state', type: 'string'),
+                                            new OA\Property(property: 'can_execute', type: 'boolean'),
+                                        ],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Unauthorized to view this assessment'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function availableTransitions(Request $request, int $id): JsonResponse
     {
         $assessment = Assessment::findOrFail($id);
@@ -2983,34 +3161,34 @@ class AssessmentController extends Controller
 
     /**
      * Download Assessment Report PDF.
-     *
-     * @OA\Get(
-     *     path="/api/v1/assessments/{identifier}/assessment-report/download",
-     *     summary="Download Assessment Report PDF",
-     *     description="Generate and download the Assessment Report PDF for a certified assessment. Accessible by Enterprise Admin, Unit Admin, Operations Manager, Operations Admin, System Admin, and DRDO Admin. Lookup by assessment ID.",
-     *     tags={"Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="identifier",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessment Report PDF file",
-     *
-     *         @OA\MediaType(mediaType="application/pdf")
-     *     ),
-     *
-     *     @OA\Response(response=403, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/{identifier}/assessment-report/download',
+        summary: 'Download Assessment Report PDF',
+        description: 'Generate and download the Assessment Report PDF for a certified assessment. Accessible by Enterprise Admin, Unit Admin, Operations Manager, Operations Admin, System Admin, and DRDO Admin. Lookup by assessment ID.',
+        tags: ['Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'identifier',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'string'),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Assessment Report PDF file',
+                content: [
+                    new OA\MediaType(mediaType: 'application/pdf'),
+                ],
+            ),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function downloadAssessmentReport(Request $request, string $identifier): mixed
     {
         $assessment = Assessment::with('application')

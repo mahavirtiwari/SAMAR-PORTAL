@@ -10,96 +10,211 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Application Assessment Basic Information",
- *     description="Step 5: Basic information management. Only Lead Assessor can manage. Structure matches Application model with mfg_/svc_ prefixes for manufacturing/services specific fields."
- * )
- */
+#[OA\Tag(
+    name: 'Application Assessment Basic Information',
+    description: 'Step 5: Basic information management. Only Lead Assessor can manage. Structure matches Application model with mfg_/svc_ prefixes for manufacturing/services specific fields.',
+)]
 class ApplicationAssessmentBasicInformationController extends Controller
 {
     /**
      * Get basic information for an assessment.
-     *
-     * @OA\Get(
-     *     path="/api/v1/application-assessments/{assessmentId}/basic-information",
-     *     summary="Get basic information",
-     *     description="Returns the basic information for the assessment (Step 5). Use mfg_* fields for manufacturing sector and svc_* fields for service sector. Returns null if not yet filled.",
-     *     tags={"Application Assessment Basic Information", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Basic information retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Basic information retrieved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="basic_information",
-     *                     type="object",
-     *                     nullable=true,
-     *                     description="Null if not yet filled",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="assessment_id", type="integer", example=1),
-     *                     @OA\Property(property="category", type="string", example="Manufacturing", nullable=true),
-     *                     @OA\Property(property="mfg_drdo_vendor_stores", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_products", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_raw_materials", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_bought_out_parts", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_key_processes", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_outsourced_processes", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="mfg_production_capacity", type="number", nullable=true),
-     *                     @OA\Property(property="mfg_capacity_unit", type="string", nullable=true),
-     *                     @OA\Property(property="svc_provider_type", type="string", nullable=true),
-     *                     @OA\Property(property="svc_drdo_vendor_labs", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="svc_services", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="svc_key_resources", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="svc_outsourced_components", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="svc_key_processes", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="svc_outsourced_processes", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="customers", type="array", @OA\Items(type="object"), nullable=true),
-     *                     @OA\Property(property="third_party_certifications", type="array", @OA\Items(type="string"), nullable=true),
-     *                     @OA\Property(property="filled_by", type="integer", nullable=true),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
-     *                 ),
-     *                 @OA\Property(property="step_completed", type="boolean", example=false, description="True if all required fields are filled"),
-     *                 @OA\Property(
-     *                     property="validation",
-     *                     type="object",
-     *                     @OA\Property(property="is_valid", type="boolean", example=false),
-     *                     @OA\Property(
-     *                         property="missing",
-     *                         type="array",
-     *
-     *                         @OA\Items(type="string"),
-     *                         example={"category", "mfg_drdo_vendor_stores", "mfg_key_processes", "mfg_products", "customers", "mfg_raw_materials", "mfg_bought_out_parts"},
-     *                         description="List of required fields that are missing"
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=404, description="Assessment not found")
-     * )
      */
+    #[OA\Get(
+        path: '/api/v1/application-assessments/{assessmentId}/basic-information',
+        summary: 'Get basic information',
+        description: 'Returns the basic information for the assessment (Step 5). Use mfg_* fields for manufacturing sector and svc_* fields for service sector. Returns null if not yet filled.',
+        tags: ['Application Assessment Basic Information', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Basic information retrieved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Basic information retrieved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'basic_information',
+                                    type: 'object',
+                                    nullable: true,
+                                    description: 'Null if not yet filled',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(property: 'assessment_id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'category',
+                                            type: 'string',
+                                            example: 'Manufacturing',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_drdo_vendor_stores',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_products',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_raw_materials',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_bought_out_parts',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_key_processes',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_outsourced_processes',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_production_capacity',
+                                            type: 'number',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'mfg_capacity_unit',
+                                            type: 'string',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_provider_type',
+                                            type: 'string',
+                                            nullable: true,
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_drdo_vendor_labs',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_services',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_key_resources',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_outsourced_components',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_key_processes',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'svc_outsourced_processes',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'customers',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'object'),
+                                        ),
+                                        new OA\Property(
+                                            property: 'third_party_certifications',
+                                            type: 'array',
+                                            nullable: true,
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                        new OA\Property(property: 'filled_by', type: 'integer', nullable: true),
+                                        new OA\Property(
+                                            property: 'created_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                        ),
+                                        new OA\Property(
+                                            property: 'updated_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                        ),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'step_completed',
+                                    type: 'boolean',
+                                    example: false,
+                                    description: 'True if all required fields are filled',
+                                ),
+                                new OA\Property(
+                                    property: 'validation',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'is_valid', type: 'boolean', example: false),
+                                        new OA\Property(
+                                            property: 'missing',
+                                            type: 'array',
+                                            example: [
+                                                'category',
+                                                'mfg_drdo_vendor_stores',
+                                                'mfg_key_processes',
+                                                'mfg_products',
+                                                'customers',
+                                                'mfg_raw_materials',
+                                                'mfg_bought_out_parts',
+                                            ],
+                                            description: 'List of required fields that are missing',
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Assessment not found'),
+        ],
+    )]
     public function show(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::with('application')->findOrFail($assessmentId);
@@ -115,251 +230,362 @@ class ApplicationAssessmentBasicInformationController extends Controller
 
     /**
      * Create or update basic information.
-     *
-     * @OA\Post(
-     *     path="/api/v1/application-assessments/{assessmentId}/basic-information",
-     *     summary="Create or update basic information",
-     *     description="Create or update the basic information for the assessment. Use mfg_* fields for manufacturing sector and svc_* fields for service sector. Only the lead assessor can perform this action.",
-     *     tags={"Application Assessment Basic Information", "Assessor - Assessment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="assessmentId",
-     *         in="path",
-     *         required=true,
-     *         description="Assessment ID",
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="category", type="string", example="Manufacturing", description="Category of the enterprise"),
-     *             @OA\Property(
-     *                 property="mfg_drdo_vendor_stores",
-     *                 type="array",
-     *                 description="Manufacturing: DRDO vendor stores list",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="store_name", type="string", example="Store A")
-     *                 ),
-     *                 example={{"store_name": "DRDO Store 1"}, {"store_name": "DRDO Store 2"}}
-     *             ),
-     *             @OA\Property(
-     *                 property="mfg_products",
-     *                 type="array",
-     *                 description="Manufacturing: Products/articles manufactured",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"product_name"},
-     *
-     *                     @OA\Property(property="product_name", type="string", example="Electronic Component A"),
-     *                     @OA\Property(property="total_production_capacity", type="number", example=1000),
-     *                     @OA\Property(property="capacity_unit", type="string", example="units/month"),
-     *                     @OA\Property(property="capacity_unit_utilized", type="string", example="units/month"),
-     *                     @OA\Property(property="current_utilized_capacity", type="number", example=750),
-     *                     @OA\Property(property="commencement_date", type="string", format="date", example="2020-01-15"),
-     *                     @OA\Property(property="is_exported", type="boolean", example=true),
-     *                     @OA\Property(property="export_countries", type="array", @OA\Items(type="string"), example={"USA", "Germany"}),
-     *                     @OA\Property(property="export_percentage", type="number", example=25.5)
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="mfg_raw_materials",
-     *                 type="array",
-     *                 description="Manufacturing: Raw materials used",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"material_name"},
-     *
-     *                     @OA\Property(property="material_name", type="string", example="Steel Grade A"),
-     *                     @OA\Property(property="is_imported", type="boolean", example=false),
-     *                     @OA\Property(property="import_percentage", type="number", example=0),
-     *                     @OA\Property(property="import_country", type="string", example=null)
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="mfg_bought_out_parts",
-     *                 type="array",
-     *                 description="Manufacturing: Bought out parts",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"part_name"},
-     *
-     *                     @OA\Property(property="part_name", type="string", example="Capacitor 100uF"),
-     *                     @OA\Property(property="is_imported", type="boolean", example=true),
-     *                     @OA\Property(property="import_percentage", type="number", example=60),
-     *                     @OA\Property(property="import_country", type="string", example="China")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="mfg_key_processes",
-     *                 type="array",
-     *                 description="Manufacturing: Key processes",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"process_name"},
-     *
-     *                     @OA\Property(property="process_name", type="string", example="CNC Machining")
-     *                 ),
-     *                 example={{"process_name": "CNC Machining"}, {"process_name": "Heat Treatment"}}
-     *             ),
-     *             @OA\Property(
-     *                 property="mfg_outsourced_processes",
-     *                 type="array",
-     *                 description="Manufacturing: Outsourced processes",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"process_name"},
-     *
-     *                     @OA\Property(property="process_name", type="string", example="Electroplating")
-     *                 )
-     *             ),
-     *             @OA\Property(property="mfg_production_capacity", type="number", example=5000, description="Manufacturing: Overall production capacity"),
-     *             @OA\Property(property="mfg_capacity_unit", type="string", example="units/month", description="Manufacturing: Capacity unit"),
-     *             @OA\Property(property="svc_provider_type", type="string", example="Testing Laboratory", description="Services: Type of service provider"),
-     *             @OA\Property(
-     *                 property="svc_drdo_vendor_labs",
-     *                 type="array",
-     *                 description="Services: DRDO vendor labs",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *
-     *                     @OA\Property(property="lab_name", type="string", example="Testing Lab A")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="svc_services",
-     *                 type="array",
-     *                 description="Services: Services offered",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"service_name"},
-     *
-     *                     @OA\Property(property="service_name", type="string", example="Material Testing"),
-     *                     @OA\Property(property="total_services_capacity", type="number", example=500),
-     *                     @OA\Property(property="capacity_unit", type="string", example="tests/month"),
-     *                     @OA\Property(property="current_utilized_capacity", type="number", example=350),
-     *                     @OA\Property(property="commencement_date", type="string", format="date", example="2019-06-01"),
-     *                     @OA\Property(property="is_exported", type="boolean", example=false),
-     *                     @OA\Property(property="export_countries", type="array", @OA\Items(type="string")),
-     *                     @OA\Property(property="export_percentage", type="number", example=0)
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="svc_key_resources",
-     *                 type="array",
-     *                 description="Services: Key resources",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"resource_name"},
-     *
-     *                     @OA\Property(property="resource_name", type="string", example="Spectrometer")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="svc_outsourced_components",
-     *                 type="array",
-     *                 description="Services: Outsourced components",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"component_name"},
-     *
-     *                     @OA\Property(property="component_name", type="string", example="Calibration Services")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="svc_key_processes",
-     *                 type="array",
-     *                 description="Services: Key processes",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"process_name"},
-     *
-     *                     @OA\Property(property="process_name", type="string", example="Quality Testing")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="svc_outsourced_processes",
-     *                 type="array",
-     *                 description="Services: Outsourced processes",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"process_name"},
-     *
-     *                     @OA\Property(property="process_name", type="string", example="Third Party Audit")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="customers",
-     *                 type="array",
-     *                 description="Common: Customer list (required)",
-     *
-     *                 @OA\Items(
-     *                     type="object",
-     *                     required={"customer_name", "customer_type"},
-     *
-     *                     @OA\Property(property="customer_name", type="string", example="DRDO Lab X"),
-     *                     @OA\Property(property="customer_type", type="string", enum={"domestic", "international"}, example="domestic"),
-     *                     @OA\Property(property="country", type="string", example="India", description="Required if customer_type is international")
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="third_party_certifications",
-     *                 type="array",
-     *                 description="Common: Third party certifications held",
-     *
-     *                 @OA\Items(type="string"),
-     *                 example={"ISO 9001:2015", "AS9100D", "NABL Accreditation"}
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Basic information saved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Basic information saved successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="basic_information", type="object"),
-     *                 @OA\Property(property="step_completed", type="boolean", example=true),
-     *                 @OA\Property(
-     *                     property="validation",
-     *                     type="object",
-     *                     @OA\Property(property="is_valid", type="boolean", example=true),
-     *                     @OA\Property(property="missing", type="array", @OA\Items(type="string"), example={})
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=400, description="Assessment not in progress"),
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Only the lead assessor can manage basic information"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/application-assessments/{assessmentId}/basic-information',
+        summary: 'Create or update basic information',
+        description: 'Create or update the basic information for the assessment. Use mfg_* fields for manufacturing sector and svc_* fields for service sector. Only the lead assessor can perform this action.',
+        tags: ['Application Assessment Basic Information', 'Assessor - Assessment'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'assessmentId',
+                in: 'path',
+                required: true,
+                description: 'Assessment ID',
+                schema: new OA\Schema(type: 'integer', example: 1),
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(
+                        property: 'category',
+                        type: 'string',
+                        example: 'Manufacturing',
+                        description: 'Category of the enterprise',
+                    ),
+                    new OA\Property(
+                        property: 'mfg_drdo_vendor_stores',
+                        type: 'array',
+                        description: 'Manufacturing: DRDO vendor stores list',
+                        example: [['store_name' => 'DRDO Store 1'], ['store_name' => 'DRDO Store 2']],
+                        items: new OA\Items(
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'store_name', type: 'string', example: 'Store A'),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_products',
+                        type: 'array',
+                        description: 'Manufacturing: Products/articles manufactured',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['product_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'product_name',
+                                    type: 'string',
+                                    example: 'Electronic Component A',
+                                ),
+                                new OA\Property(
+                                    property: 'total_production_capacity',
+                                    type: 'number',
+                                    example: 1000,
+                                ),
+                                new OA\Property(property: 'capacity_unit', type: 'string', example: 'units/month'),
+                                new OA\Property(
+                                    property: 'capacity_unit_utilized',
+                                    type: 'string',
+                                    example: 'units/month',
+                                ),
+                                new OA\Property(
+                                    property: 'current_utilized_capacity',
+                                    type: 'number',
+                                    example: 750,
+                                ),
+                                new OA\Property(
+                                    property: 'commencement_date',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2020-01-15',
+                                ),
+                                new OA\Property(property: 'is_exported', type: 'boolean', example: true),
+                                new OA\Property(
+                                    property: 'export_countries',
+                                    type: 'array',
+                                    example: ['USA', 'Germany'],
+                                    items: new OA\Items(type: 'string'),
+                                ),
+                                new OA\Property(property: 'export_percentage', type: 'number', example: 25.5),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_raw_materials',
+                        type: 'array',
+                        description: 'Manufacturing: Raw materials used',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['material_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'material_name',
+                                    type: 'string',
+                                    example: 'Steel Grade A',
+                                ),
+                                new OA\Property(property: 'is_imported', type: 'boolean', example: false),
+                                new OA\Property(property: 'import_percentage', type: 'number', example: 0),
+                                new OA\Property(property: 'import_country', type: 'string', example: null),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_bought_out_parts',
+                        type: 'array',
+                        description: 'Manufacturing: Bought out parts',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['part_name'],
+                            properties: [
+                                new OA\Property(property: 'part_name', type: 'string', example: 'Capacitor 100uF'),
+                                new OA\Property(property: 'is_imported', type: 'boolean', example: true),
+                                new OA\Property(property: 'import_percentage', type: 'number', example: 60),
+                                new OA\Property(property: 'import_country', type: 'string', example: 'China'),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_key_processes',
+                        type: 'array',
+                        description: 'Manufacturing: Key processes',
+                        example: [['process_name' => 'CNC Machining'], ['process_name' => 'Heat Treatment']],
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['process_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'process_name',
+                                    type: 'string',
+                                    example: 'CNC Machining',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_outsourced_processes',
+                        type: 'array',
+                        description: 'Manufacturing: Outsourced processes',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['process_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'process_name',
+                                    type: 'string',
+                                    example: 'Electroplating',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'mfg_production_capacity',
+                        type: 'number',
+                        example: 5000,
+                        description: 'Manufacturing: Overall production capacity',
+                    ),
+                    new OA\Property(
+                        property: 'mfg_capacity_unit',
+                        type: 'string',
+                        example: 'units/month',
+                        description: 'Manufacturing: Capacity unit',
+                    ),
+                    new OA\Property(
+                        property: 'svc_provider_type',
+                        type: 'string',
+                        example: 'Testing Laboratory',
+                        description: 'Services: Type of service provider',
+                    ),
+                    new OA\Property(
+                        property: 'svc_drdo_vendor_labs',
+                        type: 'array',
+                        description: 'Services: DRDO vendor labs',
+                        items: new OA\Items(
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'lab_name', type: 'string', example: 'Testing Lab A'),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'svc_services',
+                        type: 'array',
+                        description: 'Services: Services offered',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['service_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'service_name',
+                                    type: 'string',
+                                    example: 'Material Testing',
+                                ),
+                                new OA\Property(property: 'total_services_capacity', type: 'number', example: 500),
+                                new OA\Property(property: 'capacity_unit', type: 'string', example: 'tests/month'),
+                                new OA\Property(
+                                    property: 'current_utilized_capacity',
+                                    type: 'number',
+                                    example: 350,
+                                ),
+                                new OA\Property(
+                                    property: 'commencement_date',
+                                    type: 'string',
+                                    format: 'date',
+                                    example: '2019-06-01',
+                                ),
+                                new OA\Property(property: 'is_exported', type: 'boolean', example: false),
+                                new OA\Property(
+                                    property: 'export_countries',
+                                    type: 'array',
+                                    items: new OA\Items(type: 'string'),
+                                ),
+                                new OA\Property(property: 'export_percentage', type: 'number', example: 0),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'svc_key_resources',
+                        type: 'array',
+                        description: 'Services: Key resources',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['resource_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'resource_name',
+                                    type: 'string',
+                                    example: 'Spectrometer',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'svc_outsourced_components',
+                        type: 'array',
+                        description: 'Services: Outsourced components',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['component_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'component_name',
+                                    type: 'string',
+                                    example: 'Calibration Services',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'svc_key_processes',
+                        type: 'array',
+                        description: 'Services: Key processes',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['process_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'process_name',
+                                    type: 'string',
+                                    example: 'Quality Testing',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'svc_outsourced_processes',
+                        type: 'array',
+                        description: 'Services: Outsourced processes',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['process_name'],
+                            properties: [
+                                new OA\Property(
+                                    property: 'process_name',
+                                    type: 'string',
+                                    example: 'Third Party Audit',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'customers',
+                        type: 'array',
+                        description: 'Common: Customer list (required)',
+                        items: new OA\Items(
+                            type: 'object',
+                            required: ['customer_name', 'customer_type'],
+                            properties: [
+                                new OA\Property(property: 'customer_name', type: 'string', example: 'DRDO Lab X'),
+                                new OA\Property(
+                                    property: 'customer_type',
+                                    type: 'string',
+                                    enum: ['domestic', 'international'],
+                                    example: 'domestic',
+                                ),
+                                new OA\Property(
+                                    property: 'country',
+                                    type: 'string',
+                                    example: 'India',
+                                    description: 'Required if customer_type is international',
+                                ),
+                            ],
+                        ),
+                    ),
+                    new OA\Property(
+                        property: 'third_party_certifications',
+                        type: 'array',
+                        description: 'Common: Third party certifications held',
+                        example: ['ISO 9001:2015', 'AS9100D', 'NABL Accreditation'],
+                        items: new OA\Items(type: 'string'),
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Basic information saved successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Basic information saved successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(property: 'basic_information', type: 'object'),
+                                new OA\Property(property: 'step_completed', type: 'boolean', example: true),
+                                new OA\Property(
+                                    property: 'validation',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'is_valid', type: 'boolean', example: true),
+                                        new OA\Property(
+                                            property: 'missing',
+                                            type: 'array',
+                                            example: [],
+                                            items: new OA\Items(type: 'string'),
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 400, description: 'Assessment not in progress'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 403, description: 'Only the lead assessor can manage basic information'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ],
+    )]
     public function store(Request $request, int $assessmentId): JsonResponse
     {
         $assessment = Assessment::with('application')->findOrFail($assessmentId);

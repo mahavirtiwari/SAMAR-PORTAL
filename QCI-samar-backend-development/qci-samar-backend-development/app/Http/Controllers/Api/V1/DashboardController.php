@@ -6,13 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Services\DashboardService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 
-/**
- * @OA\Tag(
- *     name="Dashboards",
- *     description="Role-specific dashboard endpoints"
- * )
- */
+#[OA\Tag(name: 'Dashboards', description: 'Role-specific dashboard endpoints')]
 class DashboardController extends Controller
 {
     /**
@@ -28,23 +24,16 @@ class DashboardController extends Controller
         $this->dashboardService = $dashboardService;
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/ea",
-     *     summary="Get Enterprise Admin dashboard",
-     *     tags={"Dashboard", "Enterprise Admin - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Enterprise Admin dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have enterprise_admin role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/ea',
+        summary: 'Get Enterprise Admin dashboard',
+        tags: ['Dashboard', 'Enterprise Admin - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Enterprise Admin dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have enterprise_admin role'),
+        ],
+    )]
     public function enterpriseAdmin(): JsonResponse
     {
         try {
@@ -62,23 +51,16 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/om",
-     *     summary="Get Operations Manager dashboard",
-     *     tags={"Dashboard", "Operations Manager - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Operations Manager dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have operations_manager role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/om',
+        summary: 'Get Operations Manager dashboard',
+        tags: ['Dashboard', 'Operations Manager - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Operations Manager dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have operations_manager role'),
+        ],
+    )]
     public function operationsManager(): JsonResponse
     {
         try {
@@ -96,23 +78,16 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/oa",
-     *     summary="Get Operations Admin dashboard",
-     *     tags={"Dashboard", "Operations Admin - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Operations Admin dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have operations_admin role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/oa',
+        summary: 'Get Operations Admin dashboard',
+        tags: ['Dashboard', 'Operations Admin - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Operations Admin dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have operations_admin role'),
+        ],
+    )]
     public function operationsAdmin(): JsonResponse
     {
         try {
@@ -130,23 +105,16 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/dr",
-     *     summary="Get DRDO Admin dashboard",
-     *     tags={"Dashboard", "DRDO Admin - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="DRDO Admin dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have drdo_admin role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/dr',
+        summary: 'Get DRDO Admin dashboard',
+        tags: ['Dashboard', 'DRDO Admin - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'DRDO Admin dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have drdo_admin role'),
+        ],
+    )]
     public function drdoAdmin(): JsonResponse
     {
         try {
@@ -164,23 +132,16 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/assessor",
-     *     summary="Get Assessor dashboard",
-     *     tags={"Dashboard", "Assessor - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Assessor dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have assessor role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/assessor',
+        summary: 'Get Assessor dashboard',
+        tags: ['Dashboard', 'Assessor - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'Assessor dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have assessor role'),
+        ],
+    )]
     public function assessor(): JsonResponse
     {
         try {
@@ -198,23 +159,16 @@ class DashboardController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/dashboards/sa",
-     *     summary="Get System Admin dashboard",
-     *     tags={"Dashboard", "System Admin - Dashboard"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="System Admin dashboard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - User must have system_admin role"
-     *     )
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/dashboards/sa',
+        summary: 'Get System Admin dashboard',
+        tags: ['Dashboard', 'System Admin - Dashboard'],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: 'System Admin dashboard retrieved successfully'),
+            new OA\Response(response: 403, description: 'Forbidden - User must have system_admin role'),
+        ],
+    )]
     public function systemAdmin(): JsonResponse
     {
         try {

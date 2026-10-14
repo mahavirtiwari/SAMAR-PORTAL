@@ -14,35 +14,41 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
 class ServiceOutsourcedComponentsController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/outsourced-components",
-     *     summary="List all service outsourced components",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="all",
-     *         in="query",
-     *         description="Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.",
-     *         required=false,
-     *
-     *         @OA\Schema(type="boolean", default=false, example=true)
-     *     ),
-     *
-     *     @OA\Parameter(name="search", in="query", @OA\Schema(type="string")),
-     *     @OA\Parameter(name="serviceProviderType", in="query", @OA\Schema(type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"})),
-     *     @OA\Parameter(name="isActive", in="query", @OA\Schema(type="boolean")),
-     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer", default=1)),
-     *     @OA\Parameter(name="perPage", in="query", @OA\Schema(type="integer", default=15)),
-     *
-     *     @OA\Response(response=200, description="List of outsourced components"),
-     *     @OA\Response(response=400, description="Bad request - conflicting parameters")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/outsourced-components',
+        summary: 'List all service outsourced components',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(
+                name: 'all',
+                in: 'query',
+                description: 'Return all records without pagination (for dropdowns). Cannot be used with page/per_page parameters.',
+                required: false,
+                schema: new OA\Schema(type: 'boolean', default: false, example: true),
+            ),
+            new OA\Parameter(name: 'search', in: 'query', schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(
+                name: 'serviceProviderType',
+                in: 'query',
+                schema: new OA\Schema(
+                    type: 'string',
+                    enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                ),
+            ),
+            new OA\Parameter(name: 'isActive', in: 'query', schema: new OA\Schema(type: 'boolean')),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'perPage', in: 'query', schema: new OA\Schema(type: 'integer', default: 15)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'List of outsourced components'),
+            new OA\Response(response: 400, description: 'Bad request - conflicting parameters'),
+        ],
+    )]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -77,28 +83,30 @@ class ServiceOutsourcedComponentsController extends Controller
         }
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/outsourced-components",
-     *     summary="Create a new service outsourced component",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"componentName", "serviceProviderType"},
-     *
-     *             @OA\Property(property="componentName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean", default=true)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Component created successfully")
-     * )
-     */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/outsourced-components',
+        summary: 'Create a new service outsourced component',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['componentName', 'serviceProviderType'],
+                properties: [
+                    new OA\Property(property: 'componentName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean', default: true),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Component created successfully'),
+        ],
+    )]
     public function store(Request $request): JsonResponse
     {
         try {
@@ -142,46 +150,49 @@ class ServiceOutsourcedComponentsController extends Controller
         }
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/v1/master-data/service/outsourced-components/{id}",
-     *     summary="Get a specific service outsourced component",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Component details")
-     * )
-     */
+    #[OA\Get(
+        path: '/api/v1/master-data/service/outsourced-components/{id}',
+        summary: 'Get a specific service outsourced component',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Component details'),
+        ],
+    )]
     public function show(ServiceOutsourcedComponent $serviceOutsourcedComponent): JsonResponse
     {
         return $this->successResponse($serviceOutsourcedComponent, 'Service outsourced component retrieved successfully');
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/master-data/service/outsourced-components/{id}",
-     *     summary="Update a service outsourced component",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="componentName", type="string"),
-     *             @OA\Property(property="serviceProviderType", type="string", enum={"annual_maintenance_contract", "critical_service_provider", "civil_works_contractor"}),
-     *             @OA\Property(property="isActive", type="boolean")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Component updated successfully")
-     * )
-     */
+    #[OA\Put(
+        path: '/api/v1/master-data/service/outsourced-components/{id}',
+        summary: 'Update a service outsourced component',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'componentName', type: 'string'),
+                    new OA\Property(
+                        property: 'serviceProviderType',
+                        type: 'string',
+                        enum: ['annual_maintenance_contract', 'critical_service_provider', 'civil_works_contractor'],
+                    ),
+                    new OA\Property(property: 'isActive', type: 'boolean'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Component updated successfully'),
+        ],
+    )]
     public function update(Request $request, ServiceOutsourcedComponent $serviceOutsourcedComponent): JsonResponse
     {
         try {
@@ -228,23 +239,27 @@ class ServiceOutsourcedComponentsController extends Controller
 
     /**
      * Activate a service outsourced component.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/outsourced-components/{id}/activate",
-     *     summary="Activate a service outsourced component",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service outsourced component activated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service outsourced component is already active"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service outsourced component not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/outsourced-components/{id}/activate',
+        summary: 'Activate a service outsourced component',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service outsourced component activated successfully'),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Service outsourced component is already active',
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service outsourced component not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function activate(int $id): JsonResponse
     {
         try {
@@ -281,23 +296,27 @@ class ServiceOutsourcedComponentsController extends Controller
 
     /**
      * Deactivate a service outsourced component.
-     *
-     * @OA\Post(
-     *     path="/api/v1/master-data/service/outsourced-components/{id}/deactivate",
-     *     summary="Deactivate a service outsourced component",
-     *     tags={"Service Master Data"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *
-     *     @OA\Response(response=200, description="Service outsourced component deactivated successfully"),
-     *     @OA\Response(response=400, description="Bad request - Service outsourced component is already inactive"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden - System Admin only"),
-     *     @OA\Response(response=404, description="Service outsourced component not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
      */
+    #[OA\Post(
+        path: '/api/v1/master-data/service/outsourced-components/{id}/deactivate',
+        summary: 'Deactivate a service outsourced component',
+        tags: ['Service Master Data'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Service outsourced component deactivated successfully'),
+            new OA\Response(
+                response: 400,
+                description: 'Bad request - Service outsourced component is already inactive',
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 403, description: 'Forbidden - System Admin only'),
+            new OA\Response(response: 404, description: 'Service outsourced component not found'),
+            new OA\Response(response: 500, description: 'Server error'),
+        ],
+    )]
     public function deactivate(int $id): JsonResponse
     {
         try {
