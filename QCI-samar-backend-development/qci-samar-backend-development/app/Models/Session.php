@@ -65,6 +65,32 @@ class Session extends Model
         'is_active' => 'boolean',
     ];
 
+    /** Activity is recorded at most this often; the idle sweep works in tens of minutes. */
+    public const ACTIVITY_WRITE_INTERVAL_SECONDS = 60;
+
+    protected static function booted(): void
+    {
+        // Lookups go through the indexed hash; `token` itself is unindexed TEXT.
+        static::saving(function (self $session) {
+            if ($session->isDirty('token')) {
+                $session->token_hash = $session->token === null ? null : self::hashToken($session->token);
+            }
+        });
+    }
+
+    public static function hashToken(string $token): string
+    {
+        return hash('sha256', $token);
+    }
+
+    /**
+     * Scope: the session row for this exact token (indexed).
+     */
+    public function scopeForToken($query, string $token)
+    {
+        return $query->where('token_hash', self::hashToken($token));
+    }
+
     /**
      * Get the user that owns the session.
      */
@@ -86,10 +112,14 @@ class Session extends Model
     }
 
     /**
-     * Update last activity timestamp.
+     * Update the last activity timestamp. Runs on every authenticated request,
+     * so it only writes when the stored value is older than a minute.
      */
     public function updateActivity(): void
     {
+        if ($this->last_activity_at && $this->last_activity_at->gt(now()->subSeconds(self::ACTIVITY_WRITE_INTERVAL_SECONDS))) {
+            return;
+        }
         $this->update(['last_activity_at' => now()]);
     }
 

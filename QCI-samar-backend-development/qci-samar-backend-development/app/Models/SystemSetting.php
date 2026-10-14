@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasAuditLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class SystemSetting extends Model
 {
@@ -24,14 +25,30 @@ class SystemSetting extends Model
         return false;
     }
 
+    /** Settings are read on every request (maintenance mode); cache each briefly. */
+    private const CACHE_SECONDS = 60;
+
+    protected static function booted(): void
+    {
+        $forget = fn (self $setting) => Cache::forget(self::cacheKey($setting->key));
+        static::saved($forget);
+        static::deleted($forget);
+    }
+
+    private static function cacheKey(string $key): string
+    {
+        return 'system_setting:'.$key;
+    }
+
     /**
      * Get setting value by key
      */
     public static function getValue(string $key, $default = null)
     {
-        $setting = self::where('key', $key)->first();
+        // Wrapped so a missing setting (null) is cached too.
+        $cached = Cache::remember(self::cacheKey($key), self::CACHE_SECONDS, fn () => ['value' => self::where('key', $key)->value('value')]);
 
-        return $setting ? $setting->value : $default;
+        return $cached['value'] ?? $default;
     }
 
     /**

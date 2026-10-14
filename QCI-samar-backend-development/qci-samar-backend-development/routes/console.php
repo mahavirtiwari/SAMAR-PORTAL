@@ -98,7 +98,8 @@ Schedule::command('bc:retry-failed')->everyThirtyMinutes();
 Schedule::command('payments:verify-pending')->everyThirtyMinutes()->withoutOverlapping();
 
 // Example: Clean up expired tokens daily at 2 AM
-// Schedule::command('jwt:clean-expired')->dailyAt('02:00');
+// Ended login sessions and old email delivery records (both grow without bound).
+Schedule::command('records:prune-stale')->dailyAt('02:15')->withoutOverlapping();
 
 // Example: Generate daily reports
 // Schedule::command('reports:generate')->dailyAt('03:00');

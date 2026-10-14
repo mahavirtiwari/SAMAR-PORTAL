@@ -577,7 +577,7 @@ class AuthService
     public function refreshToken(string $refreshToken): array
     {
         // Verify refresh token
-        $session = Session::where('token', $refreshToken)
+        $session = Session::forToken($refreshToken)
             ->where('token_type', 'refresh')
             ->where('is_active', true)
             ->where('expires_at', '>', now())

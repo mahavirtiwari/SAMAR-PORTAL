@@ -52,7 +52,7 @@ class ValidateTokenType
         }
 
         // Check if the token exists in the sessions table as a refresh token
-        $session = Session::where('token', $refreshToken)
+        $session = Session::forToken($refreshToken)
             ->where('token_type', 'refresh')
             ->where('is_active', true)
             ->where('expires_at', '>', now())
@@ -97,8 +97,8 @@ class ValidateTokenType
         }
 
         // Check if this token is a refresh token (which should NOT be used for regular API calls)
-        // We check the first 50 characters since that's what we store for access tokens
-        $isRefreshToken = Session::where('token', $token)
+        // Looked up by the indexed token hash (see Session::scopeForToken).
+        $isRefreshToken = Session::forToken($token)
             ->where('token_type', 'refresh')
             ->exists();
 

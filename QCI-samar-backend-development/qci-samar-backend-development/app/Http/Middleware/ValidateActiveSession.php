@@ -33,7 +33,7 @@ class ValidateActiveSession
         }
 
         // Find the session for this token
-        $session = Session::where('token', $token)
+        $session = Session::forToken($token)
             ->where('user_id', $user->id)
             ->where('token_type', 'access')
             ->first();

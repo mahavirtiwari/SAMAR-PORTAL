@@ -39,7 +39,8 @@ class MailConfigurationApplier
     private static function settings(): ?MailConfiguration
     {
         try {
-            return Cache::rememberForever(self::CACHE_KEY, fn () => MailConfiguration::query()->first());
+            // false = "no row", so an empty table is cached too instead of queried on every request.
+            return Cache::rememberForever(self::CACHE_KEY, fn () => MailConfiguration::query()->first() ?? false) ?: null;
         } catch (\Throwable $e) {
             // Table missing (fresh install before migrate) or DB unavailable.
             return null;

@@ -115,4 +115,10 @@ return [
         'name' => env('MAIL_FROM_NAME'),
     ],
 
+    /*
+    | Email delivery records (notification_events) older than this are deleted
+    | by records:prune-stale. Each row holds the full rendered email.
+    */
+    'notification_events_retention_days' => (int) env('MAIL_EVENTS_RETENTION_DAYS', 180),
+
 ];

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class SystemSettingsSeeder extends Seeder
@@ -61,6 +62,8 @@ class SystemSettingsSeeder extends Seeder
                 ['key' => $setting['key']],
                 $setting
             );
+            // Bypasses the model, so drop SystemSetting::getValue()'s cached copy.
+            Cache::forget('system_setting:'.$setting['key']);
         }
 
         $this->command->info('System settings seeded successfully! ('.count($settings).' settings)');

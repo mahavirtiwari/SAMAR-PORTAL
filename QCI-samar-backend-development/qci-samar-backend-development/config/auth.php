@@ -195,6 +195,8 @@ return [
     'session' => [
         'liveness_minutes' => (int) env('SESSION_LIVENESS_MINUTES', 30),
         'idle_timeout_minutes' => (int) env('SESSION_IDLE_TIMEOUT_MINUTES', 60),
+        // records:prune-stale deletes ended/expired session rows older than this.
+        'prune_after_days' => (int) env('SESSION_PRUNE_AFTER_DAYS', 7),
     ],
 
 ];
