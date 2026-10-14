@@ -5,7 +5,7 @@ This repo deploys the **frontend only**. Staging is driven from the backend repo
 | Environment | Command | Target | URL |
 |---|---|---|---|
 | **Development** | `./deploy/deploy-dev.sh` (this repo) | `vm-webhost-dev-cin-01` → `/data/www/samar.webority.dev/build` | https://samar.webority.dev |
-| **Staging** | `../qci-samar-backend/deploy/deploy-staging.sh frontend` | `qci-staging-vm` → `/var/www/qci-samar/frontend` | https://samar-staging1.qci.org.in |
+| **Staging** | `../qci-samar-backend/deploy/deploy-staging.sh frontend` | `qci-staging-vm` → `/var/www/qci-samar/frontend` | https://qcisamartest.qci.org.in |
 | **Production** | — | not provisioned | — |
 
 > Deploying **both** repos to **both** environments in one go is the unified command in the backend repo:

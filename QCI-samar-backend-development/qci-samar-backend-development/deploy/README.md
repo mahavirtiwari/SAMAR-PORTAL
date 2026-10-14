@@ -5,13 +5,13 @@
 | Environment | Deploys | Target | URL |
 |------------|---------|--------|-----|
 | **Development** | Backend + Frontend | Webority dev VM `vm-webhost-dev-cin-01` (20.204.69.31, Central India) | Backend: https://samar-api.webority.dev · Frontend: https://samar.webority.dev |
-| **Staging** | Backend + Frontend | Linux VM (13.126.142.111) | https://samar-staging1.qci.org.in |
+| **Staging** | Backend + Frontend | Linux VM (13.232.227.197) | https://qcisamartest.qci.org.in |
 
 > All environments run on Linux VMs (nginx + php8.4-fpm + local MySQL) and deploy via SSH+rsync. They differ only in SSH auth: dev uses **Entra ID SSH** (`az ssh config`, no PEM), staging uses a **PEM key**. Use the unified command below so they never drift.
 >
 > The dev **frontend** deploys from the `qci-samar-web` repo's own `deploy/deploy-dev.sh` (rsync of the Vite build into the nginx document root — static files, no application process to restart); the unified command below invokes it for you.
 >
-> Dev's fixed egress IP (for partner IP-whitelisting: Protean GST, ICICI) is the VM IP **20.204.69.31**. Staging's is **13.126.142.111**.
+> Dev's fixed egress IP (for partner IP-whitelisting: Protean GST, ICICI) is the VM IP **20.204.69.31**. Staging's is **13.232.227.197**.
 
 ## Environment configuration (read before "fixing" the deploy to exclude `.env`)
 
@@ -47,7 +47,7 @@ If you ever see a warning like "shipping the local `.env` will overwrite prod co
 4. Deploys every target in scope from that one checkout: backend via this repo's `deploy-dev.sh` / `deploy-staging.sh`, and the dev frontend via `qci-samar-web`'s own `deploy/deploy-dev.sh`.
 5. **Parity check, both halves**: backends via `/api/v1/system/status` (`deployed_commit`), frontends via `/version.json` (`commit`, cache-busted). Each half is checked against its own repo's HEAD, and the run fails loudly if any environment is behind.
 
-`deployed_commit` is exposed on the public status endpoint precisely because it is reachable on every environment (the backend always answers under `/api`, even on staging where `/` is the frontend). Frontend URLs checked: dev at `https://samar.webority.dev/version.json`, staging at `https://samar-staging1.qci.org.in/version.json`.
+`deployed_commit` is exposed on the public status endpoint precisely because it is reachable on every environment (the backend always answers under `/api`, even on staging where `/` is the frontend). Frontend URLs checked: dev at `https://samar.webority.dev/version.json`, staging at `https://qcisamartest.qci.org.in/version.json`.
 
 ## Development Deployment (VM, Entra ID SSH)
 
@@ -134,9 +134,9 @@ composer update --no-dev
 
 | Property | Value |
 |----------|-------|
-| IP | 13.126.142.111 |
+| IP | 13.232.227.197 |
 | User | ubuntu |
-| Domain | https://samar-staging1.qci.org.in |
+| Domain | https://qcisamartest.qci.org.in |
 | Frontend Path | /var/www/qci-samar/frontend |
 | Backend Path | /var/www/qci-samar/backend |
 | Database | MySQL (local) - qci_samar |
@@ -144,7 +144,7 @@ composer update --no-dev
 ### Manual SSH Access
 
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111
+ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197
 ```
 
 ### nginx & Security Headers (Staging) — server-managed
@@ -163,7 +163,7 @@ Verify after any change — every count must be exactly 1:
 
 ```bash
 for u in / /api/v1/system/status /docs; do
-  curl -s -D - -o /dev/null "https://samar-staging1.qci.org.in$u" \
+  curl -s -D - -o /dev/null "https://qcisamartest.qci.org.in$u" \
     | grep -ci '^content-security-policy:'
 done
 ```
@@ -173,8 +173,8 @@ done
 To change the headers:
 
 ```bash
-scp -i deploy/zed-staging-server-2026.pem deploy/nginx/qci-security-headers.conf ubuntu@13.126.142.111:/tmp/
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
+scp -i deploy/zed-staging-server-2026.pem deploy/nginx/qci-security-headers.conf ubuntu@13.232.227.197:/tmp/
+ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
   'sudo cp /tmp/qci-security-headers.conf /etc/nginx/snippets/ && sudo nginx -t && sudo systemctl reload nginx'
 ```
 
@@ -215,13 +215,13 @@ Seeded accounts and their passwords are defined in `database/seeders/` — read 
 
 ### API returns 500 error
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
+ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
   "tail -50 /var/www/qci-samar/backend/storage/logs/laravel-*.log"
 ```
 
 ### Permission errors
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
+ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
   "sudo chown -R ubuntu:www-data /var/www/qci-samar/backend && \
    sudo chmod -R 755 /var/www/qci-samar/backend && \
    sudo chmod -R 775 /var/www/qci-samar/backend/storage /var/www/qci-samar/backend/bootstrap/cache"
@@ -229,7 +229,7 @@ ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
 
 ### Config not updating
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
+ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
   "cd /var/www/qci-samar/backend && export APP_ENV=staging && \
    php artisan config:clear && php artisan config:cache"
 ```

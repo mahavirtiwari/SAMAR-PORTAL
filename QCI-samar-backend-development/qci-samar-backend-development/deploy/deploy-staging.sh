@@ -3,7 +3,7 @@
 # =============================================================================
 # QCI SAMAR - Staging Deployment Script
 # =============================================================================
-# Target: Staging VM (13.126.142.111)
+# Target: Staging VM (13.232.227.197)
 # Deploys: Backend + Frontend (or individually)
 #
 # Usage:
@@ -20,9 +20,11 @@
 set -e
 
 # Server Configuration
-STAGING_IP="13.126.142.111"
-STAGING_USER="ubuntu"
-STAGING_URL="https://samar-staging1.qci.org.in"
+STAGING_IP="13.232.227.197"
+# Override with STAGING_USER / STAGING_PEM when the VM's login differs (the
+# qcisamartest VM does not accept the old zed-staging key).
+STAGING_USER="${STAGING_USER:-ubuntu}"
+STAGING_URL="https://qcisamartest.qci.org.in"
 
 # Paths
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -32,7 +34,7 @@ REMOTE_WEB_DIR="/var/www/qci-samar/frontend"
 REMOTE_BACKEND_DIR="/var/www/qci-samar/backend"
 
 # PEM file: check deploy/ folder first, then ~/.ssh/
-PEM_FILE="$SCRIPT_DIR/zed-staging-server-2026.pem"
+PEM_FILE="${STAGING_PEM:-$SCRIPT_DIR/zed-staging-server-2026.pem}"
 if [ ! -f "$PEM_FILE" ]; then
     PEM_FILE="$HOME/.ssh/zed-staging-server-2026.pem"
 fi

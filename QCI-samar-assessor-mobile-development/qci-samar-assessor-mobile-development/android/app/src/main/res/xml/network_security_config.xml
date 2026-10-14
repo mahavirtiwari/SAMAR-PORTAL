@@ -21,23 +21,19 @@
         </pin-set>
     </domain-config>
 
-    <!-- Staging environment (Let's Encrypt). Pin the ISRG roots, not the leaf: LE renews the
-         leaf every ~60 days and rotates intermediates, so leaf/intermediate pins cause a hard
-         outage on every renewal. The roots are stable for years. -->
+    <!-- Staging (qcisamartest.qci.org.in). Served with QCI's GoDaddy wildcard certificate
+         (*.qci.org.in), not Let's Encrypt: leaf -> GoDaddy TLS Intermediate CA DV - R1v1
+         -> GoDaddy TLS Root CA - R1, which is cross-signed by Go Daddy Root G2. Pin both
+         roots, not the leaf or intermediate (the wildcard is renewed yearly): a device
+         whose trust store has Root R1 ends the chain there, an older one ends at G2.
+         Pins verified against the served chain 14-Oct-2026. -->
     <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">samar-staging1.qci.org.in</domain>
+        <domain includeSubdomains="true">qcisamartest.qci.org.in</domain>
         <pin-set expiration="2027-06-01">
-            <!-- ISRG Root X2 (anchors LE ECDSA chain currently served) -->
-            <pin digest="SHA-256">diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=</pin>
-            <!-- ISRG Root X1 (backup for LE RSA chain) -->
-            <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
-            <!-- ISRG Root YE. Let's Encrypt now serves leaf -> YE1/YE2 -> Root YE -> X2,
-                 so X2 is only reachable at the END of that chain. Once device trust
-                 stores carry Root YE directly, clients build a SHORTER path that ends
-                 at YE and X2 drops out of the verified chain — pinning X2 alone would
-                 then fail with no server-side fix. Verified served by both hosts
-                 20-Aug-2026. -->
-            <pin digest="SHA-256">sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=</pin>
+            <!-- GoDaddy TLS Root CA - R1 -->
+            <pin digest="SHA-256">gKjJIacZSuY6bbDnu13WF/rufps/FKwGIaqxRb5nKZA=</pin>
+            <!-- Go Daddy Root Certificate Authority - G2 (cross-signs R1; older devices) -->
+            <pin digest="SHA-256">Ko8tivDrEjiY90yGasP6ZpBU4jwXvHqVvQI0GS3GNdA=</pin>
         </pin-set>
     </domain-config>
 

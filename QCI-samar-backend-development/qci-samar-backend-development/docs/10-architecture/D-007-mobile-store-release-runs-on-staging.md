@@ -13,7 +13,7 @@ The applicant and assessor apps are being submitted to the Play Store and the Ap
 
 There is no production environment. `.webority/infra.json` records
 `environments.production = null` and every deployable's `production` entry as `null`; only
-`samar-api.webority.dev` (dev) and `samar-staging1.qci.org.in` (QCI-hosted staging) exist.
+`samar-api.webority.dev` (dev) and `qcisamartest.qci.org.in` (QCI-hosted staging) exist.
 Both apps carried an **empty** `BASE_URL` in `appsettings.Production.json`, so a build made
 with `NODE_ENV=Production` compiled fine and then failed on its first network call. Store
 submission was impossible on that config.
@@ -42,7 +42,7 @@ Concretely:
   is the one thing that must not be confused with the `.staging` internal builds. (Both apps
   were renamed onto that scheme on 20-Aug-2026 and relaunch as fresh store listings from
   1.0.0 — see D-009.)
-- The assessor app's TLS pinning already covers `samar-staging1.qci.org.in` in both
+- The assessor app's TLS pinning already covers `qcisamartest.qci.org.in` in both
   `android/app/src/main/res/xml/network_security_config.xml` and
   `ios/assessor/AppDelegate.swift`, so the store build is pinned exactly as the staging
   build is. **No native pinning change was needed, and none may be made without a

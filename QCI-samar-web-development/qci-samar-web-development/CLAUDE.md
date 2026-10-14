@@ -23,7 +23,7 @@
 
 **Environments (API base URLs):**
 - Development: `https://samar-api.webority.dev/api/v1`
-- Staging: `https://samar-staging1.qci.org.in/api/v1`
+- Staging: `https://qcisamartest.qci.org.in/api/v1`
 - Production: **unset** — `src/appsettings.Production.json` has `BASE_URL: ""`; the production API host is not yet decided. Set it before any prod build/deploy (an empty base URL will fail at runtime).
 
 **4-repo system:**

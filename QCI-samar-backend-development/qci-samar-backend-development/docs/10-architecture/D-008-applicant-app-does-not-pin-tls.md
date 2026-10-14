@@ -19,7 +19,7 @@ Two mobile clients in this constellation talk to the same API host, with opposit
 TLS postures:
 
 - **`qci-samar-assessor-mobile` pins.** ISRG root certificates for
-  `samar-api.webority.dev` and `samar-staging1.qci.org.in`, enforced natively in
+  `samar-api.webority.dev` and `qcisamartest.qci.org.in`, enforced natively in
   `android/app/src/main/res/xml/network_security_config.xml` and via TrustKit
   (`kTSKEnforcePinning: true`) in `ios/assessor/AppDelegate.swift`.
 - **`qci-samar-applicant-mobile` pinned nothing.** No pin configuration in any env

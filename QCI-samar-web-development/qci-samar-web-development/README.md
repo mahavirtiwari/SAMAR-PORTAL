@@ -43,7 +43,7 @@ No `.env` files. `scripts/prebuild.js` merges `src/appsettings.json` (base) with
 | Environment | API base URL |
 |---|---|
 | Development | `https://samar-api.webority.dev/api/v1` |
-| Staging | `https://samar-staging1.qci.org.in/api/v1` |
+| Staging | `https://qcisamartest.qci.org.in/api/v1` |
 | Production | **unset** — not provisioned |
 
 **Production is not provisioned.** `src/appsettings.Production.json` has an empty `BASE_URL`,

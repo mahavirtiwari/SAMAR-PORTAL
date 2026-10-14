@@ -27,7 +27,7 @@ FRONTEND_DIR="$(cd "$BACKEND_DIR/../qci-samar-web" 2>/dev/null && pwd || echo ""
 WORK_BRANCH="development"
 
 DEV_URL="https://samar-api.webority.dev"
-STAGING_URL="https://samar-staging1.qci.org.in"
+STAGING_URL="https://qcisamartest.qci.org.in"
 DEV_FE_URL="https://samar.webority.dev"
 STAMP_FILE="$BACKEND_DIR/public/deployed-commit.txt"
 

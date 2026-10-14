@@ -36,7 +36,7 @@
           "deployable": "samar-api",
           "baseUrlIn": "appsettings.{Env}.json BASE_URL",
           "tlsPinning": "NONE, deliberately (backend docs/10-architecture/D-008) — unlike the assessor app this client configures no pins and wires no pinning library; do not assume pinning protects it, and do not add pinning as a consistency cleanup",
-          "$comment": "STORE BUILDS RUN ON STAGING: appsettings.Production.json BASE_URL points at https://samar-staging1.qci.org.in/api/v1/ per backend docs/10-architecture/D-007. No production backend exists."
+          "$comment": "STORE BUILDS RUN ON STAGING: appsettings.Production.json BASE_URL points at https://qcisamartest.qci.org.in/api/v1/ per backend docs/10-architecture/D-007. No production backend exists."
         },
         "firebase": "Project qci-samar (763992459108), shared with the assessor app. Apps org.qcin.samar.applicant{,.staging,.development} on ANDROID + IOS. Configs committed: android/app/google-services.json (this app's three variants only) and ios/qciapplicantapp/firebase/GoogleService-Info-{Production,Staging,Development}.plist, selected at build time by prebuild.js. Crashlytics only — no other Firebase product is wired.",
         "security": "Security-grade tier (react-native.md): SecurityGuard.kt (Kotlin baseline + RootBeer, fail-closed) enforced from MainApplication.onCreate and MainActivity.onResume, Talsec, WebView debugging off, iOS anti-debug/jailbreak/Frida layer, TrustKit + network_security_config pinning on the ISRG roots. GUARD: SecurityGuard's RELEASE_CERT_SHA256/PLAY_CERT_SHA256 are UNSET until the fresh keystores exist (D-009) — while unset the SIGNATURE check is skipped (root/tamper detection still enforces). Filling them is a pre-submission gate. Never derive these at runtime: a re-signed APK satisfies its own derived hash."
@@ -52,7 +52,7 @@
   },
   "monitoring": {
     "healthCheckPaths": {
-      "samar-api": "https://samar-staging1.qci.org.in/api/health (the API this client depends on; the app itself has no probeable endpoint)"
+      "samar-api": "https://qcisamartest.qci.org.in/api/health (the API this client depends on; the app itself has no probeable endpoint)"
     },
     "alerts": [],
     "escalation": "None, deliberately — see $comment.",

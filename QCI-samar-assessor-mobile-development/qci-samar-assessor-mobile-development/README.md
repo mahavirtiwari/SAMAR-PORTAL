@@ -42,7 +42,7 @@ repo root. `prebuild.js` also patches `android/gradle.properties` and the iOS `I
 | Environment | API host |
 |---|---|
 | Development | `samar-api.webority.dev` |
-| Staging | `samar-staging1.qci.org.in` |
+| Staging | `qcisamartest.qci.org.in` |
 | Production | **not provisioned** — placeholders only |
 
 ## TLS certificate pinning — read before touching any certificate or domain

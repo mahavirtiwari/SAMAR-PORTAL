@@ -75,22 +75,18 @@ class AppDelegate: RCTAppDelegate {
           ],
           kTSKExpirationDate: "2027-06-01",
         ],
-        // Staging environment (Let's Encrypt). Pin the ISRG roots, not the leaf: LE renews the
-        // leaf every ~60 days and rotates intermediates, so leaf/intermediate pins cause a hard
-        // outage on every renewal. The roots are stable for years.
-        "samar-staging1.qci.org.in": [
+        // Staging (qcisamartest.qci.org.in) — QCI's GoDaddy wildcard certificate (*.qci.org.in), not
+        // Let's Encrypt. Pin both roots: GoDaddy TLS Root CA - R1 ends the chain on newer
+        // devices; Go Daddy Root G2 (which cross-signs R1) on older ones. Verified against
+        // the served chain 14-Oct-2026.
+        "qcisamartest.qci.org.in": [
           kTSKEnforcePinning: true,
           kTSKIncludeSubdomains: true,
           kTSKPublicKeyHashes: [
-            // ISRG Root X2 (anchors LE ECDSA chain currently served)
-            "diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=",
-            // ISRG Root X1 (backup for LE RSA chain)
-            "C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=",
-            // ISRG Root YE — LE now serves leaf -> YE1/YE2 -> Root YE -> X2, so a
-            // client whose trust store gains Root YE builds a shorter chain that
-            // never reaches X2. Pinning X2 alone would brick installs with no
-            // server-side fix. Verified served by both hosts 20-Aug-2026.
-            "sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=",
+            // GoDaddy TLS Root CA - R1
+            "gKjJIacZSuY6bbDnu13WF/rufps/FKwGIaqxRb5nKZA=",
+            // Go Daddy Root Certificate Authority - G2
+            "Ko8tivDrEjiY90yGasP6ZpBU4jwXvHqVvQI0GS3GNdA=",
           ],
           kTSKExpirationDate: "2027-06-01",
         ],

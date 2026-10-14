@@ -36,7 +36,7 @@
           "deployable": "samar-api",
           "baseUrlIn": "appsettings.{Env}.json BASE_URL",
           "pinnedIn": "android/app/src/main/res/xml/network_security_config.xml + ios/assessor/AppDelegate.swift (hardcoded; NOT appsettings)",
-          "$comment": "Dev + staging pin the ISRG roots — coordinate any cert rotation with an app release. STORE BUILDS RUN ON STAGING: appsettings.Production.json BASE_URL points at https://samar-staging1.qci.org.in/api/v1/ per backend docs/10-architecture/D-007. That domain IS pinned, so no native pinning change was needed; the production pin block in both native files is still a commented placeholder awaiting a real production host."
+          "$comment": "Dev pins the ISRG roots and staging (qcisamartest.qci.org.in, GoDaddy *.qci.org.in wildcard) the GoDaddy R1 + G2 roots — coordinate any cert rotation with an app release. STORE BUILDS RUN ON STAGING: appsettings.Production.json BASE_URL points at https://qcisamartest.qci.org.in/api/v1/ per backend docs/10-architecture/D-007. That domain IS pinned, so no native pinning change was needed; the production pin block in both native files is still a commented placeholder awaiting a real production host."
         },
         "firebase": "Project qci-samar (763992459108). Apps org.qcin.samar.assessor{,.staging,.development} on ANDROID + IOS. Configs committed: android/app/google-services.json (this app's three variants only) and ios/assessor/firebase/GoogleService-Info-{Production,Staging,Development}.plist, selected at build time by prebuild.js. Crashlytics only — no other Firebase product is wired. The project holds exactly these 6 plus the applicant app's 6; nothing else.",
         "security": "Security-grade tier (react-native.md): SecurityGuard.kt (Kotlin baseline + RootBeer, fail-closed) enforced from MainApplication.onCreate and MainActivity.onResume, Talsec, WebView debugging off, iOS anti-debug/jailbreak/Frida layer, TrustKit + network_security_config pinning on the ISRG roots. GUARD: SecurityGuard's RELEASE_CERT_SHA256/PLAY_CERT_SHA256 are UNSET until the fresh keystores exist (D-009) — while unset the SIGNATURE check is skipped (root/tamper detection still enforces). Filling them is a pre-submission gate. Never derive these at runtime: a re-signed APK satisfies its own derived hash."
@@ -52,7 +52,7 @@
   },
   "monitoring": {
     "healthCheckPaths": {
-      "samar-api": "https://samar-staging1.qci.org.in/api/health (the API this client depends on; the app itself has no probeable endpoint)"
+      "samar-api": "https://qcisamartest.qci.org.in/api/health (the API this client depends on; the app itself has no probeable endpoint)"
     },
     "alerts": [],
     "escalation": "None, deliberately — see $comment.",

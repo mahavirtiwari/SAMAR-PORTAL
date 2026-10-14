@@ -88,7 +88,7 @@ return [
     |
     | Public support/query form linked from every outgoing email. Defaults to
     | the frontend portal's /support route so each environment resolves its own
-    | URL (staging -> samar-staging1.qci.org.in/support, production -> its own),
+    | URL (staging -> qcisamartest.qci.org.in/support, production -> its own),
     | and can be overridden per environment via the SUPPORT_URL env var.
     |
     */

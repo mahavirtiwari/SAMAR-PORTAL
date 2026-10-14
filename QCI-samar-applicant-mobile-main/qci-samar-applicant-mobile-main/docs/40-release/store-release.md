@@ -41,7 +41,7 @@ Consequences worth holding onto:
 |---|---|
 | Build command | `npm run android:release` / `npm run ios:release` with `NODE_ENV=Production` |
 | App id | `org.qcin.samar.applicant` — `APP_ID_SUFFIX` is `""` in Production (internal builds use `.staging`) |
-| API | `https://samar-staging1.qci.org.in/api/v1/` — **staging**, per D-007 (pilot) |
+| API | `https://qcisamartest.qci.org.in/api/v1/` — **staging**, per D-007 (pilot) |
 | TLS pinning | **none, deliberately** — see [D-008](../../../qci-samar-backend/docs/10-architecture/D-008-applicant-app-does-not-pin-tls.md). Unlike the assessor app, this client configures no pins and wires no pinning library. Do not assume pinning protects it, and do not copy the assessor app's pinning claims here. |
 | Version | `appsettings.json` → `VERSION_DISPLAY` / `VERSION_INTERNAL`, stamped into the native files by `prebuild.js` |
 | Client logging | off (`LOGGING_ENABLED: false`) |
@@ -201,7 +201,7 @@ be fixed server-side — it needs a store release and users installing it.
 is still in it:
 
 ```bash
-for h in samar-api.webority.dev samar-staging1.qci.org.in; do
+for h in samar-api.webority.dev qcisamartest.qci.org.in; do
   echo | openssl s_client -connect $h:443 -servername $h -showcerts 2>/dev/null     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER     | openssl dgst -sha256 -binary | openssl base64
 done
 ```

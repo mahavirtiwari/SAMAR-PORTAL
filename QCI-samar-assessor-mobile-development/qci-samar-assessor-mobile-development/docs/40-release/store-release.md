@@ -42,8 +42,8 @@ Consequences worth holding onto:
 |---|---|
 | Build command | `npm run android:release` / `npm run ios:release` with `NODE_ENV=Production` |
 | App id | `org.qcin.samar.assessor` — `APP_ID_SUFFIX` is `""` in Production (internal builds use `.staging`) |
-| API | `https://samar-staging1.qci.org.in/api/v1/` — **staging**, per D-007 (pilot) |
-| TLS pinning | ISRG roots for the staging domain, in `android/app/src/main/res/xml/network_security_config.xml` and `ios/assessor/AppDelegate.swift`. Native files, not appsettings — a cert-authority change on the staging host bricks released builds. |
+| API | `https://qcisamartest.qci.org.in/api/v1/` — **staging**, per D-007 (pilot) |
+| TLS pinning | GoDaddy roots (TLS Root CA - R1, Root G2) for the staging domain, in `android/app/src/main/res/xml/network_security_config.xml` and `ios/assessor/AppDelegate.swift`. Native files, not appsettings — a cert-authority change on the staging host bricks released builds. |
 | Version | `appsettings.json` → `VERSION_DISPLAY` / `VERSION_INTERNAL`, stamped into the native files by `prebuild.js` |
 | Client logging | off (`LOGGING_ENABLED: false`) |
 
@@ -206,7 +206,7 @@ be fixed server-side — it needs a store release and users installing it.
 is still in it:
 
 ```bash
-for h in samar-api.webority.dev samar-staging1.qci.org.in; do
+for h in samar-api.webority.dev qcisamartest.qci.org.in; do
   echo | openssl s_client -connect $h:443 -servername $h -showcerts 2>/dev/null     | openssl x509 -pubkey -noout | openssl pkey -pubin -outform DER     | openssl dgst -sha256 -binary | openssl base64
 done
 ```

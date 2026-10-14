@@ -41,7 +41,7 @@ repo root. `prebuild.js` also patches `android/gradle.properties` and the iOS `I
 | Environment | API base URL |
 |---|---|
 | Development | `https://samar-api.webority.dev/api/v1/` |
-| Staging | `https://samar-staging1.qci.org.in/api/v1/` |
+| Staging | `https://qcisamartest.qci.org.in/api/v1/` |
 | Production | **unset** — not provisioned (tracked in BUG-06301) |
 
 ## No TLS certificate pinning

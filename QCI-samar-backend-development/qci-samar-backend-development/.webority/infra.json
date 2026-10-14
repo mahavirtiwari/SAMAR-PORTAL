@@ -68,7 +68,7 @@
     "qci-staging-vm": {
       "provider": "vm",
       "ownership": "CUSTOMER-HOSTED (confirmed Navneet 18-Jul-2026) — this VM belongs to QCI, not Webority; we hold deploy access via the PEM. The dev VM is ours, this one is theirs.",
-      "ip": "13.126.142.111",
+      "ip": "13.232.227.197",
       "os": "ubuntu",
       "ssh": {
         "method": "pem",
@@ -81,7 +81,7 @@
         "mysql",
         "pm2"
       ],
-      "tls": "samar-staging1.qci.org.in — cert on the server-managed nginx on the CUSTOMER's VM (their DNS, their cert responsibility; VERIFY issuer/renewal only if an expiry incident arises)",
+      "tls": "qcisamartest.qci.org.in — cert on the server-managed nginx on the CUSTOMER's VM (their DNS, their cert responsibility; VERIFY issuer/renewal only if an expiry incident arises)",
       "backups": "none on our side — customer-hosted staging VM; pre-production estate (Navneet, 18-Jul-2026). Still accepted under the D-007 pilot store release (the store apps are a testing distribution channel, not a production launch). Trigger to revisit: production provisioning, or real dependence on staging data arriving before it.",
       "notes": "Fixed egress IP for partner whitelisting. nginx config is server-managed (/etc/nginx/sites-enabled/qci-samar.conf) — the deploy script does NOT overwrite it. Security-header snippet source of truth: deploy/nginx/qci-security-headers.conf."
     }
@@ -116,7 +116,7 @@
         "staging": {
           "host": "qci-staging-vm",
           "path": "/var/www/qci-samar/backend",
-          "url": "https://samar-staging1.qci.org.in (API under /api)"
+          "url": "https://qcisamartest.qci.org.in (API under /api)"
         },
         "production": null
       },
@@ -153,7 +153,7 @@
         "staging": {
           "host": "qci-staging-vm",
           "path": "/var/www/qci-samar/frontend",
-          "url": "https://samar-staging1.qci.org.in",
+          "url": "https://qcisamartest.qci.org.in",
           "$comment": "static via nginx"
         },
         "production": null
@@ -182,7 +182,7 @@
     "settings": [
       "samar-api.webority.dev is DNS-only (NOT proxied) — mobile cert pinning against ISRG roots; proxying it breaks the apps",
       "samar.webority.dev (web) IS proxied",
-      "staging domain samar-staging1.qci.org.in is on QCI's DNS, not ours"
+      "staging domain qcisamartest.qci.org.in is on QCI's DNS, not ours"
     ]
   },
   "integrations": {
