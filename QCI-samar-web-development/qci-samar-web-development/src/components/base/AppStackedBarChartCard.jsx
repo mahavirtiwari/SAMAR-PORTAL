@@ -47,15 +47,7 @@ const AppStackedBarChartCard = ({ title, categories = [], chartData = {}, defaul
       <div className="d-flex align-items-center justify-content-between margin-bottom-20">
         <h2 className="fs-20 fw-600 heading-color">{title}</h2>
         {categories && categories.length > 0 && (
-          <AppDropdown
-            options={categories}
-            value={selectedCategory}
-            onChange={e => setSelectedCategory(e.target.value)}
-            placeholder="Select Type"
-            label="Sector"
-            dropdownWidth="200px"
-            searchable={false}
-          />
+          <AppDropdown options={categories} value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} placeholder="Select Type" label="Sector" searchable={false} />
         )}
       </div>
       {/* Legend */}

@@ -48,6 +48,8 @@ const AppInput = ({
   InputProps,
   inputProps,
   slotProps,
+  // Width of the outer container; not a TextField prop.
+  customWidth,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -326,7 +328,7 @@ const AppInput = ({
 
   return (
     <>
-      <div className={`input-container ${inputType === 'search' ? 'search-Container' : ''} mb-0 position-relative${className ? ' ' + className : ''}`} style={{ width: props.customWidth }}>
+      <div className={`input-container ${inputType === 'search' ? 'search-Container' : ''} mb-0 position-relative${className ? ' ' + className : ''}`} style={{ width: customWidth }}>
         <TextField
           id="outlined-textarea"
           type={type || 'text'}

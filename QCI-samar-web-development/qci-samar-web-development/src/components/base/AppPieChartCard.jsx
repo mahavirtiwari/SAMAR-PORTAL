@@ -19,7 +19,13 @@ function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defau
 
   return (
     <div>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}>
         <h2 className="page-heading">{title}</h2>
         <FormControl sx={{ width: '160px' }}>
           <AppDropdown
@@ -58,11 +64,30 @@ function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defau
           hideLegend={true}
         />
       </Box>
-      <Box display="flex" justifyContent="center" flexWrap="wrap" mt={2} gap={2}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          mt: 2,
+          gap: 2,
+        }}>
         {chartData.map(item => (
-          <Box key={item.label || item.name} display="flex" alignItems="center" gap={1}>
+          <Box
+            key={item.label || item.name}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+            }}>
             <Box sx={{ width: 16, height: 16, borderRadius: '50%', background: item.color }} />
-            <Typography variant="body2" fontSize={12} fontWeight={500} color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: 'text.secondary',
+              }}>
               {item.name}
             </Typography>
           </Box>

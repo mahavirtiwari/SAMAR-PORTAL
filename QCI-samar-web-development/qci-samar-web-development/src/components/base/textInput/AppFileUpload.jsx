@@ -210,7 +210,11 @@ const AppFileUpload = ({
           onChange={handleFileChange}
         />
       </Box>
-      <Typography variant="caption" color="text.secondary">
+      <Typography
+        variant="caption"
+        sx={{
+          color: 'text.secondary',
+        }}>
         {subLabel || `Only .jpg, .jpeg, .png, .pdf files. Max file size ${maxSizeMB}MB.`}
       </Typography>
       {displayError && <div className="error-text">{displayError}</div>}
