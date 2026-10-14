@@ -1908,77 +1908,6 @@ class ApplicationController extends Controller
         }
     }
 
-    /**
-     * @OA\Put(
-     *     path="/api/v1/applications/{id}",
-     *     summary="Update application",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="sector", type="string", enum={"manufacturing", "service"}),
-     *             @OA\Property(property="mfgProducts", type="array", @OA\Items(type="object"), description="Manufacturing products (for manufacturing sector)"),
-     *             @OA\Property(property="mfgRawMaterials", type="array", @OA\Items(type="object"), description="Manufacturing raw materials (for manufacturing sector)"),
-     *             @OA\Property(property="mfgBoughtOutParts", type="array", @OA\Items(type="object"), description="Manufacturing bought out parts (for manufacturing sector)"),
-     *             @OA\Property(property="mfgKeyProcesses", type="array", @OA\Items(type="object"), description="Manufacturing key processes (for manufacturing sector)"),
-     *             @OA\Property(property="mfgOutsourcedProcesses", type="array", @OA\Items(type="object"), description="Manufacturing outsourced processes (for manufacturing sector)"),
-     *             @OA\Property(property="mfgDrdoVendorStores", type="array", @OA\Items(type="object"), description="Manufacturing DRDO vendor stores (for manufacturing sector)"),
-     *             @OA\Property(property="svcServices", type="array", @OA\Items(type="object"), description="Services (for services sector)"),
-     *             @OA\Property(property="svcKeyResources", type="array", @OA\Items(type="object"), description="Service key resources (for services sector)"),
-     *             @OA\Property(property="svcKeyProcesses", type="array", @OA\Items(type="object"), description="Service key processes (for services sector)"),
-     *             @OA\Property(property="svcOutsourcedProcesses", type="array", @OA\Items(type="object"), description="Service outsourced processes (for services sector)"),
-     *             @OA\Property(property="customers", type="array", @OA\Items(type="object"), description="Customers (common to both sectors)")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Application cannot be edited in current status"
-     *     )
-     * )
-     */
-
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/applications/{id}",
-     *     summary="Delete application",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Application deleted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Only draft applications can be deleted"
-     *     )
-     * )
-     */
     #[OA\Get(
         path: '/api/v1/applications/{id}/files/{field}',
         summary: 'Download an application file from private storage',
@@ -3040,32 +2969,6 @@ class ApplicationController extends Controller
             'message' => $result?->message,
         ], 'GSTIN consistency checked');
     }
-
-    /**
-     * @OA\Get(
-     *     path="/api/v1/applications/{id}/scorecard",
-     *     summary="Get application scorecard",
-     *     tags={"Application", "System Admin - Application", "Unit Admin - Application", "Enterprise Admin - Application"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Scorecard retrieved successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Application not found"
-     *     )
-     * )
-     */
 
     /**
      * Create a Unit Admin for the unit.

@@ -9898,6 +9898,202 @@
                 ]
             }
         },
+        "/api/v1/assessment-parameters/bulk-import": {
+            "post": {
+                "tags": [
+                    "Assessment Parameters",
+                    "System Admin - Assessment Parameters",
+                    "DRDO Admin - Assessment Parameters"
+                ],
+                "summary": "Bulk import assessment parameters with questions and options from Excel/CSV",
+                "description": "Import assessment parameters with full hierarchy (disciplines, parameters, questions, options) from Excel file. Expected columns: Discipline, Parameter Code, Parameter Name, Parameter Type, Question Category, Question Code, Question Text, Weightage (%), Option 1-5 Text. Weightage must sum to 100% per parameter. All imports are transactional (all-or-nothing).",
+                "operationId": "908d1278bc29b0e8a0692a986c7d61d5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file",
+                                    "sector",
+                                    "enterprise_size",
+                                    "vendor_category_id"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel or CSV file with assessment parameters (max 5MB)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "sector": {
+                                        "description": "Sector for all parameters in this import",
+                                        "type": "string",
+                                        "enum": [
+                                            "manufacturing",
+                                            "service"
+                                        ]
+                                    },
+                                    "enterprise_size": {
+                                        "description": "Enterprise size for all parameters in this import",
+                                        "type": "string",
+                                        "enum": [
+                                            "startup",
+                                            "micro",
+                                            "small",
+                                            "medium",
+                                            "large"
+                                        ]
+                                    },
+                                    "service_provider_type": {
+                                        "description": "Service provider type (required only if sector is service)",
+                                        "type": "string",
+                                        "nullable": true,
+                                        "enum": [
+                                            "annual_maintenance_contract",
+                                            "critical_service_provider"
+                                        ]
+                                    },
+                                    "vendor_category_id": {
+                                        "description": "DRDO vendor category ID (must exist in manufacturing_vendor_categories or service_vendor_categories based on sector)",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Import completed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Import completed successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "disciplines": {
+                                                    "properties": {
+                                                        "created": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "existing": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "parameters": {
+                                                    "properties": {
+                                                        "created": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "updated": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "questions": {
+                                                    "properties": {
+                                                        "created": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "updated": {
+                                                            "type": "integer",
+                                                            "example": 6
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "options": {
+                                                    "properties": {
+                                                        "created": {
+                                                            "type": "integer",
+                                                            "example": 105
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Import failed with validation errors"
+                                        },
+                                        "errors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "row": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "parameter_code": {
+                                                        "type": "string",
+                                                        "example": "TECH-002"
+                                                    },
+                                                    "errors": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "Weightage sums to 85%, must be 100%"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/assessment-parameters/{id}/activate": {
             "post": {
                 "tags": [
@@ -23262,6 +23458,313 @@
                     },
                     "422": {
                         "description": "No fee configuration matches the application"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payments/initiate": {
+            "post": {
+                "tags": [
+                    "Payment",
+                    "System Admin - Payment",
+                    "DRDO Admin - Payment",
+                    "Operations Manager - Payment",
+                    "Operations Admin - Payment"
+                ],
+                "summary": "Initiate a new payment",
+                "description": "Creates a new payment record and initiates the payment process with the selected payment gateway. Returns gateway-specific data required for completing the payment. For ICICI EazyPay, organization details are automatically fetched from the application.",
+                "operationId": "61cea3e7f5021b072b0673f8d2e248eb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "application_id",
+                                    "payment_type"
+                                ],
+                                "properties": {
+                                    "application_id": {
+                                        "description": "ID of the application for which payment is being made",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "payment_type": {
+                                        "description": "Type of payment",
+                                        "type": "string",
+                                        "example": "application_fee",
+                                        "enum": [
+                                            "application_fee",
+                                            "assessment_fee",
+                                            "certification_fee",
+                                            "surveillance_fee",
+                                            "other"
+                                        ]
+                                    },
+                                    "gateway": {
+                                        "description": "Payment gateway to use (optional, defaults to icici_eazypay)",
+                                        "type": "string",
+                                        "example": "icici_eazypay",
+                                        "enum": [
+                                            "icici_eazypay"
+                                        ]
+                                    },
+                                    "description": {
+                                        "description": "Payment description",
+                                        "type": "string",
+                                        "example": "SAMAR Certification Fee for Application"
+                                    },
+                                    "tdsDeductible": {
+                                        "description": "Whether the applicant elects a TDS deduction. Honoured only when the matched fee configuration enables TDS.",
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "tdsPercentage": {
+                                        "description": "TDS rate elected by the applicant. Required when tdsDeductible is true.",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 2,
+                                        "enum": [
+                                            2,
+                                            10
+                                        ]
+                                    },
+                                    "contact_person_name": {
+                                        "description": "Contact person name (optional, defaults to user name)",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "fee_description": {
+                                        "description": "Fee description (optional)",
+                                        "type": "string",
+                                        "example": "SAMAR Certification Fee"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Payment initiated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment initiated successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "payment": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "payment_number": {
+                                                            "type": "string",
+                                                            "example": "PAY-2025-000001"
+                                                        },
+                                                        "application_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "payment_type": {
+                                                            "type": "string",
+                                                            "example": "application_fee"
+                                                        },
+                                                        "amount": {
+                                                            "type": "number",
+                                                            "format": "float",
+                                                            "example": 5000
+                                                        },
+                                                        "currency": {
+                                                            "type": "string",
+                                                            "example": "INR"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "pending"
+                                                        },
+                                                        "gateway": {
+                                                            "type": "string",
+                                                            "example": "icici_eazypay"
+                                                        },
+                                                        "gateway_payment_id": {
+                                                            "type": "string",
+                                                            "example": null,
+                                                            "nullable": true
+                                                        },
+                                                        "paid_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": null,
+                                                            "nullable": true
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-01-15T10:25:00+05:30"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "gateway_data": {
+                                                    "properties": {
+                                                        "gateway_order_id": {
+                                                            "type": "string",
+                                                            "example": "order_ABC123XYZ"
+                                                        },
+                                                        "key": {
+                                                            "type": "string",
+                                                            "example": "rzp_test_ABC123"
+                                                        },
+                                                        "amount": {
+                                                            "description": "Amount in smallest currency unit (paise for INR)",
+                                                            "type": "integer",
+                                                            "example": 500000
+                                                        },
+                                                        "currency": {
+                                                            "type": "string",
+                                                            "example": "INR"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "QCI SAMAR"
+                                                        },
+                                                        "description": {
+                                                            "type": "string",
+                                                            "example": "Payment for PAY-2025-000001"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized to create payment for this application",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized to create payment for this application."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Application is not payment pending, or no fee configuration exists for it",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No fee configuration for sector \"manufacturing\" and enterprise size \"micro\"."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to initiate payment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to initiate payment."
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Gateway connection error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

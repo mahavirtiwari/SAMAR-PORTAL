@@ -236,35 +236,6 @@ class AssessmentQuestionController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/assessment-questions/{id}",
-     *     summary="Soft delete an assessment question",
-     *     tags={"Assessment Questions", "System Admin - Assessment Questions", "DRDO Admin - Assessment Questions"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Question deleted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Question not found"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
     #[OA\Get(
         path: '/api/v1/assessment-questions/{id}/options',
         summary: 'Get answer options for an assessment question',
@@ -477,43 +448,6 @@ class AssessmentQuestionController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/assessment-questions/{id}/options/{optionId}",
-     *     summary="Delete an answer option",
-     *     tags={"Assessment Questions", "System Admin - Assessment Questions", "DRDO Admin - Assessment Questions"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="optionId",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Option deleted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Option not found"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
     #[OA\Post(
         path: '/api/v1/assessment-questions/{id}/activate',
         summary: 'Activate assessment question',

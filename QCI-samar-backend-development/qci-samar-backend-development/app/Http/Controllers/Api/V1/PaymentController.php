@@ -440,131 +440,6 @@ class PaymentController extends Controller
     }
 
     /**
-     * Initiate a new payment.
-     *
-     * @OA\Post(
-     *     path="/api/v1/payments/initiate",
-     *     summary="Initiate a new payment",
-     *     description="Creates a new payment record and initiates the payment process with the selected payment gateway. Returns gateway-specific data required for completing the payment. For ICICI EazyPay, organization details are automatically fetched from the application.",
-     *     tags={"Payment", "System Admin - Payment", "DRDO Admin - Payment", "Operations Manager - Payment", "Operations Admin - Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"application_id", "payment_type"},
-     *
-     *             @OA\Property(property="application_id", type="integer", example=1, description="ID of the application for which payment is being made"),
-     *             @OA\Property(property="payment_type", type="string", enum={"application_fee", "assessment_fee", "certification_fee", "surveillance_fee", "other"}, example="application_fee", description="Type of payment"),
-     *             @OA\Property(property="gateway", type="string", enum={"icici_eazypay"}, example="icici_eazypay", description="Payment gateway to use (optional, defaults to icici_eazypay)"),
-     *             @OA\Property(property="description", type="string", example="SAMAR Certification Fee for Application", description="Payment description"),
-     *             @OA\Property(property="tdsDeductible", type="boolean", example=false, description="Whether the applicant elects a TDS deduction. Honoured only when the matched fee configuration enables TDS."),
-     *             @OA\Property(property="tdsPercentage", type="number", format="float", enum={2, 10}, example=2, description="TDS rate elected by the applicant. Required when tdsDeductible is true."),
-     *             @OA\Property(property="contact_person_name", type="string", example="John Doe", description="Contact person name (optional, defaults to user name)"),
-     *             @OA\Property(property="fee_description", type="string", example="SAMAR Certification Fee", description="Fee description (optional)")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=201,
-     *         description="Payment initiated successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Payment initiated successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="payment",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="payment_number", type="string", example="PAY-2025-000001"),
-     *                     @OA\Property(property="application_id", type="integer", example=1),
-     *                     @OA\Property(property="payment_type", type="string", example="application_fee"),
-     *                     @OA\Property(property="amount", type="number", format="float", example=5000.00),
-     *                     @OA\Property(property="currency", type="string", example="INR"),
-     *                     @OA\Property(property="status", type="string", example="pending"),
-     *                     @OA\Property(property="gateway", type="string", example="icici_eazypay"),
-     *                     @OA\Property(property="gateway_payment_id", type="string", nullable=true, example=null),
-     *                     @OA\Property(property="paid_at", type="string", format="date-time", nullable=true, example=null),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-01-15T10:25:00+05:30")
-     *                 ),
-     *                 @OA\Property(
-     *                     property="gateway_data",
-     *                     type="object",
-     *                     @OA\Property(property="gateway_order_id", type="string", example="order_ABC123XYZ"),
-     *                     @OA\Property(property="key", type="string", example="rzp_test_ABC123"),
-     *                     @OA\Property(property="amount", type="integer", example=500000, description="Amount in smallest currency unit (paise for INR)"),
-     *                     @OA\Property(property="currency", type="string", example="INR"),
-     *                     @OA\Property(property="name", type="string", example="QCI SAMAR"),
-     *                     @OA\Property(property="description", type="string", example="Payment for PAY-2025-000001")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Unauthorized to create payment for this application",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Unauthorized to create payment for this application.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=422,
-     *         description="Application is not payment pending, or no fee configuration exists for it",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="No fee configuration for sector \"manufacturing\" and enterprise size \"micro\"."),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to initiate payment",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to initiate payment."),
-     *             @OA\Property(property="error", type="string", example="Gateway connection error")
-     *         )
-     *     )
-     * )
-     */
-    /**
      * Quote the fee payable for an application.
      *
      * The payment screen renders this instead of deriving the figure itself, so the
@@ -682,6 +557,244 @@ class PaymentController extends Controller
         ], 'Fee retrieved successfully.');
     }
 
+    #[OA\Post(
+        path: '/api/v1/payments/initiate',
+        summary: 'Initiate a new payment',
+        description: 'Creates a new payment record and initiates the payment process with the selected payment gateway. Returns gateway-specific data required for completing the payment. For ICICI EazyPay, organization details are automatically fetched from the application.',
+        tags: [
+            'Payment',
+            'System Admin - Payment',
+            'DRDO Admin - Payment',
+            'Operations Manager - Payment',
+            'Operations Admin - Payment',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['application_id', 'payment_type'],
+                properties: [
+                    new OA\Property(
+                        property: 'application_id',
+                        type: 'integer',
+                        example: 1,
+                        description: 'ID of the application for which payment is being made',
+                    ),
+                    new OA\Property(
+                        property: 'payment_type',
+                        type: 'string',
+                        enum: ['application_fee', 'assessment_fee', 'certification_fee', 'surveillance_fee', 'other'],
+                        example: 'application_fee',
+                        description: 'Type of payment',
+                    ),
+                    new OA\Property(
+                        property: 'gateway',
+                        type: 'string',
+                        enum: ['icici_eazypay'],
+                        example: 'icici_eazypay',
+                        description: 'Payment gateway to use (optional, defaults to icici_eazypay)',
+                    ),
+                    new OA\Property(
+                        property: 'description',
+                        type: 'string',
+                        example: 'SAMAR Certification Fee for Application',
+                        description: 'Payment description',
+                    ),
+                    new OA\Property(
+                        property: 'tdsDeductible',
+                        type: 'boolean',
+                        example: false,
+                        description: 'Whether the applicant elects a TDS deduction. Honoured only when the matched fee configuration enables TDS.',
+                    ),
+                    new OA\Property(
+                        property: 'tdsPercentage',
+                        type: 'number',
+                        format: 'float',
+                        enum: [2, 10],
+                        example: 2,
+                        description: 'TDS rate elected by the applicant. Required when tdsDeductible is true.',
+                    ),
+                    new OA\Property(
+                        property: 'contact_person_name',
+                        type: 'string',
+                        example: 'John Doe',
+                        description: 'Contact person name (optional, defaults to user name)',
+                    ),
+                    new OA\Property(
+                        property: 'fee_description',
+                        type: 'string',
+                        example: 'SAMAR Certification Fee',
+                        description: 'Fee description (optional)',
+                    ),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Payment initiated successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Payment initiated successfully.',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'payment',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'payment_number',
+                                            type: 'string',
+                                            example: 'PAY-2025-000001',
+                                        ),
+                                        new OA\Property(property: 'application_id', type: 'integer', example: 1),
+                                        new OA\Property(
+                                            property: 'payment_type',
+                                            type: 'string',
+                                            example: 'application_fee',
+                                        ),
+                                        new OA\Property(
+                                            property: 'amount',
+                                            type: 'number',
+                                            format: 'float',
+                                            example: 5000.00,
+                                        ),
+                                        new OA\Property(property: 'currency', type: 'string', example: 'INR'),
+                                        new OA\Property(property: 'status', type: 'string', example: 'pending'),
+                                        new OA\Property(
+                                            property: 'gateway',
+                                            type: 'string',
+                                            example: 'icici_eazypay',
+                                        ),
+                                        new OA\Property(
+                                            property: 'gateway_payment_id',
+                                            type: 'string',
+                                            nullable: true,
+                                            example: null,
+                                        ),
+                                        new OA\Property(
+                                            property: 'paid_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            nullable: true,
+                                            example: null,
+                                        ),
+                                        new OA\Property(
+                                            property: 'created_at',
+                                            type: 'string',
+                                            format: 'date-time',
+                                            example: '2025-01-15T10:25:00+05:30',
+                                        ),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'gateway_data',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(
+                                            property: 'gateway_order_id',
+                                            type: 'string',
+                                            example: 'order_ABC123XYZ',
+                                        ),
+                                        new OA\Property(
+                                            property: 'key',
+                                            type: 'string',
+                                            example: 'rzp_test_ABC123',
+                                        ),
+                                        new OA\Property(
+                                            property: 'amount',
+                                            type: 'integer',
+                                            example: 500000,
+                                            description: 'Amount in smallest currency unit (paise for INR)',
+                                        ),
+                                        new OA\Property(property: 'currency', type: 'string', example: 'INR'),
+                                        new OA\Property(property: 'name', type: 'string', example: 'QCI SAMAR'),
+                                        new OA\Property(
+                                            property: 'description',
+                                            type: 'string',
+                                            example: 'Payment for PAY-2025-000001',
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthenticated',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'message', type: 'string', example: 'Unauthenticated.'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Unauthorized to create payment for this application',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Unauthorized to create payment for this application.',
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation failed',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(property: 'message', type: 'string', example: 'Validation failed.'),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Application is not payment pending, or no fee configuration exists for it',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'No fee configuration for sector "manufacturing" and enterprise size "micro".',
+                        ),
+                        new OA\Property(property: 'errors', type: 'object'),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Failed to initiate payment',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Failed to initiate payment.',
+                        ),
+                        new OA\Property(property: 'error', type: 'string', example: 'Gateway connection error'),
+                    ],
+                ),
+            ),
+        ],
+    )]
     public function initiate(Request $request, FeeCalculator $feeCalculator): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -865,123 +978,6 @@ class PaymentController extends Controller
             default => 'SAMAR Certification Fee',
         };
     }
-
-    /**
-     * Verify payment after completion.
-     *
-     * @OA\Post(
-     *     path="/api/v1/payments/{id}/verify",
-     *     summary="Verify payment",
-     *     description="Verifies a payment after the user completes the payment process with the gateway. This endpoint validates the payment signature and updates the payment status accordingly.",
-     *     tags={"Payment", "System Admin - Payment", "DRDO Admin - Payment", "Operations Manager - Payment", "Operations Admin - Payment"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Payment ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"gateway_payment_id"},
-     *
-     *             @OA\Property(property="gateway_payment_id", type="string", example="pay_ABC123XYZ", description="Payment ID from the payment gateway"),
-     *             @OA\Property(property="gateway_order_id", type="string", example="order_ABC123XYZ", description="Order ID from the payment gateway (optional)"),
-     *             @OA\Property(property="gateway_signature", type="string", example="abc123def456...", description="Signature from the payment gateway for verification")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Payment verified successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Payment verified successfully."),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="payment",
-     *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="payment_number", type="string", example="PAY-2025-000001"),
-     *                     @OA\Property(property="application_id", type="integer", example=1),
-     *                     @OA\Property(property="payment_type", type="string", example="application_fee"),
-     *                     @OA\Property(property="amount", type="number", format="float", example=5000.00),
-     *                     @OA\Property(property="currency", type="string", example="INR"),
-     *                     @OA\Property(property="status", type="string", example="success"),
-     *                     @OA\Property(property="gateway", type="string", example="icici_eazypay"),
-     *                     @OA\Property(property="gateway_payment_id", type="string", example="pay_ABC123XYZ"),
-     *                     @OA\Property(property="paid_at", type="string", format="date-time", example="2025-01-15T10:30:00+05:30"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2025-01-15T10:25:00+05:30")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request - Validation failed or payment verification failed",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Validation failed."),
-     *             @OA\Property(property="errors", type="object", nullable=true),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 nullable=true,
-     *                 @OA\Property(property="payment", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthenticated",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Payment not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="message", type="string", example="Payment not found.")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to verify payment",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Failed to verify payment."),
-     *             @OA\Property(property="error", type="string", example="Gateway verification error")
-     *         )
-     *     )
-     * )
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return JsonResponse
-     */
 
     /**
      * Generate unique payment reference using timestamp and random suffix.

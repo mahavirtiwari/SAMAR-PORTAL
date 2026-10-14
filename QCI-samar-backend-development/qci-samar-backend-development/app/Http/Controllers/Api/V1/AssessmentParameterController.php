@@ -491,35 +491,6 @@ class AssessmentParameterController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/assessment-parameters/{id}",
-     *     summary="Soft delete an assessment parameter",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Parameter deleted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Parameter not found"
-     *     ),
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     )
-     * )
-     */
     #[OA\Get(
         path: '/api/v1/assessment-parameters/export',
         summary: 'Export assessment parameters to CSV',
@@ -735,132 +706,6 @@ class AssessmentParameterController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/v1/assessment-parameters/bulk-import",
-     *     summary="Bulk import assessment parameters with questions and options from Excel/CSV",
-     *     description="Import assessment parameters with full hierarchy (disciplines, parameters, questions, options) from Excel file. Expected columns: Discipline, Parameter Code, Parameter Name, Parameter Type, Question Category, Question Code, Question Text, Weightage (%), Option 1-5 Text. Weightage must sum to 100% per parameter. All imports are transactional (all-or-nothing).",
-     *     tags={"Assessment Parameters", "System Admin - Assessment Parameters", "DRDO Admin - Assessment Parameters"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *
-     *             @OA\Schema(
-     *                 required={"file", "sector", "enterprise_size", "vendor_category_id"},
-     *
-     *                 @OA\Property(
-     *                     property="file",
-     *                     type="string",
-     *                     format="binary",
-     *                     description="Excel or CSV file with assessment parameters (max 5MB)"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="sector",
-     *                     type="string",
-     *                     enum={"manufacturing", "service"},
-     *                     description="Sector for all parameters in this import"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="enterprise_size",
-     *                     type="string",
-     *                     enum={"startup", "micro", "small", "medium", "large"},
-     *                     description="Enterprise size for all parameters in this import"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="service_provider_type",
-     *                     type="string",
-     *                     enum={"annual_maintenance_contract", "critical_service_provider"},
-     *                     nullable=true,
-     *                     description="Service provider type (required only if sector is service)"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="vendor_category_id",
-     *                     type="integer",
-     *                     description="DRDO vendor category ID (must exist in manufacturing_vendor_categories or service_vendor_categories based on sector)"
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Import completed successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Import completed successfully"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="disciplines",
-     *                     type="object",
-     *                     @OA\Property(property="created", type="integer", example=2),
-     *                     @OA\Property(property="existing", type="integer", example=1)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="parameters",
-     *                     type="object",
-     *                     @OA\Property(property="created", type="integer", example=5),
-     *                     @OA\Property(property="updated", type="integer", example=2)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="questions",
-     *                     type="object",
-     *                     @OA\Property(property="created", type="integer", example=15),
-     *                     @OA\Property(property="updated", type="integer", example=6)
-     *                 ),
-     *                 @OA\Property(
-     *                     property="options",
-     *                     type="object",
-     *                     @OA\Property(property="created", type="integer", example=105)
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Validation error",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Import failed with validation errors"),
-     *             @OA\Property(
-     *                 property="errors",
-     *                 type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="row", type="integer", example=5),
-     *                     @OA\Property(property="parameter_code", type="string", example="TECH-002"),
-     *                     @OA\Property(
-     *                         property="errors",
-     *                         type="array",
-     *
-     *                         @OA\Items(type="string", example="Weightage sums to 85%, must be 100%")
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden"
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Internal server error"
-     *     )
-     * )
-     */
     #[OA\Get(
         path: '/api/v1/assessment-parameters/template',
         summary: 'Download the bulk-import template (sample CSV)',
@@ -893,6 +738,151 @@ class AssessmentParameterController extends Controller
         ]);
     }
 
+    #[OA\Post(
+        path: '/api/v1/assessment-parameters/bulk-import',
+        summary: 'Bulk import assessment parameters with questions and options from Excel/CSV',
+        description: 'Import assessment parameters with full hierarchy (disciplines, parameters, questions, options) from Excel file. Expected columns: Discipline, Parameter Code, Parameter Name, Parameter Type, Question Category, Question Code, Question Text, Weightage (%), Option 1-5 Text. Weightage must sum to 100% per parameter. All imports are transactional (all-or-nothing).',
+        tags: [
+            'Assessment Parameters',
+            'System Admin - Assessment Parameters',
+            'DRDO Admin - Assessment Parameters',
+        ],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: [
+                new OA\MediaType(
+                    mediaType: 'multipart/form-data',
+                    schema: new OA\Schema(
+                        required: ['file', 'sector', 'enterprise_size', 'vendor_category_id'],
+                        properties: [
+                            new OA\Property(
+                                property: 'file',
+                                type: 'string',
+                                format: 'binary',
+                                description: 'Excel or CSV file with assessment parameters (max 5MB)',
+                            ),
+                            new OA\Property(
+                                property: 'sector',
+                                type: 'string',
+                                enum: ['manufacturing', 'service'],
+                                description: 'Sector for all parameters in this import',
+                            ),
+                            new OA\Property(
+                                property: 'enterprise_size',
+                                type: 'string',
+                                enum: ['startup', 'micro', 'small', 'medium', 'large'],
+                                description: 'Enterprise size for all parameters in this import',
+                            ),
+                            new OA\Property(
+                                property: 'service_provider_type',
+                                type: 'string',
+                                enum: ['annual_maintenance_contract', 'critical_service_provider'],
+                                nullable: true,
+                                description: 'Service provider type (required only if sector is service)',
+                            ),
+                            new OA\Property(
+                                property: 'vendor_category_id',
+                                type: 'integer',
+                                description: 'DRDO vendor category ID (must exist in manufacturing_vendor_categories or service_vendor_categories based on sector)',
+                            ),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Import completed successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Import completed successfully',
+                        ),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'object',
+                            properties: [
+                                new OA\Property(
+                                    property: 'disciplines',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'created', type: 'integer', example: 2),
+                                        new OA\Property(property: 'existing', type: 'integer', example: 1),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'parameters',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'created', type: 'integer', example: 5),
+                                        new OA\Property(property: 'updated', type: 'integer', example: 2),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'questions',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'created', type: 'integer', example: 15),
+                                        new OA\Property(property: 'updated', type: 'integer', example: 6),
+                                    ],
+                                ),
+                                new OA\Property(
+                                    property: 'options',
+                                    type: 'object',
+                                    properties: [
+                                        new OA\Property(property: 'created', type: 'integer', example: 105),
+                                    ],
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Validation error',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: false),
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            example: 'Import failed with validation errors',
+                        ),
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'row', type: 'integer', example: 5),
+                                    new OA\Property(
+                                        property: 'parameter_code',
+                                        type: 'string',
+                                        example: 'TECH-002',
+                                    ),
+                                    new OA\Property(
+                                        property: 'errors',
+                                        type: 'array',
+                                        items: new OA\Items(
+                                            type: 'string',
+                                            example: 'Weightage sums to 85%, must be 100%',
+                                        ),
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+            new OA\Response(response: 403, description: 'Forbidden'),
+            new OA\Response(response: 500, description: 'Internal server error'),
+        ],
+    )]
     public function bulkImport(BulkImportAssessmentParameterRequest $request, AssessmentParameterImportService $importService): JsonResponse
     {
         try {

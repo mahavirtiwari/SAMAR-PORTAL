@@ -300,31 +300,6 @@ class ThirdPartyCertController extends Controller
         }
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/api/v1/third-party-certs/{id}",
-     *     summary="Delete third-party certification",
-     *     tags={"Third-Party Certifications"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Third-party certification deleted successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Certification not found"
-     *     )
-     * )
-     */
     #[OA\Post(
         path: '/api/v1/third-party-certs/{id}/activate',
         summary: 'Activate third-party certification',

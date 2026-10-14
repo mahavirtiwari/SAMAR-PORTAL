@@ -40,45 +40,6 @@ class OrganizationController extends Controller
     ) {}
 
     /**
-     * Get organization profile.
-     *
-     * @OA\Get(
-     *     path="/api/v1/organization",
-     *     summary="Get organization profile",
-     *     description="Retrieves organization profile information. System admins can specify organization_id query parameter to view any organization.",
-     *     tags={"Organizations", "Enterprise Admin - Organizations"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="organizationId",
-     *         in="query",
-     *         description="Organization ID (System Admin only)",
-     *         required=false,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Organization retrieved successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="organization", type="object")
-     *             )
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Organization not found"),
-     *     @OA\Response(response=500, description="Server error")
-     * )
-     */
-
-    /**
      * Update organization profile.
      */
     #[OA\Put(

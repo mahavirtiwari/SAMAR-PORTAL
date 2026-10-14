@@ -6,7 +6,6 @@ use App\Contracts\SupportPlatformInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Ticket\StoreTicketRequest;
 use App\Http\Requests\Api\V1\Ticket\UpdateTicketRequest;
-use App\Models\Document;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -638,108 +637,4 @@ class SupportTicketController extends Controller
             return $this->errorResponse('Failed to update support ticket', 500);
         }
     }
-
-    /**
-     * Close the specified support ticket.
-     *
-     * @OA\Post(
-     *     path="/api/v1/support/tickets/{id}/close",
-     *     summary="Close support ticket",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Zoho Help ticket ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="resolution", type="string", description="Optional resolution text")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Success"),
-     *     @OA\Response(response=400, description="Bad request - Invalid ticket ID format or ticket is already closed"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Ticket not found")
-     * )
-     */
-
-    /**
-     * Add a comment to the support ticket.
-     *
-     * @OA\Post(
-     *     path="/api/v1/support/tickets/{id}/comments",
-     *     summary="Add comment to support ticket",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Zoho Help ticket ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"comment_text"},
-     *
-     *             @OA\Property(property="comment_text", type="string"),
-     *             @OA\Property(property="is_internal", type="boolean", description="Admin only - mark comment as internal")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=201, description="Comment added successfully"),
-     *     @OA\Response(response=400, description="Bad request - Invalid ticket ID format"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Ticket not found")
-     * )
-     */
-
-    /**
-     * Add attachment to support ticket.
-     *
-     * @OA\Post(
-     *     path="/api/v1/support/tickets/{id}/attachments",
-     *     summary="Add attachment to support ticket",
-     *     tags={"Support Tickets", "System Admin - Support Tickets", "DRDO Admin - Support Tickets", "Operations Manager - Support Tickets", "Operations Admin - Support Tickets", "Assessor - Support Tickets", "Unit Admin - Support Tickets", "Enterprise Admin - Support Tickets"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="Zoho Help ticket ID",
-     *
-     *         @OA\Schema(type="string")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"document_id"},
-     *
-     *             @OA\Property(property="document_id", type="integer", description="ID of document to attach")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=200, description="Attachment added successfully"),
-     *     @OA\Response(response=400, description="Bad request - Invalid ticket ID format, file too large, or file type not allowed"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Ticket or document not found")
-     * )
-     */
 }

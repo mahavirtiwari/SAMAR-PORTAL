@@ -583,41 +583,6 @@ class DocumentController extends Controller
     }
 
     /**
-     * Delete a document.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/documents/{uuid}",
-     *     summary="Delete a document",
-     *     tags={"Documents"},
-     *     security={{"bearerAuth":{}}},
-     *
-     *     @OA\Parameter(
-     *         name="uuid",
-     *         in="path",
-     *         required=true,
-     *         description="Document UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Document deleted successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Document deleted successfully")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Document not found")
-     * )
-     */
-
-    /**
      * Activate a document (set is_active = true).
      */
     #[OA\Post(

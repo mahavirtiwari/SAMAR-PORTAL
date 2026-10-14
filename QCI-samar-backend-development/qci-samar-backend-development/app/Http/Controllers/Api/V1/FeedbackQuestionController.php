@@ -490,63 +490,6 @@ class FeedbackQuestionController extends Controller
     }
 
     /**
-     * Remove the specified feedback question.
-     *
-     * @OA\Delete(
-     *     path="/api/v1/feedback-questions/{id}",
-     *     operationId="deleteFeedbackQuestion",
-     *     tags={"Feedback Questions"},
-     *     summary="Delete feedback question",
-     *     description="Soft delete a feedback question (only if no responses exist)",
-     *     security={{"bearerAuth": {}}},
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="Feedback question ID",
-     *         required=true,
-     *
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Feedback question deleted successfully",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Feedback question deleted successfully"),
-     *             @OA\Property(property="data", type="object", nullable=true, example=null)
-     *         )
-     *     ),
-     *
-     *     @OA\Response(response=401, description="Unauthenticated"),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Feedback question not found",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Feedback question not found")
-     *         )
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=400,
-     *         description="Cannot delete question with responses",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Cannot delete feedback question that has responses")
-     *         )
-     *     )
-     * )
-     */
-
-    /**
      * Get all available options for dropdowns.
      */
     #[OA\Get(
