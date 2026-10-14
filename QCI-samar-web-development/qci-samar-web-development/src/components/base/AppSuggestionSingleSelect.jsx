@@ -284,7 +284,6 @@ const AppSuggestionSingleSelect = ({
               setOpen(true);
             }}
             onBlur={() => setFocused(false)}
-            InputLabelProps={{ shrink: focused || Boolean(input) || tags.length > 0 }}
             onChange={e => {
               let value = e.target.value;
               // Limit input to max prop if provided (default max is 100)
@@ -308,29 +307,33 @@ const AppSuggestionSingleSelect = ({
                 handleDelete(tags[tags.length - 1]);
               }
             }}
-            InputProps={{
-              startAdornment: null,
-              endAdornment: (
-                <InputAdornment position="end">
-                  {input || tags.length > 0 ? (
-                    <div className="cross-icon-wrapper">
-                      <IconButton
-                        size="small"
-                        onClick={() => {
-                          setInput('');
-                          if (onChange) {
-                            onChange([]);
-                          } else {
-                            setInternalTags([]);
-                          }
-                        }}>
-                        <img src={Icons.cross} alt="clear" className="icon-14" />
-                      </IconButton>
-                    </div>
-                  ) : null}
-                </InputAdornment>
-              ),
-              ...textFieldProps,
+            slotProps={{
+              input: {
+                startAdornment: null,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {input || tags.length > 0 ? (
+                      <div className="cross-icon-wrapper">
+                        <IconButton
+                          size="small"
+                          onClick={() => {
+                            setInput('');
+                            if (onChange) {
+                              onChange([]);
+                            } else {
+                              setInternalTags([]);
+                            }
+                          }}>
+                          <img src={Icons.cross} alt="clear" className="icon-14" />
+                        </IconButton>
+                      </div>
+                    ) : null}
+                  </InputAdornment>
+                ),
+                ...textFieldProps,
+              },
+
+              inputLabel: { shrink: focused || Boolean(input) || tags.length > 0 },
             }}
           />
         </Box>

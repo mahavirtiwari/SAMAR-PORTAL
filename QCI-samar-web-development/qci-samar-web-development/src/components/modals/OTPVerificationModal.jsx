@@ -62,11 +62,13 @@ const OTPVerificationModal = ({ show, handleClose, length = 6, resendSeconds = 1
       fullWidth
       maxWidth="xs"
       className="otp-modal"
-      PaperProps={{
-        sx: {
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '500px' },
-          maxWidth: '98vw',
-          margin: { xs: 1, sm: 2, md: 3 },
+      slotProps={{
+        paper: {
+          sx: {
+            width: { xs: '100%', sm: '90%', md: '800px', lg: '500px' },
+            maxWidth: '98vw',
+            margin: { xs: 1, sm: 2, md: 3 },
+          },
         },
       }}>
       <DialogContent>

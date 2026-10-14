@@ -234,12 +234,15 @@ const AppDropdown = ({
             anchorOrigin: menuPlacement === 'top' ? { vertical: 'top', horizontal: 'left' } : { vertical: 'bottom', horizontal: 'left' },
             transformOrigin: menuPlacement === 'top' ? { vertical: 'bottom', horizontal: 'left' } : { vertical: 'top', horizontal: 'left' },
             ...(props.MenuProps || {}),
-            PaperProps: {
-              ...(props.MenuProps?.PaperProps || {}),
-              // Explicit width so long rich-option descriptions wrap at the input
-              // width instead of stretching the menu to the viewport. MUI keeps the
-              // anchor's width as the min, so the menu still matches the input.
-              style: { maxHeight: MENU_MAX_HEIGHT, width: 250, ...(props.MenuProps?.PaperProps?.style || {}) },
+            slotProps: {
+              ...(props.MenuProps?.slotProps || {}),
+              paper: {
+                ...(props.MenuProps?.slotProps?.paper || {}),
+                // Explicit width so long rich-option descriptions wrap at the input
+                // width instead of stretching the menu to the viewport. MUI keeps the
+                // anchor's width as the min, so the menu still matches the input.
+                style: { maxHeight: MENU_MAX_HEIGHT, width: 250, ...(props.MenuProps?.slotProps?.paper?.style || {}) },
+              },
             },
           }}>
           {searchable && (

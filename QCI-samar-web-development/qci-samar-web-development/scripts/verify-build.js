@@ -54,16 +54,37 @@ if (!entryBundle) {
   fail('no entry bundle (assets/index-*.js) found');
 }
 
-const bundleSource = fs.readFileSync(path.join(assetsDir, entryBundle), 'utf8');
-if (!bundleSource.includes(buildTime)) {
+// The bundler decides which chunk the compiled appsettings land in (Vite 8 /
+// rolldown hoists them into a shared chunk), so search the entry bundle and
+// every chunk it statically imports, transitively. Lazy chunks are skipped:
+// the version check must run from code that loads with the entry.
+function staticImportClosure(entry) {
+  const seen = new Set();
+  const queue = [entry];
+  while (queue.length > 0) {
+    const name = queue.shift();
+    if (seen.has(name) || !fs.existsSync(path.join(assetsDir, name))) {
+      continue;
+    }
+    seen.add(name);
+    const source = fs.readFileSync(path.join(assetsDir, name), 'utf8');
+    for (const match of source.matchAll(/(?:\bfrom|\bimport)\s*["']\.\/([^"']+\.js)["']/g)) {
+      queue.push(match[1]);
+    }
+  }
+  return [...seen];
+}
+
+const bakedInto = staticImportClosure(entryBundle).find(name => fs.readFileSync(path.join(assetsDir, name), 'utf8').includes(buildTime));
+if (!bakedInto) {
   fail(
-    `torn build — build/version.json buildTime (${buildTime}) is not baked into ${entryBundle}. ` +
+    `torn build — build/version.json buildTime (${buildTime}) is not baked into ${entryBundle} or its static imports. ` +
       'This ships a bundle whose BUILD_TIME disagrees with version.json and would infinite-reload. ' +
       'Rebuild from a clean tree with no other build running.',
   );
 }
 
-console.log(`verify-build: OK — ${entryBundle} matches version.json buildTime ${buildTime}`);
+console.log(`verify-build: OK — ${bakedInto} (loaded by ${entryBundle}) matches version.json buildTime ${buildTime}`);
 
 // Replace comment bodies with spaces, preserving newlines so reported line
 // numbers stay accurate and braces inside comments don't count.

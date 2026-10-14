@@ -36,7 +36,7 @@ const EMPTY_COMPONENT = { componentName: '', isImported: null, importCountry: ''
 const radioControl = <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />;
 
 const uniqueTest = field =>
-  function (value) {
+  (function(value) {
     if (!value) {
       return true;
     }
@@ -50,7 +50,7 @@ const uniqueTest = field =>
           .trim() === value.toLowerCase().trim(),
     );
     return duplicates.length === 0;
-  };
+  });
 
 const validationSchema = Yup.object().shape({
   svcProviderType: Yup.string().required('Please select the type of service provider'),

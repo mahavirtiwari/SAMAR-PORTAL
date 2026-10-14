@@ -1,6 +1,6 @@
 import { ClickAwayListener, Paper, Popper } from '@mui/material';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import { PickersDay } from '@mui/x-date-pickers/PickersDay';
+import { PickerDay } from '@mui/x-date-pickers/PickerDay';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import Icons from '../../constants/Icons';
@@ -17,7 +17,7 @@ const RangeDay = ({ day, selectedStart, selectedEnd, ...pickersDayProps }) => {
   const inRange = start && end && day.isAfter(start, 'day') && day.isBefore(end, 'day');
 
   return (
-    <PickersDay
+    <PickerDay
       {...pickersDayProps}
       day={day}
       selected={!!(isStart || isEnd)}

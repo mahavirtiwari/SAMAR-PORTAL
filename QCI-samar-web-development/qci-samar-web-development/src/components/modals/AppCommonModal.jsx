@@ -29,7 +29,15 @@ const AppCommonModal = ({ open, onClose, modalHeader, modalContent, modalFooter,
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth={false} PaperProps={{ sx: paperSx }} {...dialogProps}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth={false}
+      {...dialogProps}
+      slotProps={{
+        paper: { sx: paperSx },
+      }}>
       {modalHeader && (
         <DialogTitle className="model-header">
           {modalHeader}

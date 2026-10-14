@@ -29,7 +29,8 @@ const AppTdsToolTip = ({
       }
       arrow={arrow}
       placement={placement}
-      componentsProps={{
+      {...otherProps}
+      slotProps={{
         tooltip: {
           sx: {
             bgcolor: `${bgcolor} !important`,
@@ -43,6 +44,7 @@ const AppTdsToolTip = ({
             border: border,
           },
         },
+
         arrow: {
           sx: {
             color: `${bgcolor} !important`,
@@ -52,14 +54,14 @@ const AppTdsToolTip = ({
             },
           },
         },
-      }}
-      PopperProps={{
-        disablePortal: false,
-        sx: {
-          '& .MuiTooltip-tooltip': {},
+
+        popper: {
+          disablePortal: false,
+          sx: {
+            '& .MuiTooltip-tooltip': {},
+          },
         },
-      }}
-      {...otherProps}>
+      }}>
       <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>{children}</span>
     </Tooltip>
   );

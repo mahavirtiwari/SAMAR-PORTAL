@@ -155,21 +155,6 @@ const AppFileUpload = ({
           placeholder={fileName ? fileName : 'Choose File'}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          InputProps={{
-            readOnly: true,
-            endAdornment:
-              rightIcon && isFocused ? (
-                <span style={{ ...rightIconStyle }}>
-                  <img src={rightIcon} alt="Right Icon" style={{ width: 20, height: 20 }} />
-                </span>
-              ) : null,
-            startAdornment:
-              leftIcon && isFocused ? (
-                <span style={{ ...leftIconStyle }}>
-                  <img src={leftIcon} alt="Left Icon" style={{ width: 20, height: 20 }} />
-                </span>
-              ) : null,
-          }}
           sx={{
             width: '100%',
             height: inputType === 'search' ? 36 : 45,
@@ -196,6 +181,23 @@ const AppFileUpload = ({
           }}
           className={customInputClass}
           onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          slotProps={{
+            input: {
+              readOnly: true,
+              endAdornment:
+                rightIcon && isFocused ? (
+                  <span style={{ ...rightIconStyle }}>
+                    <img src={rightIcon} alt="Right Icon" style={{ width: 20, height: 20 }} />
+                  </span>
+                ) : null,
+              startAdornment:
+                leftIcon && isFocused ? (
+                  <span style={{ ...leftIconStyle }}>
+                    <img src={leftIcon} alt="Left Icon" style={{ width: 20, height: 20 }} />
+                  </span>
+                ) : null,
+            },
+          }}
         />
 
         <input

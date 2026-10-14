@@ -9,14 +9,14 @@
         "php": "^8.4",
         "barryvdh/laravel-dompdf": "^3.1",
         "barryvdh/laravel-snappy": "^1.0",
-        "darkaonline/l5-swagger": "^9.0",
+        "darkaonline/l5-swagger": "^11.0",
         "gregwar/captcha": "^2.1",
         "h4cc/wkhtmltoimage-amd64": "^0.12.4",
         "h4cc/wkhtmltopdf-amd64": "^0.12.4",
-        "intervention/image": "^3.11",
-        "laravel/framework": "^12.0",
+        "intervention/image": "^4.0",
+        "laravel/framework": "^13.0",
         "laravel/pail": "^1.2",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0",
         "php-open-source-saver/jwt-auth": "^2.2",
         "phpoffice/phpspreadsheet": "^5.3",
         "simplesoftwareio/simple-qrcode": "^4.2",
@@ -30,7 +30,7 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^13.0"
     },
     "autoload": {
         "psr-4": {

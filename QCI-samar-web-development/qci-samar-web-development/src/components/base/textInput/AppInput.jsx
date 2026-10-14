@@ -42,6 +42,12 @@ const AppInput = ({
   disableAutoCapitalize = false,
   value = '',
   sx,
+  // Legacy MUI TextField prop names, still used by callers. MUI v9 removed them
+  // from TextField, so they are folded into slotProps below instead of being
+  // spread onto the DOM.
+  InputProps,
+  inputProps,
+  slotProps,
   ...props
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -337,47 +343,11 @@ const AppInput = ({
           placeholder={placeholder}
           multiline={!!props.multiline}
           error={!!error}
-          InputProps={{
-            endAdornment:
-              // If rightIcon provided, show it. If inputType is 'search' and there's a value
-              // and no explicit onRightIconClick handler, use the right icon as a clear button.
-              rightIcon ? (
-                <div
-                  className="right-icon-button"
-                  onClick={e => {
-                    if (disabled) {
-                      return;
-                    }
-                    if (onRightIconClick) {
-                      return onRightIconClick(e);
-                    }
-                    if (inputType === 'search' && displayValue) {
-                      return handleClearClick(e);
-                    }
-                  }}
-                  style={{ cursor: onRightIconClick || (inputType === 'search' && displayValue) ? 'pointer' : 'default' }}>
-                  <img className="img-fluid" src={rightIcon} alt="Right Icon" />
-                </div>
-              ) : null,
-            startAdornment: showLeftIcon ? (
-              <div className="left-icon-button" style={leftIconStyle}>
-                <img className="img-fluid" src={leftIcon} alt="Left Icon" />
-              </div>
-            ) : null,
-            classes: { input: 'input-style' },
-          }}
           className={customInputClass || ''}
           value={displayValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          inputProps={{
-            ...inputStyle,
-            maxLength: effectiveMaxLength,
-            inputMode: effectiveInputMode,
-            style: { backgroundColor: bgColor, color: color },
-            ...props.inputProps,
-          }}
           sx={{
             '.input-search-document & input': {
               marginLeft: '0 !important',
@@ -419,6 +389,48 @@ const AppInput = ({
             '& .MuiOutlinedInput-notchedOutline': { border: '1px solid var(--outline)', borderRadius: 'var(--radius-8)' },
           }}
           {...props}
+          slotProps={{
+            ...slotProps,
+            input: {
+              endAdornment:
+                // If rightIcon provided, show it. If inputType is 'search' and there's a value
+                // and no explicit onRightIconClick handler, use the right icon as a clear button.
+                rightIcon ? (
+                  <div
+                    className="right-icon-button"
+                    onClick={e => {
+                      if (disabled) {
+                        return;
+                      }
+                      if (onRightIconClick) {
+                        return onRightIconClick(e);
+                      }
+                      if (inputType === 'search' && displayValue) {
+                        return handleClearClick(e);
+                      }
+                    }}
+                    style={{ cursor: onRightIconClick || (inputType === 'search' && displayValue) ? 'pointer' : 'default' }}>
+                    <img className="img-fluid" src={rightIcon} alt="Right Icon" />
+                  </div>
+                ) : null,
+              startAdornment: showLeftIcon ? (
+                <div className="left-icon-button" style={leftIconStyle}>
+                  <img className="img-fluid" src={leftIcon} alt="Left Icon" />
+                </div>
+              ) : null,
+              classes: { input: 'input-style' },
+              ...InputProps,
+              ...slotProps?.input,
+            },
+            htmlInput: {
+              ...inputStyle,
+              maxLength: effectiveMaxLength,
+              inputMode: effectiveInputMode,
+              style: { backgroundColor: bgColor, color: color },
+              ...inputProps,
+              ...slotProps?.htmlInput,
+            },
+          }}
         />
         {/* If no custom rightIcon provided, show inline clear button for search inputs when value exists */}
         {inputType === 'search' && !disabled && !rightIcon && displayValue ? (

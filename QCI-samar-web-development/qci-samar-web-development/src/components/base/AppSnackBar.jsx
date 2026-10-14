@@ -42,12 +42,16 @@ const AppSnackBar = () => {
         autoHideDuration={duration}
         onClose={handleClose}
         anchorOrigin={anchorOrigin}
-        TransitionComponent={Slide}
-        ContentProps={{
-          sx: {
-            width: 'auto',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
-            zIndex: 1400,
+        slots={{
+          transition: Slide,
+        }}
+        slotProps={{
+          content: {
+            sx: {
+              width: 'auto',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+              zIndex: 1400,
+            },
           },
         }}>
         <CustomAlert severity={variant} sx={{ width: 'auto', ...variantStyles[variant] }}>

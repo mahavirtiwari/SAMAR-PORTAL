@@ -403,7 +403,6 @@ const AppSuggestionInput = ({
                 handleAdd(input.trim());
               }
             }}
-            InputLabelProps={{ shrink: focused || Boolean(input) || tags.length > 0 }}
             onChange={e => {
               let value = e.target.value;
               // Limit input to max prop if provided (default max is 100)
@@ -431,46 +430,50 @@ const AppSuggestionInput = ({
                 handleDelete(tags[tags.length - 1]);
               }
             }}
-            InputProps={{
-              startAdornment: hasChips ? (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center', maxWidth: '100%' }}>
-                  {tags.map((tag, idx) => {
-                    const labelText = typeof tag === 'string' ? tag : tag.processName || tag.label || tag.name || tag.value || '';
-                    return (
-                      <Chip
-                        key={`${labelText}__${idx}`}
+            slotProps={{
+              input: {
+                startAdornment: hasChips ? (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center', maxWidth: '100%' }}>
+                    {tags.map((tag, idx) => {
+                      const labelText = typeof tag === 'string' ? tag : tag.processName || tag.label || tag.name || tag.value || '';
+                      return (
+                        <Chip
+                          key={`${labelText}__${idx}`}
+                          size="small"
+                          label={labelText}
+                          // Prevent the chip (and its delete icon) from blurring/refocusing the input.
+                          onMouseDown={e => e.stopPropagation()}
+                          onDelete={() => handleDeleteAtIndex(idx)}
+                          deleteIcon={<img src={Icons.cross} alt="remove" className="icon-12" />}
+                          sx={{ backgroundColor: '#F5F6FA', border: '1px solid #EBEDF3', borderRadius: '6px', fontSize: '13px' }}
+                        />
+                      );
+                    })}
+                  </Box>
+                ) : null,
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {(isSingleSelection ? selectedValueForInput || input : input) ? (
+                      <IconButton
                         size="small"
-                        label={labelText}
-                        // Prevent the chip (and its delete icon) from blurring/refocusing the input.
-                        onMouseDown={e => e.stopPropagation()}
-                        onDelete={() => handleDeleteAtIndex(idx)}
-                        deleteIcon={<img src={Icons.cross} alt="remove" className="icon-12" />}
-                        sx={{ backgroundColor: '#F5F6FA', border: '1px solid #EBEDF3', borderRadius: '6px', fontSize: '13px' }}
-                      />
-                    );
-                  })}
-                </Box>
-              ) : null,
-              endAdornment: (
-                <InputAdornment position="end">
-                  {(isSingleSelection ? selectedValueForInput || input : input) ? (
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        // Clear input and selection for single selection
-                        setInput('');
-                        if (isSingleSelection && (onChange || value !== undefined)) {
-                          if (onChange) {
-                            onChange([]);
+                        onClick={() => {
+                          // Clear input and selection for single selection
+                          setInput('');
+                          if (isSingleSelection && (onChange || value !== undefined)) {
+                            if (onChange) {
+                              onChange([]);
+                            }
                           }
-                        }
-                      }}>
-                      <img src={Icons.cross} alt="clear" className="icon-12" />
-                    </IconButton>
-                  ) : null}
-                </InputAdornment>
-              ),
-              ...textFieldProps,
+                        }}>
+                        <img src={Icons.cross} alt="clear" className="icon-12" />
+                      </IconButton>
+                    ) : null}
+                  </InputAdornment>
+                ),
+                ...textFieldProps,
+              },
+
+              inputLabel: { shrink: focused || Boolean(input) || tags.length > 0 },
             }}
           />
         </Box>

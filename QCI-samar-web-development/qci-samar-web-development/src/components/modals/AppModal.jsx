@@ -63,14 +63,17 @@ const AppModal = ({
       maxWidth="sm"
       className="custom-modal"
       scroll="body"
-      TransitionProps={{
-        onExited: onExited,
-      }}
-      PaperProps={{
-        sx: {
-          maxWidth: '500px !important', // 🔥 Your custom width
-          width: '100%',
-          borderRadius: '16px',
+      slotProps={{
+        transition: {
+          onExited: onExited,
+        },
+
+        paper: {
+          sx: {
+            maxWidth: '500px !important', // 🔥 Your custom width
+            width: '100%',
+            borderRadius: '16px',
+          },
         },
       }}>
       <DialogTitle

@@ -135,25 +135,28 @@ function AppMultiDataDropdown({ label = '', placeholder = 'Select an option', op
         }}
         className={`input-style${customDropdownClass ? ' ' + customDropdownClass : ''}`}
         variant="outlined"
-        InputProps={{
-          readOnly: true,
-          endAdornment: (
-            <img
-              src={isOpen ? Icons.openDrowpDownArrow : Icons.closeDropDownIcon}
-              alt={isOpen ? 'Dropdown Open Arrow' : 'Dropdown Close Arrow'}
-              className="dropdown-arrow"
-              style={{ cursor: 'pointer' }}
-            />
-          ),
-          style: { cursor: 'pointer', background: '#fff', height: 45 },
-        }}
-        InputLabelProps={{ shrink: labelShrink || isOpen || (singleSelect ? value.length > 0 : value.length > 0) }}
         onBlur={() => {
           if (!isOpen) {
             setLabelShrink(singleSelect && value.length > 0);
           }
         }}
         inputRef={inputRef}
+        slotProps={{
+          input: {
+            readOnly: true,
+            endAdornment: (
+              <img
+                src={isOpen ? Icons.openDrowpDownArrow : Icons.closeDropDownIcon}
+                alt={isOpen ? 'Dropdown Open Arrow' : 'Dropdown Close Arrow'}
+                className="dropdown-arrow"
+                style={{ cursor: 'pointer' }}
+              />
+            ),
+            style: { cursor: 'pointer', background: '#fff', height: 45 },
+          },
+
+          inputLabel: { shrink: labelShrink || isOpen || (singleSelect ? value.length > 0 : value.length > 0) },
+        }}
       />
       <Popper open={isOpen} anchorEl={anchorEl} placement="bottom-start" style={{ zIndex: 1300 }}>
         {isOpen && (

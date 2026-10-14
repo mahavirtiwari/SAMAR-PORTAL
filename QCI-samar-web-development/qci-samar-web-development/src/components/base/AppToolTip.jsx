@@ -18,7 +18,8 @@ const AppToolTip = ({
       title={title}
       arrow={arrow}
       placement={placement}
-      componentsProps={{
+      {...otherProps}
+      slotProps={{
         tooltip: {
           sx: {
             bgcolor: `${bgcolor} !important`,
@@ -29,6 +30,7 @@ const AppToolTip = ({
             borderRadius: borderRadius,
           },
         },
+
         arrow: {
           sx: {
             color: `${bgcolor} !important`,
@@ -38,14 +40,14 @@ const AppToolTip = ({
             },
           },
         },
-      }}
-      PopperProps={{
-        disablePortal: false,
-        sx: {
-          '& .MuiTooltip-tooltip': {},
+
+        popper: {
+          disablePortal: false,
+          sx: {
+            '& .MuiTooltip-tooltip': {},
+          },
         },
-      }}
-      {...otherProps}>
+      }}>
       <span style={{ display: 'inline-flex', alignItems: 'center' }}>{children}</span>
     </Tooltip>
   );

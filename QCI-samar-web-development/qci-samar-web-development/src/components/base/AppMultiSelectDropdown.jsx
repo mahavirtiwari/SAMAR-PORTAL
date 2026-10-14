@@ -349,7 +349,6 @@ const AppMultiSelectDropdown = ({
             // Don't auto-focus the (previously) selected option on open — that's what
             // steals keystrokes into MUI's type-ahead. We focus the search box instead.
             autoFocus: false,
-            MenuListProps: { autoFocusItem: false, ...(props.MenuProps?.MenuListProps || {}) },
             // Reposition the menu as the page scrolls so it follows the input.
             action: menuActionRef,
             // Don't clamp the menu inside the viewport — let it stay glued to the
@@ -360,9 +359,13 @@ const AppMultiSelectDropdown = ({
             anchorOrigin: menuPlacement === 'top' ? { vertical: 'top', horizontal: 'left' } : { vertical: 'bottom', horizontal: 'left' },
             transformOrigin: menuPlacement === 'top' ? { vertical: 'bottom', horizontal: 'left' } : { vertical: 'top', horizontal: 'left' },
             ...(props.MenuProps || {}),
-            PaperProps: {
-              ...(props.MenuProps?.PaperProps || {}),
-              style: { maxHeight: MENU_MAX_HEIGHT, width: 250, ...(props.MenuProps?.PaperProps?.style || {}) },
+            slotProps: {
+              ...(props.MenuProps?.slotProps || {}),
+              list: { autoFocusItem: false, ...(props.MenuProps?.slotProps?.list || {}) },
+              paper: {
+                ...(props.MenuProps?.slotProps?.paper || {}),
+                style: { maxHeight: MENU_MAX_HEIGHT, width: 250, ...(props.MenuProps?.slotProps?.paper?.style || {}) },
+              },
             },
           }}>
           {/* Search input fixed at the top of dropdown, not inside scrollable list */}

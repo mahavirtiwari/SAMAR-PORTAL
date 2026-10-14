@@ -61,7 +61,7 @@ parameters:
 			path: app/Console/Commands/RecalculateAssessmentScores.php
 
 		-
-			message: '#^Offset ''message'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			message: '#^Offset ''message'' on array\{success\: bool, message\: string, company\?\: string, token_preview\?\: string\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Console/Commands/TestBusinessCentralConnection.php
@@ -87,7 +87,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 10
+			count: 12
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentAttendanceController.php
 
 		-
@@ -169,7 +169,7 @@ parameters:
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{team_member_id\: int, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\}, Closure\(App\\Models\\AssessmentTeamMember\)\: array\{team_member_id\: int, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\} given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\{team_member_id\: int\<0, max\>, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\}, Closure\(App\\Models\\AssessmentTeamMember\)\: array\{team_member_id\: int\<0, max\>, user_id\: int\<0, max\>, name\: mixed, role\: ''co_assessor''\|''lead_assessor'', mobile_completed\: bool, mobile_completed_at\: string\|null\} given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentMobileCompletionController.php
@@ -373,13 +373,13 @@ parameters:
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$response\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
@@ -409,6 +409,12 @@ parameters:
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
 
 		-
+			message: '#^Parameter \#1 \$question of static method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:hasAnswer\(\) expects App\\Models\\ApplicationAssessmentQuestion, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentResponseController.php
+
+		-
 			message: '#^Parameter \#1 \$response of method App\\Http\\Controllers\\Api\\V1\\ApplicationAssessmentResponseController\:\:formatResponse\(\) expects App\\Models\\ApplicationAssessmentResponse, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
@@ -433,6 +439,18 @@ parameters:
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSitePictureController.php
 
 		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSitePictureController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSitePictureController.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\ApplicationAssessmentSiteTourPicture\:\:\$uploaded_by_user_id\.$#'
 			identifier: property.notFound
 			count: 1
@@ -442,6 +460,18 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 3
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSiteTourPictureController.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 2
+			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSiteTourPictureController.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 2
 			path: app/Http/Controllers/Api/V1/ApplicationAssessmentSiteTourPictureController.php
 
 		-
@@ -799,19 +829,19 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$certificate_number\.$#'
-			identifier: property.notFound
-			count: 5
-			path: app/Http/Controllers/Api/V1/AssessmentController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grade\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$certificate_number\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
@@ -835,13 +865,19 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$role\.$#'
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$teamMembers\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$total_score\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
@@ -861,7 +897,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$valid_until\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 2
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
@@ -883,9 +919,21 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forCoAssessor\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:forLeadAssessor\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/Api/V1/AssessmentController.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:byEnterpriseSize\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
@@ -903,7 +951,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\<Illuminate\\Database\\Eloquent\\Model\>\:\:byVendorCategory\(\)\.$#'
 			identifier: method.notFound
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
@@ -943,14 +991,14 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
+			message: '#^Parameter \#1 \$assessment of method App\\Http\\Controllers\\Api\\V1\\AssessmentController\:\:formatAssessment\(\) expects App\\Models\\Assessment, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Assessment\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\Assessment\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
-			identifier: argument.type
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
 			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
@@ -969,7 +1017,7 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$score of static method App\\Models\\Assessment\:\:ratingLabelFromScore\(\) expects float\|null, string\|null given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
@@ -993,7 +1041,7 @@ parameters:
 		-
 			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
-			count: 2
+			count: 3
 			path: app/Http/Controllers/Api/V1/AssessmentController.php
 
 		-
@@ -1083,13 +1131,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_active\.$#'
 			identifier: property.notFound
-			count: 3
-			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:autoDeactivateIfNeeded\(\)\.$#'
-			identifier: method.notFound
-			count: 2
+			count: 5
 			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
 
 		-
@@ -1099,19 +1141,7 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AssessmentQuestionController.php
 
 		-
-			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array, Closure\(App\\Models\\AuditLog\)\: array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/V1/AuditLogController.php
-
-		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\AuditLog\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\AuditLog\>, Illuminate\\Support\\Collection\<int, array\{id\: int, user_id\: int\|null, user_name\: string\|null, user_email\: string\|null, user_roles\: array\|null, event\: string\|null, ip_address\: string\|null, user_agent\: string\|null, \.\.\.\}\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/V1/AuditLogController.php
-
-		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array, Closure\(App\\Models\\AuditLog\)\: array given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/V1/AuditLogController.php
@@ -1203,12 +1233,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$unit_id\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Http/Controllers/Api/V1/CertificateController.php
-
-		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\Certificate\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\Certificate\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: app/Http/Controllers/Api/V1/CertificateController.php
 
@@ -1321,12 +1345,6 @@ parameters:
 			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
 
 		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\CommitteeMeeting\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\CommitteeMeeting\>, Illuminate\\Support\\Collection\<int, array\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/V1/CommitteeMeetingController.php
-
-		-
 			message: '#^Parameter \#1 \$pivot of method App\\Services\\CommitteeMeetingAssessmentService\:\:detach\(\) expects App\\Models\\CommitteeMeetingAssessment, Illuminate\\Database\\Eloquent\\Model given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1409,12 +1427,6 @@ parameters:
 			identifier: property.notFound
 			count: 2
 			path: app/Http/Controllers/Api/V1/ErrorLogController.php
-
-		-
-			message: '#^Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator\<int,App\\Models\\FeedbackQuestion\>\:\:setCollection\(\) expects Illuminate\\Support\\Collection\<int, App\\Models\\FeedbackQuestion\>, Illuminate\\Support\\Collection\<int, App\\Http\\Resources\\FeedbackQuestionResource\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/V1/FeedbackQuestionController.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$application_number\.$#'
@@ -1585,8 +1597,38 @@ parameters:
 			path: app/Http/Controllers/Api/V1/PaymentController.php
 
 		-
-			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
-			identifier: catch.neverThrown
+			message: '#^Using nullsafe property access "\?\-\>application_number" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>enterprise_classification" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>full_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>sector" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/Api/V1/PaymentController.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>unit_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Http/Controllers/Api/V1/PaymentController.php
 
@@ -1705,10 +1747,10 @@ parameters:
 			path: app/Http/Middleware/FileUploadSecurity.php
 
 		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
+			message: '#^Match arm comparison between ''expired''\|''logout''\|''timeout''\|null and ''spoc_changed'' is always false\.$#'
+			identifier: match.alwaysFalse
 			count: 1
-			path: app/Http/Middleware/FileUploadSecurity.php
+			path: app/Http/Middleware/ValidateActiveSession.php
 
 		-
 			message: '#^Using nullsafe property access "\?\-\>organization_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
@@ -2347,6 +2389,12 @@ parameters:
 			path: app/Listeners/AssessmentStatusChangedListener.php
 
 		-
+			message: '#^Using nullsafe property access "\?\-\>unit_name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Listeners/AssessmentStatusChangedListener.php
+
+		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2372,12 +2420,6 @@ parameters:
 
 		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Application\:\:\$appends is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$appends\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: app/Models/Application.php
-
-		-
-			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Application\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/Application.php
@@ -2485,12 +2527,6 @@ parameters:
 			path: app/Models/Assessment.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$code\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Models/Assessment.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 2
@@ -2539,12 +2575,6 @@ parameters:
 			path: app/Models/Assessment.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$selected_option\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Assessment.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2581,6 +2611,12 @@ parameters:
 			path: app/Models/Assessment.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:active\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:assigned\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -2611,6 +2647,12 @@ parameters:
 			path: app/Models/Assessment.php
 
 		-
+			message: '#^Method App\\Models\\Assessment\:\:incompleteParameters\(\) should return Illuminate\\Support\\Collection\<int, array\{code\: string, name\: string, answered\: int, total\: int\}\> but returns Illuminate\\Support\\Collection\<int, array\{code\: string, name\: string, answered\: int\<0, max\>, total\: int\<1, max\>\}\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Assessment\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
 			count: 1
@@ -2623,7 +2665,13 @@ parameters:
 			path: app/Models/Assessment.php
 
 		-
-			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: \(array\{code\: string, name\: string, answered\: int\<0, max\>, total\: int\<1, max\>\}\|null\), Closure\(App\\Models\\ApplicationAssessmentParameter\)\: \(array\{code\: string, name\: string, answered\: int\<0, max\>, total\: int\<1, max\>\}\|null\) given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\<0, max\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Models/Assessment.php
@@ -2733,6 +2781,12 @@ parameters:
 		-
 			message: '#^PHPDoc type array\<int, string\> of property App\\Models\\Certificate\:\:\$fillable is not covariant with PHPDoc type list\<string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$fillable\.$#'
 			identifier: property.phpDocType
+			count: 1
+			path: app/Models/Certificate.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between Carbon\\Carbon and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Models/Certificate.php
 
@@ -3077,6 +3131,12 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: app/Models/User.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:autoDeactivateIfNeeded\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Observers/AssessmentQuestionObserver.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
@@ -3433,6 +3493,12 @@ parameters:
 			path: app/Services/DashboardService.php
 
 		-
+			message: '#^Parameter \#3 \$callback of static method Illuminate\\Cache\\Repository\:\:remember\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Services/DashboardService.php
+
+		-
 			message: '#^Parameter \#1 \$string of function str_pad expects string, int given\.$#'
 			identifier: argument.type
 			count: 1
@@ -3443,6 +3509,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Services/FileStorageService.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: app/Services/Gst/ProteanGstinVerifier.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
@@ -3555,6 +3627,12 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$weighted_score\.$#'
 			identifier: property.notFound
+			count: 1
+			path: app/Services/MeetingSummarySheetService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\:\:assessed\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Services/MeetingSummarySheetService.php
 
@@ -3691,19 +3769,13 @@ parameters:
 			path: app/Services/StateMachine/AssessmentStateMachine.php
 
 		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:incompleteParameters\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Services/StateMachine/AssessmentStateMachine.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:initializeStepProgress\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/StateMachine/AssessmentStateMachine.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:questions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Services/StateMachine/AssessmentStateMachine.php
-
-		-
-			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:responses\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: app/Services/StateMachine/AssessmentStateMachine.php

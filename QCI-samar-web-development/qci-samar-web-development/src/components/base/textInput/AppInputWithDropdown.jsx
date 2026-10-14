@@ -153,93 +153,6 @@ const AppInputWithDropdown = ({
               <span className="asterics">{isRequired ? '*' : null}</span>
             </span>
           }
-          InputLabelProps={{
-            classes: { shrink: 'input-label-shrink' },
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end" sx={{ marginRight: '-14px', zIndex: 9 }}>
-                {disableDropdown ? (
-                  <Box
-                    className="static-unit-text-bx"
-                    sx={{
-                      height: '45px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: 90,
-                      px: '12px',
-                      background: 'transparent',
-                      borderTopLeftRadius: 0,
-                      borderBottomLeftRadius: 0,
-                      '& .static-unit-text': {
-                        width: '100%',
-                        boxSizing: 'border-box',
-                      },
-                      pointerEvents: 'none',
-                    }}>
-                    <Typography variant="none" className="static-unit-text">
-                      {unit || '-'}
-                    </Typography>
-                  </Box>
-                ) : (
-                  <Select
-                    value={unit}
-                    onChange={onUnitChange}
-                    onOpen={handleMenuOpen}
-                    onClose={handleMenuClose}
-                    variant="outlined"
-                    displayEmpty
-                    sx={{
-                      height: '45px',
-                      background: 'transparent',
-                      boxShadow: 'none',
-                      '.MuiOutlinedInput-notchedOutline': {
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                      },
-                      '& .MuiSelect-select': {
-                        padding: '10px 14px',
-                        fontSize: 'var(--fs-xs)',
-                        fontFamily: 'Inter-Medium',
-                        color: 'var(--text-3)',
-                        backgroundColor: 'var(--background)',
-                      },
-                      minWidth: 90,
-                    }}
-                    inputProps={{
-                      'aria-label': 'Unit',
-                      name: name ? `${name}-unit` : 'unit',
-                    }}
-                    MenuProps={{
-                      // Don't lock body scroll while the menu is open.
-                      disableScrollLock: true,
-                      // Reposition the menu as the page scrolls so it follows the input.
-                      action: menuActionRef,
-                      // Don't clamp the menu inside the viewport — let it stay glued to the
-                      // input and scroll off-screen with it instead of sticking to top/bottom.
-                      marginThreshold: null,
-                      // Open below the input by default, or above it when there's no room
-                      // below — so the menu never overlaps the input.
-                      anchorOrigin: menuPlacement === 'top' ? { vertical: 'top', horizontal: 'left' } : { vertical: 'bottom', horizontal: 'left' },
-                      transformOrigin: menuPlacement === 'top' ? { vertical: 'bottom', horizontal: 'left' } : { vertical: 'top', horizontal: 'left' },
-                      PaperProps: {
-                        sx: {
-                          zIndex: 2000,
-                          maxHeight: MENU_MAX_HEIGHT,
-                        },
-                      },
-                    }}>
-                    {unitOptions.map(option => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              </InputAdornment>
-            ),
-          }}
           sx={{
             '& .MuiOutlinedInput-root': {
               height: '45px',
@@ -272,6 +185,98 @@ const AppInputWithDropdown = ({
               top: '0',
               fontSize: '16px',
               color: 'var(--text-1)!important',
+            },
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end" sx={{ marginRight: '-14px', zIndex: 9 }}>
+                  {disableDropdown ? (
+                    <Box
+                      className="static-unit-text-bx"
+                      sx={{
+                        height: '45px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: 90,
+                        px: '12px',
+                        background: 'transparent',
+                        borderTopLeftRadius: 0,
+                        borderBottomLeftRadius: 0,
+                        '& .static-unit-text': {
+                          width: '100%',
+                          boxSizing: 'border-box',
+                        },
+                        pointerEvents: 'none',
+                      }}>
+                      <Typography variant="none" className="static-unit-text">
+                        {unit || '-'}
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Select
+                      value={unit}
+                      onChange={onUnitChange}
+                      onOpen={handleMenuOpen}
+                      onClose={handleMenuClose}
+                      variant="outlined"
+                      displayEmpty
+                      sx={{
+                        height: '45px',
+                        background: 'transparent',
+                        boxShadow: 'none',
+                        '.MuiOutlinedInput-notchedOutline': {
+                          borderTopLeftRadius: 0,
+                          borderBottomLeftRadius: 0,
+                        },
+                        '& .MuiSelect-select': {
+                          padding: '10px 14px',
+                          fontSize: 'var(--fs-xs)',
+                          fontFamily: 'Inter-Medium',
+                          color: 'var(--text-3)',
+                          backgroundColor: 'var(--background)',
+                        },
+                        minWidth: 90,
+                      }}
+                      inputProps={{
+                        'aria-label': 'Unit',
+                        name: name ? `${name}-unit` : 'unit',
+                      }}
+                      MenuProps={{
+                        // Don't lock body scroll while the menu is open.
+                        disableScrollLock: true,
+                        // Reposition the menu as the page scrolls so it follows the input.
+                        action: menuActionRef,
+                        // Don't clamp the menu inside the viewport — let it stay glued to the
+                        // input and scroll off-screen with it instead of sticking to top/bottom.
+                        marginThreshold: null,
+                        // Open below the input by default, or above it when there's no room
+                        // below — so the menu never overlaps the input.
+                        anchorOrigin: menuPlacement === 'top' ? { vertical: 'top', horizontal: 'left' } : { vertical: 'bottom', horizontal: 'left' },
+                        transformOrigin: menuPlacement === 'top' ? { vertical: 'bottom', horizontal: 'left' } : { vertical: 'top', horizontal: 'left' },
+                        slotProps: {
+                          paper: {
+                            sx: {
+                              zIndex: 2000,
+                              maxHeight: MENU_MAX_HEIGHT,
+                            },
+                          },
+                        },
+                      }}>
+                      {unitOptions.map(option => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                </InputAdornment>
+              ),
+            },
+
+            inputLabel: {
+              classes: { shrink: 'input-label-shrink' },
             },
           }}
         />
