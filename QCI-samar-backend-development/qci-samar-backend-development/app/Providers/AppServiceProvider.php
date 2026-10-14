@@ -12,6 +12,7 @@ use App\Services\Email\MailConfigurationApplier;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Events\ScheduledTaskFailed;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -41,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Mail server settings saved in Settings → Email Server override MAIL_*.
         $this->app->booted(fn () => app(MailConfigurationApplier::class)->apply());
+        // ...and its BCC list is copied on every outgoing email.
+        Event::listen(MessageSending::class, [MailConfigurationApplier::class, 'addBcc']);
 
         // Force HTTPS URLs in production/staging/development (Azure environments)
         if (app()->environment('production', 'staging', 'development')) {

@@ -3,8 +3,10 @@
 namespace App\Services\Email;
 
 use App\Models\MailConfiguration;
+use Illuminate\Mail\Events\MessageSending;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mime\Address;
 
 /**
  * Applies the System Admin's mail server settings (Settings → Email Server)
@@ -34,17 +36,55 @@ class MailConfigurationApplier
         ];
     }
 
+    private static function settings(): ?MailConfiguration
+    {
+        try {
+            return Cache::rememberForever(self::CACHE_KEY, fn () => MailConfiguration::query()->first());
+        } catch (\Throwable $e) {
+            // Table missing (fresh install before migrate) or DB unavailable.
+            return null;
+        }
+    }
+
+    /**
+     * Addresses blind-copied on every outgoing email. Independent of the
+     * custom SMTP switch, so it also applies to the environment mailer.
+     *
+     * @return list<string>
+     */
+    public static function bccAddresses(): array
+    {
+        return array_values(array_filter((array) (self::settings()->bcc ?? [])));
+    }
+
+    /**
+     * MessageSending listener: adds the configured BCC addresses that the
+     * message does not already go to.
+     */
+    public static function addBcc(MessageSending $event): void
+    {
+        $addresses = self::bccAddresses();
+        if ($addresses === []) {
+            return;
+        }
+        $message = $event->message;
+        $existing = array_map(
+            fn (Address $a) => strtolower($a->getAddress()),
+            [...$message->getTo(), ...$message->getCc(), ...$message->getBcc()],
+        );
+        foreach ($addresses as $address) {
+            if (! in_array(strtolower($address), $existing, true)) {
+                $message->addBcc($address);
+            }
+        }
+    }
+
     public function apply(): void
     {
         self::$environmentDefaults ??= self::snapshot();
 
-        try {
-            $settings = Cache::rememberForever(self::CACHE_KEY, fn () => MailConfiguration::query()->first());
-        } catch (\Throwable $e) {
-            // Table missing (fresh install before migrate) or DB unavailable:
-            // keep the environment's mail settings.
-            return;
-        }
+        // No row, table missing or DB unavailable: keep the environment's settings.
+        $settings = self::settings();
 
         if (! $settings || ! $settings->enabled || ! $settings->host) {
             return;

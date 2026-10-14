@@ -21,6 +21,7 @@ class MailConfiguration extends Model
         'password',
         'from_address',
         'from_name',
+        'bcc',
         'timeout',
         'updated_by',
     ];
@@ -32,6 +33,7 @@ class MailConfiguration extends Model
         'port' => 'integer',
         'timeout' => 'integer',
         'password' => 'encrypted',
+        'bcc' => 'array',
     ];
 
     public static function current(): self

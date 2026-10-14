@@ -29,6 +29,7 @@ const toForm = data => ({
   password: '',
   fromAddress: data.fromAddress || '',
   fromName: data.fromName || '',
+  bcc: (data.bcc || []).join(', '),
 });
 
 const EmailServerSettings = () => {
@@ -58,6 +59,10 @@ const EmailServerSettings = () => {
     password: form.password,
     fromAddress: form.fromAddress.trim() || null,
     fromName: form.fromName.trim() || null,
+    bcc: form.bcc
+      .split(/[,;s]+/)
+      .map(a => a.trim())
+      .filter(Boolean),
   });
 
   const save = async () => {
@@ -160,6 +165,12 @@ const EmailServerSettings = () => {
                     </div>
                     <div className="col-md-6 col-12">
                       <AppInput name="fromName" label="From name" placeholder="SAMAR Portal" value={form.fromName} onChange={e => setField('fromName', e.target.value)} />
+                    </div>
+                    <div className="col-12">
+                      <AppInput name="bcc" label="BCC (copied on every email)" placeholder="audit@example.org, records@example.org" value={form.bcc} onChange={e => setField('bcc', e.target.value)} />
+                      <div className="fs-12 text-3-color margin-top-4">
+                        Every transactional email is blind-copied to these addresses, whether or not the custom SMTP settings above are switched on. Separate several with commas (up to 10).
+                      </div>
                     </div>
                   </div>
                   <div className="d-flex flex-wrap gap-2 margin-top-20">

@@ -47,6 +47,7 @@ class MailConfigurationController extends Controller
             new OA\Property(property: 'password', type: 'string'),
             new OA\Property(property: 'fromAddress', type: 'string'),
             new OA\Property(property: 'fromName', type: 'string'),
+            new OA\Property(property: 'bcc', type: 'array', items: new OA\Items(type: 'string'), description: 'Blind-copied on every outgoing email'),
         ])),
         responses: [
             new OA\Response(response: 200, description: 'Mail settings updated successfully'),
@@ -66,6 +67,9 @@ class MailConfigurationController extends Controller
             $data['password'] = null;
         }
         unset($data['clear_password']);
+        if (array_key_exists('bcc', $data)) {
+            $data['bcc'] = array_values(array_unique(array_map(fn ($a) => strtolower(trim($a)), $data['bcc'] ?? []))) ?: null;
+        }
 
         $config->fill($data + ['updated_by' => $request->user()->id])->save();
         MailConfigurationApplier::forget();
@@ -134,7 +138,12 @@ class MailConfigurationController extends Controller
             'clear_password' => ['sometimes', 'boolean'],
             'from_address' => [$enabled ? 'required' : 'nullable', 'email', 'max:255'],
             'from_name' => ['nullable', 'string', 'max:255'],
+            'bcc' => ['nullable', 'array', 'max:10'],
+            'bcc.*' => ['required', 'email', 'max:255'],
             'timeout' => ['nullable', 'integer', 'between:5,120'],
+        ], [
+            'bcc.*.email' => 'Each BCC address must be a valid email address (:input is not).',
+            'bcc.max' => 'Up to 10 BCC addresses can be set.',
         ]);
     }
 
@@ -156,6 +165,7 @@ class MailConfigurationController extends Controller
             'has_password' => $config->getRawOriginal('password') !== null,
             'from_address' => $config->from_address,
             'from_name' => $config->from_name,
+            'bcc' => $config->bcc ?? [],
             'timeout' => $config->timeout,
             // What is in effect when the custom settings are off.
             'environment_defaults' => MailConfigurationApplier::environmentDefaults(),

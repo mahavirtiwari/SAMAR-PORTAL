@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Mail\NotificationMail;
 use App\Models\BrandAsset;
 use App\Models\MailConfiguration;
 use App\Models\Role;
@@ -10,6 +11,7 @@ use App\Services\Email\MailConfigurationApplier;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
@@ -93,6 +95,31 @@ class MailAndBrandingSettingsTest extends TestCase
         app(MailConfigurationApplier::class)->apply();
 
         $this->assertSame($default, config('mail.default'));
+    }
+
+    public function test_bcc_addresses_are_validated_and_saved(): void
+    {
+        $this->putJson('/api/v1/admin/mail-settings', $this->smtpPayload(['bcc' => ['not-an-email']]), $this->auth())
+            ->assertStatus(422);
+
+        $this->putJson('/api/v1/admin/mail-settings', $this->smtpPayload(['bcc' => [' Audit@Example.org', 'audit@example.org', 'records@example.org']]), $this->auth())
+            ->assertOk()
+            ->assertJsonPath('data.bcc', ['audit@example.org', 'records@example.org']);
+    }
+
+    public function test_every_outgoing_email_is_blind_copied_even_with_the_environment_mailer(): void
+    {
+        $this->putJson('/api/v1/admin/mail-settings', $this->smtpPayload(['enabled' => false, 'bcc' => ['audit@example.org', 'user@example.org']]), $this->auth())
+            ->assertOk();
+        config(['mail.default' => 'array']);
+
+        Mail::to('user@example.org')->send(new NotificationMail('Subject', '<p>Body</p>', 'Body'));
+
+        $messages = app('mail.manager')->mailer('array')->getSymfonyTransport()->messages();
+        $this->assertCount(1, $messages);
+        $bcc = array_map(fn ($a) => $a->getAddress(), $messages[0]->getOriginalMessage()->getBcc());
+        // Already a direct recipient, so not copied a second time.
+        $this->assertSame(['audit@example.org'], $bcc);
     }
 
     public function test_enabling_requires_host_port_and_sender(): void

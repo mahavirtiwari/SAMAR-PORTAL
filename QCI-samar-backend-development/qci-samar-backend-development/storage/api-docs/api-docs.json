@@ -20731,6 +20731,13 @@
                                     },
                                     "fromName": {
                                         "type": "string"
+                                    },
+                                    "bcc": {
+                                        "description": "Blind-copied on every outgoing email",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     }
                                 },
                                 "type": "object"
