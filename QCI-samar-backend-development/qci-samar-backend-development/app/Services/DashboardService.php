@@ -338,7 +338,8 @@ class DashboardService
      */
     public function getOperationsAdminDashboard(User $user): array
     {
-        $cacheKey = "dashboard:oa:{$user->id}";
+        // The figures are not user-specific; one cache entry serves every admin.
+        $cacheKey = 'dashboard:oa:global';
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () {
             // Application stats for summary cards
@@ -419,7 +420,8 @@ class DashboardService
      */
     public function getDrdoAdminDashboard(User $user): array
     {
-        $cacheKey = "dashboard:dr:{$user->id}";
+        // The figures are not user-specific; one cache entry serves every DRDO admin.
+        $cacheKey = 'dashboard:dr:global';
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () {
             // Application stats for summary cards
@@ -950,8 +952,8 @@ class DashboardService
             "dashboard:{$role}:{$user->id}",
             "dashboard:ea:{$user->organization_id}",
             "dashboard:om:{$user->id}",
-            "dashboard:oa:{$user->id}",
-            "dashboard:dr:{$user->id}",
+            'dashboard:oa:global',
+            'dashboard:dr:global',
             'dashboard:sa:global', // System admin uses global cache
             "dashboard:assessor:{$user->id}",
         ];
@@ -975,6 +977,10 @@ class DashboardService
      */
     public function clearAllCaches(): void
     {
-        Cache::flush();
+        // Not Cache::flush(): the store also holds rate-limit counters, captchas,
+        // the JWT blacklist and settings. Per-user entries expire with CACHE_TTL.
+        foreach (['dashboard:sa:global', 'dashboard:oa:global', 'dashboard:dr:global'] as $key) {
+            Cache::forget($key);
+        }
     }
 }

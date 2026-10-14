@@ -36,8 +36,10 @@ class NotifyRecertificationMonthly extends Command
         // renewal.
         $certificates = Certificate::with('application')
             ->whereIn('status', ['active', 'expired'])
-            ->whereDate('valid_until', '<=', $now->copy()->addDays($window)->toDateString())
-            ->get();
+            ->where('valid_until', '<', $now->copy()->addDays($window + 1)->startOfDay())
+            // Streamed in batches rather than loaded all at once: this set grows
+            // with every certificate that expires without a renewal.
+            ->lazyById(200);
 
         $sentCount = 0;
 

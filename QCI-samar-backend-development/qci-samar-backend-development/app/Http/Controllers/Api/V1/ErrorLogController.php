@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ErrorLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
@@ -380,9 +381,11 @@ class ErrorLogController extends Controller
     )]
     public function statistics(Request $request): JsonResponse
     {
-        $days = $request->input('days', 30);
+        $days = (int) $request->input('days', 30);
 
-        $stats = [
+        // Eleven aggregate queries over the whole error log; cached briefly so a
+        // dashboard left open (or several admins) does not re-run them constantly.
+        $stats = Cache::remember('error_logs:statistics:'.$days, 60, fn () => [
             'total' => ErrorLog::count(),
             'unresolved' => ErrorLog::unresolved()->count(),
             'bySeverity' => ErrorLog::select('severity', DB::raw('count(*) as count'))
@@ -402,7 +405,7 @@ class ErrorLogController extends Controller
             'last24Hours' => ErrorLog::where('occurred_at', '>=', now()->subDay())->count(),
             'last7Days' => ErrorLog::where('occurred_at', '>=', now()->subDays(7))->count(),
             'last30Days' => ErrorLog::where('occurred_at', '>=', now()->subDays(30))->count(),
-        ];
+        ]);
 
         return $this->successResponse($stats, 'Statistics retrieved successfully');
     }

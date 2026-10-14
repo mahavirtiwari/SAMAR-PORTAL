@@ -11,7 +11,7 @@ use App\Services\FileStorageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 #[OA\Tag(
     name: 'Application Assessment Summary',
@@ -545,7 +545,7 @@ class ApplicationAssessmentSummaryController extends Controller
             new OA\Response(response: 401, description: 'Unauthorized - Invalid or missing token'),
         ],
     )]
-    public function downloadEvidence(Request $request, int $applicationId, int $evidenceId): StreamedResponse|JsonResponse
+    public function downloadEvidence(Request $request, int $applicationId, int $evidenceId): Response|JsonResponse
     {
         $user = $request->user();
 

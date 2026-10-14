@@ -239,3 +239,58 @@ ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.126.142.111 \
 composer update --no-dev
 # Then re-run the deployment
 ```
+
+## Capacity and background processing
+
+Set up once per server; the pipelines keep it current afterwards.
+
+### Queue workers and scheduler (installed by the pipelines)
+
+Emails on status changes, the committee close-out (MoM / certificate / report
+PDFs and decision emails) and Business Central pushes run on a queue worker, not
+inside web requests. Every deploy runs `deploy/remote/install-workers.sh`, which:
+
+- installs `deploy/supervisor/qci-samar-worker.conf` (2 `queue:work` processes) when
+  supervisor is present — install it once with `sudo apt install supervisor`;
+- installs the scheduler cron (`deploy/cron/qci-samar-scheduler`) unless a user
+  crontab already runs `schedule:run`;
+- restarts the workers so they load the new code.
+
+Required in each server's `.env.{environment}` (they are deliberately not left to
+the base `.env`):
+
+```
+QUEUE_CONNECTION=database
+RATE_LIMIT_ENABLED=true
+LOG_CHANNEL=daily
+LOG_LEVEL=warning
+```
+
+The deploy prints a warning while `QUEUE_CONNECTION` is still `sync`; in that mode
+everything still works, but the slow work runs inside the request again.
+
+### Server tuning (apply by hand, sized to the VM)
+
+| File | Install to | Notes |
+|---|---|---|
+| `deploy/php/qci-samar-fpm-pool.conf` | `[www]` pool in `/etc/php/8.4/fpm/pool.d/www.conf` | Size `pm.max_children` from measured worker memory (formula in the file) |
+| `deploy/php/qci-samar-opcache.ini` | `/etc/php/8.4/fpm/conf.d/99-qci-samar-opcache.ini` | `validate_timestamps=0` relies on the deploy's php-fpm reload |
+| `deploy/php/qci-samar-uploads.ini` | `/etc/php/8.4/fpm/conf.d/99-qci-samar-uploads.ini` | Request-size limits |
+| `deploy/mysql/qci-samar.cnf` | `/etc/mysql/mysql.conf.d/zz-qci-samar.cnf` | Buffer pool, connections, slow-query log; restart MySQL in a quiet window |
+| `deploy/nginx/qci-samar.conf` | live site config | Body buffering, timeouts, `/_protected_files/` |
+
+After the `/_protected_files/` location is live, set `FILES_X_ACCEL_REDIRECT=true`
+so nginx (not PHP) sends photo and document downloads.
+
+### Growing tables
+
+`records:prune-stale` (daily, 02:15) deletes ended login sessions older than
+`SESSION_PRUNE_AFTER_DAYS` (7) and email delivery records older than
+`MAIL_EVENTS_RETENTION_DAYS` (180). Audit logs keep their own 730-day cleanup.
+
+### Scaling past one VM
+
+The app still keeps uploads (`storage/app/private`), the cache and MySQL on the
+same machine. Before adding a second app server: move uploads to S3-compatible or
+Azure Blob storage, use Redis for `CACHE_STORE` and the queue, and run MySQL as a
+managed instance.

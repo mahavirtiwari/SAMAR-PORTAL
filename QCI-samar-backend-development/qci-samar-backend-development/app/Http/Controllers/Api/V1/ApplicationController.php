@@ -23,6 +23,7 @@ use App\Services\StateFilterService;
 use App\Services\UnitService;
 use App\Services\UserService;
 use App\Support\Csv;
+use App\Support\DateRange;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -417,10 +418,10 @@ class ApplicationController extends Controller
             $applicationDateFrom = $request->input('applicationDateFrom', $request->input('application_date_from'));
             $applicationDateTo = $request->input('applicationDateTo', $request->input('application_date_to'));
             if ($applicationDateFrom) {
-                $query->whereDate('submitted_at', '>=', $applicationDateFrom);
+                DateRange::from($query, 'submitted_at', $applicationDateFrom);
             }
             if ($applicationDateTo) {
-                $query->whereDate('submitted_at', '<=', $applicationDateTo);
+                DateRange::until($query, 'submitted_at', $applicationDateTo);
             }
 
             // Payment status filter - support both camelCase and snake_case

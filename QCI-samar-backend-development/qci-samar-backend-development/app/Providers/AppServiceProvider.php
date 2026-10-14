@@ -123,6 +123,7 @@ class AppServiceProvider extends ServiceProvider
             RateLimiter::for('auth.refresh', fn () => Limit::none());
             RateLimiter::for('auth.sensitive', fn () => Limit::none());
             RateLimiter::for('erp.ingest', fn () => Limit::none());
+            RateLimiter::for('exports', fn () => Limit::none());
             RateLimiter::for('api', fn () => Limit::none());
             // Backwards-compatibility: Laravel may build a limiter name like "{Model}::api"
             // when resolving per-user limiters. Register an alias for the User model.
@@ -271,6 +272,14 @@ class AppServiceProvider extends ServiceProvider
                         'retry_after' => $headers['Retry-After'] ?? 60,
                     ], 429, $headers);
                 });
+        });
+
+        // CSV exports and report PDFs scan large tables or run wkhtmltopdf; a few
+        // per minute per user is plenty and stops one client tying up workers.
+        RateLimiter::for('exports', function (Request $request) use ($tooMany) {
+            return Limit::perMinute((int) config('app.rate_limits.exports', 10))
+                ->by('exports:'.($request->user()?->id ?: $request->ip()))
+                ->response($tooMany('Too many exports in a short time. Please wait a minute and try again.', 60));
         });
 
         // ERP inbound document push (60 requests per minute per service account/IP)

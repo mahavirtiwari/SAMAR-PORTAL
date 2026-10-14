@@ -8,6 +8,7 @@ use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -209,7 +210,7 @@ class CertificateService
     /**
      * Stream certificate PDF for inline viewing.
      *
-     * @return StreamedResponse
+     * @return Response
      */
     public function streamStoredPdf(Certificate $certificate)
     {

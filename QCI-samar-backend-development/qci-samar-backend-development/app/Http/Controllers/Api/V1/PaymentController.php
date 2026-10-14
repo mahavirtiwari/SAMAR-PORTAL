@@ -13,6 +13,7 @@ use App\Services\Payment\FeeCalculator;
 use App\Services\Payment\PaymentGatewayFactory;
 use App\Services\StateFilterService;
 use App\Support\Csv;
+use App\Support\DateRange;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1293,11 +1294,11 @@ class PaymentController extends Controller
         // is null while it is failed or pending, so ordering or filtering on that would
         // silently drop the very rows the failed total is counting. Both ends inclusive.
         if ($request->filled('from_date')) {
-            $query->whereDate('created_at', '>=', $request->input('from_date'));
+            DateRange::from($query, 'created_at', $request->input('from_date'));
         }
 
         if ($request->filled('to_date')) {
-            $query->whereDate('created_at', '<=', $request->input('to_date'));
+            DateRange::until($query, 'created_at', $request->input('to_date'));
         }
 
         return $query;

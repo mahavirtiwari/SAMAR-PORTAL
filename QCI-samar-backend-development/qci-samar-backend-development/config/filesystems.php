@@ -16,6 +16,13 @@ return [
     'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
+    | Let nginx send private files after Laravel has authorised the request
+    | (X-Accel-Redirect to the internal /_protected_files/ location in
+    | deploy/nginx/qci-samar.conf). Turn on only where that location exists.
+    */
+    'x_accel_redirect' => (bool) env('FILES_X_ACCEL_REDIRECT', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------

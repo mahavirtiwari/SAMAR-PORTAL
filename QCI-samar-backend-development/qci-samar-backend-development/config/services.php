@@ -102,7 +102,9 @@ return [
             'base_url' => env('GSTIN_PROTEAN_BASE_URL', 'https://gstlite.proteantech.in/STP/GetGstn'),
             'user_id' => env('GSTIN_PROTEAN_USER_ID'),
             'password' => env('GSTIN_PROTEAN_PASSWORD'),
-            'timeout' => (int) env('GSTIN_PROTEAN_TIMEOUT', 30),
+            // Runs inside the submit request; a slow or down GST service must not hold
+            // a PHP-FPM worker for long.
+            'timeout' => (int) env('GSTIN_PROTEAN_TIMEOUT', 15),
         ],
     ],
 

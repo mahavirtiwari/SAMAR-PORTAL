@@ -4,8 +4,13 @@ namespace App\Services;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\ImageManager;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -288,20 +293,44 @@ class FileStorageService
         return $this->disk()->download($path, $filename, $headers);
     }
 
+    /** Longest side of a ?size=thumb image, in pixels. */
+    public const THUMBNAIL_MAX_SIZE = 480;
+
+    /** Originals above this are served as-is rather than decoded for a thumbnail. */
+    private const THUMBNAIL_SOURCE_MAX_BYTES = 30 * 1024 * 1024;
+
     /**
      * Stream a file for inline viewing (e.g., PDF in browser).
+     *
+     * Images requested with ?size=thumb get a ~480px JPEG instead of the original
+     * (grids used to download every 5-10 MB photo in full). The thumbnail is made
+     * on first request and kept next to the originals; if it cannot be made the
+     * original is served.
+     *
+     * With filesystems.x_accel_redirect on, nginx sends the bytes (internal
+     * /_protected_files/ location) after this request has been authorised, so a
+     * PHP-FPM worker is not held for the whole transfer.
      */
-    public function stream(string $path, ?string $filename = null): StreamedResponse
+    public function stream(string $path, ?string $filename = null): Response
     {
-        $mimeType = $this->mimeType($path) ?? 'application/octet-stream';
-        $size = $this->size($path);
+        $filename ??= basename($path);
+        if (request()->query('size') === 'thumb' && ($thumb = $this->thumbnailFor($path))) {
+            $path = $thumb;
+            $filename = pathinfo($filename, PATHINFO_FILENAME).'-thumb.jpg';
+        }
 
+        $mimeType = $this->mimeType($path) ?? 'application/octet-stream';
         $headers = [
             'Content-Type' => $mimeType,
-            'Content-Length' => $size,
-            'Content-Disposition' => 'inline; filename="'.($filename ?? basename($path)).'"',
+            'Content-Disposition' => 'inline; filename="'.str_replace('"', '', $filename).'"',
             'Cache-Control' => 'private, max-age=3600',
         ];
+
+        if (($internalUri = $this->xAccelUri($path)) !== null) {
+            return response('', 200, $headers + ['X-Accel-Redirect' => $internalUri]);
+        }
+
+        $headers['Content-Length'] = $this->size($path);
 
         return response()->stream(function () use ($path) {
             $stream = $this->disk()->readStream($path);
@@ -310,6 +339,62 @@ class FileStorageService
                 fclose($stream);
             }
         }, 200, $headers);
+    }
+
+    /**
+     * Path of a JPEG thumbnail for an image, creating it when missing. Null when
+     * the file is not a raster image or cannot be decoded.
+     */
+    public function thumbnailFor(string $path): ?string
+    {
+        $mime = (string) $this->mimeType($path);
+        if (! str_starts_with($mime, 'image/') || $mime === 'image/svg+xml') {
+            return null;
+        }
+
+        $thumb = 'thumbnails/'.sha1($path).'.jpg';
+        if ($this->exists($thumb)) {
+            return $thumb;
+        }
+        if (($this->size($path) ?? PHP_INT_MAX) > self::THUMBNAIL_SOURCE_MAX_BYTES) {
+            return null;
+        }
+
+        try {
+            $encoded = ImageManager::usingDriver(GdDriver::class)
+                ->decodeBinary((string) $this->disk()->get($path))
+                ->orient()
+                ->scaleDown(self::THUMBNAIL_MAX_SIZE, self::THUMBNAIL_MAX_SIZE)
+                ->encode(new JpegEncoder(quality: 75));
+            $this->disk()->put($thumb, $encoded->toString());
+
+            return $thumb;
+        } catch (\Throwable $e) {
+            Log::warning('Thumbnail could not be created; serving the original', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * nginx-internal URI for a file on the private disk, or null when
+     * X-Accel-Redirect is off or the file lives outside storage/app/private.
+     */
+    private function xAccelUri(string $path): ?string
+    {
+        if (! config('filesystems.x_accel_redirect')) {
+            return null;
+        }
+        $base = rtrim(str_replace('\\', '/', storage_path('app/private')), '/').'/';
+        $full = str_replace('\\', '/', $this->disk()->path($path));
+        if (! str_starts_with($full, $base)) {
+            return null;
+        }
+
+        return '/_protected_files/'.implode('/', array_map('rawurlencode', explode('/', substr($full, strlen($base)))));
     }
 
     /**

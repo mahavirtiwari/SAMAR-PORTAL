@@ -210,6 +210,7 @@ return [
         'refresh' => (int) env('RATE_LIMIT_REFRESH', 20),
         'refresh_decay' => (int) env('RATE_LIMIT_REFRESH_DECAY', 1),
         'refresh_ip_ceiling' => (int) env('RATE_LIMIT_REFRESH_IP_CEILING', 1000),
+        'exports' => (int) env('RATE_LIMIT_EXPORTS', 10),
     ],
 
 ];

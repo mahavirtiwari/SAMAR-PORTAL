@@ -12,6 +12,7 @@ use App\Models\ApplicationFeedback;
 use App\Models\Assessment;
 use App\Models\FeedbackQuestion;
 use App\Support\Csv;
+use App\Support\DateRange;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -117,10 +118,10 @@ class ApplicationFeedbackController extends Controller
 
         // Date filters. Query keys arrive snake_case (ConvertRequestToSnakeCase).
         if ($request->filled('application_date_from')) {
-            $query->whereDate('submitted_at', '>=', $request->input('application_date_from'));
+            DateRange::from($query, 'submitted_at', $request->input('application_date_from'));
         }
         if ($request->filled('application_date_to')) {
-            $query->whereDate('submitted_at', '<=', $request->input('application_date_to'));
+            DateRange::until($query, 'submitted_at', $request->input('application_date_to'));
         }
 
         // Order by most recently updated first
@@ -886,10 +887,7 @@ class ApplicationFeedbackController extends Controller
     public function export(FeedbackExportRequest $request): StreamedResponse|JsonResponse
     {
         try {
-            $query = Application::query()
-                ->whereHas('feedbacks')
-                ->with(['latestFeedback.creator:id,samar_id'])
-                ->withMax('feedbacks as feedback_date', 'created_at');
+            $query = Application::query()->whereHas('feedbacks');
 
             // Search by application number (mirrors submittedFeedback listing).
             if ($request->filled('q')) {
@@ -905,18 +903,24 @@ class ApplicationFeedbackController extends Controller
                 });
             }
 
-            $query->orderByDesc('feedback_date');
-
-            $applications = $query->get();
-
-            // All answers for the scoped applications in one query, grouped per application.
-            $answers = ApplicationFeedback::whereIn('application_id', $applications->pluck('id'))->get();
-            $answersByApplication = $answers->groupBy('application_id');
+            // The rows are streamed in batches below; only ids and the columns the
+            // CSV needs are read (the whole table and every answer used to be
+            // loaded into memory first).
+            $scopedIds = (clone $query)->select('applications.id');
+            $rows = $query
+                ->select('applications.id', 'applications.application_number')
+                ->with(['latestFeedback.creator:id,samar_id'])
+                ->withMax('feedbacks as feedback_date', 'created_at')
+                ->orderByDesc('feedback_date')
+                ->orderByDesc('applications.id');
 
             // Ordered question-column set: distinct question ids present, ordered by the live
             // question display_order; header = current question_text, falling back to the
             // per-answer snapshot for questions removed since (feedback_question_id is not an FK).
-            $questionIds = $answers->pluck('feedback_question_id')->filter()->unique();
+            $questionIds = ApplicationFeedback::whereIn('application_id', $scopedIds)
+                ->whereNotNull('feedback_question_id')
+                ->distinct()
+                ->pluck('feedback_question_id');
             $questions = FeedbackQuestion::withTrashed()
                 ->whereIn('id', $questionIds)
                 ->orderBy('display_order')
@@ -928,8 +932,8 @@ class ApplicationFeedbackController extends Controller
             }
             foreach ($questionIds as $questionId) {
                 if (! array_key_exists($questionId, $questionColumns)) {
-                    $snapshot = $answers->firstWhere('feedback_question_id', $questionId);
-                    $questionColumns[$questionId] = $snapshot->question_text ?? "Question #{$questionId}";
+                    $snapshot = ApplicationFeedback::where('feedback_question_id', $questionId)->value('question_text');
+                    $questionColumns[$questionId] = $snapshot ?? "Question #{$questionId}";
                 }
             }
 
@@ -943,7 +947,7 @@ class ApplicationFeedbackController extends Controller
                 'Expires' => '0',
             ];
 
-            $callback = function () use ($applications, $answersByApplication, $questionColumns) {
+            $callback = function () use ($rows, $questionColumns) {
                 $file = fopen('php://output', 'w');
 
                 // BOM for UTF-8 Excel compatibility
@@ -954,25 +958,31 @@ class ApplicationFeedbackController extends Controller
                     array_values($questionColumns)
                 ));
 
-                foreach ($applications as $application) {
-                    $applicationAnswers = ($answersByApplication->get($application->id) ?? collect())
-                        ->keyBy('feedback_question_id');
+                $rows->chunk(500, function ($applications) use ($file, $questionColumns) {
+                    $answersByApplication = ApplicationFeedback::whereIn('application_id', $applications->pluck('id'))
+                        ->get()
+                        ->groupBy('application_id');
 
-                    $row = [
-                        $application->application_number,
-                        $application->latestFeedback?->creator?->samar_id,
-                        $application->feedback_date
-                            ? Carbon::parse($application->feedback_date)->format('Y-m-d')
-                            : '',
-                    ];
+                    foreach ($applications as $application) {
+                        $applicationAnswers = ($answersByApplication->get($application->id) ?? collect())
+                            ->keyBy('feedback_question_id');
 
-                    foreach (array_keys($questionColumns) as $questionId) {
-                        $answer = $applicationAnswers->get($questionId);
-                        $row[] = $answer instanceof ApplicationFeedback ? ($answer->formatted_answer ?? '') : '';
+                        $row = [
+                            $application->application_number,
+                            $application->latestFeedback?->creator?->samar_id,
+                            $application->feedback_date
+                                ? Carbon::parse($application->feedback_date)->format('Y-m-d')
+                                : '',
+                        ];
+
+                        foreach (array_keys($questionColumns) as $questionId) {
+                            $answer = $applicationAnswers->get($questionId);
+                            $row[] = $answer instanceof ApplicationFeedback ? ($answer->formatted_answer ?? '') : '';
+                        }
+
+                        Csv::putRow($file, $row);
                     }
-
-                    Csv::putRow($file, $row);
-                }
+                });
 
                 fclose($file);
             };

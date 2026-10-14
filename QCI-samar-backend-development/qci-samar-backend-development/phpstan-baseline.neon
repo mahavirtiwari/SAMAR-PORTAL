@@ -2535,7 +2535,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$latestAttendance\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Models/Assessment.php
 
 		-
@@ -2583,7 +2583,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Models/Assessment.php
 
 		-

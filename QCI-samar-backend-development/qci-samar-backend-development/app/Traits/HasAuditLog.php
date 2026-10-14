@@ -39,15 +39,18 @@ trait HasAuditLog
                 return;
             }
 
-            $oldValues = $model->getOriginal();
-            $newValues = $model->getAttributes();
-
             $changes = $model->getChanges();
             unset($changes['updated_at']); // Don't track updated_at changes
 
             if (empty($changes)) {
                 return;
             }
+
+            // Only the changed fields: a full before/after snapshot of a wide row
+            // (applications has ~130 columns, 15 of them JSON) was written on every
+            // save, including draft autosaves.
+            $oldValues = array_intersect_key($model->getOriginal(), $changes);
+            $newValues = array_intersect_key($model->getAttributes(), $changes);
 
             // A whitelisted workflow transition writes its own semantic entry, so
             // the generic row for a status-only change would just duplicate it.

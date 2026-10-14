@@ -11,6 +11,7 @@ use App\Models\ApplicationAssessmentQuestionFeedback;
 use App\Models\ApplicationAssessmentResponse;
 use App\Models\Assessment;
 use App\Models\AssessmentTeamMember;
+use App\Models\BrandAsset;
 use App\Models\CommitteeMeeting;
 use App\Models\CommitteeMeetingAssessment;
 use App\Models\Role;
@@ -25,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -2948,8 +2950,7 @@ class AssessmentController extends Controller
         }
 
         try {
-            $summaryService = app(MeetingSummarySheetService::class);
-            $pdfContent = $summaryService->generateAssessmentReportPdf($assessment, Assessment::STATUS_CERTIFIED);
+            $pdfContent = $this->cachedCertifiedReportPdf($assessment);
 
             $filename = 'Assessment-Report-'.($assessment->application->application_number ?? $assessment->id).'.pdf';
 
@@ -2966,5 +2967,29 @@ class AssessmentController extends Controller
 
             return $this->errorResponse('Failed to generate assessment report.', 500);
         }
+    }
+
+    /**
+     * The certified assessment report rendered once and kept: wkhtmltopdf with
+     * embedded photos takes seconds, and a certified report only changes when
+     * the assessment or a logo (Settings → Branding & Logos) changes, both of
+     * which are part of the cache file name.
+     */
+    private function cachedCertifiedReportPdf(Assessment $assessment): string
+    {
+        $disk = Storage::disk('private');
+        $logosVersion = collect(BrandAsset::allByKey())->max(fn (BrandAsset $asset) => $asset->updated_at?->timestamp) ?? 0;
+        $directory = "assessments/{$assessment->id}/report-cache";
+        $path = $directory.'/certified-'.$assessment->updated_at->timestamp.'-'.$logosVersion.'.pdf';
+
+        if ($disk->exists($path)) {
+            return (string) $disk->get($path);
+        }
+
+        $pdfContent = app(MeetingSummarySheetService::class)->generateAssessmentReportPdf($assessment, Assessment::STATUS_CERTIFIED);
+        $disk->delete($disk->files($directory));
+        $disk->put($path, $pdfContent);
+
+        return $pdfContent;
     }
 }

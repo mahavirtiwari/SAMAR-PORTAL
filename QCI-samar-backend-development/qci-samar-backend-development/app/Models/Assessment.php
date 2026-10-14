@@ -1618,7 +1618,7 @@ class Assessment extends Model
         $members->loadMissing('latestAttendance');
 
         return $members->every(
-            fn (AssessmentTeamMember $m) => $m->latestAttendance?->type === ApplicationAssessmentAttendance::TYPE_PUNCH_OUT
+            fn ($m) => $m->latestAttendance?->type === ApplicationAssessmentAttendance::TYPE_PUNCH_OUT
         );
     }
 
@@ -1627,7 +1627,7 @@ class Assessment extends Model
      * have just been updated in this request); list endpoints pass $useLoaded to
      * reuse the eager-loaded relation instead of querying for every row.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, AssessmentTeamMember>
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Database\Eloquent\Model>
      */
     private function teamForCheck(bool $useLoaded)
     {

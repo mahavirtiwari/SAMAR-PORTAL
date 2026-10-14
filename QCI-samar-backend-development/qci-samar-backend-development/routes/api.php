@@ -276,7 +276,7 @@ Route::prefix('v1')->group(function () {
         // System Admin organization management routes
         Route::prefix('organizations')->middleware('role:system_admin,operations_admin,operations_manager,drdo_admin,drdo_lab')->group(function () {
             Route::get('/', [OrganizationController::class, 'index']);
-            Route::get('/export', [OrganizationController::class, 'export']);
+            Route::get('/export', [OrganizationController::class, 'export'])->middleware('throttle:exports');
 
             // Organization status management (System Admin, Operations Admin only)
             Route::post('/{id}/activate', [OrganizationController::class, 'activate'])
@@ -335,7 +335,7 @@ Route::prefix('v1')->group(function () {
             // Main application CRUD
             Route::get('/', [ApplicationController::class, 'index']);
             // Used by web: services/api/systemAdmin/ApplicationService.js (System Admin - export applications)
-            Route::get('/export', [ApplicationController::class, 'export']);
+            Route::get('/export', [ApplicationController::class, 'export'])->middleware('throttle:exports');
             Route::post('/manufacturing/draft', [ApplicationController::class, 'storeManufacturingDraft'])
                 ->middleware('file.security');
             Route::post('/services/draft', [ApplicationController::class, 'storeServicesDraft'])
@@ -353,7 +353,7 @@ Route::prefix('v1')->group(function () {
                 ->middleware('role:system_admin,operations_admin,operations_manager');
             // Bulk "all feedback" CSV export — same 3-role gate (must be before {id} routes)
             Route::get('/feedback-submissions/export', [ApplicationFeedbackController::class, 'export'])
-                ->middleware('role:system_admin,operations_admin,operations_manager');
+                ->middleware(['role:system_admin,operations_admin,operations_manager', 'throttle:exports']);
             // Fee quote — the payment screen renders this rather than deriving the amount
             Route::get('/{applicationId}/fee', [PaymentController::class, 'fee']);
 
@@ -392,7 +392,7 @@ Route::prefix('v1')->group(function () {
                 Route::get('/', [ApplicationFeedbackController::class, 'index'])
                     ->middleware('role:system_admin,operations_admin,operations_manager');
                 Route::get('/export', [ApplicationFeedbackController::class, 'exportForApplication'])
-                    ->middleware('role:system_admin,operations_admin,operations_manager');
+                    ->middleware(['role:system_admin,operations_admin,operations_manager', 'throttle:exports']);
                 Route::get('/form', [ApplicationFeedbackController::class, 'form']);
                 Route::post('/submit', [ApplicationFeedbackController::class, 'submitAll'])
                     ->middleware('role:enterprise_admin,unit_admin');
@@ -414,7 +414,7 @@ Route::prefix('v1')->group(function () {
             // CSV export of the assessment list, same filters as index.
             // Used by web: services/api/common/AssessmentService.js (exportAssessments)
             Route::get('/export', [AssessmentController::class, 'export'])
-                ->middleware(['role:operations_admin,operations_manager,system_admin,drdo_admin,drdo_lab', 'throttle:60,1']);
+                ->middleware(['role:operations_admin,operations_manager,system_admin,drdo_admin,drdo_lab', 'throttle:exports']);
             Route::get('/{id}', [AssessmentController::class, 'show']);
 
             // Assessment workflow actions (role-restricted)
@@ -443,7 +443,7 @@ Route::prefix('v1')->group(function () {
                 ->middleware('role:assessor,operations_manager,operations_admin,system_admin,drdo_admin');
             Route::get('/{identifier}/assessment-report/download', [AssessmentController::class, 'downloadAssessmentReport'])
                 ->where('identifier', '[0-9]+|ASS-[0-9]{4}-[0-9]+')
-                ->middleware('role:enterprise_admin,unit_admin,operations_manager,operations_admin,system_admin,drdo_admin');
+                ->middleware(['role:enterprise_admin,unit_admin,operations_manager,operations_admin,system_admin,drdo_admin', 'throttle:exports']);
         });
 
         // Assessor off-time (unavailability) self-service
@@ -601,7 +601,7 @@ Route::prefix('v1')->group(function () {
             // Must stay above /{id} or "export" is read as a payment id.
             // Used by web: services/api/payment/PaymentService.js (exportPayments)
             Route::get('/export', [PaymentController::class, 'export'])
-                ->middleware('throttle:60,1');
+                ->middleware('throttle:exports');
             Route::get('/{id}', [PaymentController::class, 'show']);
             Route::post('/initiate', [PaymentController::class, 'initiate']);
         });
@@ -861,7 +861,7 @@ Route::prefix('v1')->group(function () {
             // Public - List and view disciplines
             Route::get('/', [DisciplineController::class, 'index']);
             // Used by web: services/api/systemAdmin/DisciplinesService.js (System Admin - export disciplines)
-            Route::get('/export', [DisciplineController::class, 'export']);
+            Route::get('/export', [DisciplineController::class, 'export'])->middleware('throttle:exports');
             Route::get('/{id}', [DisciplineController::class, 'show']);
 
             // Restricted - Create, update, delete (SA, DR only)
@@ -880,7 +880,7 @@ Route::prefix('v1')->group(function () {
             // Public - List and view parameters
             Route::get('/', [AssessmentParameterController::class, 'index']);
             Route::get('/export', [AssessmentParameterController::class, 'export'])
-                ->middleware('role:system_admin');
+                ->middleware(['role:system_admin', 'throttle:exports']);
             Route::get('/template', [AssessmentParameterController::class, 'downloadImportTemplate'])
                 ->middleware('role:system_admin');
             Route::get('/bulk-update-template', [AssessmentParameterController::class, 'downloadBulkUpdateTemplate'])

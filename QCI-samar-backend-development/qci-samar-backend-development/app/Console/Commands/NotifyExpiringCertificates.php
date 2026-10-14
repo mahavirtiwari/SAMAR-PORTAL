@@ -42,8 +42,12 @@ class NotifyExpiringCertificates extends Command
         // 'renewed'/'revoked'/'suspended' certs are intentionally excluded.
         $certificates = Certificate::with('application')
             ->whereIn('status', ['active', 'expired'])
-            ->whereDate('valid_until', '<=', $now->copy()->addDays($window)->toDateString())
-            ->get();
+            ->where('valid_until', '<', $now->copy()->addDays($window + 1)->startOfDay())
+            // A certificate that already got the final (expired) reminder has
+            // nothing left to send; skip it instead of reloading every expired
+            // certificate ever issued on each daily run.
+            ->where(fn ($q) => $q->whereNull('renewal_reminders_sent')->orWhereJsonDoesntContain('renewal_reminders_sent', 'expired'))
+            ->lazyById(200);
 
         $sentCount = 0;
 
