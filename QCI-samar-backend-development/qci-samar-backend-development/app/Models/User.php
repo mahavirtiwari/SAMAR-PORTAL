@@ -379,10 +379,12 @@ class User extends Authenticatable implements JWTSubject
 
         $otp = str_pad((string) random_int(0, (10 ** $length) - 1), $length, '0', STR_PAD_LEFT);
 
+        // otp_attempts is deliberately not reset here: requesting a fresh code
+        // must not hand out a fresh set of guesses, or the 5-attempt lock could
+        // be dodged by resending after every 4 wrong tries.
         $this->forceFill([
             'otp_code' => Hash::make($otp),
             'otp_expires_at' => now()->addMinutes($expiryMinutes),
-            'otp_attempts' => 0,
         ])->save();
 
         return $otp;
@@ -395,6 +397,11 @@ class User extends Authenticatable implements JWTSubject
     {
         if ($this->otp_locked_until && now()->lt($this->otp_locked_until)) {
             return false;
+        }
+
+        // A lock that has run out starts a new round of attempts.
+        if ($this->otp_locked_until) {
+            $this->forceFill(['otp_attempts' => 0, 'otp_locked_until' => null])->save();
         }
 
         if (! $this->otp_code || ! $this->otp_expires_at || now()->gt($this->otp_expires_at)) {

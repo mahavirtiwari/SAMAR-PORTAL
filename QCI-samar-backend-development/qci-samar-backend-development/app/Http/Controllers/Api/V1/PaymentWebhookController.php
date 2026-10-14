@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\ErrorLog;
 use App\Models\Payment;
 use App\Services\Payment\ICICIEazyPayAdapter;
-use App\Services\Payment\PaymentGatewayFactory;
 use App\Services\Payment\PaymentSettlementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -84,31 +83,39 @@ class PaymentWebhookController extends Controller
             // Parse webhook payload (decrypts and parses XML)
             $parsedData = $gateway->parseWebhookPayload($payload);
 
+            // Metadata only: the raw payload carries customer details (PII).
             Log::info('ICICI EazyPay webhook parsed', [
                 'event' => $parsedData['event'] ?? 'unknown',
                 'payment_id' => $parsedData['payment_id'] ?? null,
                 'status' => $parsedData['status'] ?? null,
                 'response_code' => $parsedData['response_code'] ?? null,
                 'amount' => $parsedData['amount'] ?? null,
-                'parsed_data' => $parsedData,
             ]);
 
-            // Verify signature if HashVal is present
+            // HashVal is checked for diagnostics only. The push is never trusted
+            // to settle a payment by itself — processICICIWebhookEvent re-verifies
+            // every verdict with the gateway — so a missing or bad hash cannot
+            // move money.
             $hashVal = $parsedData['hash_value'] ?? '';
-            $rawPayload = $parsedData['raw_payload'] ?? [];
-
-            if ($hashVal && ! $gateway->verifyWebhookSignature($rawPayload, $hashVal)) {
-                Log::warning('ICICI EazyPay invalid webhook signature', [
-                    'hash_val' => $hashVal,
+            if (! $hashVal || ! $gateway->verifyWebhookSignature($parsedData['raw_payload'] ?? [], $hashVal)) {
+                Log::warning('ICICI EazyPay webhook signature missing or invalid; verdict will be re-verified', [
+                    'hash_present' => (bool) $hashVal,
                 ]);
+            }
 
-                // Still return 200 to acknowledge receipt
-                return $this->successResponse(null, 'Invalid webhook signature');
+            // Without a transaction id there is nothing to match. Guard it: a
+            // where() against null becomes IS NULL and would match an unrelated
+            // payment that has no gateway id yet.
+            $transactionId = (string) ($parsedData['payment_id'] ?? '');
+            if ($transactionId === '') {
+                Log::warning('ICICI EazyPay webhook without a transaction id ignored');
+
+                return $this->successResponse(null, 'Webhook acknowledged');
             }
 
             // Find payment by gateway_payment_id (TrnId) or gateway_order_id
-            $payment = Payment::where('gateway_payment_id', $parsedData['payment_id'])
-                ->orWhere('gateway_order_id', $parsedData['payment_id'])
+            $payment = Payment::where('gateway_payment_id', $transactionId)
+                ->orWhere('gateway_order_id', $transactionId)
                 ->first();
 
             if (! $payment) {
@@ -120,7 +127,7 @@ class PaymentWebhookController extends Controller
             }
 
             // Process the webhook event
-            $this->processICICIWebhookEvent($payment, $parsedData);
+            $this->processICICIWebhookEvent($payment, $parsedData, $gateway);
 
             return $this->successResponse(null, 'Webhook processed successfully');
         } catch (\Exception $e) {
@@ -264,44 +271,60 @@ class PaymentWebhookController extends Controller
                 ]);
             }
 
-            // Validate signature
+            // The return URL is public, so only a signed callback is a verdict. An
+            // unsigned or mis-signed one — success or failure — is recorded and
+            // then checked with the gateway directly; it never changes the
+            // payment on its own. (Settling a forged failure used to strand a
+            // payment the customer then made.)
             if (! $parsedResponse['valid']) {
-                // error-level: a signature mismatch on an E000 callback means ICICI
-                // collected money from the customer but our integration cannot prove
-                // it. Needs immediate ops attention.
-                Log::error('ICICI EazyPay callback - invalid signature', [
-                    'payment_id' => $payment->id,
-                    'reference_no' => $parsedResponse['reference_no'] ?? null,
-                    'response_code' => $parsedResponse['response_code'] ?? null,
-                    'eazypay_tran_id' => $parsedResponse['eazypay_tran_id'] ?? null,
-                    'success_flag' => $parsedResponse['success'] ?? null,
-                ]);
-
-                app(ErrorReporter::class)->captureException(
-                    new \RuntimeException('ICICI EazyPay callback: invalid response signature'),
-                    'payment',
-                    [
+                if ($parsedResponse['success']) {
+                    // error-level: an E000 we cannot verify may mean ICICI collected
+                    // money that our integration cannot prove. Needs ops attention
+                    // unless the gateway check below confirms it.
+                    Log::error('ICICI EazyPay callback - invalid signature on a success response', [
                         'payment_id' => $payment->id,
                         'reference_no' => $parsedResponse['reference_no'] ?? null,
                         'response_code' => $parsedResponse['response_code'] ?? null,
-                    ],
-                    ErrorLog::SEVERITY_CRITICAL,
-                );
+                        'eazypay_tran_id' => $parsedResponse['eazypay_tran_id'] ?? null,
+                    ]);
 
-                // Never downgrade an already-settled payment. If a prior push
-                // notification already settled this row, the service records the
-                // payload and leaves the status alone.
-                $this->settlement->settleFailure($payment, [
-                    'error_code' => 'INVALID_SIGNATURE',
-                    'failure_reason' => 'Invalid response signature',
+                    app(ErrorReporter::class)->captureException(
+                        new \RuntimeException('ICICI EazyPay callback: invalid response signature'),
+                        'payment',
+                        [
+                            'payment_id' => $payment->id,
+                            'reference_no' => $parsedResponse['reference_no'] ?? null,
+                            'response_code' => $parsedResponse['response_code'] ?? null,
+                        ],
+                        ErrorLog::SEVERITY_CRITICAL,
+                    );
+                }
+
+                $this->settlement->recordPayload($payment, [
                     'payload' => ['callback' => $responseData, 'parsed' => $parsedResponse],
-                ], 'callback');
+                ], 'unverified_callback');
 
-                return $this->redirectToFrontend([
-                    'status' => 'error',
-                    'message' => 'Invalid payment signature',
-                    'payment_id' => $payment->id,
-                ]);
+                ['verdict' => $verdict] = $this->settlement->verifyAndSettle($payment, $gateway, 'callback_verification');
+
+                return $this->redirectToFrontend(match ($verdict) {
+                    'success' => [
+                        'status' => 'success',
+                        'message' => 'Payment completed successfully',
+                        'payment_id' => $payment->id,
+                        'application_id' => $payment->application_id,
+                        'transaction_id' => $payment->fresh()?->gateway_payment_id,
+                    ],
+                    'failed' => [
+                        'status' => 'failed',
+                        'message' => 'Payment failed',
+                        'payment_id' => $payment->id,
+                    ],
+                    default => [
+                        'status' => 'pending',
+                        'message' => 'We are confirming your payment with the bank. This page will show the final status shortly.',
+                        'payment_id' => $payment->id,
+                    ],
+                });
             }
 
             // Update payment based on response
@@ -353,167 +376,44 @@ class PaymentWebhookController extends Controller
     }
 
     /**
-     * Generic webhook handler.
+     * Process an ICICI EazyPay push notification.
+     *
+     * The push payload is decrypted but its HashVal is not keyed with a merchant
+     * secret, so it cannot prove the verdict came from ICICI. A success or
+     * failure push therefore only triggers a server-to-server status check, and
+     * the payment is settled on what the gateway itself reports.
      */
-    protected function handleWebhook(Request $request, string $gateway): JsonResponse
-    {
-        try {
-            $payload = $request->all();
-            $signature = $request->header('X-Webhook-Signature') ?? '';
-
-            Log::info('Payment webhook received', [
-                'gateway' => $gateway,
-                'payload' => $payload,
-            ]);
-
-            // Get gateway adapter
-            $gatewayAdapter = PaymentGatewayFactory::create($gateway);
-
-            // Verify webhook signature
-            if (! $gatewayAdapter->verifyWebhookSignature($payload, $signature)) {
-                Log::warning('Invalid webhook signature', [
-                    'gateway' => $gateway,
-                    'signature' => $signature,
-                ]);
-
-                return $this->errorResponse('Invalid webhook signature', 401);
-            }
-
-            // Parse webhook payload
-            $parsedData = $gatewayAdapter->parseWebhookPayload($payload);
-
-            Log::info('Webhook parsed successfully', [
-                'gateway' => $gateway,
-                'event' => $parsedData['event'] ?? 'unknown',
-                'payment_id' => $parsedData['payment_id'] ?? null,
-            ]);
-
-            // Find payment by gateway_payment_id or gateway_order_id
-            $payment = Payment::where('gateway_payment_id', $parsedData['payment_id'])
-                ->orWhere('gateway_order_id', $parsedData['order_id'])
-                ->first();
-
-            if (! $payment) {
-                Log::warning('Payment not found for webhook', [
-                    'gateway' => $gateway,
-                    'payment_id' => $parsedData['payment_id'],
-                    'order_id' => $parsedData['order_id'],
-                ]);
-
-                return $this->successResponse(null, 'Payment not found, webhook acknowledged');
-            }
-
-            // Update payment based on event
-            $this->processWebhookEvent($payment, $parsedData);
-
-            return $this->successResponse(null, 'Webhook processed successfully');
-        } catch (\Exception $e) {
-            Log::error('Webhook processing error', [
-                'gateway' => $gateway,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return $this->serverErrorResponse($e, 'Webhook processing failed', 200);
-        }
-    }
-
-    /**
-     * Process ICICI EazyPay webhook event and update payment.
-     */
-    protected function processICICIWebhookEvent(Payment $payment, array $data): void
+    protected function processICICIWebhookEvent(Payment $payment, array $data, ICICIEazyPayAdapter $gateway): void
     {
         $event = $data['event'] ?? '';
-        $status = $data['status'] ?? '';
 
         Log::info('Processing ICICI EazyPay webhook event', [
             'payment_id' => $payment->id,
             'event' => $event,
-            'status' => $status,
+            'status' => $data['status'] ?? '',
         ]);
 
-        switch ($event) {
-            case 'payment.success':
-                $this->settlement->settleSuccess($payment, [
-                    'gateway_payment_id' => $data['payment_id'],
-                    'payment_method' => $data['payment_mode'],
-                    'gateway_fee' => $data['processing_fee'],
-                    'tax_amount' => $data['tax'],
-                    'collected_amount' => $data['amount'] ?? null,
-                    'payload' => $data,
-                ], 'push_notification');
-                break;
+        // Keep the push on the row for reconciliation, whatever it claims.
+        $this->settlement->recordPayload($payment, [
+            'payload' => $data,
+        ], $event === 'challan.generated' ? 'challan_notification' : 'push_notification');
 
-            case 'challan.generated':
-                // Offline payment challan generated, keep as pending
-                $this->settlement->recordPayload($payment, [
-                    'gateway_payment_id' => $data['payment_id'],
-                    'payload' => $data,
-                ], 'challan_notification');
+        if (! in_array($event, ['payment.success', 'payment.failed'], true)) {
+            Log::info('ICICI webhook event recorded without a verdict', [
+                'payment_id' => $payment->id,
+                'event' => $event,
+            ]);
 
-                Log::info('ICICI challan generated notification received', [
-                    'payment_id' => $payment->id,
-                ]);
-                break;
-
-            case 'payment.failed':
-                $this->settlement->settleFailure($payment, [
-                    'failure_reason' => $data['remarks'] ?? 'Payment failed',
-                    'payload' => $data,
-                ], 'push_notification');
-                break;
-
-            default:
-                Log::info('Unhandled ICICI webhook event', [
-                    'payment_id' => $payment->id,
-                    'event' => $event,
-                ]);
+            return;
         }
-    }
 
-    /**
-     * Process generic webhook event and update payment.
-     */
-    protected function processWebhookEvent(Payment $payment, array $data): void
-    {
-        $event = $data['event'] ?? '';
+        ['verdict' => $verdict] = $this->settlement->verifyAndSettle($payment, $gateway, 'push_verification');
 
-        Log::info('Processing webhook event', [
+        Log::info('ICICI webhook verdict re-verified with the gateway', [
             'payment_id' => $payment->id,
-            'event' => $event,
-            'status' => $data['status'] ?? 'unknown',
+            'push_event' => $event,
+            'gateway_verdict' => $verdict,
         ]);
-
-        switch ($event) {
-            case 'payment.success':
-            case 'payment.captured':
-                if ($data['status'] === 'success') {
-                    $this->settlement->settleSuccess($payment, [
-                        'gateway_payment_id' => $data['payment_id'],
-                        'collected_amount' => $data['amount'] ?? null,
-                        'payload' => $data,
-                    ], 'webhook');
-                } else {
-                    $this->settlement->recordPayload($payment, [
-                        'gateway_payment_id' => $data['payment_id'],
-                        'payload' => $data,
-                    ], 'webhook');
-                }
-                break;
-
-            case 'payment.failed':
-                $this->settlement->settleFailure($payment, [
-                    'failure_reason' => $data['raw_payload']['error_description'] ?? 'Payment failed',
-                    'payload' => $data,
-                ], 'webhook');
-                break;
-
-            default:
-                Log::info('Unhandled webhook event', [
-                    'payment_id' => $payment->id,
-                    'event' => $event,
-                ]);
-        }
     }
 
     /**

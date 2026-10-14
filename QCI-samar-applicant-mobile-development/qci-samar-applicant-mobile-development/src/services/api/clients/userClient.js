@@ -72,7 +72,12 @@ axiosRetry(userClient, {
     // no connectivity there's no response, so retrying just burns the backoff
     // before the caller's fallback runs. Fail the request fast.
     const status = error.response?.status;
-    return status === 429 || (status >= 500 && status <= 599);
+    // Replay only idempotent methods: a POST that hit a 5xx/429 may already
+    // have been processed server-side, and resending it would duplicate it.
+    // (Outbox uploads are retried by the sync engine, deduped on clientUuid.)
+    const method = (error.config?.method || "get").toLowerCase();
+    const idempotent = ["get", "head", "options", "put", "delete"].includes(method);
+    return idempotent && (status === 429 || (status >= 500 && status <= 599));
   },
 });
 

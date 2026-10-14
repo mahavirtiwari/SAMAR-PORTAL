@@ -73,11 +73,11 @@ class PendingLoginSession extends Model
         // Generate 6-digit OTP
         $otp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
+        // The attempt counter and any lock survive a resend: a fresh code must
+        // not hand out fresh guesses or lift an active lock.
         $this->update([
             'otp_code' => Hash::make($otp),
             'otp_expires_at' => now()->addMinutes($expiryMinutes),
-            'otp_attempts' => 0,
-            'otp_locked_until' => null,
         ]);
 
         return $otp;
@@ -91,6 +91,11 @@ class PendingLoginSession extends Model
         // Check if locked
         if ($this->isLocked()) {
             return false;
+        }
+
+        // A lock that has run out starts a new round of attempts.
+        if ($this->otp_locked_until) {
+            $this->update(['otp_attempts' => 0, 'otp_locked_until' => null]);
         }
 
         // Check if expired

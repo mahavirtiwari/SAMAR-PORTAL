@@ -322,11 +322,15 @@ class ICICIEazyPayAdapter implements PaymentGatewayInterface
 
     /**
      * Verify webhook signature using SHA512.
+     *
+     * Note: as implemented, the hash input is payload fields plus a date with no
+     * merchant secret, so a match does not prove the push came from ICICI.
+     * PaymentWebhookController therefore treats this as a diagnostic only and
+     * re-verifies every push verdict with the gateway before settling.
      */
     public function verifyWebhookSignature(array $payload, string $signature, ?string $secret = null): bool
     {
         // ICICI sends HashVal in the XML payload for push notifications
-        // The hash is generated from specific fields + AES key + date
         if (empty($signature)) {
             return false;
         }
@@ -427,8 +431,8 @@ class ICICIEazyPayAdapter implements PaymentGatewayInterface
      */
     public function parseReturnResponse(array $response): array
     {
-        // Log raw response for debugging
-        \Log::info('ICICI parseReturnResponse raw', ['keys' => array_keys($response), 'response' => $response]);
+        // Keys only: the callback echoes customer details (PII) back to us.
+        \Log::info('ICICI parseReturnResponse raw', ['keys' => array_keys($response)]);
 
         // Normalize response keys: ICICI sends keys with spaces like "Response Code"
         // but PHP/Laravel may convert spaces to underscores or other formats
@@ -456,25 +460,21 @@ class ICICIEazyPayAdapter implements PaymentGatewayInterface
         $responseCode = $getValue('Response Code', '') ?: ($normalizedResponse['ResponseCode'] ?? '');
         $isSuccess = $responseCode === self::RESPONSE_SUCCESS;
 
-        // Validate RS (SHA512 signature) using normalized response
-        // For success responses (E000), signature validation is critical
-        // For error responses, ICICI may not send complete transaction data,
-        // so signature validation is less reliable - we still log it but don't block
+        // Validate RS (SHA512 signature, keyed with the merchant AES key). Only a
+        // valid signature proves the verdict came from ICICI. The return URL is
+        // public, so an unsigned or mis-signed callback — success or failure —
+        // is never acted on directly; the caller re-verifies it with the gateway.
         $signatureValid = $this->validateResponseSignature($normalizedResponse);
 
-        // For successful transactions, require valid signature
-        // For failed/cancelled transactions, accept as valid (error is already known)
-        $isValid = $isSuccess ? $signatureValid : true;
-
-        if (! $isSuccess && ! $signatureValid) {
-            \Log::info('ICICI signature mismatch on error response - accepted', [
+        if (! $signatureValid) {
+            \Log::info('ICICI return callback signature did not verify', [
                 'response_code' => $responseCode,
                 'message' => $this->getErrorMessage($responseCode),
             ]);
         }
 
         return [
-            'valid' => $isValid,
+            'valid' => $signatureValid,
             'success' => $isSuccess,
             'response_code' => $responseCode,
             'eazypay_tran_id' => $getValue('Unique Ref Number'),

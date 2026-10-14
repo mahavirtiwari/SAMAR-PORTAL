@@ -74,12 +74,7 @@ class VerifyPendingPayments extends Command
                 $payment->increment('verification_attempts', 1, ['last_verified_at' => now()]);
 
                 try {
-                    $result = $gateway->verifyPayment($payment->gateway_order_id, [
-                        'reference_no' => $payment->gateway_order_id,
-                        'amount' => $payment->amount,
-                        'eazypay_tran_id' => $payment->gateway_payment_id ?? '',
-                        'payment_mode' => $payment->payment_method ?? '',
-                    ]);
+                    ['verdict' => $verdict, 'result' => $result] = $settlement->verifyAndSettle($payment, $gateway, 'verification_sweep');
                 } catch (\Exception $e) {
                     Log::warning('Payment verification sweep could not reach the gateway', [
                         'payment_id' => $payment->id,
@@ -90,9 +85,7 @@ class VerifyPendingPayments extends Command
                     continue;
                 }
 
-                // A failed call carries no status at all — treating its absence as
-                // a verdict would mark a live payment failed on a network blip.
-                if (! ($result['success'] ?? false)) {
+                if ($verdict === null) {
                     Log::warning('Payment verification sweep got no verdict from the gateway', [
                         'payment_id' => $payment->id,
                         'message' => $result['message'] ?? null,
@@ -102,28 +95,13 @@ class VerifyPendingPayments extends Command
                     continue;
                 }
 
-                $status = $result['status'] ?? 'pending';
-
-                if ($status === 'success') {
-                    $settlement->settleSuccess($payment, [
-                        'gateway_payment_id' => $result['eazypay_tran_id'] ?? null,
-                        'payment_method' => $result['payment_mode'] ?? null,
-                        'gateway_fee' => $result['processing_fee'] ?? null,
-                        'tax_amount' => $result['tax'] ?? null,
-                        'collected_amount' => $result['amount'] ?? null,
-                        'payload' => $result,
-                    ], 'verification_sweep');
+                if ($verdict === 'success') {
                     $succeeded++;
 
                     continue;
                 }
 
-                if ($status === 'failed') {
-                    $settlement->settleFailure($payment, [
-                        'error_code' => $result['raw_status'] ?? null,
-                        'failure_reason' => $result['message'] ?? 'Payment failed at the gateway',
-                        'payload' => $result,
-                    ], 'verification_sweep');
+                if ($verdict === 'failed') {
                     $failed++;
 
                     continue;

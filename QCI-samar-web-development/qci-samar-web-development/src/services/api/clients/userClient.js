@@ -33,6 +33,9 @@ const userClient = axios.create({
   timeout: REQUEST_TIMEOUT,
 });
 
+const IDEMPOTENT_METHODS = ['get', 'head', 'options', 'put', 'delete'];
+const isIdempotentRequest = config => IDEMPOTENT_METHODS.includes((config?.method || 'get').toLowerCase());
+
 // Configure axios-retry with modified exponential backoff
 axiosRetry(userClient, {
   retries: 3,
@@ -52,7 +55,10 @@ axiosRetry(userClient, {
         return false;
       }
     }
-    return isNetworkOrIdempotentRequestError(error) || [429, 503].includes(error.response?.status);
+    // 429/503 are only replayed for idempotent methods. A POST that hit a 503
+    // from a proxy may already have been processed (payment initiation, an
+    // application submit); resending it would create a duplicate.
+    return isNetworkOrIdempotentRequestError(error) || ([429, 503].includes(error.response?.status) && isIdempotentRequest(error.config));
   },
 });
 
@@ -88,6 +94,64 @@ const processQueue = (error, token = null) => {
     }
   });
   failedQueue = [];
+};
+
+/**
+ * Refreshes the access token. Shared by the request interceptor (proactive
+ * refresh before expiry) and the response interceptor (refresh on 401), so a
+ * request queued in failedQueue is settled by whichever refresh is in flight.
+ * Before this was shared, a request that queued behind a proactive refresh
+ * never settled and its screen hung on a spinner.
+ */
+const startTokenRefresh = () => {
+  // Assigned synchronously so concurrent callers join this refresh.
+  refreshTokenPromise = (async () => {
+    try {
+      Logger.info('User Client: Refreshing token...');
+      const refreshToken = await getToken('refreshToken');
+      if (!refreshToken?.token) {
+        throw new Error('No refresh token available');
+      }
+
+      const refreshTokenExpiry = parseExpiry(refreshToken.expiry);
+      if (refreshTokenExpiry === null || refreshTokenExpiry <= Date.now()) {
+        throw new Error('Refresh token expired');
+      }
+
+      if (!store) {
+        throw new Error('Store not available for token refresh');
+      }
+
+      const refreshResult = await store.dispatch(refreshTokenAction());
+      if (refreshResult.error) {
+        throw new Error(`Token refresh failed: ${refreshResult.error.message || 'Unknown error'}`);
+      }
+
+      const newAccessToken = await getToken('accessToken');
+      if (!newAccessToken?.token) {
+        throw new Error('Failed to retrieve new access token after refresh');
+      }
+
+      Logger.info('Token refreshed successfully');
+      processQueue(null, newAccessToken.token);
+      return newAccessToken.token;
+    } catch (refreshError) {
+      Logger.error('Token refresh failed:', refreshError.response?.data || refreshError.message);
+      processQueue(refreshError, null);
+      if (store) {
+        try {
+          sessionStorage.setItem('logout_reason', 'Your session has expired. Please log in again.');
+        } catch {
+          // sessionStorage may not be available
+        }
+        await store.dispatch(logoutUserAction());
+      }
+      throw refreshError;
+    } finally {
+      refreshTokenPromise = null;
+    }
+  })();
+  return refreshTokenPromise;
 };
 
 /**
@@ -129,61 +193,8 @@ userClient.interceptors.request.use(
           }
         }
 
-        // Start a new token refresh process — assign synchronously to prevent race window
-        refreshTokenPromise = (async () => {
-          try {
-            const refreshToken = await getToken('refreshToken');
-
-            if (!refreshToken?.token) {
-              Logger.error('No refresh token available');
-              throw new Error('No refresh token available');
-            }
-
-            // Check if refresh token is expired
-            const refreshTokenExpiry = parseExpiry(refreshToken.expiry);
-            if (refreshTokenExpiry === null || refreshTokenExpiry <= currentTime) {
-              Logger.error('Refresh token expired');
-              throw new Error('Refresh token expired');
-            }
-
-            if (!store) {
-              Logger.error('Store not injected into userClient');
-              throw new Error('Store not available for token refresh');
-            }
-
-            Logger.info('Dispatching refresh token action');
-            const refreshResult = await store.dispatch(refreshTokenAction());
-
-            if (refreshResult.error) {
-              throw new Error(`Token refresh failed: ${refreshResult.error.message || 'Unknown error'}`);
-            }
-
-            const newAccessToken = await getToken('accessToken');
-
-            if (!newAccessToken?.token) {
-              throw new Error('Failed to retrieve new access token after refresh');
-            }
-
-            Logger.info('Token refreshed successfully before request');
-            return newAccessToken.token;
-          } catch (error) {
-            Logger.error('Token refresh failed before request:', error.message);
-            if (store) {
-              try {
-                sessionStorage.setItem('logout_reason', 'Your session has expired. Please log in again.');
-              } catch {
-                // sessionStorage may not be available
-              }
-              await store.dispatch(logoutUserAction());
-            }
-            throw error;
-          } finally {
-            refreshTokenPromise = null;
-          }
-        })();
-
         try {
-          const newToken = await refreshTokenPromise;
+          const newToken = await startTokenRefresh();
           config.headers.Authorization = `Bearer ${newToken}`;
           return config;
         } catch (err) {
@@ -281,59 +292,8 @@ userClient.interceptors.response.use(
           });
       }
 
-      // Start a new token refresh process — assign synchronously to prevent race window
-      refreshTokenPromise = (async () => {
-        try {
-          Logger.info('User Client: Refreshing token...');
-          const refreshToken = await getToken('refreshToken');
-          if (!refreshToken || !refreshToken.token) {
-            Logger.error('No refresh token available or token is invalid');
-            throw new Error('No refresh token available');
-          }
-
-          if (!store) {
-            Logger.error('Store not injected into userClient for token refresh');
-            throw new Error('Store not available for token refresh');
-          }
-
-          Logger.info('Dispatching refresh token action');
-          const refreshResult = await store.dispatch(refreshTokenAction());
-
-          if (refreshResult.error) {
-            Logger.error('Token refresh action failed:', refreshResult.error);
-            throw new Error(`Token refresh failed: ${refreshResult.error.message || 'Unknown error'}`);
-          }
-
-          Logger.info('Getting new access token after refresh');
-          const newAccessToken = await getToken('accessToken');
-
-          if (!newAccessToken?.token) {
-            throw new Error('Failed to retrieve new access token');
-          }
-
-          Logger.info('Token refreshed successfully');
-
-          processQueue(null, newAccessToken.token);
-          return newAccessToken.token;
-        } catch (refreshError) {
-          Logger.error('Token refresh failed:', refreshError.response?.data || refreshError.message);
-          processQueue(refreshError, null);
-          if (store) {
-            try {
-              sessionStorage.setItem('logout_reason', 'Your session has expired. Please log in again.');
-            } catch {
-              // sessionStorage may not be available
-            }
-            await store.dispatch(logoutUserAction());
-          }
-          throw refreshError;
-        } finally {
-          refreshTokenPromise = null;
-        }
-      })();
-
       try {
-        const newToken = await refreshTokenPromise;
+        const newToken = await startTokenRefresh();
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return userClient(originalRequest);
       } catch (err) {

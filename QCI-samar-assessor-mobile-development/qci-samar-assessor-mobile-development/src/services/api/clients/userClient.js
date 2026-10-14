@@ -57,7 +57,12 @@ axiosRetry(userClient, {
     // which is the offline slowness the field team hit. Offline-first: fail the
     // request fast and let the catch hydrate from local immediately.
     const status = error.response?.status;
-    return status === 429 || (status >= 500 && status <= 599);
+    // Replay only idempotent methods: a POST that hit a 5xx/429 may already
+    // have been processed server-side, and resending it would duplicate it.
+    // (Outbox uploads are retried by the sync engine, deduped on clientUuid.)
+    const method = (error.config?.method || "get").toLowerCase();
+    const idempotent = ["get", "head", "options", "put", "delete"].includes(method);
+    return idempotent && (status === 429 || (status >= 500 && status <= 599));
   }
 });
 

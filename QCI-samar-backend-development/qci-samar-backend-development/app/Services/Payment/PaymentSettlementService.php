@@ -2,6 +2,7 @@
 
 namespace App\Services\Payment;
 
+use App\Contracts\PaymentGatewayInterface;
 use App\Exceptions\ErrorReporter;
 use App\Models\Application;
 use App\Models\ErrorLog;
@@ -35,6 +36,14 @@ class PaymentSettlementService
      */
     public const UNSETTLED_STATUSES = ['initiated', 'pending', 'processing'];
 
+    /**
+     * Statuses a gateway-confirmed success may settle. A failed row is included:
+     * once the gateway has proved money moved, an earlier failure verdict (a
+     * declined first attempt, or a failure that raced the success) must not
+     * strand a payment the customer has made.
+     */
+    public const SUCCESS_SETTLEABLE_STATUSES = ['initiated', 'pending', 'processing', 'failed'];
+
     public function __construct(
         private BcSyncService $bcSync,
         private EmailNotificationService $emailNotifications,
@@ -58,10 +67,18 @@ class PaymentSettlementService
         $settled = DB::transaction(function () use ($payment, $details, $source) {
             $locked = Payment::where('id', $payment->id)->lockForUpdate()->first();
 
-            if (! $locked || ! in_array($locked->status, self::UNSETTLED_STATUSES, true)) {
+            if (! $locked || ! in_array($locked->status, self::SUCCESS_SETTLEABLE_STATUSES, true)) {
                 $this->recordPayload($locked ?? $payment, $details, $source.'_after_settlement');
 
                 return false;
+            }
+
+            if ($locked->status === 'failed') {
+                Log::warning('Gateway-confirmed success overrides an earlier failure verdict', [
+                    'payment_id' => $locked->id,
+                    'error_code' => $locked->error_code,
+                    'source' => $source,
+                ]);
             }
 
             $locked->update(array_filter([
@@ -157,6 +174,62 @@ class PaymentSettlementService
         }
 
         return $settled;
+    }
+
+    /**
+     * Ask the gateway for the payment's status and settle on its verdict.
+     *
+     * This is the authoritative path for every verdict we cannot prove came from
+     * the gateway: the scheduled sweep, push notifications, and return-URL
+     * callbacks whose signature does not verify. The status query is a
+     * server-to-server call, so a forged notification can at worst trigger a
+     * harmless re-check, never settle or fail a payment on its own.
+     *
+     * @return array{verdict: string|null, result: array} verdict is 'success',
+     *                                                    'failed', 'pending', or null when the gateway gave
+     *                                                    no answer (unreachable / error)
+     */
+    public function verifyAndSettle(Payment $payment, PaymentGatewayInterface $gateway, string $source): array
+    {
+        $result = $gateway->verifyPayment($payment->gateway_order_id, [
+            'reference_no' => $payment->gateway_order_id,
+            'amount' => $payment->amount,
+            'eazypay_tran_id' => $payment->gateway_payment_id ?? '',
+            'payment_mode' => $payment->payment_method ?? '',
+        ]);
+
+        // A failed call carries no status at all — treating its absence as a
+        // verdict would mark a live payment failed on a network blip.
+        if (! ($result['success'] ?? false)) {
+            return ['verdict' => null, 'result' => $result];
+        }
+
+        $status = $result['status'] ?? 'pending';
+
+        if ($status === 'success') {
+            $this->settleSuccess($payment, [
+                'gateway_payment_id' => $result['eazypay_tran_id'] ?? null,
+                'payment_method' => $result['payment_mode'] ?? null,
+                'gateway_fee' => $result['processing_fee'] ?? null,
+                'tax_amount' => $result['tax'] ?? null,
+                'collected_amount' => $result['amount'] ?? null,
+                'payload' => $result,
+            ], $source);
+
+            return ['verdict' => 'success', 'result' => $result];
+        }
+
+        if ($status === 'failed') {
+            $this->settleFailure($payment, [
+                'error_code' => $result['raw_status'] ?? null,
+                'failure_reason' => $result['message'] ?? 'Payment failed at the gateway',
+                'payload' => $result,
+            ], $source);
+
+            return ['verdict' => 'failed', 'result' => $result];
+        }
+
+        return ['verdict' => 'pending', 'result' => $result];
     }
 
     /**
