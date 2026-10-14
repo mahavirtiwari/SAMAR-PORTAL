@@ -200,12 +200,16 @@ return [
         'enabled' => env('RATE_LIMIT_ENABLED', true),
         'login' => (int) env('RATE_LIMIT_LOGIN', 20),
         'login_decay' => (int) env('RATE_LIMIT_LOGIN_DECAY', 1),
+        // Per-IP flood ceilings on top of the per-account limits (an office NAT
+        // shares one IP).
+        'login_ip_ceiling' => (int) env('RATE_LIMIT_LOGIN_IP_CEILING', 300),
         'register' => (int) env('RATE_LIMIT_REGISTER', 5),
         'register_decay' => (int) env('RATE_LIMIT_REGISTER_DECAY', 5),
         'password_reset' => (int) env('RATE_LIMIT_PASSWORD_RESET', 5),
         'password_reset_decay' => (int) env('RATE_LIMIT_PASSWORD_RESET_DECAY', 5),
         'refresh' => (int) env('RATE_LIMIT_REFRESH', 20),
         'refresh_decay' => (int) env('RATE_LIMIT_REFRESH_DECAY', 1),
+        'refresh_ip_ceiling' => (int) env('RATE_LIMIT_REFRESH_IP_CEILING', 1000),
     ],
 
 ];

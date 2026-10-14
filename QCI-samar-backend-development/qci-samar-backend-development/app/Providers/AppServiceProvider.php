@@ -131,64 +131,77 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        // Per-IP anti-flood backstop for the login endpoints. Kept above the
-        // per-account lockout (auth.lockout.max_attempts) so the account lock is
-        // the gate that actually arms; this only stops request flooding.
-        RateLimiter::for('auth.login', function (Request $request) {
+        // Auth limits are keyed by account + IP, per endpoint. Keyed by IP alone,
+        // every user behind one office NAT shared a single budget (about six
+        // logins a minute per office) and the login, OTP and resend endpoints
+        // shared one counter. A much higher per-IP ceiling still stops flooding.
+        $accountKey = static function (Request $request): string {
+            $samarId = strtoupper(trim((string) $request->input('samar_id')));
+            if ($samarId !== '') {
+                return $samarId;
+            }
+            $other = $request->input('session_token') ?? $request->input('email') ?? $request->input('token');
+
+            return $other ? substr(hash('sha256', strtolower((string) $other)), 0, 20) : '-';
+        };
+        $tooMany = static fn (string $message, int $retryAfter) => static fn (Request $request, array $headers) => response()->json([
+            'success' => false,
+            'message' => $message,
+            'retry_after' => $headers['Retry-After'] ?? $retryAfter,
+        ], 429, $headers);
+
+        // Login endpoints. The per-account limit sits above the account lockout
+        // (auth.lockout.max_attempts) so the lockout is the gate that arms first.
+        RateLimiter::for('auth.login', function (Request $request) use ($accountKey, $tooMany) {
             $maxAttempts = (int) config('app.rate_limits.login', 20);
             $decayMinutes = (int) config('app.rate_limits.login_decay', 1);
+            $response = $tooMany('Too many login attempts. Please try again later.', 60);
 
-            return Limit::perMinutes($decayMinutes, $maxAttempts)
-                ->by($request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many login attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 60,
-                    ], 429, $headers);
-                });
+            return [
+                Limit::perMinutes($decayMinutes, $maxAttempts)
+                    ->by('login:'.$request->path().':'.$accountKey($request).'|'.$request->ip())
+                    ->response($response),
+                Limit::perMinute((int) config('app.rate_limits.login_ip_ceiling', 300))
+                    ->by('login-ip:'.$request->ip())
+                    ->response($response),
+            ];
         });
 
-        // Moderate rate limiting for registration (3 attempts per 5 minutes per IP)
-        RateLimiter::for('auth.register', function (Request $request) {
+        // Registration: per email + IP, with a per-IP ceiling for an office
+        // registering several units.
+        RateLimiter::for('auth.register', function (Request $request) use ($accountKey, $tooMany) {
             $maxAttempts = (int) config('app.rate_limits.register', 3);
             $decayMinutes = (int) config('app.rate_limits.register_decay', 5);
+            $response = $tooMany('Too many registration attempts. Please try again later.', 300);
 
-            return Limit::perMinutes($decayMinutes, $maxAttempts)
-                ->by($request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many registration attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 300,
-                    ], 429, $headers);
-                });
+            return [
+                Limit::perMinutes($decayMinutes, $maxAttempts)
+                    ->by('register:'.$accountKey($request).'|'.$request->ip())
+                    ->response($response),
+                Limit::perMinutes($decayMinutes, $maxAttempts * 10)
+                    ->by('register-ip:'.$request->ip())
+                    ->response($response),
+            ];
         });
 
-        // Rate limiting for OTP verification (10 attempts per 5 minutes per IP)
-        RateLimiter::for('auth.verify', function (Request $request) {
-            return Limit::perMinutes(5, 10)
-                ->by($request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many verification attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 300,
-                    ], 429, $headers);
-                });
+        // OTP verification (10 attempts per 5 minutes per account + IP)
+        RateLimiter::for('auth.verify', function (Request $request) use ($accountKey, $tooMany) {
+            $response = $tooMany('Too many verification attempts. Please try again later.', 300);
+
+            return [
+                Limit::perMinutes(5, 10)->by('verify:'.$accountKey($request).'|'.$request->ip())->response($response),
+                Limit::perMinutes(5, 200)->by('verify-ip:'.$request->ip())->response($response),
+            ];
         });
 
-        // Rate limiting for OTP resend (5 attempts per 5 minutes per IP)
-        RateLimiter::for('auth.resend', function (Request $request) {
-            return Limit::perMinutes(5, 5)
-                ->by($request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many OTP resend attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 300,
-                    ], 429, $headers);
-                });
+        // OTP resend (5 attempts per 5 minutes per account + IP)
+        RateLimiter::for('auth.resend', function (Request $request) use ($accountKey, $tooMany) {
+            $response = $tooMany('Too many OTP resend attempts. Please try again later.', 300);
+
+            return [
+                Limit::perMinutes(5, 5)->by('resend:'.$accountKey($request).'|'.$request->ip())->response($response),
+                Limit::perMinutes(5, 100)->by('resend-ip:'.$request->ip())->response($response),
+            ];
         });
 
         // Password-reset OTP resend: keyed by SAMAR ID (the target account), not IP,
@@ -210,36 +223,39 @@ class AppServiceProvider extends ServiceProvider
                 });
         });
 
-        // Strict rate limiting for password reset requests (3 attempts per 10 minutes per IP)
-        RateLimiter::for('auth.password', function (Request $request) {
+        // Password reset (3 attempts per 10 minutes per account + IP, per endpoint)
+        RateLimiter::for('auth.password', function (Request $request) use ($accountKey, $tooMany) {
             $maxAttempts = (int) config('app.rate_limits.password_reset', 3);
             $decayMinutes = (int) config('app.rate_limits.password_reset_decay', 10);
+            $response = $tooMany('Too many password reset attempts. Please try again later.', 600);
 
-            return Limit::perMinutes($decayMinutes, $maxAttempts)
-                ->by($request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many password reset attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 600,
-                    ], 429, $headers);
-                });
+            return [
+                Limit::perMinutes($decayMinutes, $maxAttempts)
+                    ->by('password:'.$request->path().':'.$accountKey($request).'|'.$request->ip())
+                    ->response($response),
+                Limit::perMinutes($decayMinutes, $maxAttempts * 20)
+                    ->by('password-ip:'.$request->ip())
+                    ->response($response),
+            ];
         });
 
-        // Relaxed rate limiting for token refresh (10 attempts per minute per user)
-        RateLimiter::for('auth.refresh', function (Request $request) {
+        // Token refresh: keyed by the refresh token itself. The access token has
+        // usually expired by now, so this used to fall back to the IP and an
+        // office of 150+ users behind one NAT hit 429 and was logged out.
+        RateLimiter::for('auth.refresh', function (Request $request) use ($tooMany) {
             $maxAttempts = (int) config('app.rate_limits.refresh', 10);
             $decayMinutes = (int) config('app.rate_limits.refresh_decay', 1);
+            $response = $tooMany('Too many token refresh attempts. Please try again later.', 60);
+            $token = (string) ($request->input('refresh_token') ?: $request->bearerToken());
 
-            return Limit::perMinutes($decayMinutes, $maxAttempts)
-                ->by($request->user()?->id ?: $request->ip())
-                ->response(function (Request $request, array $headers) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Too many token refresh attempts. Please try again later.',
-                        'retry_after' => $headers['Retry-After'] ?? 60,
-                    ], 429, $headers);
-                });
+            return [
+                Limit::perMinutes($decayMinutes, $maxAttempts)
+                    ->by('refresh:'.($token !== '' ? substr(hash('sha256', $token), 0, 20) : $request->ip()))
+                    ->response($response),
+                Limit::perMinute((int) config('app.rate_limits.refresh_ip_ceiling', 1000))
+                    ->by('refresh-ip:'.$request->ip())
+                    ->response($response),
+            ];
         });
 
         // Signed-in endpoints that verify the account password (change password,

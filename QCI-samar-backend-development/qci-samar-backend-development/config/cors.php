@@ -25,7 +25,7 @@ return [
 
     'allowed_headers' => explode(',', env('CORS_ALLOWED_HEADERS', 'Content-Type,Authorization,X-Requested-With,Accept')),
 
-    'exposed_headers' => array_filter(explode(',', env('CORS_EXPOSED_HEADERS', 'Content-Disposition,Content-Type,Content-Length'))),
+    'exposed_headers' => array_filter(explode(',', env('CORS_EXPOSED_HEADERS', 'Content-Disposition,Content-Type,Content-Length,Retry-After'))),
 
     'max_age' => (int) env('CORS_MAX_AGE', 86400),
 
