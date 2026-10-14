@@ -21,8 +21,8 @@ set -e
 
 # Server Configuration
 STAGING_IP="13.232.227.197"
-# Override with STAGING_USER / STAGING_PEM when the VM's login differs (the
-# qcisamartest VM does not accept the old zed-staging key).
+# Override with STAGING_USER / STAGING_PEM when the VM's login differs. The key
+# (samar-geostat.pem) is never committed: keep it in deploy/ or ~/.ssh/.
 STAGING_USER="${STAGING_USER:-ubuntu}"
 STAGING_URL="https://qcisamartest.qci.org.in"
 
@@ -34,9 +34,9 @@ REMOTE_WEB_DIR="/var/www/qci-samar/frontend"
 REMOTE_BACKEND_DIR="/var/www/qci-samar/backend"
 
 # PEM file: check deploy/ folder first, then ~/.ssh/
-PEM_FILE="${STAGING_PEM:-$SCRIPT_DIR/zed-staging-server-2026.pem}"
+PEM_FILE="${STAGING_PEM:-$SCRIPT_DIR/samar-geostat.pem}"
 if [ ! -f "$PEM_FILE" ]; then
-    PEM_FILE="$HOME/.ssh/zed-staging-server-2026.pem"
+    PEM_FILE="$HOME/.ssh/samar-geostat.pem"
 fi
 
 SSH_CTRL_PATH="/tmp/qci-samar-staging-ssh-%r@%h:%p"
@@ -77,8 +77,8 @@ check_pem_file() {
     if [ ! -f "$PEM_FILE" ]; then
         print_error "PEM file not found."
         echo "  Looked in:"
-        echo "    - $SCRIPT_DIR/zed-staging-server-2026.pem"
-        echo "    - $HOME/.ssh/zed-staging-server-2026.pem"
+        echo "    - $SCRIPT_DIR/samar-geostat.pem"
+        echo "    - $HOME/.ssh/samar-geostat.pem"
         echo ""
         echo "  Place the PEM file in either location."
         exit 1
@@ -386,7 +386,7 @@ show_usage() {
     echo "URL:    $STAGING_URL"
     echo ""
     echo "Requires:"
-    echo "  - PEM file: deploy/zed-staging-server-2026.pem or ~/.ssh/zed-staging-server-2026.pem"
+    echo "  - PEM file: deploy/samar-geostat.pem or ~/.ssh/samar-geostat.pem"
     echo "  - Frontend repo at: ../qci-samar-web/ (for frontend deploy)"
 }
 

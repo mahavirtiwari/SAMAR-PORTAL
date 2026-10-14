@@ -125,8 +125,8 @@ composer update --no-dev
 
 ### Prerequisites
 - PEM file in one of these locations:
-  - `deploy/zed-staging-server-2026.pem`
-  - `~/.ssh/zed-staging-server-2026.pem`
+  - `deploy/samar-geostat.pem`
+  - `~/.ssh/samar-geostat.pem`
 - Frontend repo cloned as sibling: `../qci-samar-web/`
 - Node.js and npm (for frontend build)
 
@@ -144,7 +144,7 @@ composer update --no-dev
 ### Manual SSH Access
 
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197
+ssh -i deploy/samar-geostat.pem ubuntu@13.232.227.197
 ```
 
 ### nginx & Security Headers (Staging) — server-managed
@@ -173,8 +173,8 @@ done
 To change the headers:
 
 ```bash
-scp -i deploy/zed-staging-server-2026.pem deploy/nginx/qci-security-headers.conf ubuntu@13.232.227.197:/tmp/
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
+scp -i deploy/samar-geostat.pem deploy/nginx/qci-security-headers.conf ubuntu@13.232.227.197:/tmp/
+ssh -i deploy/samar-geostat.pem ubuntu@13.232.227.197 \
   'sudo cp /tmp/qci-security-headers.conf /etc/nginx/snippets/ && sudo nginx -t && sudo systemctl reload nginx'
 ```
 
@@ -215,13 +215,13 @@ Seeded accounts and their passwords are defined in `database/seeders/` — read 
 
 ### API returns 500 error
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
+ssh -i deploy/samar-geostat.pem ubuntu@13.232.227.197 \
   "tail -50 /var/www/qci-samar/backend/storage/logs/laravel-*.log"
 ```
 
 ### Permission errors
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
+ssh -i deploy/samar-geostat.pem ubuntu@13.232.227.197 \
   "sudo chown -R ubuntu:www-data /var/www/qci-samar/backend && \
    sudo chmod -R 755 /var/www/qci-samar/backend && \
    sudo chmod -R 775 /var/www/qci-samar/backend/storage /var/www/qci-samar/backend/bootstrap/cache"
@@ -229,7 +229,7 @@ ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
 
 ### Config not updating
 ```bash
-ssh -i deploy/zed-staging-server-2026.pem ubuntu@13.232.227.197 \
+ssh -i deploy/samar-geostat.pem ubuntu@13.232.227.197 \
   "cd /var/www/qci-samar/backend && export APP_ENV=staging && \
    php artisan config:clear && php artisan config:cache"
 ```

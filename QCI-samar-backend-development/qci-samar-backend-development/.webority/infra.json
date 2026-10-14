@@ -73,7 +73,7 @@
       "ssh": {
         "method": "pem",
         "user": "ubuntu",
-        "keyIn": "deploy/zed-staging-server-2026.pem"
+        "keyIn": "deploy/samar-geostat.pem"
       },
       "services": [
         "nginx",
