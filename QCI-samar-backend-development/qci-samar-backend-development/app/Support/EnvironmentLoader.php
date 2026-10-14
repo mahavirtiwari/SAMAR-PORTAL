@@ -76,8 +76,14 @@ class EnvironmentLoader
                 $key = trim($key);
                 $value = trim($value);
 
-                // Remove quotes from value
-                $value = trim($value, '"\'');
+                // Quoted value: keep what is inside the quotes (a # there is literal).
+                // Unquoted: drop an inline " # comment", which would otherwise become
+                // part of the value (e.g. "false  # note" read as a truthy string).
+                if (preg_match('/^(["\'])(.*)\1(\s+#.*)?$/', $value, $quoted)) {
+                    $value = $quoted[2];
+                } else {
+                    $value = trim((string) preg_replace('/\s+#.*$/', '', $value));
+                }
 
                 // Handle variable expansion like ${VAR}
                 if (preg_match('/\$\{([A-Z_]+)\}/', $value, $matches)) {

@@ -212,6 +212,10 @@ for d in storage bootstrap/cache public/pdf public/images/assessment-report; do
     sudo find "$d" -type f -exec chmod 664 {} +
 done
 
+echo "[queue] workers + scheduler..."
+# Non-fatal: a missing supervisor must not stop the reload below.
+bash deploy/remote/install-workers.sh "$APP_ENV" "$(pwd)" || echo "[queue] worker install failed — see output above"
+
 echo "[services] reloading php-fpm (8.4) and nginx..."
 sudo systemctl reload php8.4-fpm 2>/dev/null || true
 sudo systemctl reload nginx

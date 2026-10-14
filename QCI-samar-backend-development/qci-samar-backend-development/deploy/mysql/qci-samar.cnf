@@ -1,0 +1,16 @@
+# MySQL 8.4 tuning for QCI SAMAR (MySQL on the same VM as the app).
+# Copy to /etc/mysql/mysql.conf.d/zz-qci-samar.cnf and restart mysql in a quiet window.
+[mysqld]
+# ~50-60% of the RAM left after PHP-FPM; e.g. 6G on a 16 GB VM.
+innodb_buffer_pool_size = 6G
+innodb_buffer_pool_instances = 6
+innodb_log_file_size = 1G
+innodb_flush_log_at_trx_commit = 1
+innodb_flush_method = O_DIRECT
+# Must exceed PHP-FPM max_children + queue workers + scheduler + admin headroom.
+max_connections = 200
+# Find slow queries under real load (review weekly; mysqldumpslow).
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/slow.log
+long_query_time = 0.5
+log_queries_not_using_indexes = 0

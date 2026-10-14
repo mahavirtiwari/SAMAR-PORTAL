@@ -1,0 +1,4 @@
+# Laravel scheduler for QCI SAMAR (session/email pruning, idle-session sweep,
+# certificate reminders, payment verification, Business Central sync).
+# Installed by deploy/remote/install-workers.sh into /etc/cron.d/.
+* * * * * www-data cd __BACKEND_DIR__ && APP_ENV=__APP_ENV__ /usr/bin/php artisan schedule:run >> /dev/null 2>&1

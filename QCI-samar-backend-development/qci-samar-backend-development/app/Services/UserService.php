@@ -421,29 +421,33 @@ class UserService
             'created_by' => $createdBy?->id ?? auth()->id(),
         ]);
 
-        try {
-            $this->notificationService->send(
-                $user,
-                'contact-person-authorized',
-                [
-                    'user_name' => $user->full_name,
-                    'samar_id' => $user->samar_id,
-                    'organization_name' => $user->organization?->name ?? 'N/A',
-                    'application_number' => $applicationNumber ?? 'N/A',
-                    'password' => $temporaryPassword,
-                    'login_url' => config('app.frontend_url', config('app.url')),
-                ],
-                ['priority' => 9]
-            );
-        } catch (\Exception $e) {
-            Log::error('Failed to send contact-person-authorized email', [
-                'user_id' => $user->id,
-                'user_email' => $user->email,
-                'application_number' => $applicationNumber,
-                'error' => $e->getMessage(),
-            ]);
-            // Don't fail user creation if email dispatch fails
-        }
+        // Callers create the user inside a transaction that also stores files and
+        // can still roll back; only email the credentials once it has committed.
+        DB::afterCommit(function () use ($user, $applicationNumber, $temporaryPassword) {
+            try {
+                $this->notificationService->send(
+                    $user,
+                    'contact-person-authorized',
+                    [
+                        'user_name' => $user->full_name,
+                        'samar_id' => $user->samar_id,
+                        'organization_name' => $user->organization?->name ?? 'N/A',
+                        'application_number' => $applicationNumber ?? 'N/A',
+                        'password' => $temporaryPassword,
+                        'login_url' => config('app.frontend_url', config('app.url')),
+                    ],
+                    ['priority' => 9]
+                );
+            } catch (\Exception $e) {
+                Log::error('Failed to send contact-person-authorized email', [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'application_number' => $applicationNumber,
+                    'error' => $e->getMessage(),
+                ]);
+                // Don't fail user creation if email dispatch fails
+            }
+        });
 
         return $user;
     }

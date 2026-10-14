@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\RunCommitteeMeetingCloseTail;
 use App\Models\Assessment;
 use App\Models\CommitteeMeeting;
 use App\Models\CommitteeMeetingAssessment;
@@ -1556,45 +1557,14 @@ class CommitteeMeetingController extends Controller
 
             // The meeting is already fully completed above (status + decision transitions committed
             // to the DB). The MoM PDF and decision emails are slow (PDF rendering + SMTP round-trips
-            // per assessment) but not needed for the response, so they run after the response has
-            // been sent to the client — same PHP-FPM process, no queue worker involved.
-            defer(function () use ($meeting) {
-                // The MoM PDF is an attachment, not a precondition for the close email.
-                // Generate it separately so a PDF failure never suppresses the
-                // meeting-closed email — members still get it, just without the MoM.
-                $pdfPath = null;
-                try {
-                    $pdfResult = app(MeetingSummarySheetService::class)->generateAndStoreMoMPdf($meeting);
-                    $pdfPath = $pdfResult['path'];
-                } catch (\Exception $e) {
-                    Log::error('Failed to generate MoM PDF', [
-                        'meeting_id' => $meeting->id,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-
-                try {
-                    $this->sendMeetingClosedEmail($meeting, $pdfPath);
-                } catch (\Exception $e) {
-                    Log::error('Failed to send MoM email', [
-                        'meeting_id' => $meeting->id,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-
-                // Send decision-specific emails independently of MoM PDF
-                try {
-                    Log::info('Starting decision emails for meeting', ['meeting_id' => $meeting->id]);
-                    $this->sendDecisionEmails($meeting);
-                    Log::info('Decision emails completed for meeting', ['meeting_id' => $meeting->id]);
-                } catch (\Exception $e) {
-                    Log::error('Failed to send decision emails', [
-                        'meeting_id' => $meeting->id,
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString(),
-                    ]);
-                }
-            })->name('committee-meeting-'.$meeting->id.'-close-tail');
+            // per assessment) and not needed for the response: they run on the queue worker, or
+            // after the response in this process when no worker is configured (sync queue).
+            $tail = new RunCommitteeMeetingCloseTail($meeting->id);
+            if (config('queue.default') === 'sync') {
+                defer(fn () => dispatch_sync($tail))->name('committee-meeting-'.$meeting->id.'-close-tail');
+            } else {
+                dispatch($tail);
+            }
 
             return $response;
         } catch (\Exception $e) {
@@ -2952,6 +2922,50 @@ class CommitteeMeetingController extends Controller
             Log::error('Failed to send assessment feedback request email', [
                 'assessment_id' => $assessment->id,
                 'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * MoM PDF, meeting-closed email and decision emails for a completed meeting.
+     * Run by RunCommitteeMeetingCloseTail; each step is isolated so one failure
+     * does not stop the others.
+     */
+    public function runCloseTail(CommitteeMeeting $meeting): void
+    {
+        // The MoM PDF is an attachment, not a precondition for the close email.
+        // Generate it separately so a PDF failure never suppresses the
+        // meeting-closed email — members still get it, just without the MoM.
+        $pdfPath = null;
+        try {
+            $pdfResult = app(MeetingSummarySheetService::class)->generateAndStoreMoMPdf($meeting);
+            $pdfPath = $pdfResult['path'];
+        } catch (\Exception $e) {
+            Log::error('Failed to generate MoM PDF', [
+                'meeting_id' => $meeting->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        try {
+            $this->sendMeetingClosedEmail($meeting, $pdfPath);
+        } catch (\Exception $e) {
+            Log::error('Failed to send MoM email', [
+                'meeting_id' => $meeting->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
+        // Send decision-specific emails independently of MoM PDF
+        try {
+            Log::info('Starting decision emails for meeting', ['meeting_id' => $meeting->id]);
+            $this->sendDecisionEmails($meeting);
+            Log::info('Decision emails completed for meeting', ['meeting_id' => $meeting->id]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send decision emails', [
+                'meeting_id' => $meeting->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }

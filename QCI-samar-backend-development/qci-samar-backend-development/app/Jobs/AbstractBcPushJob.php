@@ -27,7 +27,11 @@ abstract class AbstractBcPushJob implements ShouldQueue
 
     public int $tries = 1;
 
-    public function __construct(public int $recordId) {}
+    public function __construct(public int $recordId)
+    {
+        // Pushed from inside the payment settlement transaction; send only once it commits.
+        $this->afterCommit();
+    }
 
     public function handle(BusinessCentralClientInterface $bc): void
     {

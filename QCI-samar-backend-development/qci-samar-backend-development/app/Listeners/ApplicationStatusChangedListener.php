@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Models\Application;
 use App\Models\User;
 use App\Services\Email\EmailNotificationService;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -12,8 +13,18 @@ use Illuminate\Support\Facades\Log;
  *
  * Listens to application.status.changed events and triggers appropriate email notifications.
  */
-class ApplicationStatusChangedListener
+class ApplicationStatusChangedListener implements ShouldQueueAfterCommit
 {
+    /**
+     * Runs on the queue worker after the transition commits: one status change
+     * emails every Operations Manager/Admin, which is too slow (one SMTP
+     * round-trip each) to do inside the request and its database locks.
+     */
+    public int $tries = 3;
+
+    /** @var array<int, int> */
+    public array $backoff = [60, 300];
+
     /**
      * Email notification service instance.
      */
