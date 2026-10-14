@@ -19,7 +19,7 @@ const PunchModal = ({
   device,
   isCameraActive,
   hasPermission,
-  cameraRef,
+  camera,
   currentTime,
   userLocation,
   locationStatus,
@@ -57,11 +57,13 @@ const PunchModal = ({
                 <View style={styles.cameraCircle}>
                   <Camera
                     resizeMode="cover"
-                    ref={cameraRef}
                     style={styles.cameraView}
                     device={device}
                     isActive={isCameraActive && visible}
-                    photo={true}
+                    outputs={[camera.photoOutput]}
+                    onStarted={camera.onStarted}
+                    onStopped={camera.onStopped}
+                    onError={camera.onError}
                   />
                 </View>
               </View>

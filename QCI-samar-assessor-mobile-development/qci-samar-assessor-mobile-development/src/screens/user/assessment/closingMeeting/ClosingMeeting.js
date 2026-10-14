@@ -1369,7 +1369,7 @@ const ClosingMeeting = () => {
         device={punch.device}
         isCameraActive={punch.isCameraActive}
         hasPermission={punch.hasPermission}
-        cameraRef={punch.cameraRef}
+        camera={punch.camera}
         currentTime={punch.currentTime}
         userLocation={punch.userLocation}
         locationStatus={punch.locationStatus}

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Animated, AppState, Platform } from 'react-native';
-import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
+import { useCameraDevice, useCameraPermission, usePhotoOutput } from 'react-native-vision-camera';
 import AppSettings from '../../../../../appsettings';
 import { LOCATION_PUNCH_MAX_AGE_MS } from '../../../../constants/Config';
 import {
@@ -34,10 +34,30 @@ const usePunchFlow = ({
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [selfieUri, setSelfieUri] = useState(null);
   const [rotateValue] = useState(() => new Animated.Value(0));
-  const cameraRef = useRef(null);
+  // VisionCamera v5 captures through an output attached to the camera session
+  // rather than a ref on the view. A capture is only possible once the session
+  // has started, so track that explicitly.
+  const [isCameraStarted, setIsCameraStarted] = useState(false);
 
   const device = useCameraDevice('front');
-  const { hasPermission } = useCameraPermission();
+  const { hasPermission, requestPermission: syncCameraPermission } = useCameraPermission();
+  const photoOutput = usePhotoOutput({ qualityPrioritization: 'quality' });
+  // Wiring for PunchModal's <Camera>: the photo output to attach and the
+  // session callbacks that gate capture on the session actually running.
+  // Memoized because VisionCamera feeds onError into the session config, so a
+  // new identity on every render would reconfigure the session.
+  const camera = useMemo(
+    () => ({
+      photoOutput,
+      onStarted: () => setIsCameraStarted(true),
+      onStopped: () => setIsCameraStarted(false),
+      onError: (error) => {
+        setIsCameraStarted(false);
+        Logger.error('Selfie camera error:', error?.message || error);
+      }
+    }),
+    [photoOutput]
+  );
 
   const currentTime = new Date()
     .toLocaleString('en-GB', {
@@ -131,7 +151,7 @@ const usePunchFlow = ({
     // it never hears about that grant, so on iOS `hasPermission` stayed false
     // for the whole session and the camera never mounted. Re-requesting here
     // is a no-op dialog-wise (already granted) and syncs the store.
-    await Camera.requestCameraPermission();
+    await syncCameraPermission();
     setIsCameraActive(true);
   };
 
@@ -154,7 +174,7 @@ const usePunchFlow = ({
         getCurrentLocation();
       }
       if (permissions.camera === 'granted' && !isCameraActive) {
-        await Camera.requestCameraPermission();
+        await syncCameraPermission();
         setIsCameraActive(true);
       }
     });
@@ -194,6 +214,16 @@ const usePunchFlow = ({
     }
   };
 
+  // Captures the selfie through VisionCamera's photo output and returns a
+  // file:// URI for the capture pipeline. capturePhotoToFile returns a plain
+  // filesystem path; the scheme is added only if missing, since a doubled
+  // file://file:/// prefix makes the native compressor write an empty selfie.
+  const captureSelfieUri = async () => {
+    const photoFile = await photoOutput.capturePhotoToFile({ flashMode: 'off' }, {});
+    const path = photoFile.filePath;
+    return path.startsWith('file://') ? path : `file://${path}`;
+  };
+
   const handleCheckIn = async () => {
     if (!userLocation) {
       showErrorToast('Location Required', 'Punch-in cannot be recorded without your location.');
@@ -204,16 +234,9 @@ const usePunchFlow = ({
 
       // Capture selfie photo
       let selfieUriCaptured = null;
-      if (cameraRef.current && isCameraActive) {
+      if (isCameraActive && isCameraStarted) {
         try {
-          const photo = await cameraRef.current.takePhoto({
-            qualityPrioritization: 'quality',
-            flash: 'off'
-          });
-          // VisionCamera's photo.path may already carry the file:// scheme;
-          // prefixing unconditionally produced file://file:///… which the
-          // native compressor mangled into a non-existent path (empty selfie).
-          const rawUri = photo.path.startsWith('file://') ? photo.path : `file://${photo.path}`;
+          const rawUri = await captureSelfieUri();
           selfieUriCaptured = await prepareCapturedPhoto({
             uri: rawUri,
             serverAssessmentId: assessmentId,
@@ -298,16 +321,9 @@ const usePunchFlow = ({
       setIsCheckingIn(true);
 
       // Capture selfie photo (front camera via vision-camera)
-      if (cameraRef.current && isCameraActive) {
+      if (isCameraActive && isCameraStarted) {
         try {
-          const photo = await cameraRef.current.takePhoto({
-            qualityPrioritization: 'quality',
-            flash: 'off'
-          });
-          // VisionCamera's photo.path may already carry the file:// scheme;
-          // prefixing unconditionally produced file://file:///… which the
-          // native compressor mangled into a non-existent path (empty selfie).
-          const rawUri = photo.path.startsWith('file://') ? photo.path : `file://${photo.path}`;
+          const rawUri = await captureSelfieUri();
           selfieUriCaptured = await prepareCapturedPhoto({
             uri: rawUri,
             serverAssessmentId: assessmentId,
@@ -393,6 +409,7 @@ const usePunchFlow = ({
   const closeCheckInModal = () => {
     setCheckInModalVisible(false);
     setIsCameraActive(false);
+    setIsCameraStarted(false);
     setUserLocation(null);
     setLocationStatus('idle');
     setIsCheckingIn(false);
@@ -410,7 +427,7 @@ const usePunchFlow = ({
     retryLocation: requestLocationPermission,
     isCameraActive,
     selfieUri,
-    cameraRef,
+    camera,
     device,
     hasPermission,
     currentTime,
