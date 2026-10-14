@@ -33,7 +33,7 @@ input:-webkit-autofill:active {
 }
 
 .asterics {
-  color: var(--danger-primary);
+  color: var(--danger-text);
   /* Anchor the asterisk to the text's mid-line and add a small gap so it sits
      consistently next to the label regardless of the preceding character's height. */
   display: inline-block;
@@ -213,19 +213,19 @@ min-width: 90px;
 
 .app-button.active-filter-btn {
   background-color: var(--primary-5);
-  color: var(--primary);
+  color: var(--primary-text);
   border: 1px solid var(--primary-50);
 }
 
 .app-button.secondary {
   background-color: var(--primary-20);
-  color: var(--primary);
+  color: var(--primary-text);
   border: 1px solid var(--primary-20);
 }
 
 .app-button.secondary:hover {
   background-color: var(--primary-15);
-  color: var(--primary);
+  color: var(--primary-text);
   border: 1px solid var(--primary-15);
 }
 
@@ -286,7 +286,7 @@ min-width: 90px;
 .app-button.link {
   background-color: transparent;
   border: none;
-  color: var(--primary);
+  color: var(--primary-text);
   height: auto;
   min-width: auto;
   padding-left: 10px;
@@ -330,13 +330,13 @@ min-width: 90px;
 
 .app-button.danger-secondary {
   background-color: var(--danger-light);
-  color: var(--danger-primary);
+  color: var(--danger-text);
   border: 1px solid var(--danger-light);
 }
 
 .app-button.danger-secondary:hover {
   background-color: var(--danger-button-light-hover);
-  color: var(--danger-primary);
+  color: var(--danger-text);
   border: 1px solid var(--danger-clarity);
 }
 
@@ -389,19 +389,19 @@ min-width: 90px;
 /* Success background variant - light background with success clarity */
 .app-button.success-bg {
   background-color: var(--success-clarity);
-  color: var(--success-active);
+  color: var(--success-text);
   border: 1px solid transparent;
 }
 
 .app-button.success-bg:hover {
   background-color: #deffea;
-  color: var(--success-active);
+  color: var(--success-text);
   border: 1px solid #04b4401f;
 }
 
 .app-button.success-bg:focus {
   background-color: var(--success-clarity);
-  color: var(--success-active);
+  color: var(--success-text);
   border: 1px solid #04b4401f;
 }
 
@@ -414,13 +414,13 @@ min-width: 90px;
 .app-button.danger-link {
   background-color: transparent;
   border: none;
-  color: var(--danger-primary);
+  color: var(--danger-text);
 }
 
 .app-button.danger-link:hover {
   background-color: transparent;
   border: none;
-  color: var(--danger-primary);
+  color: var(--danger-text);
 }
 
 .app-button.danger-link:focus {
@@ -440,8 +440,10 @@ min-width: 90px;
   margin-left: var(--space-15);
 }
 
-.css-taie28-MuiDataGrid-root .MuiDataGrid-columnHeader:focus-within,
-.css-taie28-MuiDataGrid-root .MuiDataGrid-cell:focus-within {
+/* Mouse focus only — keyboard focus keeps the ring defined in custom.css.
+   Browsers without :has() drop this rule and show MUI's own ring instead. */
+.MuiDataGrid-root .MuiDataGrid-columnHeader:focus-within:not(:focus-visible):not(:has(:focus-visible)),
+.MuiDataGrid-root .MuiDataGrid-cell:focus-within:not(:focus-visible):not(:has(:focus-visible)) {
   outline: solid 1px #edf4fc !important;
 }
 
@@ -533,9 +535,10 @@ DATA TABLE STYLING
 ============================================================================= */
 .MuiDataGrid-columnHeaderTitle {
   font-size: 12px;
-  color: #99a1b7;
+  color: var(--text-4-text);
   font-family: "Inter-Medium";
   text-transform: uppercase;
+  white-space: normal !important;
   text-wrap-mode: wrap !important;
 }
 
@@ -563,7 +566,7 @@ DATA TABLE STYLING
   border-left-color: var(--primary);
 }
 
-.css-taie28-MuiDataGrid-root .MuiDataGrid-cell {
+.MuiDataGrid-root .MuiDataGrid-cell {
   border-bottom: 0px solid #f0f0f0;
 }
 
@@ -595,16 +598,16 @@ DATA TABLE STYLING
   padding-bottom: 20px;
 }
 
-.css-1905moa-MuiTablePagination-displayedRows {
+.MuiTablePagination-displayedRows {
   margin-bottom: 0 !important;
 }
 
-.css-taie28-MuiDataGrid-root .MuiDataGrid-cell {
+.MuiDataGrid-root .MuiDataGrid-cell {
   border-top: 0px !important;
 }
 
-.css-taie28-MuiDataGrid-root .MuiDataGrid-columnHeader:focus,
-.css-taie28-MuiDataGrid-root .MuiDataGrid-cell:focus {
+.MuiDataGrid-root .MuiDataGrid-columnHeader:focus:not(:focus-visible),
+.MuiDataGrid-root .MuiDataGrid-cell:focus:not(:focus-visible) {
   outline: solid 1px transparent !important;
 }
 
@@ -650,15 +653,15 @@ DATA TABLE STYLING
   font-family: "Inter-Medium";
 }
 
-.css-taie28-MuiDataGrid-root .MuiDataGrid-footerContainer {
+.MuiDataGrid-root .MuiDataGrid-footerContainer {
   background: transparent;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   border-color: transparent !important;
 }
 
-.css-y1ejz4-MuiTablePagination-root .MuiTablePagination-selectLabel,
-.css-11cfq65-MuiTablePagination-displayedRows {
+.MuiTablePagination-root .MuiTablePagination-selectLabel,
+.MuiTablePagination-root .MuiTablePagination-displayedRows {
   margin-bottom: 0;
 }
 
@@ -675,7 +678,7 @@ DATA TABLE STYLING
   padding: 4px 8px;
   border-radius: 4px;
   border: 1px solid;
-  font-size: 10px;
+  font-size: 11px;
   display: inline-block;
   line-height: normal;
   font-family: "Inter-Bold";
@@ -688,6 +691,7 @@ Typography STYLING
 .page-heading {
   font-family: "Inter-Medium";
   font-size: var(--fs-lg);
+  white-space: nowrap;
   text-wrap-mode: nowrap;
   color: var(--heading);
   margin-bottom: 0;
@@ -908,7 +912,7 @@ background-color: #c65d0d
 }
 
 .MuiList-root.MuiList-padding.MuiMenu-list li.Mui-selected {
-  color: var(--primary);
+  color: var(--primary-text);
   background-color: var(--info-light);
 }
 
@@ -1031,7 +1035,7 @@ background-color: #c65d0d
   min-width: 180px;
 }
 
-.css-vab54s-MuiAlert-icon {
+.MuiAlert-icon {
   align-items: center;
 }
 
@@ -1048,12 +1052,12 @@ background-color: #c65d0d
   outline: none !important;
 }
 
-.css-1yukwmk-MuiInputBase-root-MuiOutlinedInput-root {
+.MuiOutlinedInput-root {
   background-color: var(--input-outline);
 }
 
-.css-1yukwmk-MuiInputBase-root-MuiOutlinedInput-root input::placeholder,
-.css-1yukwmk-MuiInputBase-root-MuiOutlinedInput-root textarea::placeholder {
+.MuiOutlinedInput-root input::placeholder,
+.MuiOutlinedInput-root textarea::placeholder {
   color: var(--text-3) !important;
   font-family: "Inter-Regular" !important;
   opacity: 1 !important;
@@ -1065,7 +1069,7 @@ background-color: #c65d0d
   min-width: 47% !important;
 }
 
-.css-12qilk4-MuiTablePagination-displayedRows {
+.MuiTablePagination-displayedRows {
   margin-bottom: 0;
 }
 
@@ -1173,7 +1177,7 @@ background-color: #c65d0d
 
 .settings-card p {
   margin: 0;
-  color: #78829d;
+  color: var(--text-3);
   font-size: 14px;
   font-family: "Inter-Medium";
   line-height: normal;
@@ -1182,7 +1186,7 @@ background-color: #c65d0d
 .success-note {
   background: #eafff1;
   font-family: "Inter-Medium";
-  color: #04b440;
+  color: var(--success-text);
 
   padding: 8px 12px;
   border-radius: 6px;
@@ -1374,7 +1378,7 @@ background-color: #c65d0d
   font-size: 13px;
   font-weight: 600;
   line-height: 1;
-  color: #78829d;
+  color: var(--text-3);
   white-space: nowrap;
 }
 

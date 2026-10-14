@@ -82,7 +82,7 @@
   /* green border */
   background-color: #e6f4ea;
   /* pale green */
-  color: #04b440;
+  color: var(--success-text);
   /* initials color */
 }
 
@@ -92,7 +92,7 @@
   /* blue border */
   background-color: var(--primary-10);
   /* very pale blue */
-  color: var(--primary);
+  color: var(--primary-text);
   /* initials color */
 }
 
@@ -102,7 +102,7 @@
   /* light blue border */
   background-color: var(--primary-10);
   /* very pale cyan */
-  color: var(--primary);
+  color: var(--primary-text);
   /* initials color */
 }
 
@@ -116,12 +116,12 @@
 }
 
 /* 1. Hide MUI's default arrow shape */
-.css-iglfhh-MuiTooltip-arrow::before {
+.MuiTooltip-arrow::before {
   display: none !important;
 }
 
 /* 2. Insert your custom triangle image */
-.css-iglfhh-MuiTooltip-arrow {
+.MuiTooltip-arrow {
   width: 28px !important;
   height: 28px !important;
   background-image: url("../icons/triangle.svg");
@@ -130,7 +130,7 @@
   background-position: center;
   transform: translateY(0px); /* adjust position so it sits exactly like your screenshot */
 }
-.css-jycagz-MuiPopper-root-MuiTooltip-popper[data-popper-placement*="bottom"] .MuiTooltip-arrow {
+.MuiTooltip-popper[data-popper-placement*="bottom"] .MuiTooltip-arrow {
   top: 0;
   margin-top: -21px !important;
 }

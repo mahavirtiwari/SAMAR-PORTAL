@@ -103,7 +103,7 @@ margin-left: 10px;
 }
 
 .at-person-meta .at-role {
-  color: #78829d;
+  color: var(--text-3);
   font-size: 12px;
   font-weight: 400;
 }
@@ -134,7 +134,7 @@ margin-left: 10px;
 }
 
 .at-check-label.in {
-  color: var(--success-active);
+  color: var(--success-text);
   margin-right: 10px;
 }
 

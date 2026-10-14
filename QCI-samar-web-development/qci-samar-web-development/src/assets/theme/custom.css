@@ -51,6 +51,7 @@ body {
   justify-content: center;
   padding: 0 10px 20px 10px;
   min-height: calc(100vh - 110px);
+  min-height: calc(100dvh - 110px);
   width: 100%;
   max-width: 540px;
   margin: auto;
@@ -103,7 +104,7 @@ body {
 }
 
 .content-block a {
-  color: var(--primary);
+  color: var(--primary-text);
   font-weight: 600;
 }
 
@@ -211,9 +212,23 @@ body {
   bottom: 100px;
 }
 
+/* Both blocks are pinned to the bottom of the viewport; on short screens and
+   phones/tablets (incl. landscape) they overlap the form, so put them in flow. */
+@media (max-height: 700px), (max-width: 992px) {
+  .publicFormBottomMainContainer,
+  .quickLinksContainer {
+    position: static;
+  }
+
+  .quickLinksContainer {
+    margin-top: var(--space-20);
+  }
+}
+
 .newPasswordSection {
   background-color: var(--background);
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
 }
 
@@ -276,6 +291,7 @@ body {
 .forgotPasswordSection {
   background-color: var(--background);
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
 }
 
@@ -288,6 +304,7 @@ body {
 
 .forgotPasswordContainer {
   min-height: calc(100vh - 70px);
+  min-height: calc(100dvh - 70px);
 }
 
 /* =============================================================================
@@ -639,7 +656,7 @@ LAYOUT STYLES - Header, Sidebar, Layout
 }
 
 .check {
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .step-connector {
@@ -661,6 +678,7 @@ LAYOUT STYLES - Header, Sidebar, Layout
   color: #252f4a;
   line-height: normal;
   font-weight: 600;
+  white-space: nowrap;
   text-wrap-mode: nowrap;
 }
 
@@ -692,6 +710,8 @@ LAYOUT STYLES - Header, Sidebar, Layout
   width: 100%;
   margin-right: 0px;
   border-top: 1px solid #4a71a5;
+  /* Keep "Collapse Menu" above the iOS home indicator. */
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Layout Styles */
@@ -704,6 +724,7 @@ LAYOUT STYLES - Header, Sidebar, Layout
   margin-left: 250px;
   transition: margin-left 0.1s ease;
   max-height: calc(100vh - 70px);
+  max-height: calc(100dvh - 70px);
 }
 
 .main-content.sidebar-closed {
@@ -1335,7 +1356,7 @@ PREVIEW STYLES
 }
 
 .table.product-details-table thead th {
-  color: #99a1b7;
+  color: var(--text-4-text);
   font-size: 12px;
   font-weight: 500;
   padding: 0.4rem 0.5rem 1rem;
@@ -1348,7 +1369,7 @@ PREVIEW STYLES
 }
 
 .table.product-details-table td a {
-  color: #3d8bfd;
+  color: var(--primary-text);
   text-decoration: none;
 }
 
@@ -1370,14 +1391,14 @@ PREVIEW STYLES
 }
 
 .product-details-table td:first-child {
-  color: #78829d;
+  color: var(--text-3);
 }
 
 .cus-bx-1 {
   line-height: 36px;
 }
 
-.css-1ggfs1g-MuiPaper-root-MuiDialog-paper {
+.MuiDialog-paper {
   border-radius: 12px !important;
 }
 
@@ -1439,10 +1460,24 @@ Scrollbar Styling STYLES
   background: rgba(255, 255, 255, 0.3);
 }
 
-.MuiDataGrid-columnHeader:focus-within,
-.css-dm8gmn-MuiDataGrid-root .MuiDataGrid-cell:focus-within {
+/* Hide the grid focus ring for mouse focus only; keyboard focus stays visible. */
+.MuiDataGrid-columnHeader:focus-within:not(:focus-visible):not(:has(:focus-visible)),
+.MuiDataGrid-root .MuiDataGrid-cell:focus-within:not(:focus-visible):not(:has(:focus-visible)) {
   outline: transparent !important;
   outline-offset: 0px !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-columnHeader:focus-visible,
+.MuiDataGrid-root .MuiDataGrid-cell:focus-visible {
+  outline: 2px solid var(--primary-text) !important;
+  outline-offset: -2px !important;
+}
+
+/* Separate rule: a browser without :has() must not drop the one above. */
+.MuiDataGrid-root .MuiDataGrid-columnHeader:has(:focus-visible),
+.MuiDataGrid-root .MuiDataGrid-cell:has(:focus-visible) {
+  outline: 2px solid var(--primary-text) !important;
+  outline-offset: -2px !important;
 }
 
 .MuiDataGrid-cell {
@@ -1490,6 +1525,7 @@ Scrollbar Styling STYLES
 .heading-createApp {
   font-family: "Inter-SemiBold";
   font-size: var(--fs-md);
+  white-space: nowrap;
   text-wrap-mode: nowrap;
   color: var(--heading);
   margin-bottom: 0;
@@ -1543,12 +1579,12 @@ Scrollbar Styling STYLES
 
 /* Active tab text color */
 .unit-type-tab.active .unit-type {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 /* Hover state text color */
 .unit-type-tab:hover .unit-type {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 /* =============================================================================
@@ -1771,7 +1807,7 @@ padding-right: 40px;
 .section-title-product {
   font-family: "Inter-SemiBold";
   font-size: var(--fs-base);
-  color: var(--primary);
+  color: var(--primary-text);
 
   margin-bottom: 16px;
   text-transform: uppercase;
@@ -1809,7 +1845,7 @@ padding-right: 40px;
 .remove-text {
   font-family: "Inter-Medium";
   font-size: var(--fs-xs);
-  color: var(--danger-primary);
+  color: var(--danger-text);
   cursor: pointer;
   margin-left: 4px;
 }
@@ -2145,7 +2181,7 @@ Application Details
 
 .card-tabs-link span.active {
   border-bottom: 2px solid;
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 a.cusLink {
@@ -2177,14 +2213,14 @@ a.cusLink {
 
 .cusTags.cusTags-header {
   padding: 2px 6px 2px;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 2px;
   margin-bottom: 0px;
 }
 
 .grid-cus {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -2269,7 +2305,8 @@ a.cusLink {
   border: 1px solid var(--outline);
   border-radius: 10px;
   background-color: var(--input-outline);
-  width: 540px;
+  width: 100%;
+  max-width: 540px;
   text-align: left;
 }
 
@@ -2302,7 +2339,7 @@ a.cusLink {
   height: 36px;
   border-radius: 8px;
   background: var(--primary-15);
-  color: var(--primary);
+  color: var(--primary-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2363,6 +2400,7 @@ a.cusLink {
   top: 140px;
   align-self: flex-start;
   max-height: calc(100vh - 160px);
+  max-height: calc(100dvh - 160px);
   overflow-y: auto;
 }
 
@@ -2645,12 +2683,12 @@ margin-right: var(--space-12)
   font-size: 14px;
 }
 
-.css-1yukwmk-MuiInputBase-root-MuiOutlinedInput-root {
+.MuiOutlinedInput-root:not(.MuiInputBase-multiline):not(.MuiInputBase-adornedStart):not(.MuiInputBase-adornedEnd) {
   padding: 0 !important;
 }
 
 .lat {
-  color: #78829d;
+  color: var(--text-3);
 }
 
 .margin-top-4 {
@@ -2665,6 +2703,7 @@ margin-right: var(--space-12)
 
 .css-51we07-MuiPopper-root {
   width: 652px;
+  max-width: calc(100vw - 32px);
   margin-top: 6px !important;
 }
 
@@ -2756,7 +2795,7 @@ margin-right: var(--space-12)
 
 /* select lead in schedule assessment */
 .app-dropdown-list {
-  min-width: 340px;
+  min-width: min(340px, calc(100vw - 32px));
   box-shadow: 0 2px 8px #0001;
   border-radius: 8px;
   background: var(--white);
@@ -2815,7 +2854,7 @@ margin-right: var(--space-12)
 }
 
 .app-dropdown-option.selected .app-dropdown-option-name {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .app-dropdown-option-role {
@@ -2844,7 +2883,7 @@ margin-right: var(--space-12)
 
 .app-dropdown-option-status.green {
   background: var(--success-light);
-  color: var(--success-active);
+  color: var(--success-text);
 }
 
 .app-dropdown-option-status.red {
@@ -3083,7 +3122,7 @@ background-image: url('../icons/openDrowpDownArrow.svg') !important;
   border: 1px solid var(--outline);
 }
 
-.css-rql6nh-MuiInputBase-root-MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
+.MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
   border-color: #ebedf3 !important;
   background-color: #fcfcfc !important;
 }
@@ -3136,11 +3175,11 @@ background-image: url('../icons/openDrowpDownArrow.svg') !important;
 }
 
 .step-item.active .step-title {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .step-item.done .step-title {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .step-item .step-title {
@@ -3372,7 +3411,7 @@ input[type="password"]::-ms-clear {
 
 .navbar-nav .user-dropdown-menu.dropdown-menu {
   position: absolute;
-  min-width: 320px;
+  min-width: min(320px, calc(100vw - 32px));
   border-radius: var(--radius-10);
 }
 
@@ -3524,7 +3563,7 @@ input[type="password"]::-ms-clear {
   background-color: var(--background);
 }
 
-.css-1toxriw-MuiList-root-MuiMenu-list {
+.MuiMenu-list {
   padding-bottom: 0px !important;
   min-width: 100px !important;
 }
@@ -3535,10 +3574,6 @@ font-family: 'Inter-Medium' !important;
 padding: 4px 8px;
 color: var(--text-2);
 } */
-
-.css-1h8qil1-MuiButtonBase-root-MuiMenuItem-root.Mui-focusVisible {
-  background-color: #ffffff !important;
-}
 
 .table-flex-end {
   display: flex;
@@ -3641,6 +3676,12 @@ border-color: var(--primary-30);
   box-shadow: none;
 }
 
+/* The rule above removes Bootstrap's ring for every focus; give keyboard users one back. */
+.accordion-button:focus-visible {
+  outline: 2px solid var(--primary-text);
+  outline-offset: -2px;
+}
+
 .site-card {
   width: 100%;
 }
@@ -3683,7 +3724,7 @@ border-color: var(--primary-30);
   padding: 0 12px;
   border-radius: 60px;
   background: #edf4ff;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-size: 14px;
   font-weight: 700;
 }
@@ -3733,7 +3774,7 @@ border-color: var(--primary-30);
   border: 1px dashed #c5dcfe;
   border-radius: 20px;
   background: #f5f9ff;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-size: 14px;
   font-weight: 600;
   flex-direction: column;
@@ -3747,7 +3788,7 @@ border-color: var(--primary-30);
 
 .meeting-picture-picker__help {
   margin: 8px 0 0;
-  color: #78829d;
+  color: var(--text-3);
   font-size: 12px;
 }
 
@@ -3858,7 +3899,7 @@ border-color: var(--primary-30);
   padding: 6px 20px;
   border-radius: 60px;
   background: #eaf2ff;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-size: 14px !important;
   font-weight: 700;
   line-height: 14px;
@@ -3874,7 +3915,7 @@ border-color: var(--primary-30);
 .meeting-recordings__add-link {
   border: 0;
   background: transparent;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -3882,7 +3923,7 @@ border-color: var(--primary-30);
 
 .meeting-recordings__add-link:hover,
 .meeting-recordings__add-link:focus-visible {
-  color: #3d8bfd;
+  color: var(--primary-text);
 }
 
 .meeting-recordings__list {
@@ -4230,19 +4271,19 @@ height: 150px;
 }
 
 .dual-feedback-message .score-span {
-  color: #78829d;
+  color: var(--text-3);
   font-size: 14px;
   font-weight: 500;
 }
 
 .dual-feedback-message .score-span span {
   font-size: 20px;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-weight: 500;
 }
 
 .dual-feedback-message .score-span {
-  color: #78829d;
+  color: var(--text-3);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 8px;
@@ -4256,7 +4297,7 @@ height: 150px;
   margin-bottom: 0;
 }
 
-.css-1bxcvor-MuiFormLabel-root-MuiInputLabel-root.Mui-focused {
+.MuiInputLabel-root.Mui-focused {
   color: var(--heading) !important;
 }
 
@@ -4338,7 +4379,7 @@ color: #F8285A !important;
   margin-bottom: 4px;
 }
 
-.MuiFormControlLabel-label.css-vbvna7-MuiTypography-root {
+.MuiFormControlLabel-label.MuiTypography-root {
   color: var(--text-1) !important;
 }
 
@@ -4379,7 +4420,7 @@ color: #F8285A !important;
   padding-top: 16px;
 }
 
-.static-unit-text-bx.MuiBox-root.css-14vdj50 {
+.static-unit-text-bx.MuiBox-root {
   height: 43px;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
@@ -4446,7 +4487,7 @@ textarea::-webkit-input-placeholder {
   background-color: #fcfcfc !important;
 }
 
-.linkViewBtn button.MuiButtonBase-root.app-button.small.link.css-1i1o7bi-MuiButtonBase-root {
+.linkViewBtn button.MuiButtonBase-root.app-button.small.link {
   padding-left: 0 !important;
 }
 
@@ -4456,28 +4497,28 @@ textarea::-webkit-input-placeholder {
 
 .MuiListItem-root.MuiListItem-dense.MuiListItem-gutters.css-1gv2gh0-MuiListItem-root {
   background-color: var(--info-light);
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .suggestion-ul .MuiListItem-root.MuiListItem-dense.MuiListItem-gutters.css-5wth3e {
   background-color: var(--info-light);
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .MuiListItem-gutters.css-1gv2gh0-MuiListItem-root .MuiButtonBase-root .MuiBox-root {
-  color: var(--primary) !important;
+  color: var(--primary-text) !important;
 }
 
-.suggestionBx .css-1t4z0v6-MuiFormControl-root-MuiTextField-root .MuiOutlinedInput-root {
+.suggestionBx .MuiTextField-root .MuiOutlinedInput-root {
   height: 45px;
   padding-right: 0px;
 }
 
-.suggestionBx .css-elo8k2-MuiInputAdornment-root {
+.suggestionBx .MuiInputAdornment-root {
   margin-left: 0px !important;
 }
 
-.suggestionBx .css-elo8k2-MuiInputAdornment-root button {
+.suggestionBx .MuiInputAdornment-root button {
   margin-left: 8px !important;
   margin-right: 15px !important;
 }
@@ -4533,14 +4574,14 @@ textarea::-webkit-input-placeholder {
 }
 
 .suggestion-ul .MuiListItem-root.MuiListItem-dense.MuiListItem-gutters.css-5wth3e span {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
-.css-14vdj50 .static-unit-text {
+.static-unit-text-bx .static-unit-text {
   font-size: 12px;
 }
 
-.search-Container .css-6p6jw7-MuiFormControl-root-MuiTextField-root .MuiOutlinedInput-root input {
+.search-Container .MuiTextField-root .MuiOutlinedInput-root input {
   margin-left: 0px !important;
 }
 
@@ -4648,11 +4689,11 @@ textarea::-webkit-input-placeholder {
   border-width: 1px !important;
 }
 
-.css-1cdcxx0-MuiPickersInputBase-root-MuiPickersOutlinedInput-root:hover .MuiPickersOutlinedInput-notchedOutline {
+.MuiPickersOutlinedInput-root:hover .MuiPickersOutlinedInput-notchedOutline {
   border-color: #ecedf4 !important;
 }
 
-.css-1cdcxx0-MuiPickersInputBase-root-MuiPickersOutlinedInput-root.Mui-focused:not(.Mui-error) .MuiPickersOutlinedInput-notchedOutline {
+.MuiPickersOutlinedInput-root.Mui-focused:not(.Mui-error) .MuiPickersOutlinedInput-notchedOutline {
   border-color: #d1e6ff !important;
 }
 
@@ -4664,7 +4705,7 @@ textarea::-webkit-input-placeholder {
   width: 100%;
 }
 
-.timePicker-container .css-1umw9bq-MuiSvgIcon-root {
+.timePicker-container .MuiSvgIcon-root {
   fill: rgb(174 179 198) !important;
 }
 
@@ -4693,7 +4734,7 @@ textarea::-webkit-input-placeholder {
   padding-left: 0;
 }
 
-.css-73fb6a-MuiFormControl-root-MuiTextField-root .MuiInputLabel-shrink {
+.MuiTextField-root .MuiInputLabel-shrink {
   padding-left: 0px !important;
 }
 
@@ -4738,11 +4779,11 @@ textarea::-webkit-input-placeholder {
   margin-bottom: 0;
 }
 
-.MuiDateCalendar-root .css-1e4ohhe-MuiButtonBase-root-MuiPickersDay-root.Mui-selected {
+.MuiDateCalendar-root .MuiPickersDay-root.Mui-selected {
   background-color: #3d8bfd;
 }
 
-.css-1e4ohhe-MuiButtonBase-root-MuiPickersDay-root {
+.MuiPickersDay-root {
   font-size: 0.9rem !important;
 }
 
@@ -4877,10 +4918,10 @@ textarea::-webkit-input-placeholder {
 .empty-img {
   width: 140px;
 }
-.cus-radio-gap .css-iyihhx-MuiFormControlLabel-root {
+.cus-radio-gap .MuiFormControlLabel-root {
   margin-right: 18px;
 }
-.double-content .css-m8tume-MuiTypography-root {
+.double-content .MuiTypography-root {
   font-size: 12px;
   font-weight: 500;
   color: var(--heading);
@@ -4998,7 +5039,7 @@ textarea::-webkit-input-placeholder {
 .assessment-status-card__allocation-link {
   background: transparent;
   border: 0;
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -5031,7 +5072,7 @@ textarea::-webkit-input-placeholder {
 }
 
 .assessment-status-card__location {
-  color: #3d8bfd;
+  color: var(--primary-text);
   font-weight: 500;
 }
 
@@ -5064,7 +5105,7 @@ textarea::-webkit-input-placeholder {
   border-radius: 60px;
   background: #ecf3ff;
   margin-left: 8px;
-  color: #3d8bfd;
+  color: var(--primary-text);
   justify-content: center;
   align-items: center;
 }
@@ -5084,7 +5125,7 @@ textarea::-webkit-input-placeholder {
 .html-editor-tool:hover,
 .html-editor-placeholder:hover {
   border-color: var(--primary);
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .html-editor-placeholder {

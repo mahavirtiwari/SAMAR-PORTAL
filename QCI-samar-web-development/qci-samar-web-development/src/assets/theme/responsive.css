@@ -6,7 +6,7 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  .cus-radio-gap .css-sqklou-MuiFormGroup-root {
+  .cus-radio-gap .MuiFormGroup-root {
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -112,6 +112,7 @@
   }
   .nav-text {
     font-size: 12px;
+    white-space: normal;
     text-wrap-mode: wrap;
   }
   .custom-sidebar-nav .sidebar-submenu {
@@ -244,6 +245,7 @@
     display: block;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     z-index: 1045;
   }
 
@@ -366,6 +368,30 @@
   .action-btn {
     padding: 12px 20px;
     font-size: 14px;
+  }
+
+  /* The sidebar is an overlay here, so the desktop insets that make room for it
+     (custom.css .subHeader.sidebar-closed 73px, .sidebar-open 300px) only push
+     the sub-header content off-centre. */
+  .subHeader.sidebar-closed,
+  .subHeader.sidebar-open {
+    padding-left: 0;
+  }
+
+  /* The fixed sub-header plus a fixed main-content margin (132px / 157px /
+     155px) assumes a one-line sub-header; once it wraps it overlaps the page.
+     Put it in normal flow under the 70px fixed header and keep it pinned with
+     sticky, so whatever height it wraps to pushes the content down. The sibling
+     selector (only present when a sub-header renders) outranks the 575px
+     .main-content margin; .withoutSubHeader pages keep their 70px. */
+  .subHeader {
+    position: sticky;
+    top: 70px;
+    margin-top: 70px;
+  }
+
+  .subHeader ~ .main-content {
+    margin-top: 0 !important;
   }
 }
 
@@ -738,6 +764,10 @@
   .main-content {
     margin-top: 155px;
   }
+  /* The extra room is for a wrapped sub-header; pages without one sit under the 70px header. */
+  .main-content.withoutSubHeader {
+    margin-top: 70px;
+  }
   .accordion-header button {
     padding-left: 20px;
     padding-right: 20px;
@@ -873,7 +903,11 @@
   .maintenance-card {
     flex-direction: column;
   }
+}
 
+/* Up to MUI's sm breakpoint (600px), not the 575px block above, so phones at
+   576-599px don't keep MUI's 32px dialog margins. */
+@media (max-width: 599px) {
   .MuiDialog-paper {
     margin: 0 !important;
     width: 95% !important;
@@ -988,7 +1022,7 @@
   }
 
   .activity-time {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   /* Payment History Small Mobile */
@@ -1006,7 +1040,7 @@
   }
 
   .payment-status {
-    font-size: 10px;
+    font-size: 11px;
     padding: 3px 6px;
   }
 
@@ -1024,7 +1058,7 @@
   }
 
   .document-meta {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   /* Feedback Small Mobile */
@@ -1124,7 +1158,7 @@
   }
 
   .stat-label {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .action-btn {

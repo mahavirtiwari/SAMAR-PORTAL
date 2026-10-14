@@ -38,3 +38,49 @@ html {
     border-color 0.15s ease-in-out,
     box-shadow 0.15s ease-in-out;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print only the page content, not the app chrome. */
+@media print {
+  .sidebar,
+  .sidebar-overlay,
+  .custom-header,
+  .subHeader,
+  .no-print {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .table-container,
+  .MuiDataGrid-root {
+    box-shadow: none;
+  }
+}
+
+/* Sidebar icons are white SVG <img>s drawn for the dark sidebar. Forced colours
+   leave images alone but repaint the sidebar background (white in light
+   high-contrast themes), which hides them, so keep the sidebar's own colours. */
+@media (forced-colors: active) {
+  .sidebar,
+  .sidebar img {
+    forced-color-adjust: none;
+  }
+}

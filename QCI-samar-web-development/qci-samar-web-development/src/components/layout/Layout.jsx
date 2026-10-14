@@ -25,12 +25,24 @@ const Layout = ({ children, subHeader, isSubHeaderWithButton }) => {
   // the user had collapsed).
   useEffect(() => {
     const query = window.matchMedia(OVERLAY_QUERY);
-    const handleChange = event => {
-      setIsOverlay(event.matches);
-      setIsSidebarOpen(!event.matches);
+    let wasOverlay = query.matches;
+    const handleChange = () => {
+      if (query.matches === wasOverlay) {
+        return;
+      }
+      wasOverlay = query.matches;
+      setIsOverlay(query.matches);
+      setIsSidebarOpen(!query.matches);
     };
+    // Some environments (embedded webviews, device emulators) resize without
+    // firing the media-query change event, so resize is checked too; both only
+    // act when the breakpoint is actually crossed.
     query.addEventListener('change', handleChange);
-    return () => query.removeEventListener('change', handleChange);
+    window.addEventListener('resize', handleChange);
+    return () => {
+      query.removeEventListener('change', handleChange);
+      window.removeEventListener('resize', handleChange);
+    };
   }, []);
 
   // Escape closes the drawer.

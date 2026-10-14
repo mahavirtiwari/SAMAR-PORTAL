@@ -3,6 +3,7 @@
   top: 0;
   left: 0;
   height: 100vh;
+  height: 100dvh;
   background: var(--info-dark);
   transform: translateX(0);
   transition: transform 0.1s ease;
@@ -69,6 +70,7 @@
   left: 0;
   width: 100vw;
   height: calc(100vh - 70px);
+  height: calc(100dvh - 70px);
   background: rgba(0, 0, 0, 0.5);
   z-index: 1019;
   display: none;
@@ -148,6 +150,7 @@
   gap: 5px;
   padding: 0 15px;
   height: calc(100vh - 167px);
+  height: calc(100dvh - 167px);
   overflow-y: auto;
   flex-wrap: nowrap;
 }
@@ -196,6 +199,7 @@
   font-weight: 600;
   letter-spacing: 0.3px;
   font-family: "Inter-SemiBold";
+  white-space: nowrap;
   text-wrap-mode: nowrap;
   line-height: normal;
 }
@@ -313,6 +317,7 @@ padding-right: 8px;
   font-weight: 600;
   letter-spacing: 0.3px;
   font-family: "Inter-SemiBold";
+  white-space: nowrap;
   text-wrap-mode: nowrap;
   line-height: normal;
   color: #ffffff;

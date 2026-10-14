@@ -110,7 +110,7 @@ const EmailServerSettings = () => {
                   <div className="d-flex justify-content-between align-items-start gap-3 margin-bottom-16">
                     <div>
                       <div className="fs-16 fw-600 text-1-color">Use these SMTP settings</div>
-                      <div className="fs-13 text-3-color">When off, the server's default mail configuration is used (see the right-hand panel).</div>
+                      <div className="fs-13 text-3-color">When off, the server's default mail configuration is used (see Server default).</div>
                     </div>
                     <AppSwitch checked={form.enabled} ariaLabel="Use custom SMTP settings" onChange={() => setField('enabled', !form.enabled)} />
                   </div>
