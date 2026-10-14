@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Icons from '../../constants/Icons';
 import { getResponsesAction } from '../../redux/action/common/ApplicationAssessmentAction';
+import { onActivate } from '../../utils/a11y';
 import { isServiceSector } from '../../utils/assessmentExecution';
 import { formatParameterScore } from '../../utils/assessmentScoreUtils';
 import AppButton from './AppButton';
@@ -108,7 +109,7 @@ const OperationsManagerAssessmentParameter = ({ mandatory, score, onClick }) => 
           return (
             <div key={param.id} className="payment-allocation-container margin-bottom-16">
               {/* HEADER */}
-              <div className="d-flex justify-content-between cursor-pointer align-items-start" onClick={() => handleToggle(param.id)}>
+              <div className="d-flex justify-content-between cursor-pointer align-items-start" {...onActivate(() => handleToggle(param.id))} aria-expanded={isOpen}>
                 <div className="d-flex align-items-start">
                   <div
                     className="status-icon-container margin-right-10"
@@ -131,7 +132,7 @@ const OperationsManagerAssessmentParameter = ({ mandatory, score, onClick }) => 
                           <span className="fs-12 fw-500 text-3-color">{param.isMandatory ? 'Mandatory' : 'Optional'}</span>
                         </div>
                         <div className="margin-top-12">
-                          <img src={Icons.blueUser} className="icon-18 margin-right-8" />
+                          <img alt="" src={Icons.blueUser} className="icon-18 margin-right-8" />
                           <span className="fw-500 fs-12 text-2-color">{param?.assignedAssessor?.name}</span>
                         </div>
                       </div>
@@ -161,7 +162,7 @@ const OperationsManagerAssessmentParameter = ({ mandatory, score, onClick }) => 
                               <div className="clarification-Number">{displayCount}</div>
                               <span className="fs-12 fw-500">Clarification Required</span>
                               <div className="response-icon-container margin-left-4">
-                                <img src={Icons.redFlag} alt="response icon" className="icon-14" />
+                                <img src={Icons.redFlag} alt="" className="icon-14" />
                               </div>
                             </div>
                           </div>
@@ -178,7 +179,7 @@ const OperationsManagerAssessmentParameter = ({ mandatory, score, onClick }) => 
                         </div>
                       </div>
                     </div>
-                    <img src={isOpen ? Icons.topArrow : Icons.greyDownArrow} className="icon-24" alt="toggle" />
+                    <img src={isOpen ? Icons.topArrow : Icons.greyDownArrow} className="icon-24" alt="" />
                   </div>
                 </div>
               </div>

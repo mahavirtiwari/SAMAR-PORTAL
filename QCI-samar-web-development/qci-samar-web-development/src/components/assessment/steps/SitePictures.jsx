@@ -6,6 +6,7 @@ import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
 import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSitePicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
+import { onActivate } from '../../../utils/a11y';
 import { isServiceSector } from '../../../utils/assessmentExecution';
 import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatPersonName, formatUploaderDesignation } from '../../../utils/formatters';
@@ -175,7 +176,7 @@ const SitePictures = () => {
               <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Site Interior Pictures</h3>
               {interiorPictures.length > 0 ? (
                 interiorPictures?.map(picture => (
-                  <div key={picture.id} className="site-card mb-3" onClick={() => handleOpenModal(picture)} style={{ cursor: 'pointer' }}>
+                  <div key={picture.id} className="site-card mb-3" {...onActivate(() => handleOpenModal(picture))} style={{ cursor: 'pointer' }}>
                     <div className="site-image-wrapper">
                       <img
                         src={picture && getImageUrl(picture)}
@@ -209,7 +210,7 @@ const SitePictures = () => {
               <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Site Exterior Pictures</h3>
               {exteriorPictures.length > 0 ? (
                 exteriorPictures.map(picture => (
-                  <div key={picture.id} className="site-card mb-3" onClick={() => handleOpenModal(picture)} style={{ cursor: 'pointer' }}>
+                  <div key={picture.id} className="site-card mb-3" {...onActivate(() => handleOpenModal(picture))} style={{ cursor: 'pointer' }}>
                     <div className="site-image-wrapper">
                       <img
                         src={picture && getImageUrl(picture)}
@@ -269,7 +270,7 @@ const SitePictures = () => {
       <div className="row">
         {pictures.map(picture => (
           <div key={picture.id} className="col-12 col-md-6 mb-3">
-            <div className="site-card" onClick={() => handleOpenModal(picture)} style={{ cursor: 'pointer' }}>
+            <div className="site-card" {...onActivate(() => handleOpenModal(picture))} style={{ cursor: 'pointer' }}>
               <div className="site-image-wrapper">
                 <img
                   src={picture && getImageUrl(picture)}

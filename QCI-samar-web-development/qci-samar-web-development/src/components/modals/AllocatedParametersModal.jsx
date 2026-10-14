@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Icons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import { findMyTeamMember } from '../../utils/assessmentExecution';
 import { hasRole } from '../../utils/roleUtils';
 import { AppAvatar, AppButton } from '../base';
@@ -136,7 +137,7 @@ const AllocatedParametersModal = ({ open, onClose, user, myAssignedParameterCoun
           />
         ) : (
           <div
-            onClick={() => handleOptionalSelect(parameter.id)}
+            {...onActivate(() => handleOptionalSelect(parameter.id))}
             style={{
               width: 22,
               height: 22,
@@ -262,7 +263,7 @@ const AllocatedParametersModal = ({ open, onClose, user, myAssignedParameterCoun
         }
         paperSx={{
           width: {
-            xs: '100%',
+            xs: 'calc(100% - 16px)',
             sm: '90%',
             md: '900px',
           },

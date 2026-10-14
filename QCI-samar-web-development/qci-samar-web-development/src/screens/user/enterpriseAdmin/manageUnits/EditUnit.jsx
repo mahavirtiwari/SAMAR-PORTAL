@@ -388,9 +388,7 @@ const EditUnit = () => {
                           <RadioGroup name="status" value={values.status} onChange={handleChange} sx={{ flexDirection: 'row', gap: 2 }}>
                             <FormControlLabel
                               value="Active"
-                              control={
-                                <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                              }
+                              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                               label="Active"
                               sx={{
                                 marginRight: 3,
@@ -401,9 +399,7 @@ const EditUnit = () => {
                             />
                             <FormControlLabel
                               value="Inactive"
-                              control={
-                                <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                              }
+                              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                               label="Inactive"
                               sx={{
                                 '& .MuiFormControlLabel-label': {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Icons from '../../constants/Icons';
 import useContentBlocks from '../../hooks/useContentBlocks';
+import { onActivate } from '../../utils/a11y';
 import { AppButton } from '../base';
 import ContentBlock from '../base/ContentBlock';
 import AppCommonModal from './AppCommonModal';
@@ -64,8 +65,13 @@ const PaymentDisclaimerModal = ({ open, onClose, handleClose, onAccept }) => {
       </ContentBlock>
 
       <div className="agreement-section margin-bottom-24">
-        <div className="custom-checkbox d-flex align-items-start" onClick={handleApplicationAcceptanceAgreementChange} style={{ cursor: 'pointer' }}>
-          {applicationAcceptanceAgreement ? <img src={Icons.squareTick} alt="checkbox" className="icon-22" /> : <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />}
+        <div
+          className="custom-checkbox d-flex align-items-start"
+          {...onActivate(handleApplicationAcceptanceAgreementChange)}
+          role="checkbox"
+          aria-checked={applicationAcceptanceAgreement}
+          style={{ cursor: 'pointer' }}>
+          {applicationAcceptanceAgreement ? <img src={Icons.squareTick} alt="" className="icon-22" /> : <img src={Icons.squareUncheck} alt="" className="icon-22" />}
           <label className="form-check-label mb-0" style={{ cursor: 'pointer' }}>
             {blocks.payment_undertaking_agreement?.body || 'I have read and agree to the above disclaimer and terms.'}
           </label>
@@ -90,7 +96,7 @@ const PaymentDisclaimerModal = ({ open, onClose, handleClose, onAccept }) => {
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '700px', lg: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '700px', lg: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

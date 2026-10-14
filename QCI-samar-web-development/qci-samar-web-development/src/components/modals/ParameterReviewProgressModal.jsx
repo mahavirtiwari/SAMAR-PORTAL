@@ -91,7 +91,7 @@ const ParameterReviewProgressModal = ({ open, handleClose, isService = false }) 
       modalHeader={modalTitle}
       modalContent={modalContent}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '1200px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '1200px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

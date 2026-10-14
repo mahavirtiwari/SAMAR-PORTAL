@@ -4,6 +4,7 @@ import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
 import { getQuestionFeedbackHistoryAction } from '../../redux/action/common/ApplicationAssessmentAction';
 import { addPendingQc } from '../../redux/slices/common/AssessmentSlice';
+import { onActivate } from '../../utils/a11y';
 import { isServiceSector } from '../../utils/assessmentExecution';
 import { formatQuestionScore } from '../../utils/assessmentScoreUtils';
 import { fetchAuthenticatedImageUrl } from '../../utils/FileUtils';
@@ -448,7 +449,8 @@ const AppParameterViewQuestionsModal = ({ open, onClose, parameterData = [], que
                                         src={feedbackImageBlobs?.[item.id]?.[att.id]}
                                         alt={att.fileName}
                                         style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                        onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName)}
+                                        aria-label={`View ${att.fileName}`}
+                                        {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName))}
                                         onError={e => {
                                           e.target.src = Images.dummySite;
                                         }}
@@ -510,7 +512,8 @@ const AppParameterViewQuestionsModal = ({ open, onClose, parameterData = [], que
                                           src={feedbackImageBlobs?.[item.clarification.id]?.[att.id]}
                                           alt={att.fileName}
                                           style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                          onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName)}
+                                          aria-label={`View ${att.fileName}`}
+                                          {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName))}
                                           onError={e => {
                                             e.target.src = Images.dummySite;
                                           }}
@@ -598,7 +601,7 @@ const AppParameterViewQuestionsModal = ({ open, onClose, parameterData = [], que
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '1100px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '1100px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

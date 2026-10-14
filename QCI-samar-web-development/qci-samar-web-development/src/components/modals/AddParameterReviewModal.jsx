@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Icons from '../../constants/Icons'; // make sure this path is correct
+import { onActivate } from '../../utils/a11y';
 import { formatParameterScore } from '../../utils/assessmentScoreUtils';
 import { AppBadge, AppButton } from '../base';
 import AppCommonModal from './AppCommonModal';
@@ -102,16 +103,17 @@ const AddParameterReviewModal = ({ open, onClose, onSelect, initialSelected, ass
       {/* PARAMETER LIST */}
       <div className="parameter-list-wrapper margin-top-24">
         {visibleParameters.map(p => (
-          <div key={p.id} className={`parameter-card margin-bottom-10 ${selected.map(String).includes(String(p.id)) ? 'active' : ''}`} onClick={() => toggleSelect(p.id)}>
+          <div
+            key={p.id}
+            className={`parameter-card margin-bottom-10 ${selected.map(String).includes(String(p.id)) ? 'active' : ''}`}
+            {...onActivate(() => toggleSelect(p.id))}
+            role="checkbox"
+            aria-checked={selected.map(String).includes(String(p.id))}>
             <div className="d-flex align-items-center justify-content-between">
               <div className="d-flex align-items-center gap-10">
                 {/* UPDATED CHECKBOX */}
                 <div className="param-checkbox d-flex align-items-center" style={{ cursor: 'pointer' }}>
-                  {selected.map(String).includes(String(p.id)) ? (
-                    <img src={Icons.squareTick} alt="checkbox" className="icon-22" />
-                  ) : (
-                    <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />
-                  )}
+                  {selected.map(String).includes(String(p.id)) ? <img src={Icons.squareTick} alt="" className="icon-22" /> : <img src={Icons.squareUncheck} alt="" className="icon-22" />}
                 </div>
 
                 <div>
@@ -159,7 +161,7 @@ const AddParameterReviewModal = ({ open, onClose, onSelect, initialSelected, ass
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '900px', lg: '850px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '900px', lg: '850px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

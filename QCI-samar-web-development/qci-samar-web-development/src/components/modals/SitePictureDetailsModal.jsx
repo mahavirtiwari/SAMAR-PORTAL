@@ -3,6 +3,7 @@
 import PropTypes from 'prop-types';
 import { Spinner } from 'react-bootstrap';
 import DefaultIcons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import { formatPersonName, formatUploaderDesignation } from '../../utils/formatters';
 import ViewLocation from '../../utils/ViewLocation';
 import AppCommonModal from './AppCommonModal';
@@ -52,7 +53,7 @@ const SitePictureDetailsModal = ({ open, onClose, selectedPicture, modalImageLoa
   const modalFooter = (
     <div className="d-flex justify-content-between align-items-start" style={{ width: '100%' }}>
       {selectedPicture.latitude && selectedPicture.longitude ? (
-        <div className="d-flex justify-content-start align-items-center" style={{ cursor: 'pointer' }} onClick={() => ViewLocation(selectedPicture.latitude, selectedPicture.longitude)}>
+        <div className="d-flex justify-content-start align-items-center" style={{ cursor: 'pointer' }} {...onActivate(() => ViewLocation(selectedPicture.latitude, selectedPicture.longitude))}>
           <span className="fs-14 fw-500 mb-0 primary-color margin-right-2 mt-0">View Location</span>
           <img src={icons.sendArrow} alt="location" className="icon-16" />
         </div>
@@ -82,7 +83,7 @@ const SitePictureDetailsModal = ({ open, onClose, selectedPicture, modalImageLoa
       modalFooter={modalFooter}
       modalContent={modalContent}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

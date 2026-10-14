@@ -1,4 +1,5 @@
 import Icons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import AppAvatar from './AppAvatar';
 
 const AppAssessmentParameter = ({
@@ -19,10 +20,10 @@ const AppAssessmentParameter = ({
   mandatory,
 }) => {
   return (
-    <div className={`payment-allocation-container rowBetween margin-bottom-16 ${onClick ? 'cursor-pointer' : ''}`} onClick={onClick}>
+    <div className={`payment-allocation-container rowBetween margin-bottom-16 ${onClick ? 'cursor-pointer' : ''}`} {...onActivate(onClick)}>
       <div>
         <div className="d-flex align-items-center">
-          {documentIcon && <img src={Icons.twoNotesGrey} alt="Document Icon" className="icon-32 margin-right-12" />}
+          {documentIcon && <img src={Icons.twoNotesGrey} alt="" className="icon-32 margin-right-12" />}
           {statusIcon && (
             <div>
               <img src={status === 'completed' ? Icons.greenTickCircle : Icons.yellowClock} alt={status === 'completed' ? 'completed' : 'pending'} className="icon-24 margin-right-10" />
@@ -61,7 +62,7 @@ const AppAssessmentParameter = ({
         </div>
         {navigate && (
           <div className="arrow-container margin-left-20">
-            <img src={Icons.blueRightArrow} alt="arrow" className="icon-18" />
+            <img src={Icons.blueRightArrow} alt="" className="icon-18" />
           </div>
         )}
       </div>

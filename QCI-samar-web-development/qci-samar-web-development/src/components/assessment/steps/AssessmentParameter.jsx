@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import Icons from '../../../constants/Icons';
 import { getResponsesAction, getStepProgressAction } from '../../../redux/action/common/ApplicationAssessmentAction';
+import { onActivate } from '../../../utils/a11y';
 import { isServiceSector } from '../../../utils/assessmentExecution';
 import { formatParameterScore, formatRcParameterScore } from '../../../utils/assessmentScoreUtils';
 import { hasRole } from '../../../utils/roleUtils';
@@ -109,7 +110,10 @@ const AssessmentParameter = ({
           return (
             <div key={param.id} className="payment-allocation-container margin-bottom-16">
               {/* HEADER */}
-              <div className="d-flex justify-content-between cursor-pointer" onClick={() => (inProgress ? openQuestionsModal() : handleToggle(param.id))}>
+              <div
+                className="d-flex justify-content-between cursor-pointer"
+                {...onActivate(() => (inProgress ? openQuestionsModal() : handleToggle(param.id)))}
+                aria-expanded={inProgress ? undefined : isOpen}>
                 <div className="d-flex align-items-start">
                   {inProgress && (
                     <div
@@ -144,7 +148,7 @@ const AssessmentParameter = ({
                             <span className="fs-12 fw-500 text-3-color">{param?.isMandatory ? 'Mandatory' : 'Optional'}</span>
                           </div>
                           <div className="margin-top-12">
-                            <img src={Icons.blueUser} className="icon-18 margin-right-8" />
+                            <img alt="" src={Icons.blueUser} className="icon-18 margin-right-8" />
                             <span className="fw-500 fs-12 text-2-color">{param?.assignedAssessor?.name}</span>
                           </div>
                         </div>
@@ -160,7 +164,7 @@ const AssessmentParameter = ({
                             <span className="fs-12 fw-500 text-3-color">{param.isMandatory ? 'Mandatory' : 'Optional'}</span>
                           </div>
                           <div className="margin-top-12">
-                            <img src={Icons.blueUser} className="icon-18 margin-right-8" />
+                            <img alt="" src={Icons.blueUser} className="icon-18 margin-right-8" />
                             <span className="fw-500 fs-12 text-2-color">{param?.assignedAssessor?.name}</span>
                           </div>
                         </div>
@@ -180,7 +184,7 @@ const AssessmentParameter = ({
                                 <div className="clarification-Number">{flaggedCommitteeCount > 0 ? flaggedCommitteeCount : null}</div>
                                 <span className="fs-12">Clarification Required</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.redFlag} className="icon-14" />
+                                  <img alt="" src={Icons.redFlag} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -193,7 +197,7 @@ const AssessmentParameter = ({
                                 </div>
                                 <span className="fs-12">Responded</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.messageEdit} className="icon-14" />
+                                  <img alt="" src={Icons.messageEdit} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -208,7 +212,7 @@ const AssessmentParameter = ({
                                 <div className="clarification-Number">{flaggedQcCount > 0 ? flaggedQcCount : null}</div>
                                 <span className="fs-12">Clarification Required</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.redFlag} className="icon-14" />
+                                  <img alt="" src={Icons.redFlag} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -221,7 +225,7 @@ const AssessmentParameter = ({
                                 </div>
                                 <span className="fs-12">Responded</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.messageEdit} className="icon-14" />
+                                  <img alt="" src={Icons.messageEdit} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -236,7 +240,7 @@ const AssessmentParameter = ({
                                 <div className="clarification-Number">{flaggedCount}</div>
                                 <span className="fs-12">Clarification Required</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.redFlag} className="icon-14" />
+                                  <img alt="" src={Icons.redFlag} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -249,7 +253,7 @@ const AssessmentParameter = ({
                                 </div>
                                 <span className="fs-12">Responded</span>
                                 <div className="red-flag-container">
-                                  <img src={Icons.messageEdit} className="icon-14" />
+                                  <img alt="" src={Icons.messageEdit} className="icon-14" />
                                 </div>
                               </div>
                             </div>
@@ -283,7 +287,7 @@ const AssessmentParameter = ({
                         }}
                       />
                     ) : (
-                      <img src={isOpen ? Icons.topArrow : Icons.greyDownArrow} className="icon-24" alt="toggle" />
+                      <img src={isOpen ? Icons.topArrow : Icons.greyDownArrow} className="icon-24" alt="" />
                     )}
                   </div>
                 </div>

@@ -5,12 +5,14 @@ import OverviewManufacturingTab from '../../../../../../components/applicationTa
 import OverviewServiceTab from '../../../../../../components/applicationTab/OverviewServiceTab';
 import AssessmentScoreSummary from '../../../../../../components/assessment/AssessmentScoreSummary';
 import { AppBadge, AppButton, FullScreenLoader, RenewalTag } from '../../../../../../components/base';
+import AppIconButton from '../../../../../../components/base/AppIconButton';
 import { toastError } from '../../../../../../components/base/toast';
 import { Layout } from '../../../../../../components/layout';
 import { ApplicationStoresModal } from '../../../../../../components/modals';
 import ProductDetailModal from '../../../../../../components/modals/ProductDetailModal';
 import Icons from '../../../../../../constants/Icons';
 import { downloadAssessmentReportAction, downloadCertificateAction, getAssessmentByIdAction } from '../../../../../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../../../../../utils/a11y';
 import { downloadFile, downloadPayloadAsPdf } from '../../../../../../utils/FileUtils';
 import { formatDate, formatDisplayValue } from '../../../../../../utils/formatters';
 import { Logger } from '../../../../../../utils/logger';
@@ -87,7 +89,7 @@ const AssessmentDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Assessment Details</h1>
             </div>
@@ -182,7 +184,7 @@ const AssessmentDetails = () => {
                     </div>
                     <div className="bottom-details-card">
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         {applicationDetails?.enterpriseClassification === 'startup' && (
                           <div>
                             <p className="fs-12 fw-500 mb-1 text-3-color">DPIIT Registration Number</p>
@@ -222,11 +224,11 @@ const AssessmentDetails = () => {
                       </div>
                       <div className="vertical-divider" />
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         <div>
                           <div className="d-flex align-items-center">
                             <p className="fs-12 fw-500 mb-0 text-3-color">DRDO / DRDO Lab Registration Number</p>
-                            {applicationDetails?.drdoRegistrationNumber && <img src={Icons.greenTick} className="icon-15 margin-left-4" />}
+                            {applicationDetails?.drdoRegistrationNumber && <img alt="Verified" src={Icons.greenTick} className="icon-15 margin-left-4" />}
                           </div>
                           <div className="d-flex align-items-end">
                             <p className="fs-14 fw-500 mb-0 heading-color">{applicationDetails?.drdoRegistrationNumber ? applicationDetails?.drdoRegistrationNumber : '-'}</p>
@@ -261,16 +263,25 @@ const AssessmentDetails = () => {
                   </div>
                   <div className="card-bottom-tabs">
                     <div className="card-tabs-link">
-                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} onClick={() => setActiveTab('overview')}>
+                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} {...onActivate(() => setActiveTab('overview'))} aria-pressed={activeTab === 'overview'}>
                         Overview
                       </span>
-                      <span className={activeTab === 'schedule' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('schedule')}>
+                      <span
+                        className={activeTab === 'schedule' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('schedule'))}
+                        aria-pressed={activeTab === 'schedule'}>
                         Schedule
                       </span>
-                      <span className={activeTab === 'assessment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('assessment')}>
+                      <span
+                        className={activeTab === 'assessment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('assessment'))}
+                        aria-pressed={activeTab === 'assessment'}>
                         Assessment
                       </span>
-                      <span className={activeTab === 'checkin/checkout' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('checkin/checkout')}>
+                      <span
+                        className={activeTab === 'checkin/checkout' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('checkin/checkout'))}
+                        aria-pressed={activeTab === 'checkin/checkout'}>
                         Attendance
                       </span>
                     </div>

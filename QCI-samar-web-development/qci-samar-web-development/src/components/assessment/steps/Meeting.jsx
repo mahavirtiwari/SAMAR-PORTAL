@@ -18,6 +18,7 @@ import {
   updateMeetingCommentsAction,
 } from '../../../redux/action/common/ApplicationAssessmentAction';
 import { getAssessmentByIdAction } from '../../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../../utils/a11y';
 import { isMemberExecutionLocked, isServiceSector, resolveTeamRole } from '../../../utils/assessmentExecution';
 import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatPersonName } from '../../../utils/formatters';
@@ -374,7 +375,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
       modalHeader={<div>Capture Picture</div>}
       modalContent={<AppWebcamCapture onCapture={handleCameraCapture} disabled={saving || meetingActionLoading} fileNamePrefix={`${type}-meeting`} allowUpload={false} autoStart />}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '640px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '640px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}
@@ -439,7 +440,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
         )
       }
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}
@@ -470,7 +471,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
       <>
         {currentImage ? (
           <div className="site-card meeting-picture-preview">
-            <div className="site-image-wrapper" onClick={photoPreview ? undefined : handleOpenModal}>
+            <div className="site-image-wrapper" {...onActivate(photoPreview ? undefined : handleOpenModal)}>
               <img
                 src={currentImage}
                 alt={`${type} meeting screenshot`}
@@ -488,7 +489,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
             </div>
             <div
               className="meeting-picture-preview__remove"
-              onClick={() => {
+              {...onActivate(() => {
                 if (saving || meetingActionLoading) {
                   return;
                 }
@@ -497,7 +498,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
                 } else {
                   setReplacingPhoto(true);
                 }
-              }}>
+              })}>
               <img src={Icons.redCross} alt="Remove picture" width="16" height="16" />
             </div>
           </div>
@@ -671,7 +672,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
           <AppButton size="medium" title={recordingLinkEditIndex != null ? 'Save' : 'Add'} onClick={handleSaveRecordingLink} />
         </div>
       }
-      paperSx={{ width: { xs: '100%', sm: '90%', md: '520px' }, maxWidth: '98vw', margin: { xs: 1, sm: 2 } }}
+      paperSx={{ width: { xs: 'calc(100% - 16px)', sm: '90%', md: '520px' }, maxWidth: '98vw', margin: { xs: 1, sm: 2 } }}
     />
   );
 
@@ -941,7 +942,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
           />
         </div>
       }
-      paperSx={{ width: { xs: '100%', sm: '90%', md: '520px' }, maxWidth: '98vw', margin: { xs: 1, sm: 2 } }}
+      paperSx={{ width: { xs: 'calc(100% - 16px)', sm: '90%', md: '520px' }, maxWidth: '98vw', margin: { xs: 1, sm: 2 } }}
     />
   );
   const renderRecordingLinksEditor = _onSave => (
@@ -1205,7 +1206,7 @@ const Meeting = ({ type = 'opening', onEditComment, onSaved }) => {
           {canLeadCapture
             ? renderMeetingPictureSection({ autoSave: true, savedImageSrc: meetingImageSrc })
             : meetingImageSrc && (
-                <div className="site-card cursor-pointer" onClick={handleOpenModal}>
+                <div className="site-card cursor-pointer" {...onActivate(handleOpenModal)}>
                   <div className="site-image-wrapper">
                     <img
                       src={meetingImageSrc}

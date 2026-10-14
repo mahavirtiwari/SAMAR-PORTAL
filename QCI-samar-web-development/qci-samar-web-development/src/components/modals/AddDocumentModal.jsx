@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import Icons from '../../constants/Icons';
 import { uploadDocumentAction } from '../../redux/action/common/DocumentAction';
+import { onActivate } from '../../utils/a11y';
 import { Logger } from '../../utils/logger';
 import { mapServerErrorsToFormik } from '../../utils/serverErrorUtils';
 import { AppButton, AppInput } from '../base';
@@ -131,7 +132,7 @@ function AddDocumentModal({ open, handleClose, handleCancel, handleSave, onGener
             onDragOver={handleDrag(true)}
             onDragLeave={handleDrag(false)}
             onDrop={handleDrop}
-            onClick={!formik.values.file ? handleBrowse : undefined}
+            {...onActivate(!formik.values.file ? handleBrowse : undefined)}
             style={{ cursor: formik.values.file ? 'default' : 'pointer', border: dragActive ? '1px dashed var(--primary-color)' : '1px dashed var(--outline)' }}>
             <input id="document-upload-input" type="file" style={{ display: 'none' }} accept=".pdf" onChange={handleFile} />
 
@@ -162,10 +163,10 @@ function AddDocumentModal({ open, handleClose, handleCancel, handleSave, onGener
               </div>
               <div
                 className="d-flex align-items-center"
-                onClick={e => {
+                {...onActivate(e => {
                   e.stopPropagation();
                   formik.setFieldValue('file', null);
-                }}>
+                })}>
                 <img src={Icons.crossGrey} alt="delete" className="icon-20 cursor-pointer" />
               </div>
             </div>
@@ -214,7 +215,7 @@ function AddDocumentModal({ open, handleClose, handleCancel, handleSave, onGener
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

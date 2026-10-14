@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Images from '../../constants/Images';
+import { onActivate } from '../../utils/a11y';
 import { getCachedImageUrl } from '../../utils/FileUtils';
 import { formatDateTime } from '../../utils/formatters';
 import SitePictureDetailsModal from '../modals/SitePictureDetailsModal';
@@ -76,7 +77,7 @@ const AppSiteTourCard = ({ picture, lat, long, dateString, uploader = '-' }) => 
         {/* Evidence photos carry the assessor's comment as `description` rather than `title`. */}
         <h3>{picture?.title || picture?.description || 'Site Photo'}</h3>
         <div className="site-tour-image-container">
-          <div className="site-card" onClick={() => handleOpen()} style={{ cursor: 'pointer' }}>
+          <div className="site-card" {...onActivate(() => handleOpen())} style={{ cursor: 'pointer' }}>
             <div className="site-image-wrapper">
               <img
                 src={imageSrc || Images.dummySite}

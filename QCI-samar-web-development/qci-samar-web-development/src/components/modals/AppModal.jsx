@@ -87,7 +87,7 @@ const AppModal = ({
           ...modalHeaderStyle,
         }}
         className={`custom-modal-header ${modalHeaderClassName ? 'bg-' + modalHeaderClassName : ''}`}>
-        <img src={image} alt="modal" className="img-fluid" />
+        <img src={image} alt="" className="img-fluid" />
       </DialogTitle>
       <DialogContent className="margin-top-40 margin-bottom-40">
         {header ? <h4 className="fs-24 fw-600 heading-color mb-0 text-center">{header}</h4> : null}

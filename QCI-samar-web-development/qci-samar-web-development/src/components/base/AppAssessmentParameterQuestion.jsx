@@ -9,6 +9,7 @@ import { formatDateTime } from '../../utils/formatters';
 import EditCommentModal from '../modals/EditCommentModal';
 import AppAssessmentEvidenceImage from './AppAssessmentEvidenceImage';
 import AppButton from './AppButton';
+import AppIconButton from './AppIconButton';
 
 const AppAssessmentParameterQuestion = ({
   onClick,
@@ -214,8 +215,8 @@ const AppAssessmentParameterQuestion = ({
                     value={opt.id}
                     control={
                       <Radio
-                        icon={<img src={optionsDisabled ? Icons.disabledRadio : Icons.uncheck} className="icon-20" />}
-                        checkedIcon={<img src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
+                        icon={<img alt="" src={optionsDisabled ? Icons.disabledRadio : Icons.uncheck} className="icon-20" />}
+                        checkedIcon={<img alt="" src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
                       />
                     }
                     label={opt.text}
@@ -260,10 +261,10 @@ const AppAssessmentParameterQuestion = ({
             <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Comment</h3>
             <div className="rowBetween">
               <div className="d-flex align-items-center">
-                <img src={Icons.calendarFill} className="icon-16" />
+                <img alt="" src={Icons.calendarFill} className="icon-16" />
                 <div className="margin-left-2 fs-12 fw-500 text-1-color">{formatDateTime(currentQuestion?.response?.assessedAt)}</div>
               </div>
-              {editComment && InProgress && <img src={Icons.edit} alt="edit" className="cursor-pointer icon-16 margin-left-4" onClick={handleEditClick} />}
+              {editComment && InProgress && <AppIconButton icon={Icons.edit} label="Edit" iconClassName="icon-16" className="margin-left-4" onClick={handleEditClick} />}
             </div>
 
             <p className="fs-14 fw-400 text-2-color horizontal-seperator-20 margin-top-8">{comment || currentQuestion?.response?.assessorRemarks}</p>

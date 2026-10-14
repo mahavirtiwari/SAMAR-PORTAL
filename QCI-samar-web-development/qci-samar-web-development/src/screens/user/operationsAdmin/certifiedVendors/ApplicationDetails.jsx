@@ -4,11 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import OverviewManufacturingTab from '../../../../components/applicationTab/OverviewManufacturingTab';
 import OverviewServiceTab from '../../../../components/applicationTab/OverviewServiceTab';
 import { AppBadge, AppButton, AppModal, FullScreenLoader } from '../../../../components/base';
+import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import { ApplicationStoresModal } from '../../../../components/modals';
 import ProductDetailModal from '../../../../components/modals/ProductDetailModal';
 import Icons from '../../../../constants/Icons';
 import { downloadAssessmentReportAction, downloadCertificateAction, getAssessmentByIdAction } from '../../../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../../../utils/a11y';
 import { downloadFile, downloadPayloadAsPdf } from '../../../../utils/FileUtils';
 import { formatDate, formatDisplayValue } from '../../../../utils/formatters';
 import { Logger } from '../../../../utils/logger';
@@ -90,7 +92,7 @@ const AssessmentDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Application Details</h1>
             </div>
@@ -261,15 +263,22 @@ const AssessmentDetails = () => {
                   </div>
                   <div className="card-bottom-tabs">
                     <div className="card-tabs-link">
-                      <span className={activeTab === 'Basic Info' ? 'active cursor-pointer' : 'cursor-pointer'} onClick={() => setActiveTab('Basic Info')}>
+                      <span
+                        className={activeTab === 'Basic Info' ? 'active cursor-pointer' : 'cursor-pointer'}
+                        {...onActivate(() => setActiveTab('Basic Info'))}
+                        aria-pressed={activeTab === 'Basic Info'}>
                         Basic Information
                       </span>
-                      <span className={activeTab === 'Site Tour' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('Site Tour')}>
+                      <span
+                        className={activeTab === 'Site Tour' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('Site Tour'))}
+                        aria-pressed={activeTab === 'Site Tour'}>
                         Site Tour
                       </span>
                       <span
                         className={activeTab === 'Application Details' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
-                        onClick={() => setActiveTab('Application Details')}>
+                        {...onActivate(() => setActiveTab('Application Details'))}
+                        aria-pressed={activeTab === 'Application Details'}>
                         Application Details
                       </span>
                     </div>

@@ -59,7 +59,7 @@ const AddServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSav
             <RadioGroup value={status} onChange={e => setStatus(e.target.value)} sx={{ flexDirection: 'row', gap: 2 }}>
               <FormControlLabel
                 value="Active"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Active"
                 sx={{
                   marginRight: 3,
@@ -70,7 +70,7 @@ const AddServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSav
               />
               <FormControlLabel
                 value="Inactive"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Inactive"
                 sx={{
                   '& .MuiFormControlLabel-label': {
@@ -102,7 +102,7 @@ const AddServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSav
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

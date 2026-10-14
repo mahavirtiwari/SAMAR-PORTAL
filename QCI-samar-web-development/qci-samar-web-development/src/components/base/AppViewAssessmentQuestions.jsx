@@ -8,6 +8,7 @@ import { formatQuestionScore } from '../../utils/assessmentScoreUtils';
 import { formatDateTime } from '../../utils/formatters';
 import { Logger } from '../../utils/logger';
 import AppAssessmentEvidenceImage from './AppAssessmentEvidenceImage';
+import AppIconButton from './AppIconButton';
 
 const AppViewAssessmentQuestions = ({ score, editComment = false, propParameterId, questions, currentQIndex, assessmentId, data, validationError, onActionChange, rcScoreApplicable = false }) => {
   const { responses } = useSelector(state => state.ApplicationAssessment);
@@ -239,7 +240,7 @@ const AppViewAssessmentQuestions = ({ score, editComment = false, propParameterI
                 <div className="d-flex juatify-content-start">
                   <div className="response-container d-inline-flex align-items-center margin-bottom-8" style={{ backgroundColor: statusConfig.bg, color: statusConfig.color }}>
                     <div className="response-icon-container margin-right-4">
-                      <img src={statusConfig.icon} alt="response icon" className="icon-14" />
+                      <img src={statusConfig.icon} alt="" className="icon-14" />
                     </div>
                     <span className="fs-12 fw-500">{statusConfig.label}</span>
                   </div>
@@ -261,8 +262,8 @@ const AppViewAssessmentQuestions = ({ score, editComment = false, propParameterI
                     disabled={optionsDisabled}
                     control={
                       <Radio
-                        icon={<img src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
-                        checkedIcon={<img src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
+                        icon={<img alt="" src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
+                        checkedIcon={<img alt="" src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
                       />
                     }
                     label={opt.text}
@@ -305,7 +306,7 @@ const AppViewAssessmentQuestions = ({ score, editComment = false, propParameterI
             <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Comment</h3>
             <div className="rowBetween">
               <div className="d-flex align-items-center">
-                <img src={Icons.calendarFill} className="icon-16" />
+                <img alt="" src={Icons.calendarFill} className="icon-16" />
                 <div className="margin-left-2 fs-12 fw-500 text-3-color">
                   {currentQuestion.response && currentQuestion.response.assessedAt
                     ? formatDateTime(currentQuestion.response.assessedAt)
@@ -314,7 +315,7 @@ const AppViewAssessmentQuestions = ({ score, editComment = false, propParameterI
                       : ''}
                 </div>
               </div>
-              {editComment && <img src={Icons.edit} alt="edit" className="cursor-pointer icon-16 margin-left-4" onClick={handleEditClick} />}
+              {editComment && <AppIconButton icon={Icons.edit} label="Edit" iconClassName="icon-16" className="margin-left-4" onClick={handleEditClick} />}
             </div>
 
             <p className="fs-14 fw-400 text-2-color horizontal-seperator-20 margin-top-8">

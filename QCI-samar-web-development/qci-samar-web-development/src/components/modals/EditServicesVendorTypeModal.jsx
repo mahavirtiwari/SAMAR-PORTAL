@@ -36,7 +36,7 @@ const EditServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSa
           <RadioGroup value={serviceType} onChange={e => setServiceType(e.target.value)} sx={{ flexDirection: 'row', gap: 2 }}>
             <FormControlLabel
               value="annual_maintenance_contract"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Annual Maintenance Contract (AMC)"
               sx={{
                 marginRight: 3,
@@ -47,7 +47,7 @@ const EditServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSa
             />
             <FormControlLabel
               value="critical_service_provider"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Critical Service Provider"
               sx={{
                 marginRight: 3,
@@ -58,7 +58,7 @@ const EditServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSa
             />
             <FormControlLabel
               value="civil_works_contractor"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Civil Works Contractors"
               sx={{
                 '& .MuiFormControlLabel-label': {
@@ -142,7 +142,7 @@ const EditServicesVendorTypeModal = ({ open, handleClose, handleCancel, handleSa
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

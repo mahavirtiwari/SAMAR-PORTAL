@@ -17,6 +17,7 @@ import {
   uploadResponseEvidenceAction,
 } from '../../redux/action/common/ApplicationAssessmentAction';
 import { postQuestionClarificationAction, updateQuestionClarificationAction } from '../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../utils/a11y';
 import { isMemberExecutionLocked, isServiceSector, resolveTeamRole } from '../../utils/assessmentExecution';
 import { formatQuestionScore, resolveDisplayedSelectedOption } from '../../utils/assessmentScoreUtils';
 import { fetchAuthenticatedImageFile, fetchAuthenticatedImageUrl, normalizeUploadFileName } from '../../utils/FileUtils';
@@ -24,6 +25,7 @@ import { formatDateTime } from '../../utils/formatters';
 import { Logger } from '../../utils/logger';
 import { hasRole } from '../../utils/roleUtils';
 import { AppAssessmentEvidenceImage, AppAvatar, AppButton, AppInput, AppModal } from '../base';
+import AppIconButton from '../base/AppIconButton';
 import { toastError, toastSuccess, toastWarning } from '../base/toast';
 import EditCommentModal from '../modals/EditCommentModal';
 import AppCommonModal from './AppCommonModal';
@@ -975,7 +977,7 @@ const AppSingleParameterQuestionsModal = ({
                         color: label === 'Responded' ? 'var(--info-active)' : 'var(--danger-active)',
                       }}>
                       <div className="response-icon-container margin-right-4">
-                        <img src={label === 'Responded' ? Icons.messageEdit : Icons.redFlag} alt="response icon" className="icon-14" />
+                        <img src={label === 'Responded' ? Icons.messageEdit : Icons.redFlag} alt="" className="icon-14" />
                       </div>
                       <span className="fs-12 fw-500">{label}</span>
                     </div>
@@ -1004,8 +1006,8 @@ const AppSingleParameterQuestionsModal = ({
                       value={opt.id}
                       control={
                         <Radio
-                          icon={<img src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
-                          checkedIcon={<img src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
+                          icon={<img alt="" src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
+                          checkedIcon={<img alt="" src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
                         />
                       }
                       label={opt.text}
@@ -1091,12 +1093,12 @@ const AppSingleParameterQuestionsModal = ({
                             <AppAssessmentEvidenceImage evidence={evidence} />
                             <div
                               className="remove-image-btn"
-                              onClick={e => {
+                              {...onActivate(e => {
                                 e.stopPropagation();
                                 if (!evidenceBusy) {
                                   handleRemoveEvidence(evidence.id);
                                 }
-                              }}>
+                              })}>
                               <img src={Icons.whiteCross} alt="Remove" className="icon-8" />
                             </div>
                           </div>
@@ -1124,7 +1126,7 @@ const AppSingleParameterQuestionsModal = ({
                   <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Comment</h3>
                   <div className="rowBetween">
                     <div className="d-flex align-items-center">
-                      <img src={Icons.calendarFill} className="icon-16" />
+                      <img alt="" src={Icons.calendarFill} className="icon-16" />
                       <div className="margin-left-2 fs-12 fw-500 text-3-color">
                         {currentQuestion && currentQuestion.response && currentQuestion.response.assessedAt
                           ? formatDateTime(currentQuestion.response.assessedAt)
@@ -1133,7 +1135,7 @@ const AppSingleParameterQuestionsModal = ({
                             : ''}
                       </div>
                     </div>
-                    {editComment && <img src={Icons.edit} alt="edit" className="cursor-pointer icon-16 margin-left-4" onClick={handleEditClick} />}
+                    {editComment && <AppIconButton icon={Icons.edit} label="Edit" iconClassName="icon-16" className="margin-left-4" onClick={handleEditClick} />}
                   </div>
 
                   <p className="fs-14 fw-400 text-2-color horizontal-seperator-20 margin-top-8">
@@ -1231,7 +1233,8 @@ const AppSingleParameterQuestionsModal = ({
                                         src={feedbackImageBlobs?.[item.id]?.[att.id]}
                                         alt={att.fileName}
                                         style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                        onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName)}
+                                        aria-label={`View ${att.fileName}`}
+                                        {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName))}
                                         onError={e => {
                                           e.target.src = Images.dummySite;
                                         }}
@@ -1278,10 +1281,10 @@ const AppSingleParameterQuestionsModal = ({
                                 !isEditMode &&
                                 String(item.clarification.id) === String(latestClarificationId) &&
                                 ((item.feedbackType === 'QC Feedback' && qualitycheckfeedback) || (item.feedbackType === 'Committee Feedback' && committeeReviewFeedback)) && (
-                                  <img
-                                    src={Icons.edit}
-                                    alt="edit"
-                                    className="cursor-pointer icon-16"
+                                  <AppIconButton
+                                    icon={Icons.edit}
+                                    label="Edit clarification"
+                                    iconClassName="icon-16"
                                     onClick={() => {
                                       setFeedbackComment(prev => ({ ...prev, [item.clarification.id]: item.clarification.message || '' }));
                                       const imgs =
@@ -1396,7 +1399,7 @@ const AppSingleParameterQuestionsModal = ({
                                     {uploadedImages.map(image => (
                                       <div key={image.id} className="clarification-img position-relative">
                                         <img src={image.url} alt={image.name} className="img-fluid" />
-                                        <div className="remove-image-btn" onClick={() => removeImage(image.id)}>
+                                        <div className="remove-image-btn" {...onActivate(() => removeImage(image.id))}>
                                           <img src={Icons.whiteCross} alt="Remove" className="icon-8" />
                                         </div>
                                       </div>
@@ -1427,7 +1430,8 @@ const AppSingleParameterQuestionsModal = ({
                                             src={feedbackImageBlobs?.[item.clarification.id]?.[att.id]}
                                             alt={att.fileName}
                                             style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                            onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName)}
+                                            aria-label={`View ${att.fileName}`}
+                                            {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName))}
                                             onError={e => {
                                               e.target.src = Images.dummySite;
                                             }}
@@ -1539,7 +1543,7 @@ const AppSingleParameterQuestionsModal = ({
                                 {uploadedImages.map(image => (
                                   <div key={image.id} className="clarification-img position-relative">
                                     <img src={image.url} alt={image.name} className="img-fluid" />
-                                    <div className="remove-image-btn" onClick={() => removeImage(image.id)}>
+                                    <div className="remove-image-btn" {...onActivate(() => removeImage(image.id))}>
                                       <img src={Icons.whiteCross} alt="Remove" className="icon-8" />
                                     </div>
                                   </div>
@@ -1593,7 +1597,7 @@ const AppSingleParameterQuestionsModal = ({
                       <div
                         className={`site-card position-relative ${selected ? 'border border-primary' : ''}`}
                         style={{ cursor: 'pointer', borderRadius: 8, overflow: 'hidden' }}
-                        onClick={() => togglePickerImage(pic.id)}>
+                        {...onActivate(() => togglePickerImage(pic.id))}>
                         <img
                           src={pickerImageUrls[pic.id]}
                           alt={pic.title || 'Site tour'}
@@ -1630,7 +1634,7 @@ const AppSingleParameterQuestionsModal = ({
           </div>
         }
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '700px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '700px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}
@@ -1646,7 +1650,7 @@ const AppSingleParameterQuestionsModal = ({
       modalHeader={modalTitle}
       modalContent={modalContent}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '1100px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '1100px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

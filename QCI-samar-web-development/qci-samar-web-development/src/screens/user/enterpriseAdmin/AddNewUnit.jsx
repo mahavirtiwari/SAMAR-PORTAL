@@ -13,6 +13,7 @@ import { createUnitAction, getAllUnitsAction } from '../../../redux/action/enter
 import { getStateAction } from '../../../redux/action/master/MasterAction';
 import { getAllOrganizationsAction } from '../../../redux/action/organizations/OrganizationAction';
 import { resetCreateUnit } from '../../../redux/slices/enterpriseAdmin/Unit/UnitSlice';
+import { onActivate } from '../../../utils/a11y';
 import { emailRegex } from '../../../utils/Regex';
 
 const AddNewUnit = () => {
@@ -243,7 +244,7 @@ const AddNewUnit = () => {
                   <div
                     className="custom-checkbox d-flex align-items-center"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => {
+                    {...onActivate(() => {
                       const newValue = !isSameAsRegistered;
                       setIsSameAsRegistered(newValue);
                       if (newValue && organizations && organizations.length > 0) {
@@ -269,8 +270,10 @@ const AddNewUnit = () => {
                           registeredMobileNumber: '',
                         });
                       }
-                    }}>
-                    {isSameAsRegistered ? <img src={Icons.squareTick} alt="checkbox" className="icon-22" /> : <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />}
+                    })}
+                    role="checkbox"
+                    aria-checked={isSameAsRegistered}>
+                    {isSameAsRegistered ? <img src={Icons.squareTick} alt="" className="icon-22" /> : <img src={Icons.squareUncheck} alt="" className="icon-22" />}
                     <label className="form-check-label mb-0" style={{ cursor: 'pointer' }}>
                       Same as Enterprise Address
                     </label>

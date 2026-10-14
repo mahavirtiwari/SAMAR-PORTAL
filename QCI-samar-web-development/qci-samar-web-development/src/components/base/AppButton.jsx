@@ -10,14 +10,14 @@ const AppButton = ({ title, onClick, size = 'medium', variant = 'primary', minWi
   };
   return (
     <ButtonBase className={classNames} style={style} onClick={onClick} disabled={disabled} type={type} focusRipple>
-      {leftIcon ? <img src={leftIcon} alt="image left" className={`margin-right-6 ${leftIconStyle}`} /> : null}
+      {leftIcon ? <img src={leftIcon} alt="" className={`margin-right-6 ${leftIconStyle}`} /> : null}
       {title}
       {loading ? (
         <Spinner animation="border" role="status" size="sm" className="margin-left-8">
           <span className="visually-hidden"></span>
         </Spinner>
       ) : null}
-      {rightIcon ? <img src={rightIcon} alt="image right" className={`margin-left-4 ${rightIconStyle}`} /> : null}
+      {rightIcon ? <img src={rightIcon} alt="" className={`margin-left-4 ${rightIconStyle}`} /> : null}
     </ButtonBase>
   );
 };

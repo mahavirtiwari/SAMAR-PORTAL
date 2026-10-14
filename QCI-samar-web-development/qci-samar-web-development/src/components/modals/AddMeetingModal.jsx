@@ -254,7 +254,7 @@ const AddMeetingModal = ({ open, handleClose, handleSave, disabled, loading, onG
             <RadioGroup value={formik.values.meetingType} onChange={(e, v) => formik.setFieldValue('meetingType', v ?? e?.target?.value ?? e)} row sx={{ gap: 2 }}>
               <FormControlLabel
                 value="Online"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Online"
                 sx={{
                   marginRight: 3,
@@ -264,7 +264,7 @@ const AddMeetingModal = ({ open, handleClose, handleSave, disabled, loading, onG
 
               <FormControlLabel
                 value="Offline"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Offline"
                 sx={{
                   '& .MuiFormControlLabel-label': { fontSize: '14px' },
@@ -361,7 +361,7 @@ const AddMeetingModal = ({ open, handleClose, handleSave, disabled, loading, onG
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

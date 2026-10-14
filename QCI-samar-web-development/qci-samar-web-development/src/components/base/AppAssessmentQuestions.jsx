@@ -8,6 +8,7 @@ import { formatQuestionScore } from '../../utils/assessmentScoreUtils';
 import { formatDateTime } from '../../utils/formatters';
 import { Logger } from '../../utils/logger';
 import AppAssessmentEvidenceImage from './AppAssessmentEvidenceImage';
+import AppIconButton from './AppIconButton';
 import AppInput from './textInput/AppInput';
 
 const AppAssessmentQuestions = ({
@@ -325,7 +326,7 @@ const AppAssessmentQuestions = ({
                 <div className="d-flex justify-content-start">
                   <div className="response-container d-inline-flex align-items-center margin-bottom-8" style={{ backgroundColor: statusConfig.bg, color: statusConfig.color }}>
                     <div className="response-icon-container margin-right-4">
-                      <img src={statusConfig.icon} alt="response icon" className="icon-14" />
+                      <img src={statusConfig.icon} alt="" className="icon-14" />
                     </div>
                     <span className="fs-12 fw-500">{statusConfig.label}</span>
                   </div>
@@ -347,8 +348,8 @@ const AppAssessmentQuestions = ({
                     value={opt.id}
                     control={
                       <Radio
-                        icon={<img src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
-                        checkedIcon={<img src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
+                        icon={<img alt="" src={optionsDisabled ? Icons.disabledUncheck : Icons.defaultUncheck} className="icon-20" />}
+                        checkedIcon={<img alt="" src={optionsDisabled ? Icons.disabledRadio : Icons.radioBtn} className="icon-20" />}
                       />
                     }
                     label={opt.text}
@@ -373,20 +374,26 @@ const AppAssessmentQuestions = ({
               <FormControl component="fieldset" sx={{ marginBottom: 2, width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   {selectedAction === 'markSendBack' ? (
-                    <img
-                      src={Icons.redSquareTick}
-                      alt="checkbox"
-                      className="icon-22"
-                      onClick={sendBackDisabled ? undefined : handleInformationTrueAgreementChange}
+                    <AppIconButton
+                      icon={Icons.redSquareTick}
+                      label="Send back for clarification"
+                      iconClassName="icon-22"
                       style={{ cursor: sendBackDisabled ? 'not-allowed' : 'pointer' }}
+                      disabled={sendBackDisabled}
+                      onClick={handleInformationTrueAgreementChange}
+                      role="checkbox"
+                      aria-checked={true}
                     />
                   ) : (
-                    <img
-                      src={Icons.squareUncheck}
-                      alt="checkbox"
-                      className="icon-22"
-                      onClick={sendBackDisabled ? undefined : handleInformationTrueAgreementChange}
+                    <AppIconButton
+                      icon={Icons.squareUncheck}
+                      label="Send back for clarification"
+                      iconClassName="icon-22"
                       style={{ cursor: sendBackDisabled ? 'not-allowed' : 'pointer' }}
+                      disabled={sendBackDisabled}
+                      onClick={handleInformationTrueAgreementChange}
+                      role="checkbox"
+                      aria-checked={false}
                     />
                   )}
                   <span className="label mb-0 text-1-color" style={{ whiteSpace: 'nowrap' }}>
@@ -470,7 +477,7 @@ const AppAssessmentQuestions = ({
             <h3 className="fs-16 fw-600 heading-color margin-bottom-16">Comment</h3>
             <div className="rowBetween">
               <div className="d-flex align-items-center">
-                <img src={Icons.calendarFill} className="icon-16" />
+                <img alt="" src={Icons.calendarFill} className="icon-16" />
                 <div className="margin-left-2 fs-12 fw-500 text-3-color">
                   {currentQuestion.response && currentQuestion.response.assessedAt
                     ? formatDateTime(currentQuestion.response.assessedAt)
@@ -479,7 +486,7 @@ const AppAssessmentQuestions = ({
                       : ''}
                 </div>
               </div>
-              {editComment && <img src={Icons.edit} alt="edit" className="cursor-pointer icon-16 margin-left-4" onClick={handleEditClick} />}
+              {editComment && <AppIconButton icon={Icons.edit} label="Edit" iconClassName="icon-16" className="margin-left-4" onClick={handleEditClick} />}
             </div>
 
             <p className="fs-14 fw-400 text-2-color horizontal-seperator-20 margin-top-8">

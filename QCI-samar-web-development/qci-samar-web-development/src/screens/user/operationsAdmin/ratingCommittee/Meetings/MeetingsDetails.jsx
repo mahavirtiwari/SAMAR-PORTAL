@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppBadge, AppButton, AppDataGrid, AppModal } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { Layout } from '../../../../../components/layout';
 import AppCommonModal from '../../../../../components/modals/AppCommonModal';
 import Icons from '../../../../../constants/Icons';
@@ -210,7 +211,7 @@ const MeetingsDetails = () => {
         subHeader={
           <div className="subHeaderWrapper">
             <div className="subHeaderLeft">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Meeting Details</h1>
             </div>
@@ -237,7 +238,7 @@ const MeetingsDetails = () => {
       subHeader={
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
-            <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+            <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
             <div className="heading-seperator"></div>
             <h1 className="heading-createApp">Meeting Details</h1>
             <div className="subHeaderRightBx">
@@ -300,13 +301,13 @@ const MeetingsDetails = () => {
                           </div>
                           {meeting?.venue && (
                             <div className="d-flex align-items-center margin-top-2">
-                              <img src={Icons.location} className="icon-20" />
+                              <img alt="" src={Icons.location} className="icon-20" />
                               <span className="margin-left-8 fs-14 fw-500 heading-color">{meeting?.venue}</span>
                             </div>
                           )}
                           <div className="d-flex align-items-center gap-32 margin-top-16 custom-gap-style custom-flex-wrap">
                             <div className="d-flex align-items-center gap-8">
-                              <img src={Icons.user} className="icon-24" alt="icon" />
+                              <img src={Icons.user} className="icon-24" alt="" />
                               <div className="d-flex flex-column">
                                 <span className="fs-12 fw-500 text-3-color">Chair</span>
                                 <span className="fs-14 fw-500 heading-color">{chair?.name || meeting?.organizer?.name || 'N/A'}</span>
@@ -316,7 +317,7 @@ const MeetingsDetails = () => {
                             <div className="vertical-divider margin-left-30 margin-right-30" />
 
                             <div className="d-flex align-items-center gap-8">
-                              <img src={Icons.blueUserProfile} className="icon-24" alt="icon" />
+                              <img src={Icons.blueUserProfile} className="icon-24" alt="" />
                               <div className="d-flex flex-column">
                                 <span className="fs-12 fw-500 text-3-color">Convenor</span>
                                 <span className="fs-14 fw-500 heading-color">{convenor?.name || 'N/A'}</span>
@@ -326,7 +327,7 @@ const MeetingsDetails = () => {
                             <div className="vertical-divider margin-left-30 margin-right-30" />
 
                             <div className="d-flex align-items-center gap-8">
-                              <img src={Icons.calendarBlue} className="icon-24" alt="icon" />
+                              <img src={Icons.calendarBlue} className="icon-24" alt="" />
                               <div className="d-flex flex-column">
                                 <span className="fs-12 fw-500 text-3-color">Committee Members</span>
                                 <a
@@ -344,7 +345,7 @@ const MeetingsDetails = () => {
                             <div className="vertical-divider margin-left-30 margin-right-30" />
 
                             <div className="d-flex align-items-center gap-8">
-                              <img src={Icons.calendarBlue} className="icon-24" alt="icon" />
+                              <img src={Icons.calendarBlue} className="icon-24" alt="" />
                               <div className="d-flex flex-column">
                                 <span className="fs-12 fw-500 text-3-color">Date & Time</span>
                                 <span className="fs-14 fw-500 heading-color">
@@ -436,7 +437,7 @@ const MeetingsDetails = () => {
           <AppDataGrid rows={memberRows} columns={memberColumns} server={false} page={memberPagination.page} pageSize={memberPagination.pageSize} onPaginationChange={setMemberPagination} />
         }
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '700px', lg: '800px' },
+          width: { xs: 'calc(100% - 64px)', sm: '90%', md: '700px', lg: '800px' },
           maxWidth: '98vw',
         }}
       />

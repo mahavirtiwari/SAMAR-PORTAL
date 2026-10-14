@@ -6,6 +6,7 @@ import { Logger } from '../../utils/logger';
 import AppModal from '../modals/AppModal';
 import EditCommentModal from '../modals/EditCommentModal';
 import AppAvatar from './AppAvatar';
+import AppIconButton from './AppIconButton';
 
 const getInitials = name => {
   if (!name) {
@@ -71,7 +72,7 @@ const AppCommentCard = ({ comment, onEdit, assessmentId, type, editComment }) =>
           </div>
           <div className="d-flex align-items-center">
             <h4 className="fs-12 fw-500 text-4-color mb-0">{comment.timestamp}</h4>
-            {onEdit && editComment && <img src={Icons.edit} alt="edit" className="cursor-pointer icon-16 margin-left-4" onClick={handleEditClick} />}
+            {onEdit && editComment && <AppIconButton icon={Icons.edit} label="Edit comment" iconClassName="icon-16" className="margin-left-4" onClick={handleEditClick} />}
           </div>
         </div>
         <p className="fs-14 fw-400 text-2-color mb-0 margin-top-8 lh-normal">{comment.message}</p>

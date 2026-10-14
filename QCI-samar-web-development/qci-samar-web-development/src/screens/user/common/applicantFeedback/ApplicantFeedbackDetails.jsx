@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppButton, AppDataGrid } from '../../../../components/base';
+import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { exportApplicationFeedbacksAction, getFeedbacksAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
@@ -123,7 +124,7 @@ const ApplicantFeedbackDetails = () => {
                 <div className="table-container">
                   <div className="table-header">
                     <div className="table-header-left table-header-left-without-search">
-                      <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} style={{ cursor: 'pointer' }} />
+                      <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
                       <div className="heading-seperator margin-left-8 margin-right-8"></div>
                       <h1 className="heading-createApp">Applicant Feedback</h1>
                     </div>
@@ -152,7 +153,7 @@ const ApplicantFeedbackDetails = () => {
               <div className="table-container">
                 <div className="table-header">
                   <div className="table-header-left table-header-left-without-search">
-                    <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} style={{ cursor: 'pointer' }} />
+                    <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
                     <div className="heading-seperator margin-left-8 margin-right-8"></div>
                     <h1 className="heading-createApp">Applicant Feedback</h1>
                     <div className="heading-seperator"></div>

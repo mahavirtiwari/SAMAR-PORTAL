@@ -187,13 +187,13 @@ const AppFileUpload = ({
               endAdornment:
                 rightIcon && isFocused ? (
                   <span style={{ ...rightIconStyle }}>
-                    <img src={rightIcon} alt="Right Icon" style={{ width: 20, height: 20 }} />
+                    <img src={rightIcon} alt="" style={{ width: 20, height: 20 }} />
                   </span>
                 ) : null,
               startAdornment:
                 leftIcon && isFocused ? (
                   <span style={{ ...leftIconStyle }}>
-                    <img src={leftIcon} alt="Left Icon" style={{ width: 20, height: 20 }} />
+                    <img src={leftIcon} alt="" style={{ width: 20, height: 20 }} />
                   </span>
                 ) : null,
             },

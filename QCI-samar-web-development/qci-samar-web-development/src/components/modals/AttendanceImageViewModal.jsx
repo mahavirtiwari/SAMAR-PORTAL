@@ -1,4 +1,5 @@
 import Icons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import ViewLocation from '../../utils/ViewLocation';
 import AppCommonModal from './AppCommonModal';
 
@@ -48,7 +49,7 @@ const AttendanceImageViewModal = ({
         <div className="Attendee-details-container d-flex flex-column justify-content-between">
           <div>
             <div className="d-flex align-items-center">
-              <img src={Icons.calendarFill} className="icon-16" />
+              <img alt="" src={Icons.calendarFill} className="icon-16" />
               <div className="margin-left-6 fs-14 fw-500 text-2-color">
                 Date & Time:<span className="margin-left-6 fs-14 fw-600 heading-color">{dateTime}</span>
               </div>
@@ -68,7 +69,7 @@ const AttendanceImageViewModal = ({
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-end align-items-center margin-top-12" style={{ cursor: 'pointer' }} onClick={() => ViewLocation(latitude, longitude)}>
+          <div className="d-flex justify-content-end align-items-center margin-top-12" style={{ cursor: 'pointer' }} {...onActivate(() => ViewLocation(latitude, longitude))}>
             <span className="fs-14 fw-500 mb-0 primary-color margin-right-2 mt-0">View Location</span>
             <img src={Icons.sendArrow} alt="location" className="icon-16" />
           </div>
@@ -84,7 +85,7 @@ const AttendanceImageViewModal = ({
       modalHeader={modalHeader}
       modalContent={modalContent}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '400px', lg: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '400px', lg: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

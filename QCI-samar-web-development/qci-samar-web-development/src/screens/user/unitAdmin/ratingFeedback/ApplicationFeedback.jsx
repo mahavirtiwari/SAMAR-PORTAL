@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AppButton, AppDataGrid, AppInput, AppModal } from '../../../../components/base';
+import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { getFeedbackFormAction, submitBulkFeedbackAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
@@ -11,16 +12,21 @@ import { resetFeedbackForm, resetSubmitState } from '../../../../redux/slices/co
 // StarRating component for interactive stars
 const StarRating = ({ filled, total = 5, onStarClick }) => (
   <>
-    {[...Array(total)].map((_, idx) => (
-      <img
-        key={idx}
-        src={idx < filled ? Icons.starFilled : Icons.starUnfilled}
-        alt="star"
-        className="icon-20 margin-right-8"
-        onClick={onStarClick ? () => onStarClick(idx + 1) : undefined}
-        style={onStarClick ? { cursor: 'pointer' } : undefined}
-      />
-    ))}
+    {[...Array(total)].map((_, idx) =>
+      onStarClick ? (
+        <AppIconButton
+          key={idx}
+          icon={idx < filled ? Icons.starFilled : Icons.starUnfilled}
+          label={`Rate ${idx + 1} out of ${total}`}
+          aria-pressed={idx < filled}
+          iconClassName="icon-20"
+          className="margin-right-8"
+          onClick={() => onStarClick(idx + 1)}
+        />
+      ) : (
+        <img key={idx} src={idx < filled ? Icons.starFilled : Icons.starUnfilled} alt={idx < filled ? 'Filled star' : 'Empty star'} className="icon-20 margin-right-8" />
+      ),
+    )}
   </>
 );
 
@@ -64,7 +70,7 @@ const getColumns = (setRowRating, handleStatusChange) => [
             <RadioGroup name={`status-${params.row.id}`} value={currentValue} onChange={e => handleStatusChange(params.row.id, e.target.value)} sx={{ flexDirection: 'row' }}>
               <FormControlLabel
                 value="yes"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Yes"
                 sx={{
                   marginRight: 2,
@@ -75,7 +81,7 @@ const getColumns = (setRowRating, handleStatusChange) => [
               />
               <FormControlLabel
                 value="no"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="No"
                 sx={{
                   '& .MuiFormControlLabel-label': {
@@ -218,7 +224,7 @@ const ApplicationFeedback = () => {
               <div className="table-container">
                 <div className="table-header">
                   <div className="table-header-left">
-                    <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+                    <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
                     <div className="heading-seperator margin-left-8 margin-right-8"></div>
                     <h1 className="heading-createApp">Application Feedback</h1>
                     <div className="heading-seperator"></div>

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppBadge, FullScreenLoader, RenewalTag } from '../../../../../../components/base';
+import AppIconButton from '../../../../../../components/base/AppIconButton';
 import { Layout } from '../../../../../../components/layout';
 import ProductDetailModal from '../../../../../../components/modals/ProductDetailModal';
 import Icons from '../../../../../../constants/Icons';
 import { getAssessmentByIdAction } from '../../../../../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../../../../../utils/a11y';
 import { formatDate } from '../../../../../../utils/formatters';
 import AssessmentTab from '../../qualityCheckFeedback/assessmentDetails/assessment/AssessmentTab';
 import AttendanceTab from './AttendanceTab';
@@ -40,7 +42,7 @@ const AssessmentDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Assessment Details</h1>
             </div>
@@ -106,13 +108,13 @@ const AssessmentDetails = () => {
                       </div>
                     )}
                     <div className="d-flex align-items-center margin-top-16">
-                      <img src={Icons.calendarBlue} alt="documnet" className="icon-20 margin-right-8" />
+                      <img src={Icons.calendarBlue} alt="" className="icon-20 margin-right-8" />
                       <p className="fs-12 fw-500 mb-0 text-3-color">UDYAM Registration Number</p>
                       <p className="fs-14 fw-500 mb-0 heading-color margin-left-12">{assessmentData?.application?.udyamRegistrationNumber || '-'}</p>
                       <p className="margin-left-8 fs-12 fw-600 primary-color cursor-pointer mb-0">View</p>
                     </div>
                     <div className="d-flex align-items-center margin-top-12">
-                      <img src={Icons.calendarBlue} alt="documnet" className="icon-20 margin-right-8" />
+                      <img src={Icons.calendarBlue} alt="" className="icon-20 margin-right-8" />
                       <p className="fs-12 fw-500 mb-0 text-3-color">DRDO / DRDO Lab Registration Number:</p>
                       <p className="fs-14 fw-500 mb-0 heading-color margin-left-12">{assessmentData?.application?.drdoRegistrationNumber || '-'}</p>
                       <p className="margin-left-8 fs-12 fw-600 primary-color cursor-pointer mb-0">View</p>
@@ -170,16 +172,25 @@ const AssessmentDetails = () => {
                   </div>
                   <div className="card-bottom-tabs">
                     <div className="card-tabs-link">
-                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} onClick={() => setActiveTab('overview')}>
+                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} {...onActivate(() => setActiveTab('overview'))} aria-pressed={activeTab === 'overview'}>
                         Overview
                       </span>
-                      <span className={activeTab === 'schedule' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('schedule')}>
+                      <span
+                        className={activeTab === 'schedule' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('schedule'))}
+                        aria-pressed={activeTab === 'schedule'}>
                         Schedule
                       </span>
-                      <span className={activeTab === 'assessment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('assessment')}>
+                      <span
+                        className={activeTab === 'assessment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('assessment'))}
+                        aria-pressed={activeTab === 'assessment'}>
                         Assessment
                       </span>
-                      <span className={activeTab === 'checkin/checkout' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('checkin/checkout')}>
+                      <span
+                        className={activeTab === 'checkin/checkout' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                        {...onActivate(() => setActiveTab('checkin/checkout'))}
+                        aria-pressed={activeTab === 'checkin/checkout'}>
                         Attendance
                       </span>
                     </div>

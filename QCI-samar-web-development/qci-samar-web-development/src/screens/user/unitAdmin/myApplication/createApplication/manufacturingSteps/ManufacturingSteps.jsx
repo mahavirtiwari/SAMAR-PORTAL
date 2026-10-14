@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { DeclarationAccuracyText, DeclarationDiscretionText } from '../../../../../../components/applicationTab/ApplicationDeclarations';
 import { AppButton, AppDatePicker, AppDropdown, AppFileUpload, AppInput, AppInputWithDropdown, AppMultiSelectDropdown, AppSuggestionInput, RenewalTag } from '../../../../../../components/base';
+import AppIconButton from '../../../../../../components/base/AppIconButton';
 import { toastError } from '../../../../../../components/base/toast';
 import { Layout } from '../../../../../../components/layout';
 import { ApplicationStoresModal, AppModal } from '../../../../../../components/modals';
@@ -2503,7 +2504,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       sx={{ flexDirection: 'row' }}>
                       <FormControlLabel
                         value="yes"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Yes"
                         sx={{
                           marginRight: 3,
@@ -2514,7 +2515,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="no"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="No"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -2567,7 +2568,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                     <RadioGroup value={formik.values.enterpriseClassification} onChange={handleEnterpriseClassificationChange} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'wrap' }}>
                       <FormControlLabel
                         value="startup"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Start-Up"
                         sx={{
                           marginRight: 2,
@@ -2578,7 +2579,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="micro"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Micro"
                         sx={{
                           marginRight: 2,
@@ -2589,7 +2590,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="small"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Small"
                         sx={{
                           marginRight: 2,
@@ -2600,7 +2601,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="medium"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Medium"
                         sx={{
                           marginRight: 2,
@@ -2611,7 +2612,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="large"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Large"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -2973,7 +2974,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       onBlur={() => formik.setFieldTouched('hasGst', true)}>
                       <FormControlLabel
                         value="yes"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Yes"
                         sx={{
                           marginRight: 3,
@@ -2984,7 +2985,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="no"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="No"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -3050,7 +3051,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       sx={{ flexDirection: 'row', gap: 2 }}>
                       <FormControlLabel
                         value="yes"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Yes"
                         sx={{
                           marginRight: 3,
@@ -3061,7 +3062,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="no"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="No"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -3231,9 +3232,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                 sx={{ flexDirection: 'row', gap: 2 }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 3,
@@ -3244,9 +3243,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -3378,9 +3375,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                               sx={{ flexDirection: 'row', gap: 2 }}>
                               <FormControlLabel
                                 value="domestic"
-                                control={
-                                  <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                }
+                                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                 label="Domestic"
                                 sx={{
                                   marginRight: 3,
@@ -3391,9 +3386,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                               />
                               <FormControlLabel
                                 value="international"
-                                control={
-                                  <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                }
+                                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                 label="International"
                                 sx={{
                                   '& .MuiFormControlLabel-label': {
@@ -3605,9 +3598,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                 sx={{ flexDirection: 'row', gap: 2 }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 3,
@@ -3618,9 +3609,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -3775,12 +3764,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                   sx={{ flexDirection: 'row', gap: 2 }}>
                                   <FormControlLabel
                                     value="yes"
-                                    control={
-                                      <Radio
-                                        icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />}
-                                        checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />}
-                                      />
-                                    }
+                                    control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                     label="Yes"
                                     sx={{
                                       marginRight: 3,
@@ -3791,12 +3775,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                   />
                                   <FormControlLabel
                                     value="no"
-                                    control={
-                                      <Radio
-                                        icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />}
-                                        checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />}
-                                      />
-                                    }
+                                    control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                     label="No"
                                     sx={{
                                       '& .MuiFormControlLabel-label': {
@@ -3931,7 +3910,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       sx={{ flexDirection: 'row', gap: 2 }}>
                       <FormControlLabel
                         value="yes"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Yes"
                         sx={{
                           marginRight: 3,
@@ -3942,7 +3921,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="no"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="No"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -3984,7 +3963,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                     <RadioGroup value={formik.values.hasOngoingEnquiry || ''} onChange={e => formik.setFieldValue('hasOngoingEnquiry', e.target.value)} sx={{ flexDirection: 'row', gap: 2 }}>
                       <FormControlLabel
                         value="yes"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="Yes"
                         sx={{
                           marginRight: 3,
@@ -3995,7 +3974,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       />
                       <FormControlLabel
                         value="no"
-                        control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                        control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                         label="No"
                         sx={{
                           '& .MuiFormControlLabel-label': {
@@ -4018,9 +3997,23 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                     <div className="form-check">
                       <div className="custom-checkbox d-flex align-items-start">
                         {formik.values.informationTrueAgreement ? (
-                          <img src={Icons.squareTick} alt="checkbox" className="icon-22" onClick={handleInformationTrueAgreementChange} style={{ cursor: 'pointer' }} />
+                          <AppIconButton
+                            icon={Icons.squareTick}
+                            label="I declare that the information provided is accurate"
+                            iconClassName="icon-22"
+                            onClick={handleInformationTrueAgreementChange}
+                            role="checkbox"
+                            aria-checked={true}
+                          />
                         ) : (
-                          <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" onClick={handleInformationTrueAgreementChange} style={{ cursor: 'pointer' }} />
+                          <AppIconButton
+                            icon={Icons.squareUncheck}
+                            label="I declare that the information provided is accurate"
+                            iconClassName="icon-22"
+                            onClick={handleInformationTrueAgreementChange}
+                            role="checkbox"
+                            aria-checked={false}
+                          />
                         )}
                         <label className="form-check-label mb-0">
                           <DeclarationAccuracyText />
@@ -4033,9 +4026,23 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                     <div className="form-check margin-top-16">
                       <div className="custom-checkbox d-flex align-items-start">
                         {formik.values.applicationAcceptanceAgreement ? (
-                          <img src={Icons.squareTick} alt="checkbox" className="icon-22" onClick={handleApplicationAcceptanceAgreementChange} style={{ cursor: 'pointer' }} />
+                          <AppIconButton
+                            icon={Icons.squareTick}
+                            label="I accept the application declaration"
+                            iconClassName="icon-22"
+                            onClick={handleApplicationAcceptanceAgreementChange}
+                            role="checkbox"
+                            aria-checked={true}
+                          />
                         ) : (
-                          <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" onClick={handleApplicationAcceptanceAgreementChange} style={{ cursor: 'pointer' }} />
+                          <AppIconButton
+                            icon={Icons.squareUncheck}
+                            label="I accept the application declaration"
+                            iconClassName="icon-22"
+                            onClick={handleApplicationAcceptanceAgreementChange}
+                            role="checkbox"
+                            aria-checked={false}
+                          />
                         )}
                         <label className="form-check-label mb-0">
                           <DeclarationDiscretionText />
@@ -4084,7 +4091,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                             <li className="fs-14 fw-500 text-2-color text-capitalize">Manufacturing</li>
                           </ul>
                           <div className="d-flex align-items-center margin-top-16">
-                            <img src={Icons.enterpriseInfoDone} alt="documnet" className="icon-24 margin-right-8" />
+                            <img src={Icons.enterpriseInfoDone} alt="" className="icon-24 margin-right-8" />
 
                             <div className="d-flex align-items-center gap-2">
                               <p className="fs-12 fw-500 mb-0 text-3-color">Enterprise Name:</p>
@@ -4097,7 +4104,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
 
                     <div className="bottom-details-card">
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         {formik.values.enterpriseClassification === 'startup' && (
                           <div>
                             <p className="fs-12 fw-500 mb-1 text-3-color">DPIIT Registration Number</p>
@@ -4137,11 +4144,11 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                       </div>
                       <div className="vertical-divider" />
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         <div>
                           <div className="d-flex align-items-center">
                             <p className="fs-12 fw-500 mb-0 text-3-color">DRDO / DRDO Lab Registration Number</p>
-                            {formik.values.drdoRegistrationNumber && <img src={Icons.greenTick} className="icon-15 margin-left-4" />}
+                            {formik.values.drdoRegistrationNumber && <img alt="Verified" src={Icons.greenTick} className="icon-15 margin-left-4" />}
                           </div>
                           <div className="d-flex align-items-end">
                             <p className="fs-14 fw-500 mb-0 heading-color">{formik.values.drdoRegistrationNumber ? formik.values.drdoRegistrationNumber : '-'}</p>
@@ -4178,27 +4185,27 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                   <span>{formatFullAddress(formik.values.unitAddress, formik.values.unitDistrict, formik.values.unitState, formik.values.unitPincode)}</span>
                                   <ul className="enterpriseInfoUl">
                                     <li>
-                                      <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.unitMobile}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.landline} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Landline Number:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.unitLandline ? formik.values.unitLandline : '-'}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Email:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.unitEmail)}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Alternate Email:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.unitAlternateEmail ? formik.values.unitAlternateEmail : '-')}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.gallery} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.gallery} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Picture of Site Exterior:</p>
 
                                       <AppButton size="small" variant="link" title={'View'} onClick={() => handleOpenImagePreview(formik.values.siteExteriorPhoto)} />
@@ -4219,22 +4226,22 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                   </span>
                                   <ul className="enterpriseInfoUl">
                                     <li>
-                                      <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.registeredOfficeMobile}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.landline} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Landline Number:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.registeredOfficeLandline ? formik.values.registeredOfficeLandline : '-'}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Email:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.registeredOfficeEmail)}</p>
                                     </li>
                                     <li>
-                                      <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Alternate Email:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">
                                         {formatDisplayValue(formik.values.registeredOfficeAlternateEmail ? formik.values.registeredOfficeAlternateEmail : '-')}
@@ -4267,22 +4274,22 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                             <h5 className="heading-color">Contact Person</h5>
                             <ul className="enterpriseInfoUl enterpriseInfoHorizontalUl">
                               <li>
-                                <img src={Icons.user} alt="documnet" className="icon-20 margin-right-8" />
+                                <img src={Icons.user} alt="" className="icon-20 margin-right-8" />
                                 <p className="fs-12 fw-400 mb-0 text-3-color">Name:</p>
                                 <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.contactPersonName)}</p>
                               </li>
                               <li>
-                                <img src={Icons.designation} alt="documnet" className="icon-20 margin-right-8" />
+                                <img src={Icons.designation} alt="" className="icon-20 margin-right-8" />
                                 <p className="fs-12 fw-400 mb-0 text-3-color">Designation:</p>
                                 <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.contactPersonDesignation)}</p>
                               </li>
                               <li>
-                                <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                                <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                                 <p className="fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                                 <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.contactPersonMobile}</p>
                               </li>
                               <li>
-                                <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                                <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                                 <p className="fs-12 fw-400 mb-0 text-3-color">Email:</p>
                                 <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(formik.values.contactPersonEmail)}</p>
                               </li>
@@ -4301,14 +4308,14 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                 <div className="enterpriseInfoWrapper">
                                   <ul className="enterpriseInfoUl gap-14">
                                     <li>
-                                      <img src={Icons.tickCircle} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.tickCircle} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Ownership Type:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12 text-capitalize">
                                         {ownershipTypeOptions.find(option => option.value === formik.values.ownershipType)?.label}
                                       </p>
                                     </li>
                                     <li>
-                                      <img src={Icons.users} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.users} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Number of Employees:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">
                                         {formatNumber(
@@ -4335,7 +4342,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                       </ul>
                                     </li>
                                     <li>
-                                      <img src={Icons.documentText} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.documentText} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">GST Number:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.hasGst === 'yes' ? formatDisplayValue(formik.values.gstNumber) : 'No'}</p>
                                       {formik.values.hasGst === 'yes' && formik.values.gstCertificateFile && (
@@ -4343,7 +4350,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                                       )}
                                     </li>
                                     <li>
-                                      <img src={Icons.organisation} alt="documnet" className="icon-20 margin-right-8" />
+                                      <img src={Icons.organisation} alt="" className="icon-20 margin-right-8" />
                                       <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Registered with Government Organisation:</p>
                                       <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formik.values.hasGovtRegistration === 'yes' ? formik.values.govtOrganisationName : 'No'}</p>
 
@@ -4613,7 +4620,7 @@ const ManufacturingSteps = ({ initialDraftValues, draftApplicationId }) => {
                             </div>
                             {idx < steps.length - 1 && (
                               <div>
-                                <img src={activeStep > idx ? Icons.arrowBlue : Icons.arrowGrey} alt="arrow" className="icon-12" />
+                                <img src={activeStep > idx ? Icons.arrowBlue : Icons.arrowGrey} alt="" className="icon-12" />
                               </div>
                             )}
                           </>

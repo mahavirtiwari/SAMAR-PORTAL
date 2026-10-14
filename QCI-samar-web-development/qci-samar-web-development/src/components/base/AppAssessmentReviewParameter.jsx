@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Icons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import { isServiceSector } from '../../utils/assessmentExecution';
 import { formatParameterScore, formatRcParameterScore } from '../../utils/assessmentScoreUtils';
 import AppButton from './AppButton';
@@ -35,7 +36,7 @@ const AppAssessmentReviewParameter = ({
 
   return (
     <div className="payment-allocation-container  margin-bottom-16">
-      <div className={`rowBetween cursor-pointer`} onClick={handleToggle}>
+      <div className={`rowBetween cursor-pointer`} {...onActivate(handleToggle)} aria-expanded={collapse}>
         <div className="d-flex align-items-center">
           <div
             className="status-icon-container  margin-right-10"
@@ -75,7 +76,7 @@ const AppAssessmentReviewParameter = ({
               <div className="clarification-Number">{pendingForParamCount > 0 ? pendingForParamCount : sendBackCount}</div>
               <span className="fs-12 fw-500 margin-left-8">Clarification Required</span>
               <div className="response-icon-container margin-left-4">
-                <img src={Icons.redFlag} alt="response icon" className="icon-14" />
+                <img src={Icons.redFlag} alt="" className="icon-14" />
               </div>
             </div>
           )}
@@ -88,7 +89,7 @@ const AppAssessmentReviewParameter = ({
             <p className="fs-12 fw-500 text-2-color mb-0">{'RC Score'}</p>
           </div>
           <div>
-            <img src={collapse ? Icons.topArrow : Icons.greyDownArrow} alt="arrow" className="icon-24" />
+            <img src={collapse ? Icons.topArrow : Icons.greyDownArrow} alt="" className="icon-24" />
           </div>
         </div>
       </div>
@@ -103,7 +104,7 @@ const AppAssessmentReviewParameter = ({
             return (
               <div className={`question-container ${index !== question.length - 1 ? 'margin-bottom-20' : ''}`} key={index}>
                 <div className="d-flex align-items-start gap-10">
-                  <img src={iconSrc} alt="question icon" className="icon-20" />
+                  <img src={iconSrc} alt="" className="icon-20" />
                   <p className="fw-500 fs-14 text-1-color mb-0">{qn?.questionText}</p>
                 </div>
                 <AppButton size="medium" variant="link" title={'View'} buttonPaddingX="0" customClass="fs-12" onClick={() => handleViewClick(qn)} />

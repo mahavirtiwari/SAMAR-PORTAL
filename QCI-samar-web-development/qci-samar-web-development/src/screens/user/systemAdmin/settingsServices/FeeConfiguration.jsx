@@ -444,9 +444,7 @@ const FeeConfiguration = () => {
                               <RadioGroup value={startupTdsDeductible} onChange={e => setStartupTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 2,
@@ -457,9 +455,7 @@ const FeeConfiguration = () => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -545,9 +541,7 @@ const FeeConfiguration = () => {
                               <RadioGroup value={microTdsDeductible} onChange={e => setMicroTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 2,
@@ -558,9 +552,7 @@ const FeeConfiguration = () => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -646,9 +638,7 @@ const FeeConfiguration = () => {
                               <RadioGroup value={smallTdsDeductible} onChange={e => setSmallTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 2,
@@ -659,9 +649,7 @@ const FeeConfiguration = () => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -747,9 +735,7 @@ const FeeConfiguration = () => {
                               <RadioGroup value={mediumTdsDeductible} onChange={e => setMediumTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 2,
@@ -760,9 +746,7 @@ const FeeConfiguration = () => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {
@@ -849,9 +833,7 @@ const FeeConfiguration = () => {
                               <RadioGroup value={largeTdsDeductible} onChange={e => setLargeTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                                 <FormControlLabel
                                   value="yes"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="Yes"
                                   sx={{
                                     marginRight: 2,
@@ -862,9 +844,7 @@ const FeeConfiguration = () => {
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="No"
                                   sx={{
                                     '& .MuiFormControlLabel-label': {

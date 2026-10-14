@@ -316,6 +316,7 @@ const AppSuggestionSingleSelect = ({
                       <div className="cross-icon-wrapper">
                         <IconButton
                           size="small"
+                          aria-label="Clear"
                           onClick={() => {
                             setInput('');
                             if (onChange) {
@@ -324,7 +325,7 @@ const AppSuggestionSingleSelect = ({
                               setInternalTags([]);
                             }
                           }}>
-                          <img src={Icons.cross} alt="clear" className="icon-14" />
+                          <img src={Icons.cross} alt="" className="icon-14" />
                         </IconButton>
                       </div>
                     ) : null}
@@ -368,7 +369,7 @@ const AppSuggestionSingleSelect = ({
                         }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
                           <span>{text}</span>
-                          {isSelected && <img src={Icons.check} alt="check" className="icon-16" />}
+                          {isSelected && <img src={Icons.check} alt="" className="icon-16" />}
                         </Box>
                       </ListItemButton>
                     </ListItem>

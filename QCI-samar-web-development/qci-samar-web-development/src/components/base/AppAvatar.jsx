@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../../assets/theme/avatar.css';
+import { onActivate } from '../../utils/a11y';
 
 export const getInitials = (name = '') => {
   if (!name || typeof name !== 'string') {
@@ -100,14 +101,14 @@ const AppAvatar = ({ src, alt = '', size = '40', role = 'Participant', className
 
   if (src && !imgError) {
     return (
-      <div className={`avatar ${sizeClass} ${roleClass} avatar--image ${className}`.trim()} title={alt} style={{ ...style }} onClick={onClick}>
+      <div className={`avatar ${sizeClass} ${roleClass} avatar--image ${className}`.trim()} title={alt} style={{ ...style }} {...onActivate(onClick)}>
         <img src={src} alt={alt} className="avatar-img" loading="lazy" onError={() => setImgError(true)} />
       </div>
     );
   }
 
   return (
-    <div className={`avatar ${sizeClass} ${roleClass} ${className}`.trim()} title={alt} aria-label={alt} style={{ ...style }} onClick={onClick}>
+    <div className={`avatar ${sizeClass} ${roleClass} ${className}`.trim()} title={alt} aria-label={alt} style={{ ...style }} {...onActivate(onClick)}>
       <span className="avatar-initials">{displayInitials}</span>
     </div>
   );

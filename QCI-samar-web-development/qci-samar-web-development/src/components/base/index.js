@@ -17,6 +17,7 @@ export { default as AppDateRangePicker } from './AppDateRangePicker';
 export { default as AppDropdown } from './AppDropdown';
 export { default as AppEmptyState } from './AppEmptyState';
 export { default as AppErrorBoundary } from './AppErrorBoundary';
+export { default as AppIconButton } from './AppIconButton';
 export { default as AppMultiDataDropdown } from './AppMultiDataDropdown';
 export { default as AppMultiSelectDropdown } from './AppMultiSelectDropdown';
 export { default as AppOperationsManagerAssessmentQuestions } from './AppOperationsManagerAssessmentQuestions';

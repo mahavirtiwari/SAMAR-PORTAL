@@ -4,6 +4,7 @@ import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
 import { getQuestionFeedbackHistoryAction } from '../../redux/action/common/ApplicationAssessmentAction';
 import { addPendingQc, removePendingQc } from '../../redux/slices/common/AssessmentSlice';
+import { onActivate } from '../../utils/a11y';
 import { isServiceSector } from '../../utils/assessmentExecution';
 import { formatQuestionScore } from '../../utils/assessmentScoreUtils';
 import { fetchAuthenticatedImageUrl } from '../../utils/FileUtils';
@@ -499,7 +500,8 @@ const AppOperationsManagerQuestionModal = ({ open, onClose, parameterData = [], 
                                         src={feedbackImageBlobs?.[item.id]?.[att.id]}
                                         alt={att.fileName}
                                         style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                        onClick={() => handleOpenImagePreview(feedbackImageBlobs?.[item.id]?.[att.id] || att.downloadUrl, att.fileName)}
+                                        aria-label={`View ${att.fileName}`}
+                                        {...onActivate(() => handleOpenImagePreview(feedbackImageBlobs?.[item.id]?.[att.id] || att.downloadUrl, att.fileName))}
                                         onError={e => {
                                           e.target.src = Images.dummySite;
                                         }}
@@ -563,7 +565,8 @@ const AppOperationsManagerQuestionModal = ({ open, onClose, parameterData = [], 
                                           src={feedbackImageBlobs?.[item.clarification.id]?.[att.id]}
                                           alt={att.fileName}
                                           style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                          onClick={() => handleOpenImagePreview(feedbackImageBlobs?.[item.clarification.id]?.[att.id] || att.downloadUrl, att.fileName)}
+                                          aria-label={`View ${att.fileName}`}
+                                          {...onActivate(() => handleOpenImagePreview(feedbackImageBlobs?.[item.clarification.id]?.[att.id] || att.downloadUrl, att.fileName))}
                                           onError={e => {
                                             e.target.src = Images.dummySite;
                                           }}
@@ -622,7 +625,7 @@ const AppOperationsManagerQuestionModal = ({ open, onClose, parameterData = [], 
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '1100px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '1100px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

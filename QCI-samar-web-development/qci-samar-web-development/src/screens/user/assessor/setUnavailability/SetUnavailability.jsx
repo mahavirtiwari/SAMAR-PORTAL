@@ -5,6 +5,7 @@ import { toastError } from '../../../../components/base/toast';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import Api from '../../../../services/api';
+import { onActivate } from '../../../../utils/a11y';
 import { formatDate, formatDateFull } from '../../../../utils/formatters';
 import { Logger } from '../../../../utils/logger';
 
@@ -107,7 +108,7 @@ const SetUnavailability = () => {
         sortable: false,
         renderCell: params => (
           <AppToolTip title="Delete">
-            <div className="table-icon-button danger" onClick={() => setRecordToDelete(params.row)}>
+            <div className="table-icon-button danger" {...onActivate(() => setRecordToDelete(params.row))}>
               <img className="icon-14" src={Icons.trash} alt="Delete" />
             </div>
           </AppToolTip>

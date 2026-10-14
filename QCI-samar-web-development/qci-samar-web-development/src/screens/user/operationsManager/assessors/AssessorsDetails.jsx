@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppAvatar, AppBadge, AppDataGrid, AppInput, AppTableEmpty, FullScreenLoader } from '../../../../components/base';
+import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import { AppAssessorLocationModal, AssessorDomainModal } from '../../../../components/modals';
 import Icons from '../../../../constants/Icons';
@@ -237,7 +238,7 @@ const AssessorsDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Assessor Details</h1>
             </div>

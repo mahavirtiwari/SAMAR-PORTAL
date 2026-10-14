@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Icons from '../../constants/Icons'; // make sure this path is correct
 import { getResponsesAction } from '../../redux/action/common/ApplicationAssessmentAction';
 import { getAssessmentByIdAction } from '../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../utils/a11y';
 import { formatParameterScore } from '../../utils/assessmentScoreUtils';
 import { Logger } from '../../utils/logger';
 import { AppBadge, AppButton } from '../base';
@@ -184,12 +185,17 @@ const ReviewParameter = ({ open, handleClose, assessmentData }) => {
           </div>
         ) : (
           mappedParams.map(p => (
-            <div key={p.id} className={`parameter-card margin-bottom-10 ${selected.includes(p.id) ? 'active' : ''}`} onClick={() => toggleSelect(p.id)}>
+            <div
+              key={p.id}
+              className={`parameter-card margin-bottom-10 ${selected.includes(p.id) ? 'active' : ''}`}
+              {...onActivate(() => toggleSelect(p.id))}
+              role="checkbox"
+              aria-checked={selected.includes(p.id)}>
               <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center gap-10">
                   {/* UPDATED CHECKBOX */}
                   <div className="param-checkbox d-flex align-items-center" style={{ cursor: 'pointer' }}>
-                    {selected.includes(p.id) ? <img src={Icons.squareTick} alt="checkbox" className="icon-22" /> : <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />}
+                    {selected.includes(p.id) ? <img src={Icons.squareTick} alt="" className="icon-22" /> : <img src={Icons.squareUncheck} alt="" className="icon-22" />}
                   </div>
 
                   <div>
@@ -231,7 +237,7 @@ const ReviewParameter = ({ open, handleClose, assessmentData }) => {
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '900px', lg: '850px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '900px', lg: '850px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

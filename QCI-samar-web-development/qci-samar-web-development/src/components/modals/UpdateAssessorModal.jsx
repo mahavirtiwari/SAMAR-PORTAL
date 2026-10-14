@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Icons from '../../constants/Icons';
+import { onActivate } from '../../utils/a11y';
 import { AppButton, AppDropdown } from '../base';
 import AppCommonModal from './AppCommonModal';
 
@@ -25,12 +26,12 @@ const UpdateAssessorModal = ({ open, onClose, handleClose }) => {
             {coAssessors.length > 1 && (
               <div
                 className="danger-active-color fw-500 fs-12 cursor-pointer d-flex align-items-center justify-content-end margin-bottom-2"
-                onClick={() => {
+                {...onActivate(() => {
                   if (coAssessors.length > 1) {
                     const updated = coAssessors.filter((_, i) => i !== idx);
                     setCoAssessors(updated);
                   }
-                }}>
+                })}>
                 Remove
               </div>
             )}
@@ -47,7 +48,7 @@ const UpdateAssessorModal = ({ open, onClose, handleClose }) => {
             />
           </div>
         ))}
-        <div className="d-flex align-items-center cursor-pointer margin-top-6" onClick={() => setCoAssessors([...coAssessors, ''])}>
+        <div className="d-flex align-items-center cursor-pointer margin-top-6" {...onActivate(() => setCoAssessors([...coAssessors, '']))}>
           <img src={Icons.plusIcon} alt="Add More" />
           <span className="primary-color fw-500 fs-12">Add More</span>
         </div>
@@ -71,7 +72,7 @@ const UpdateAssessorModal = ({ open, onClose, handleClose }) => {
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
         borderRadius: 3,

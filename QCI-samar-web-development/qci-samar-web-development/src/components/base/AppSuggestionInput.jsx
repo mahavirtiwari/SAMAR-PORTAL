@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 import Icons from '../../constants/Icons';
 import AppButton from './AppButton';
+import AppIconButton from './AppIconButton';
 
 /**
  * AppSuggestionInput
@@ -456,6 +457,7 @@ const AppSuggestionInput = ({
                     {(isSingleSelection ? selectedValueForInput || input : input) ? (
                       <IconButton
                         size="small"
+                        aria-label="Clear"
                         onClick={() => {
                           // Clear input and selection for single selection
                           setInput('');
@@ -465,7 +467,7 @@ const AppSuggestionInput = ({
                             }
                           }
                         }}>
-                        <img src={Icons.cross} alt="clear" className="icon-12" />
+                        <img src={Icons.cross} alt="" className="icon-12" />
                       </IconButton>
                     ) : null}
                   </InputAdornment>
@@ -504,12 +506,13 @@ const AppSuggestionInput = ({
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {Outsourced && (
                       <>
-                        <img
-                          src={isOutsourced ? Icons.checkSquare : Icons.uncheckSquare}
-                          alt={isOutsourced ? 'check' : 'uncheck'}
-                          className="icon-22"
+                        <AppIconButton
+                          icon={isOutsourced ? Icons.checkSquare : Icons.uncheckSquare}
+                          label={`${labelText} outsourced`}
+                          iconClassName="icon-22"
                           onClick={() => handleToggleOutsourcedAndNotify(idx, labelText)}
-                          style={{ cursor: 'pointer' }}
+                          role="checkbox"
+                          aria-checked={isOutsourced}
                         />
                         <span className="fs-14 fw-400 text-1-color">Outsourced</span>
                       </>
@@ -591,7 +594,7 @@ const AppSuggestionInput = ({
                         }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between' }}>
                           <span>{text}</span>
-                          {isSelected && <img src={Icons.check} alt="check" className="icon-16" />}
+                          {isSelected && <img src={Icons.check} alt="" className="icon-16" />}
                         </Box>
                       </ListItemButton>
                     </ListItem>

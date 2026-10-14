@@ -10,6 +10,7 @@ import { getUserDetailsAction } from '../../../redux/action/common/UnitAdminActi
 import { getApplicationAction } from '../../../redux/action/enterpriseAdmin/application/ApplicationAction';
 import { getEnterpriseAdminDashboardAction } from '../../../redux/action/enterpriseAdmin/DashboardAction';
 import { getAllOrganizationsAction } from '../../../redux/action/organizations/OrganizationAction';
+import { onActivate, onActivateLink } from '../../../utils/a11y';
 import { formatDate } from '../../../utils/formatters';
 import { getBadgeVariantByLabel } from '../../../utils/getStatusColors';
 
@@ -216,7 +217,7 @@ const Dashboard = () => {
             <div className="col-xxl-7 col-xl-7 col-lg-7 col-md-7">
               <div className="row h-100 align-content-between">
                 <div className="col-md-6">
-                  <div className="statCard" style={{ borderLeftColor: 'var(--info-primary)', cursor: 'pointer' }} onClick={() => navigate('/unit-users')}>
+                  <div className="statCard" style={{ borderLeftColor: 'var(--info-primary)', cursor: 'pointer' }} {...onActivateLink(() => navigate('/unit-users'))}>
                     <div className="d-flex flex-row gap-16">
                       <div className="statIconContainer">
                         <img src={Icons.buildings} alt="Units" className="icon-36" />
@@ -229,7 +230,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="col-md-6">
-                  <div className="statCard" style={{ borderLeftColor: 'var(--badge-green)', cursor: 'pointer' }} onClick={() => navigate('/applications/active')}>
+                  <div className="statCard" style={{ borderLeftColor: 'var(--badge-green)', cursor: 'pointer' }} {...onActivateLink(() => navigate('/applications/active'))}>
                     <div className="d-flex flex-row gap-16">
                       <div className="statIconContainer" style={{ backgroundColor: 'var(--success-light)' }}>
                         <img src={Icons.greenClipboard} alt="Active Applications" className="icon-36" />
@@ -242,7 +243,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="col-md-6">
-                  <div className="statCard" style={{ borderLeftColor: 'var(--purple-dark)', cursor: 'pointer' }} onClick={() => navigate('/documents')}>
+                  <div className="statCard" style={{ borderLeftColor: 'var(--purple-dark)', cursor: 'pointer' }} {...onActivateLink(() => navigate('/documents'))}>
                     <div className="d-flex flex-row gap-16">
                       <div className="statIconContainer" style={{ backgroundColor: '#f3efff' }}>
                         <img src={Icons.certificates} alt="Current Certifications" className="icon-36" />
@@ -255,7 +256,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="col-md-6">
-                  <div className="statCard" style={{ borderLeftColor: 'var(--warning-primary)', cursor: 'pointer' }} onClick={() => navigate('/applications/draft')}>
+                  <div className="statCard" style={{ borderLeftColor: 'var(--warning-primary)', cursor: 'pointer' }} {...onActivateLink(() => navigate('/applications/draft'))}>
                     <div className="d-flex flex-row gap-16">
                       <div className="statIconContainer" style={{ backgroundColor: 'var(--warning-light)' }}>
                         <img src={Icons.yellowClock} alt="Draft Applications" className="icon-36" />
@@ -274,11 +275,11 @@ const Dashboard = () => {
                 <h6 className="margin-bottom-20 fs-16 fw-600 text-heading-color">Quick Actions</h6>
                 <div className="quickActionsGrid">
                   <div className="d-flex align-items-center flex-grow-1 gap-12">
-                    <a className="justify-content-start new-application-button" onClick={handleNewApplication} style={{ width: '49%', textDecoration: 'none', cursor: 'pointer' }}>
+                    <a className="justify-content-start new-application-button" {...onActivate(handleNewApplication)} style={{ width: '49%', textDecoration: 'none', cursor: 'pointer' }}>
                       <img src={Icons.documentText} alt="New Application" className="icon-40" />
                       <div className="fs-14 fw-500 primary-color text-center">Apply For New Application</div>
                     </a>
-                    <a className="new-application-button contact-support-outline-button" onClick={handleContactSupport} style={{ width: '49%', textDecoration: 'none', cursor: 'pointer' }}>
+                    <a className="new-application-button contact-support-outline-button" {...onActivate(handleContactSupport)} style={{ width: '49%', textDecoration: 'none', cursor: 'pointer' }}>
                       <img src={Icons.contactSupport} alt="New Application" className="icon-40" />
                       <div className="fs-14 fw-500 primary-color">Contact Support</div>
                     </a>

@@ -5,6 +5,7 @@ import Images from '../../constants/Images';
 import { getQuestionFeedbackHistoryAction, getResponsesAction } from '../../redux/action/common/ApplicationAssessmentAction';
 import { postQuestionClarificationAction, updateQuestionClarificationAction } from '../../redux/action/common/AssessmentAction';
 import { addPendingQc, addPendingRcScore } from '../../redux/slices/common/AssessmentSlice';
+import { onActivate } from '../../utils/a11y';
 import { isServiceSector } from '../../utils/assessmentExecution';
 import { formatQuestionScore, resolveDisplayedSelectedOption } from '../../utils/assessmentScoreUtils';
 import { fetchAuthenticatedImageUrl } from '../../utils/FileUtils';
@@ -754,7 +755,8 @@ const AppParameterQuestionsModal = ({ open, onClose, parameterData = [], questio
                                         src={feedbackImageBlobs?.[item.id]?.[att.id]}
                                         alt={att.fileName}
                                         style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                        onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName)}
+                                        aria-label={`View ${att.fileName}`}
+                                        {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.id]?.[att.id], att.fileName))}
                                         onError={e => {
                                           e.target.src = Images.dummySite;
                                         }}
@@ -814,6 +816,8 @@ const AppParameterQuestionsModal = ({ open, onClose, parameterData = [], questio
                                     <div key={img.id} style={{ position: 'relative', width: 80, height: 80 }}>
                                       <img src={img.url} alt={img.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }} />
                                       <button
+                                        type="button"
+                                        aria-label={`Remove ${img.name}`}
                                         onClick={() => handleRemoveClarificationImage(item.clarification.id, img.id)}
                                         style={{
                                           position: 'absolute',
@@ -879,7 +883,8 @@ const AppParameterQuestionsModal = ({ open, onClose, parameterData = [], questio
                                             src={feedbackImageBlobs?.[item.clarification.id]?.[att.id]}
                                             alt={att.fileName}
                                             style={{ maxWidth: 120, maxHeight: 120, borderRadius: 6, border: '1px solid #eee', objectFit: 'cover', cursor: 'pointer' }}
-                                            onClick={() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName)}
+                                            aria-label={`View ${att.fileName}`}
+                                            {...onActivate(() => handleOpenImagePreview(att.downloadUrl || feedbackImageBlobs?.[item.clarification.id]?.[att.id], att.fileName))}
                                             onError={e => {
                                               e.target.src = Images.dummySite;
                                             }}
@@ -952,7 +957,7 @@ const AppParameterQuestionsModal = ({ open, onClose, parameterData = [], questio
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '1100px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '1100px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

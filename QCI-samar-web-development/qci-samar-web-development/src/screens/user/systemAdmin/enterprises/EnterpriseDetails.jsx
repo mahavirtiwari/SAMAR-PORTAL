@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppBadge, FullScreenLoader } from '../../../../components/base';
+import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { getOrganizationByIdAction } from '../../../../redux/action/systemAdmin/EnterprisesAction';
@@ -21,7 +22,7 @@ const EnterpriseDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Enterprise Details</h1>
             </div>
@@ -98,22 +99,22 @@ const EnterpriseDetails = () => {
                     <h5 className="heading-color">Owner Details:</h5>
                     <ul className="enterpriseInfoUl enterpriseInfoHorizontalUl">
                       <li>
-                        <img src={Icons.user} alt="documnet" className="icon-20 margin-right-8" />
+                        <img src={Icons.user} alt="" className="icon-20 margin-right-8" />
                         <p className="fs-12 fw-400 mb-0 text-3-color">Name:</p>
                         <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{organization?.organization?.ownerName ? organization?.organization?.ownerName : '-'}</p>
                       </li>
                       <li>
-                        <img src={Icons.designation} alt="documnet" className="icon-20 margin-right-8" />
+                        <img src={Icons.designation} alt="" className="icon-20 margin-right-8" />
                         <p className="fs-12 fw-400 mb-0 text-3-color">Designation:</p>
                         <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{organization?.organization?.ownerDesignation ? organization?.organization?.ownerDesignation : '-'}</p>
                       </li>
                       <li>
-                        <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                        <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                         <p className="fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                         <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{organization?.organization?.ownerMobileNumber ? organization?.organization?.ownerMobileNumber : '-'}</p>
                       </li>
                       <li>
-                        <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                        <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                         <p className="fs-12 fw-400 mb-0 text-3-color">Email:</p>
                         <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{organization?.organization?.ownerEmail ? organization?.organization?.ownerEmail : '-'}</p>
                       </li>

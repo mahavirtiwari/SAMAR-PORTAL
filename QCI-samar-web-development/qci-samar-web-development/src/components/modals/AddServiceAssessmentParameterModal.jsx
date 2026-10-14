@@ -110,7 +110,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
               <RadioGroup value={formik.values.isMandatory} name="isMandatory" onChange={e => formik.setFieldValue('isMandatory', e.target.value)} sx={{ flexDirection: 'row' }}>
                 <FormControlLabel
                   value="mandatory"
-                  control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                   label="Mandatory"
                   sx={{
                     marginRight: 2,
@@ -121,7 +121,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
                 />
                 <FormControlLabel
                   value="optional"
-                  control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                   label="Optional"
                   sx={{
                     '& .MuiFormControlLabel-label': {
@@ -145,6 +145,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
                 <button
                   key={sizeValue}
                   type="button"
+                  aria-pressed={formik.values.enterpriseSize.includes(sizeValue)}
                   onClick={() => {
                     const currentSizes = formik.values.enterpriseSize;
                     const newSizes = currentSizes.includes(sizeValue) ? currentSizes.filter(size => size !== sizeValue) : [...currentSizes, sizeValue];
@@ -160,11 +161,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
                     cursor: 'pointer',
                     fontSize: '14px',
                   }}>
-                  {formik.values.enterpriseSize.includes(sizeValue) ? (
-                    <img src={Icons.squareTick} alt="checkbox" className="icon-22" />
-                  ) : (
-                    <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />
-                  )}
+                  {formik.values.enterpriseSize.includes(sizeValue) ? <img src={Icons.squareTick} alt="" className="icon-22" /> : <img src={Icons.squareUncheck} alt="" className="icon-22" />}
                   <span style={{ textTransform: 'capitalize' }}>{sizeValue === 'startup' ? 'Start-Up' : sizeValue.charAt(0).toUpperCase() + sizeValue.slice(1)}</span>
                 </button>
               ))}
@@ -186,7 +183,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
               sx={{ flexDirection: 'row' }}>
               <FormControlLabel
                 value="annual_maintenance_contract"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Annual Maintenance Contract (AMC)"
                 sx={{
                   marginRight: 3,
@@ -197,7 +194,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
               />
               <FormControlLabel
                 value="critical_service_provider"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Critical Service Provider"
                 sx={{
                   marginRight: 3,
@@ -208,7 +205,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
               />
               <FormControlLabel
                 value="civil_works_contractor"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Civil Works Contractors"
                 sx={{
                   '& .MuiFormControlLabel-label': {
@@ -260,7 +257,7 @@ const AddServiceAssessmentParameterModal = ({ open, handleClose, disciplines, dr
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

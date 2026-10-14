@@ -158,12 +158,12 @@ const PublicHeader = () => {
                   <span className="user-name">{displayName}</span>
                   <span className="user-id">{displaySamarId}</span>
                 </div>
-                <img src={Icons.defaultProfile} alt="SAMAR Logo" className="icon-40" />
+                <img src={Icons.defaultProfile} alt="" className="icon-40" />
               </Dropdown.Toggle>
 
               <Dropdown.Menu className="user-dropdown-menu">
                 <div className="top-user-dropdown-menu">
-                  <img src={Icons.defaultProfile} alt="SAMAR Logo" className="icon-60" />
+                  <img src={Icons.defaultProfile} alt="" className="icon-60" />
                   <div>
                     <h4 className="fs-16 fw-600 heading-color mb-0">{profileUserName}</h4>
                     {isEnterpriseAdmin && profileEnterpriseName ? <p className="fs-12 fw-500 heading-color margin-top-2 mb-0">{profileEnterpriseName}</p> : null}

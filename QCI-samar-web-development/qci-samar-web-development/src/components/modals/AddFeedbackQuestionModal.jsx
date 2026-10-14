@@ -75,7 +75,7 @@ const AddFeedbackQuestionModal = ({ open, handleClose, onGeneralError }) => {
             <RadioGroup name="type" value={formik.values.type} onChange={formik.handleChange} sx={{ flexDirection: 'row' }}>
               <FormControlLabel
                 value="rating"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Rating"
                 sx={{
                   marginRight: 2,
@@ -86,7 +86,7 @@ const AddFeedbackQuestionModal = ({ open, handleClose, onGeneralError }) => {
               />
               <FormControlLabel
                 value="yes_no"
-                control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                 label="Yes/No"
                 sx={{
                   '& .MuiFormControlLabel-label': {
@@ -121,7 +121,7 @@ const AddFeedbackQuestionModal = ({ open, handleClose, onGeneralError }) => {
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

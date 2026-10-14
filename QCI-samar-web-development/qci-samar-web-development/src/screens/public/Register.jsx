@@ -15,6 +15,7 @@ import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
 import { registerAction, resendOtpAction, verifyOtpAction } from '../../redux/action/common/AccountAction';
 import { resetRegisterData } from '../../redux/slices/common/AccountSlice';
+import { onActivate } from '../../utils/a11y';
 import { Logger } from '../../utils/logger';
 import { emailRegex } from '../../utils/Regex';
 import { getFirstServerError, normalizeServerErrors } from '../../utils/serverErrorUtils';
@@ -166,10 +167,10 @@ const Register = () => {
             </div>
             <div className="quickLinksContainer">
               <p className="fs-18 fw-600 primary-color mb-0">Quick Link</p>
-              <div className="d-flex align-items-center gap-6 cursor-pointer" onClick={handleDownloadManual}>
-                <img src={Icons.fourDot} alt="dots" className="icon-12" />
+              <div className="d-flex align-items-center gap-6 cursor-pointer" {...onActivate(handleDownloadManual)}>
+                <img src={Icons.fourDot} alt="" className="icon-12" />
                 <p className="mb-0 fs-16 fw-500 text-1-color">Applicant User Manual</p>
-                <img src={Icons.arrowDown} alt="arrow" className="icon-12" />
+                <img src={Icons.arrowDown} alt="" className="icon-12" />
               </div>
             </div>
           </Col>

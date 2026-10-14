@@ -17,7 +17,7 @@ const EditAssessmentDateModal = ({ open, onClose, handleClose, handleSave, disab
         <div className="row">
           <div className="col-12">
             <div className="d-flex align-items-center">
-              <img src={Icons.locationGrey} className="icon-20" />
+              <img alt="" src={Icons.locationGrey} className="icon-20" />
               <span className="fs-14 fw-500 text-2-color margin-left-4">Unit Location</span>
               <span className="fs-14 fw-600 heading-color margin-left-8">Gurugram, Haryana</span>
             </div>
@@ -49,7 +49,7 @@ const EditAssessmentDateModal = ({ open, onClose, handleClose, handleSave, disab
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '700px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '700px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
         borderRadius: 3,

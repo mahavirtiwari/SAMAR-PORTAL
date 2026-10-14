@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AssessmentScoreSummary from '../../../../../components/assessment/AssessmentScoreSummary';
 import { AppAssessmentViewParameter, AppButton } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { Layout } from '../../../../../components/layout';
 import { AddParameterReviewModal, ApplicationStoresModal, AppModal, AppParameterViewQuestionsModal, ViewApplicationDetailsModal } from '../../../../../components/modals';
 import Icons from '../../../../../constants/Icons';
@@ -166,7 +167,7 @@ const ViewAssessmentParameter = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">View Assessment</h1>
             </div>
@@ -204,7 +205,7 @@ const ViewAssessmentParameter = () => {
                               </ul>
                               <div className="d-flex align-items-center margin-top-16">
                                 <div className="d-flex align-items-center">
-                                  <img src={Icons.enterpriseInfoDone} alt="documnet" className="icon-24 margin-right-8" />
+                                  <img src={Icons.enterpriseInfoDone} alt="" className="icon-24 margin-right-8" />
                                   <div>
                                     <p className="fs-12 fw-500 mb-0 text-3-color">Unit</p>
                                     <p className="fs-14 fw-500 mb-0 heading-color">{applicationDetails?.unitName}</p>
@@ -212,7 +213,7 @@ const ViewAssessmentParameter = () => {
                                 </div>
                                 <div className="vertical-divider" />
                                 <div className="d-flex align-items-center">
-                                  <img src={Icons.enterpriseInfoDone} alt="documnet" className="icon-24 margin-right-8" />
+                                  <img src={Icons.enterpriseInfoDone} alt="" className="icon-24 margin-right-8" />
                                   <div>
                                     <p className="fs-12 fw-500 mb-0 text-3-color">Enterprise</p>
                                     <p className="fs-14 fw-500 mb-0 heading-color">{applicationDetails?.organizationName}</p>
@@ -241,7 +242,7 @@ const ViewAssessmentParameter = () => {
 
                     <div className="bottom-details-card">
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         {applicationDetails?.enterpriseClassification === 'startup' && (
                           <div>
                             <p className="fs-12 fw-500 mb-1 text-3-color">DPIIT Registration Number</p>
@@ -281,11 +282,11 @@ const ViewAssessmentParameter = () => {
                       </div>
                       <div className="vertical-divider" />
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         <div>
                           <div className="d-flex align-items-center">
                             <p className="fs-12 fw-500 mb-0 text-3-color">DRDO / DRDO Lab Registration Number</p>
-                            {applicationDetails?.drdoRegistrationNumber && <img src={Icons.greenTick} className="icon-15 margin-left-4" />}
+                            {applicationDetails?.drdoRegistrationNumber && <img alt="Verified" src={Icons.greenTick} className="icon-15 margin-left-4" />}
                           </div>
                           <div className="d-flex align-items-end">
                             <p className="fs-14 fw-500 mb-0 heading-color">{applicationDetails?.drdoRegistrationNumber ? applicationDetails?.drdoRegistrationNumber : '-'}</p>

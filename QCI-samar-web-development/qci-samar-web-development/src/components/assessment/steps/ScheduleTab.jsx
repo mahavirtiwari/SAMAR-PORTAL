@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import Icons from '../../../constants/Icons';
+import { onActivate } from '../../../utils/a11y';
 import { formatDate } from '../../../utils/formatters';
 import { Logger } from '../../../utils/logger';
 import ViewLocation from '../../../utils/ViewLocation';
 import { AppButton, AppDataGrid } from '../../base';
+import AppIconButton from '../../base/AppIconButton';
 
 const ScheduleTab = ({ assessment, disabledJoinBtn }) => {
   const [copied, setCopied] = useState(false);
@@ -152,7 +154,7 @@ const ScheduleTab = ({ assessment, disabledJoinBtn }) => {
                 </div>
 
                 <div className="lh-normal-18">
-                  <div className="d-flex align-items-center justify-content-end cursor-pointer" onClick={() => ViewLocation(assessment?.application?.unitAddress)}>
+                  <div className="d-flex align-items-center justify-content-end cursor-pointer" {...onActivate(() => ViewLocation(assessment?.application?.unitAddress))}>
                     <span className="fs-12 fw-500 mb-0 primary-color margin-right-2 mt-0">Get Direction</span>
                     <img src={Icons.sendArrow} alt="location" className="icon-16" />
                   </div>
@@ -206,7 +208,7 @@ const ScheduleTab = ({ assessment, disabledJoinBtn }) => {
                         <div className="d-flex align-items-center gap-2">
                           <img src={Icons.callGrey} alt="Mobile" className="icon-16" />
                           <span className="fs-14 fw-500 heading-color">{contactMobile}</span>
-                          <img src={Icons.copy} alt="Copy mobile" className="icon-16 cursor-pointer" onClick={() => handleCopyContact(contactMobile, 'mobile')} />
+                          <AppIconButton icon={Icons.copy} label="Copy mobile number" iconClassName="icon-16" onClick={() => handleCopyContact(contactMobile, 'mobile')} />
                           {copiedField === 'mobile' && <span className="fs-12 primary-color">Copied</span>}
                         </div>
                       )}
@@ -219,7 +221,7 @@ const ScheduleTab = ({ assessment, disabledJoinBtn }) => {
                         <div className="d-flex align-items-center gap-2">
                           <img src={Icons.smsGrey} alt="Email" className="icon-16" />
                           <span className="fs-14 fw-500 heading-color">{contactEmail}</span>
-                          <img src={Icons.copy} alt="Copy email" className="icon-16 cursor-pointer" onClick={() => handleCopyContact(contactEmail, 'email')} />
+                          <AppIconButton icon={Icons.copy} label="Copy email" iconClassName="icon-16" onClick={() => handleCopyContact(contactEmail, 'email')} />
                           {copiedField === 'email' && <span className="fs-12 primary-color">Copied</span>}
                         </div>
                       )}

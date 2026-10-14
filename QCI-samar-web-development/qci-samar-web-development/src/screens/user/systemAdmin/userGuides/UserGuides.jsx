@@ -9,6 +9,7 @@ import Icons from '../../../../constants/Icons';
 import Images from '../../../../constants/Images';
 import { activateDocumentAction, deactivateDocumentAction, downloadDocumentAction, getDocumentsAction } from '../../../../redux/action/common/DocumentAction';
 import { resetDocumentCreateUpdateDelete } from '../../../../redux/slices/common/DocumentSlice';
+import { onActivate } from '../../../../utils/a11y';
 import { Logger } from '../../../../utils/logger';
 
 const UserGuides = () => {
@@ -199,16 +200,16 @@ const UserGuides = () => {
                                   </a> */}
                                   <div className="toggle-btns d-flex">
                                     {doc.isActive ? (
-                                      <a className="fs-12 fw-600 text-decoration-none danger-primary-color" style={{ cursor: 'pointer' }} onClick={() => handleToggle(doc.id, true, doc.title)}>
+                                      <a className="fs-12 fw-600 text-decoration-none danger-primary-color" style={{ cursor: 'pointer' }} {...onActivate(() => handleToggle(doc.id, true, doc.title))}>
                                         Deactivate
                                       </a>
                                     ) : (
-                                      <a className="fs-12 fw-600 text-decoration-none success-active-color" style={{ cursor: 'pointer' }} onClick={() => handleToggle(doc.id, false, doc.title)}>
+                                      <a className="fs-12 fw-600 text-decoration-none success-active-color" style={{ cursor: 'pointer' }} {...onActivate(() => handleToggle(doc.id, false, doc.title))}>
                                         Activate
                                       </a>
                                     )}
                                   </div>
-                                  <a className="fs-12 fw-600 primary-color text-decoration-none" style={{ cursor: 'pointer' }} onClick={() => handleViewDocument(doc)}>
+                                  <a className="fs-12 fw-600 primary-color text-decoration-none" style={{ cursor: 'pointer' }} {...onActivate(() => handleViewDocument(doc))}>
                                     View
                                   </a>
                                 </div>

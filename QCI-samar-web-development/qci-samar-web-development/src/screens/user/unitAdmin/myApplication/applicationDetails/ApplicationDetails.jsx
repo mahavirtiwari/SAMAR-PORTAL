@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import OverviewManufacturingTab from '../../../../../components/applicationTab/OverviewManufacturingTab';
 import OverviewServiceTab from '../../../../../components/applicationTab/OverviewServiceTab';
 import { AppBadge, AppButton, AppStatusSteps, FullScreenLoader, RenewalTag } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { defaultStatusSteps } from '../../../../../components/base/AppStatusSteps';
 import { Layout } from '../../../../../components/layout';
 import ApplicationStoresModal from '../../../../../components/modals/ApplicationStoresModal';
@@ -15,6 +16,7 @@ import ScheduleAssessmentModal from '../../../../../components/modals/ScheduleAs
 import { getAssessmentTypeLabel, RENEWAL_HIDDEN_ASSESSMENT_STATUSES } from '../../../../../constants/assessmentStatus';
 import Icons from '../../../../../constants/Icons';
 import { getApplicationDetailsAction, getAssessmentSummaryAction, setPreferredAssessmentDateAction } from '../../../../../redux/action/unitAdmin/application/ApplicationAction';
+import { onActivate } from '../../../../../utils/a11y';
 import { isRenewalApplication } from '../../../../../utils/applicationUtils';
 import { downloadFile } from '../../../../../utils/FileUtils';
 import { formatDate, formatDisplayValue } from '../../../../../utils/formatters';
@@ -124,7 +126,7 @@ const ApplicationDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Application Details</h1>
             </div>
@@ -303,23 +305,35 @@ const ApplicationDetails = () => {
                   </div>
                   <div className="card-bottom-tabs">
                     <div className="card-tabs-link">
-                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} onClick={() => setActiveTab('overview')}>
+                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} {...onActivate(() => setActiveTab('overview'))} aria-pressed={activeTab === 'overview'}>
                         Overview
                       </span>
                       {applicationDetails?.status === 'payment_completed' && (
-                        <span className={activeTab === 'payment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('payment')}>
+                        <span
+                          className={activeTab === 'payment' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                          {...onActivate(() => setActiveTab('payment'))}
+                          aria-pressed={activeTab === 'payment'}>
                           Payment
                         </span>
                       )}
                       {showAssessmentSection && (
                         <>
-                          <span className={activeTab === 'basicInfo' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('basicInfo')}>
+                          <span
+                            className={activeTab === 'basicInfo' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                            {...onActivate(() => setActiveTab('basicInfo'))}
+                            aria-pressed={activeTab === 'basicInfo'}>
                             Basic Information
                           </span>
-                          <span className={activeTab === 'siteTour' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('siteTour')}>
+                          <span
+                            className={activeTab === 'siteTour' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                            {...onActivate(() => setActiveTab('siteTour'))}
+                            aria-pressed={activeTab === 'siteTour'}>
                             Site Tour
                           </span>
-                          <span className={activeTab === 'evidences' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'} onClick={() => setActiveTab('evidences')}>
+                          <span
+                            className={activeTab === 'evidences' ? 'active cursor-pointer margin-left-24' : 'cursor-pointer margin-left-24'}
+                            {...onActivate(() => setActiveTab('evidences'))}
+                            aria-pressed={activeTab === 'evidences'}>
                             Evidences
                           </span>
                         </>

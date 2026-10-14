@@ -3,6 +3,7 @@ import { Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AppBadge, AppButton, AppDataGrid, AppInput, AppModal, AppToolTip } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddAssessmentQuestionModal, EditAssessmentQuestionModal, QuestionDetailModal } from '../../../../../components/modals';
@@ -328,7 +329,7 @@ const AssessmentParameterDetail = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Assessment Parameter Details</h1>
             </div>

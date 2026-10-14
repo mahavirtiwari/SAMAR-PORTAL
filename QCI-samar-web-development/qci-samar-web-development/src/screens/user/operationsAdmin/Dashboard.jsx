@@ -10,6 +10,7 @@ import StepProgressBar from '../../../components/base/StepProgressBar';
 import { Layout } from '../../../components/layout';
 import Icons from '../../../constants/Icons';
 import { getOperationsAdminDashboardAction } from '../../../redux/action/operationsAdmin/DashboardAction';
+import { onActivateLink } from '../../../utils/a11y';
 
 // Chart color schemes
 const CHART_COLORS = ['#FF4C61', '#FFC93E', '#3B82F6', '#8B5CF6', '#22C55E'];
@@ -202,7 +203,7 @@ const Dashboard = () => {
                       ...(config.color ? { borderLeftColor: config.color } : {}),
                       cursor: targetRoute ? 'pointer' : 'default',
                     }}
-                    onClick={() => targetRoute && navigate(targetRoute)}>
+                    {...onActivateLink(() => targetRoute && navigate(targetRoute))}>
                     <div className="d-flex flex-row gap-16">
                       <div className="statIconContainer" style={config.bgColor ? { backgroundColor: config.bgColor } : undefined}>
                         <img src={config.icon || Icons.clipboard} alt={card.label} className="icon-36" />

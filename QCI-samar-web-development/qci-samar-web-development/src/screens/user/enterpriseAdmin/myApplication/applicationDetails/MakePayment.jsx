@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppButton, AppInput, AppModal, AppTdsToolTip } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import Icons from '../../../../../constants/Icons';
@@ -241,7 +242,7 @@ const MakePayment = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Application Details</h1>
             </div>
@@ -344,9 +345,7 @@ const MakePayment = () => {
                           <RadioGroup value={tdsDeductible} onChange={e => setTdsDeductible(e.target.value)} sx={{ flexDirection: 'row', gap: 2, flexWrap: 'nowrap' }}>
                             <FormControlLabel
                               value="yes"
-                              control={
-                                <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                              }
+                              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                               label="Yes"
                               sx={{
                                 marginRight: 2,
@@ -357,9 +356,7 @@ const MakePayment = () => {
                             />
                             <FormControlLabel
                               value="no"
-                              control={
-                                <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                              }
+                              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                               label="No"
                               sx={{
                                 '& .MuiFormControlLabel-label': {
@@ -381,23 +378,19 @@ const MakePayment = () => {
                                   TDS Percentage?<span className="asterics">*</span>
                                 </span>
                                 <AppTdsToolTip>
-                                  <img src={Icons.infoGrey} className="icon-14" />
+                                  <img alt="" src={Icons.infoGrey} className="icon-14" />
                                 </AppTdsToolTip>
                               </div>
                               <RadioGroup value={tdsPercentage} onChange={e => setTdsPercentage(e.target.value)} sx={{ flexDirection: 'row', gap: 2 }}>
                                 <FormControlLabel
                                   value="2"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="2%"
                                   sx={{ marginRight: 3 }}
                                 />
                                 <FormControlLabel
                                   value="10"
-                                  control={
-                                    <Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />
-                                  }
+                                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                                   label="10%"
                                 />
                               </RadioGroup>

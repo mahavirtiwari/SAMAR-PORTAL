@@ -86,7 +86,7 @@ const AddManufacturingVendorCategoriesModal = ({ open, handleClose, onGeneralErr
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

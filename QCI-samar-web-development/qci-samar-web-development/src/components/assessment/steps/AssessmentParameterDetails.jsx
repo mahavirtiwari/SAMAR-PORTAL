@@ -9,6 +9,7 @@ import { formatParameterScore, formatRcParameterScore, isRcScoreApplicable } fro
 import { getBadgeVariantByLabel, getStatusLabel } from '../../../utils/getStatusColors';
 import { hasRole } from '../../../utils/roleUtils';
 import { AppAssessmentParameterQuestion, AppAvatar, AppBadge } from '../../base';
+import AppIconButton from '../../base/AppIconButton';
 import { Layout } from '../../layout';
 
 const AssessmentParameterDetails = () => {
@@ -74,7 +75,7 @@ const AssessmentParameterDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img src={Icons.back} alt="back" className="icon-24 cursor-pointer" onClick={() => navigate(-1)} />
+              <AppIconButton icon={Icons.back} label="Go back" iconClassName="icon-24" onClick={() => navigate(-1)} />
               <div className="heading-seperator"></div>
               <h1 className="heading-createApp">Parameter Details</h1>
             </div>

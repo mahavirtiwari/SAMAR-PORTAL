@@ -6,6 +6,7 @@ import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { getAllUsersAction } from '../../../../redux/action/common/UnitAdminAction';
 import { getAllUnitsAction } from '../../../../redux/action/enterpriseAdmin/unit/UnitAction';
+import { onActivateLink } from '../../../../utils/a11y';
 
 const ManageUnits = () => {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ const ManageUnits = () => {
           <div style={{ display: 'flex', gap: '8px' }}>
             <AppButton variant="secondary" size="extraSmall" title={'View'} onClick={() => navigate(`/units/unit-details/${params.row.id}`)} />
 
-            <div className="table-icon-button" onClick={() => navigate(`/units/edit-unit/${params.row.id}`)}>
+            <div className="table-icon-button" {...onActivateLink(() => navigate(`/units/edit-unit/${params.row.id}`))}>
               <img className="icon-14" src={Icons.edit} alt="Edit" />
             </div>
           </div>

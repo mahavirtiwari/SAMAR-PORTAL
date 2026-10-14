@@ -149,7 +149,7 @@ const PaymentSuccessful = () => {
                   </div>
                   <div className="select-date-container">
                     <div className="rowCenter">
-                      <img src={Icons.calendarDark} alt="Info Icon" className="icon-24 margin-right-10" />
+                      <img src={Icons.calendarDark} alt="" className="icon-24 margin-right-10" />
                       <span className="fs-16 fw-500 heading-color">Select Preferred Date for Assessment </span>
                     </div>
                     <div className="d-flex gap-3">

@@ -14,6 +14,7 @@ import { listKeyProcessesAction, listThirdPartyCertsAction } from '../../redux/a
 import { downloadFile } from '../../utils/FileUtils';
 import { formatDisplayValue, formatFullAddress, formatNumber, parseNumericOrNull } from '../../utils/formatters';
 import { AppButton } from '../base';
+import AppIconButton from '../base/AppIconButton';
 
 const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -129,27 +130,27 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                       <span>{formatFullAddress(applicationDetails?.unitAddress, applicationDetails?.unitDistrict, applicationDetails?.unitState, applicationDetails?.unitPincode)}</span>
                       <ul className="enterpriseInfoUl">
                         <li>
-                          <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.unitMobile}</p>
                         </li>
                         <li>
-                          <img src={Icons.landline} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Landline Number:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.unitLandline || '-'}</p>
                         </li>
                         <li>
-                          <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Email:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.unitEmail)}</p>
                         </li>
                         <li>
-                          <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Alternate Email:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.unitAlternateEmail) || '-'}</p>
                         </li>
                         <li>
-                          <img src={Icons.gallery} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.gallery} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Picture of Site Exterior:</p>
                           <AppButton
                             size="small"
@@ -177,22 +178,22 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                       </span>
                       <ul className="enterpriseInfoUl">
                         <li>
-                          <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.registeredOfficeMobile}</p>
                         </li>
                         <li>
-                          <img src={Icons.landline} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Landline Number:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.registeredOfficeLandline || '-'}</p>
                         </li>
                         <li>
-                          <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Email:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.registeredOfficeEmail)}</p>
                         </li>
                         <li>
-                          <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                          <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Alternate Email:</p>
                           <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.registeredOfficeAlternateEmail)}</p>
                         </li>
@@ -222,26 +223,26 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
               <div className="bottom-EnterpriseInfo">
                 <div className="d-flex justify-content-between align-items-start">
                   <h5 className="heading-color">Contact Person</h5>
-                  {edit && <img src={Icons.edit} className="icon-18 cursor-pointer" onClick={() => setContactPersonModalOpen(true)} />}
+                  {edit && <AppIconButton icon={Icons.edit} label="Edit contact person" iconClassName="icon-18" onClick={() => setContactPersonModalOpen(true)} />}
                 </div>
                 <ul className="enterpriseInfoUl enterpriseInfoHorizontalUl">
                   <li>
-                    <img src={Icons.user} alt="documnet" className="icon-20 margin-right-8" />
+                    <img src={Icons.user} alt="" className="icon-20 margin-right-8" />
                     <p className="fs-12 fw-400 mb-0 text-3-color">Name:</p>
                     <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.contactPersonName)}</p>
                   </li>
                   <li>
-                    <img src={Icons.designation} alt="documnet" className="icon-20 margin-right-8" />
+                    <img src={Icons.designation} alt="" className="icon-20 margin-right-8" />
                     <p className="fs-12 fw-400 mb-0 text-3-color">Designation:</p>
                     <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.contactPersonDesignation)}</p>
                   </li>
                   <li>
-                    <img src={Icons.receiver} alt="documnet" className="icon-20 margin-right-8" />
+                    <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                     <p className="fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
                     <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.contactPersonMobile}</p>
                   </li>
                   <li>
-                    <img src={Icons.email} alt="documnet" className="icon-20 margin-right-8" />
+                    <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
                     <p className="fs-12 fw-400 mb-0 text-3-color">Email:</p>
                     <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.contactPersonEmail)}</p>
                   </li>
@@ -262,14 +263,14 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                         <div className="enterpriseInfoWrapper">
                           <ul className="enterpriseInfoUl gap-14">
                             <li>
-                              <img src={Icons.tickCircle} alt="documnet" className="icon-20 margin-right-8" />
+                              <img src={Icons.tickCircle} alt="" className="icon-20 margin-right-8" />
                               <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Ownership Type:</p>
                               <p className="fs-12 fw-500 mb-0 heading-color margin-left-12 text-capitalize">
                                 {ownershipTypeOptions.find(option => option.value === applicationDetails?.ownershipType)?.label}
                               </p>
                             </li>
                             <li>
-                              <img src={Icons.users} alt="documnet" className="icon-20 margin-right-8" />
+                              <img src={Icons.users} alt="" className="icon-20 margin-right-8" />
                               <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Number of Employees:</p>
                               <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">
                                 {formatNumber(
@@ -298,7 +299,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                               </ul>
                             </li>
                             <li>
-                              <img src={Icons.documentText} alt="documnet" className="icon-20 margin-right-8" />
+                              <img src={Icons.documentText} alt="" className="icon-20 margin-right-8" />
                               <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">GST Number:</p>
                               <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.gstNumber)}</p>
                               {applicationDetails?.gstCertificateFileUrl && (
@@ -306,7 +307,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                               )}
                             </li>
                             <li>
-                              <img src={Icons.organisation} alt="documnet" className="icon-20 margin-right-8" />
+                              <img src={Icons.organisation} alt="" className="icon-20 margin-right-8" />
                               <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-2-color w-auto">Registered with Government Organisation:</p>
                               <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.govtOrganisationName)}</p>
 

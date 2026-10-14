@@ -6,6 +6,7 @@ import Icons from '../../../constants/Icons';
 import Images from '../../../constants/Images';
 import useLiveRefresh from '../../../hooks/useLiveRefresh';
 import { getSiteTourPicturesAction } from '../../../redux/action/common/ApplicationAssessmentAction';
+import { onActivate } from '../../../utils/a11y';
 import { getStepStatus, isServiceSector, resolveTeamRole, STEP_STATUS } from '../../../utils/assessmentExecution';
 import { getCachedImageUrl } from '../../../utils/FileUtils';
 import { formatCoordinates, formatDateTimeOrDash, formatPersonName, formatUploaderDesignation } from '../../../utils/formatters';
@@ -206,7 +207,7 @@ const SiteTour = () => {
             <div className="site-tour-container">
               <h3>{picture.title || 'Site Tour Photo'}</h3>
               <div className="site-tour-image-container">
-                <div className="site-card" onClick={() => handleOpenModal(picture)} style={{ cursor: 'pointer' }}>
+                <div className="site-card" {...onActivate(() => handleOpenModal(picture))} style={{ cursor: 'pointer' }}>
                   <div className="site-image-wrapper">
                     <img
                       src={imageUrls[picture.id]}
@@ -241,7 +242,7 @@ const SiteTour = () => {
         modalHeader={selectedPicture?.title || 'Site Tour Picture'}
         modalContent={modalContent}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Images from '../../constants/Images';
+import { onActivate } from '../../utils/a11y';
 import { getCachedImageUrl } from '../../utils/FileUtils';
 import { formatCoordinates, formatDateTime } from '../../utils/formatters';
 import SitePictureDetailsModal from '../modals/SitePictureDetailsModal';
@@ -84,7 +85,7 @@ const AppAssessmentEvidenceImage = ({ evidence }) => {
 
   return (
     <div className="site-tour-image-container">
-      <div className="site-card" onClick={() => handleOpen()} style={{ cursor: 'pointer' }}>
+      <div className="site-card" {...onActivate(() => handleOpen())} style={{ cursor: 'pointer' }}>
         <div className="site-image-wrapper" style={{ height: 'auto' }}>
           {(() => {
             const pics = Array.isArray(evidence) ? evidence : evidence ? [evidence] : [];

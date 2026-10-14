@@ -62,7 +62,7 @@ const AddServiceOutsourcedComponent = ({ open, handleClose, onGeneralError }) =>
           <RadioGroup value={formik.values.serviceProviderType} onChange={e => formik.setFieldValue('serviceProviderType', e.target.value)} sx={{ flexDirection: 'row' }}>
             <FormControlLabel
               value="annual_maintenance_contract"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Annual Maintenance Contract (AMC)"
               sx={{
                 marginRight: 3,
@@ -73,7 +73,7 @@ const AddServiceOutsourcedComponent = ({ open, handleClose, onGeneralError }) =>
             />
             <FormControlLabel
               value="critical_service_provider"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Critical Service Provider"
               sx={{
                 marginRight: 3,
@@ -84,7 +84,7 @@ const AddServiceOutsourcedComponent = ({ open, handleClose, onGeneralError }) =>
             />
             <FormControlLabel
               value="civil_works_contractor"
-              control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+              control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
               label="Civil Works Contractors"
               sx={{
                 '& .MuiFormControlLabel-label': {
@@ -131,7 +131,7 @@ const AddServiceOutsourcedComponent = ({ open, handleClose, onGeneralError }) =>
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{
-        width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+        width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
         maxWidth: '98vw',
         margin: { xs: 1, sm: 2, md: 3 },
       }}

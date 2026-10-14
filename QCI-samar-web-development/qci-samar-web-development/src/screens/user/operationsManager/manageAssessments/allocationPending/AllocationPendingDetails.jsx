@@ -4,11 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import OverviewManufacturingTab from '../../../../../components/applicationTab/OverviewManufacturingTab';
 import OverviewServiceTab from '../../../../../components/applicationTab/OverviewServiceTab';
 import { AppBadge, AppButton, AppModal, FullScreenLoader, RenewalTag } from '../../../../../components/base';
+import AppIconButton from '../../../../../components/base/AppIconButton';
 import { Layout } from '../../../../../components/layout';
 import { ApplicationStoresModal, CustomerDetailModal, KeyRawMaterialModal, OperationScheduleAssessmentModal } from '../../../../../components/modals';
 import ProductDetailModal from '../../../../../components/modals/ProductDetailModal';
 import Icons from '../../../../../constants/Icons';
 import { getAssessmentByIdAction } from '../../../../../redux/action/common/AssessmentAction';
+import { onActivate } from '../../../../../utils/a11y';
 import { downloadFile } from '../../../../../utils/FileUtils';
 import { formatDate, formatDisplayValue } from '../../../../../utils/formatters';
 
@@ -80,9 +82,9 @@ const AllocationPendingDetails = () => {
         <div className="subHeaderWrapper">
           <div className="subHeaderLeft">
             <div className="subHeaderLeftBox">
-              <img
-                src={Icons.back}
-                alt="back"
+              <AppIconButton
+                icon={Icons.back}
+                label="Go back"
                 onClick={() => {
                   navigate(-1);
                 }}
@@ -151,7 +153,7 @@ const AllocationPendingDetails = () => {
                     </div>
                     <div className="bottom-details-card">
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         {applicationDetails?.enterpriseClassification === 'startup' && (
                           <div>
                             <p className="fs-12 fw-500 mb-1 text-3-color">DPIIT Registration Number</p>
@@ -191,11 +193,11 @@ const AllocationPendingDetails = () => {
                       </div>
                       <div className="vertical-divider" />
                       <div className="each-details-box">
-                        <img src={Icons.documentText} alt="documnet" className="icon-24" />
+                        <img src={Icons.documentText} alt="" className="icon-24" />
                         <div>
                           <div className="d-flex align-items-center">
                             <p className="fs-12 fw-500 mb-0 text-3-color">DRDO / DRDO Lab Registration Number</p>
-                            {applicationDetails?.drdoRegistrationNumber && <img src={Icons.greenTick} className="icon-15 margin-left-4" />}
+                            {applicationDetails?.drdoRegistrationNumber && <img alt="Verified" src={Icons.greenTick} className="icon-15 margin-left-4" />}
                           </div>
                           <div className="d-flex align-items-end">
                             <p className="fs-14 fw-500 mb-0 heading-color">{applicationDetails?.drdoRegistrationNumber ? applicationDetails?.drdoRegistrationNumber : '-'}</p>
@@ -230,7 +232,7 @@ const AllocationPendingDetails = () => {
                   </div>
                   <div className="card-bottom-tabs">
                     <div className="card-tabs-link">
-                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} onClick={() => setActiveTab('overview')}>
+                      <span className={activeTab === 'overview' ? 'active cursor-pointer' : 'cursor-pointer'} {...onActivate(() => setActiveTab('overview'))} aria-pressed={activeTab === 'overview'}>
                         Overview
                       </span>
                     </div>

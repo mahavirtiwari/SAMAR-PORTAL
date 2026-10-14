@@ -195,7 +195,7 @@ const EditAssessmentQuestionModal = ({ open, handleClose, data, parameterId, onG
               <RadioGroup value={formik.values.category} name="category" onChange={formik.handleChange} sx={{ flexDirection: 'row' }}>
                 <FormControlLabel
                   value="planning"
-                  control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                   label="Planning"
                   sx={{
                     marginRight: 2,
@@ -206,7 +206,7 @@ const EditAssessmentQuestionModal = ({ open, handleClose, data, parameterId, onG
                 />
                 <FormControlLabel
                   value="deployment"
-                  control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                   label="Deployment"
                   sx={{
                     '& .MuiFormControlLabel-label': {
@@ -216,7 +216,7 @@ const EditAssessmentQuestionModal = ({ open, handleClose, data, parameterId, onG
                 />
                 <FormControlLabel
                   value="monitoring"
-                  control={<Radio icon={<img src={Icons.uncheck} alt="Uncheck Icon" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="Check Icon" className="icon-22" />} />}
+                  control={<Radio icon={<img src={Icons.uncheck} alt="" className="icon-22" />} checkedIcon={<img src={Icons.radioBtn} alt="" className="icon-22" />} />}
                   label="Monitoring"
                   sx={{
                     '& .MuiFormControlLabel-label': {
@@ -310,7 +310,7 @@ const EditAssessmentQuestionModal = ({ open, handleClose, data, parameterId, onG
         modalContent={modalContent}
         modalFooter={modalFooter}
         paperSx={{
-          width: { xs: '100%', sm: '90%', md: '800px', lg: '800px' },
+          width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '800px' },
           maxWidth: '98vw',
           margin: { xs: 1, sm: 2, md: 3 },
         }}
