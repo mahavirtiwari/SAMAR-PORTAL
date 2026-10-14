@@ -82,6 +82,55 @@ body {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* Admin-editable content blocks (Settings → Content & Disclaimers) arrive as
+   plain HTML; these rules give them the same look as the hardcoded text. */
+.content-block p {
+  margin-bottom: 12px;
+}
+
+.content-block p:last-child {
+  margin-bottom: 0;
+}
+
+.content-block ol,
+.content-block ul {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.content-block li {
+  margin-bottom: 8px;
+}
+
+.content-block a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.policy-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin: 24px 0 12px;
+}
+
+.policy-content h2:first-child {
+  margin-top: 0;
+}
+
+.policy-content h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.policy-content p {
+  font-size: 14px;
+  color: var(--text-2);
+  margin-bottom: 16px;
+}
+
 /* Answer field left, challenge image right, on one line. Aligned to the top so
    a validation message under the field pushes only the field, not the image. */
 .captchaRow {
@@ -5018,4 +5067,75 @@ textarea::-webkit-input-placeholder {
   color: #3d8bfd;
   justify-content: center;
   align-items: center;
+}
+
+/* Settings → Email Templates / Content & Disclaimers editor */
+.html-editor-tool,
+.html-editor-placeholder {
+  border: 1px solid var(--outline);
+  background: var(--white);
+  border-radius: var(--radius-8);
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--text-1);
+  cursor: pointer;
+}
+
+.html-editor-tool:hover,
+.html-editor-placeholder:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.html-editor-placeholder {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+.html-editor-textarea {
+  width: 100%;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-8);
+  padding: 12px;
+  resize: vertical;
+  color: var(--text-1);
+  background: var(--white);
+}
+
+.html-editor-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.html-editor-textarea.has-error {
+  border-color: var(--danger, #f8285a);
+}
+
+.html-preview-frame {
+  width: 100%;
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-8);
+  background: #f5f6fa;
+}
+
+.settings-editor-panel {
+  background: var(--white);
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.recipient-role-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 16px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--text-2);
+  cursor: pointer;
 }

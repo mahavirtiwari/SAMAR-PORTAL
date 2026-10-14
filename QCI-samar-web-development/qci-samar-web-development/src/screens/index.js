@@ -271,6 +271,9 @@ export const ServicesFeeConfiguration = lazy(() => import('./user/systemAdmin/se
 export const SystemAdminActiveApplications = lazy(() => import('./user/systemAdmin/status/ActiveApplications'));
 export const SystemAdminPaymentPendingApplications = lazy(() => import('./user/systemAdmin/status/PaymentPendingApplications'));
 export const SystemAdminSystemSettings = lazy(() => import('./user/systemAdmin/systemSettings/SystemSettings'));
+export const SystemAdminEmailTemplates = lazy(() => import('./user/systemAdmin/emailTemplates/EmailTemplates'));
+export const SystemAdminEmailTemplateEdit = lazy(() => import('./user/systemAdmin/emailTemplates/EmailTemplateEdit'));
+export const SystemAdminContentBlocks = lazy(() => import('./user/systemAdmin/contentBlocks/ContentBlocks'));
 export const SystemAdminUserGuides = lazy(() => import('./user/systemAdmin/userGuides/UserGuides'));
 export const SystemAdminAssessors = lazy(() => import('./user/systemAdmin/userManagement/assessors/Assessors'));
 export const SystemAdminAssessorDetails = lazy(() => import('./user/systemAdmin/userManagement/assessors/AssessorsDetails'));

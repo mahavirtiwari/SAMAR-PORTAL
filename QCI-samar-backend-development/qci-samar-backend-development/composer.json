@@ -10,6 +10,7 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "barryvdh/laravel-snappy": "^1.0",
         "darkaonline/l5-swagger": "^11.0",
+        "ezyang/htmlpurifier": "^4.19",
         "gregwar/captcha": "^2.1",
         "h4cc/wkhtmltoimage-amd64": "^0.12.4",
         "h4cc/wkhtmltopdf-amd64": "^0.12.4",

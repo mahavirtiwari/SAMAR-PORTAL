@@ -43,6 +43,9 @@ class EmailNotificationTemplate extends Model
         'event',
         'category',
         'subject',
+        'title',
+        'body',
+        'customized_at',
         'cc',
         'bcc',
         'variables',
@@ -69,6 +72,7 @@ class EmailNotificationTemplate extends Model
         'send_to_creator' => 'boolean',
         'has_attachment' => 'boolean',
         'is_active' => 'boolean',
+        'customized_at' => 'datetime',
     ];
 
     /**

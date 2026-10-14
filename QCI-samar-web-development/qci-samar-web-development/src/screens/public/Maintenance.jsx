@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import AppSettings from '../../appsettings';
 import { AppButton } from '../../components/base';
 import Images from '../../constants/Images';
+import useContentBlocks from '../../hooks/useContentBlocks';
 import { logoutUserAction } from '../../redux/action/common/AccountAction';
 import { Logger } from '../../utils/logger';
 
 const Maintenance = () => {
   const navigate = useNavigate();
+  // Message is editable in Settings → Content & Disclaimers.
+  const blocks = useContentBlocks(['maintenance_message']);
   const dispatch = useDispatch();
   const { isUserLoggedIn } = useSelector(state => state.Account);
 
@@ -33,7 +36,7 @@ const Maintenance = () => {
           </div>
           <h1 className="fs-32 fw-700 primary-color mb-3">System Under Maintenance</h1>
           <p className="fs-18 fw-500 text-1-color mb-4" style={{ maxWidth: '600px' }}>
-            We are currently performing scheduled maintenance to improve our services. The system will be back online shortly.
+            {blocks.maintenance_message?.body || 'We are currently performing scheduled maintenance to improve our services. The system will be back online shortly.'}
           </p>
           <p className="fs-16 fw-400 text-2-color mb-4">We apologize for any inconvenience. Please try again later.</p>
           {isUserLoggedIn ? (

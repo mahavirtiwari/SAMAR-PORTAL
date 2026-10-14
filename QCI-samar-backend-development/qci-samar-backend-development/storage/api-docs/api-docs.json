@@ -16234,6 +16234,162 @@
                 ]
             }
         },
+        "/api/v1/content-blocks": {
+            "get": {
+                "tags": [
+                    "Content Blocks"
+                ],
+                "summary": "Get content blocks (public)",
+                "description": "Returns the current text of the requested blocks, or of all blocks when no keys are given.",
+                "operationId": "listContentBlocks",
+                "parameters": [
+                    {
+                        "name": "keys",
+                        "in": "query",
+                        "description": "Comma-separated block keys",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Content blocks retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/content-blocks/{key}": {
+            "get": {
+                "tags": [
+                    "Content Blocks"
+                ],
+                "summary": "Get one content block (public)",
+                "operationId": "getContentBlock",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Content block retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Content block not found"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/content-blocks": {
+            "get": {
+                "tags": [
+                    "Content Blocks"
+                ],
+                "summary": "List content blocks with editing details (System Admin)",
+                "operationId": "adminListContentBlocks",
+                "responses": {
+                    "200": {
+                        "description": "Content blocks retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/content-blocks/{key}": {
+            "put": {
+                "tags": [
+                    "Content Blocks"
+                ],
+                "summary": "Update a content block (System Admin)",
+                "operationId": "updateContentBlock",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "body"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "body": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Content block updated successfully"
+                    },
+                    "404": {
+                        "description": "Content block not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/content-blocks/{key}/reset": {
+            "post": {
+                "tags": [
+                    "Content Blocks"
+                ],
+                "summary": "Restore a content block to its original text (System Admin)",
+                "operationId": "resetContentBlock",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Content block reset to default"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/master-data/countries": {
             "get": {
                 "tags": [
@@ -17642,6 +17798,221 @@
                     },
                     "404": {
                         "description": "Document not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/email-templates": {
+            "get": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "List all transactional email templates",
+                "operationId": "listEmailTemplates",
+                "responses": {
+                    "200": {
+                        "description": "Email templates retrieved successfully"
+                    },
+                    "403": {
+                        "description": "Only System Admin can manage email templates"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/email-templates/{id}": {
+            "get": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "Get an email template with its editable content and placeholders",
+                "operationId": "getEmailTemplate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email template retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Email template not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "Update an email template",
+                "description": "Updates the subject, heading, body (HTML with {{placeholders}}, sanitised on save), CC/BCC, recipient roles and active state.",
+                "operationId": "updateEmailTemplate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "subject": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "cc": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "bcc": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "recipientRoles": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "isActive": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email template updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/email-templates/{id}/preview": {
+            "post": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "Render a template (optionally with unsaved edits) using sample data",
+                "operationId": "previewEmailTemplate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Preview rendered"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/email-templates/{id}/test": {
+            "post": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "Send the template, with sample data, to the signed-in admin's email",
+                "operationId": "sendTestEmailTemplate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Test email sent"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/email-templates/{id}/reset": {
+            "post": {
+                "tags": [
+                    "Email Templates"
+                ],
+                "summary": "Discard the customised heading and body and use the built-in design again",
+                "operationId": "resetEmailTemplate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email template reset to default"
                     }
                 },
                 "security": [
@@ -29292,12 +29663,20 @@
             "description": "Committee meeting management endpoints - Create, update, start, and complete committee meetings"
         },
         {
+            "name": "Content Blocks",
+            "description": "Instructions, declarations and disclaimers shown in the portal. Public read; System Admin edit (Settings → Content & Disclaimers)."
+        },
+        {
             "name": "Disciplines",
             "description": "Discipline management endpoints"
         },
         {
             "name": "Documents",
             "description": "Document management endpoints"
+        },
+        {
+            "name": "Email Templates",
+            "description": "System Admin management of transactional email templates (Settings → Email Templates)."
         },
         {
             "name": "Fee Configurations",

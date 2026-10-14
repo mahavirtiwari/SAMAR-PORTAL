@@ -28,11 +28,13 @@ use App\Http\Controllers\Api\V1\Auth\TwoFactorController;
 use App\Http\Controllers\Api\V1\CertificateController;
 use App\Http\Controllers\Api\V1\CommitteeMeetingController;
 use App\Http\Controllers\Api\V1\CommitteeMemberController;
+use App\Http\Controllers\Api\V1\ContentBlockController;
 use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\DisciplineController;
 use App\Http\Controllers\Api\V1\DistrictController;
 use App\Http\Controllers\Api\V1\DocumentController;
+use App\Http\Controllers\Api\V1\EmailTemplateController;
 use App\Http\Controllers\Api\V1\Erp\ErpDocumentController;
 use App\Http\Controllers\Api\V1\Erp\ErpTokenController;
 use App\Http\Controllers\Api\V1\ErrorGroupController;
@@ -121,6 +123,13 @@ Route::prefix('v1')->group(function () {
     // Public certificate verification (no auth required)
     // GET supports QR-code deep links from certificate PDFs; POST kept for form/body callers.
     Route::match(['get', 'post'], '/verify-certificate', [CertificateController::class, 'verify']);
+
+    // Instructions, declarations and disclaimers (public: the login, register
+    // and policy pages read them before anyone is signed in)
+    Route::middleware('throttle:120,1')->group(function () {
+        Route::get('/content-blocks', [ContentBlockController::class, 'index']);
+        Route::get('/content-blocks/{key}', [ContentBlockController::class, 'show']);
+    });
 
     // Public routes (no authentication required)
     Route::prefix('auth')->group(function () {
@@ -216,6 +225,25 @@ Route::prefix('v1')->group(function () {
             // Full audit/activity trail (data changes + authentication + security)
             Route::get('/activity-logs', [AuditLogController::class, 'activity'])
                 ->middleware('role:system_admin');
+
+            // Settings → Email Templates
+            Route::prefix('email-templates')->middleware('role:system_admin')->group(function () {
+                Route::get('/', [EmailTemplateController::class, 'index']);
+                Route::get('/{id}', [EmailTemplateController::class, 'show'])->whereNumber('id');
+                Route::put('/{id}', [EmailTemplateController::class, 'update'])->whereNumber('id');
+                Route::post('/{id}/preview', [EmailTemplateController::class, 'preview'])->whereNumber('id');
+                Route::post('/{id}/test', [EmailTemplateController::class, 'sendTest'])
+                    ->whereNumber('id')
+                    ->middleware('throttle:10,1');
+                Route::post('/{id}/reset', [EmailTemplateController::class, 'reset'])->whereNumber('id');
+            });
+
+            // Settings → Content & Disclaimers
+            Route::prefix('content-blocks')->middleware('role:system_admin')->group(function () {
+                Route::get('/', [ContentBlockController::class, 'adminIndex']);
+                Route::put('/{key}', [ContentBlockController::class, 'update']);
+                Route::post('/{key}/reset', [ContentBlockController::class, 'reset']);
+            });
         });
 
         // Organization profile management (for authenticated user's own organization)

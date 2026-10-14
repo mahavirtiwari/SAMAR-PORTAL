@@ -206,10 +206,13 @@ import {
   SystemAdminAssessors,
   SystemAdminAuditLog,
   SystemAdminCertifiedVendor,
+  SystemAdminContentBlocks,
   SystemAdmincertifiedVendersDetails,
   SystemAdminDashboard,
   SystemAdminDrdoAdmin,
   SystemAdminDrdoLabs,
+  SystemAdminEmailTemplateEdit,
+  SystemAdminEmailTemplates,
   SystemAdminEnterpriseDetails,
   SystemAdminEnterprises,
   SystemAdminFeedbackConfigurations,
@@ -1490,6 +1493,9 @@ export default function UserNavigator() {
           'System Settings',
         )}
       />
+      <Route path="/email-templates" element={getElementByRole(role, { system_admin: <SystemAdminEmailTemplates /> }, 'Email Templates')} />
+      <Route path="/email-templates/:id" element={getElementByRole(role, { system_admin: <SystemAdminEmailTemplateEdit /> }, 'Email Templates')} />
+      <Route path="/content-blocks" element={getElementByRole(role, { system_admin: <SystemAdminContentBlocks /> }, 'Content & Disclaimers')} />
       <Route
         path="/audit-logs"
         element={getElementByRole(

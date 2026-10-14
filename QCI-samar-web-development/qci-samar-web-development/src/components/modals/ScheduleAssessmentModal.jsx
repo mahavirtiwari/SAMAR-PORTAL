@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
+import useContentBlocks from '../../hooks/useContentBlocks';
 import { AppButton } from '../base';
 import AppDatePicker from '../base/AppDatePicker';
 import AppCommonModal from './AppCommonModal';
 
 function ScheduleAssessmentModal({ open, handleClose, onClose, applicationRef, assessmentType, selectedDate, onDateChange, onConfirm, isLoading = false }) {
+  // Note text is editable in Settings → Content & Disclaimers.
+  const blocks = useContentBlocks(['assessment_schedule_note']);
+
   // Modal title
 
   const modalTitle = <>Select Preferred Assessment Date</>;
@@ -26,8 +30,8 @@ function ScheduleAssessmentModal({ open, handleClose, onClose, applicationRef, a
         Note:
       </div>
       <div style={{ fontSize: 14, color: '#374151', marginBottom: 24 }}>
-        Once you select your preferred assessment date, QCI reserves the right to propose an alternative date or reschedule the assessment if necessary. You will receive timely notification if any
-        changes are made to your selected date.
+        {blocks.assessment_schedule_note?.body ||
+          'Once you select your preferred assessment date, QCI reserves the right to propose an alternative date or reschedule the assessment if necessary. You will receive timely notification if any changes are made to your selected date.'}
       </div>
       <div style={{ marginBottom: 16 }}>
         <AppDatePicker

@@ -374,6 +374,26 @@ class EmailNotificationService
         // Render email subject
         $subject = $this->replaceVariables($template->subject ?? '', $variables);
 
+        // A body customised in Settings → Email Templates replaces the Blade view.
+        if ($template->body !== null && trim($template->body) !== '') {
+            try {
+                $emailBody = app(EmailTemplateEditor::class)->render($template, $variables);
+
+                return [
+                    'subject' => $subject,
+                    'body' => $emailBody,
+                    'body_text' => strip_tags($emailBody),
+                    'bcc' => is_array($template->bcc) ? $template->bcc : [],
+                ];
+            } catch (\Exception $e) {
+                // Fall through to the Blade view rather than send nothing.
+                Log::error('Failed to render customised email template; using the default', [
+                    'template' => $template->slug,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
         // Try to find and render Blade email template
         $emailBody = '';
         $emailBodyText = '';

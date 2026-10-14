@@ -23,9 +23,11 @@ import PaymentService from './payment/PaymentService';
 import SystemAdminApplicationServices from './systemAdmin/ApplicationService';
 import SystemAdminAssessmentParameterService from './systemAdmin/AssessmentParameterService';
 import SystemAdminAuditLogService from './systemAdmin/AuditLogService';
+import ContentBlockAdminService from './systemAdmin/ContentBlockAdminService';
 import SystemAdminDashboardService from './systemAdmin/DashboardService';
 import SystemAdminDisciplinesService from './systemAdmin/DisciplinesService';
 import SystemAdminDocumentService from './systemAdmin/documentService';
+import EmailTemplateService from './systemAdmin/EmailTemplateService';
 import SystemAdminEnterprisesService from './systemAdmin/EnterprisesService';
 import SystemAdminFeeConfigService from './systemAdmin/FeeConfigService';
 import SystemAdminFeedbackService from './systemAdmin/FeedbackService';
@@ -67,6 +69,8 @@ const Api = {
   SystemAdminAuditLog: SystemAdminAuditLogService(userClient),
   SystemAdminIntegrationFailure: SystemAdminIntegrationFailureService(userClient),
   SystemSettingsService: SystemSettingsService(),
+  EmailTemplates: EmailTemplateService(),
+  ContentBlockAdmin: ContentBlockAdminService(),
   SystemStatus: SystemStatusService(),
   CommitteeMeeting: CommitteeMeetingService(),
   CommitteeMember: CommitteeMemberService(),

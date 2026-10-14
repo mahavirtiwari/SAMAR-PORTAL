@@ -6,6 +6,7 @@ import { Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { DeclarationAccuracyText, DeclarationDiscretionText } from '../../../../../../components/applicationTab/ApplicationDeclarations';
 import { AppButton, AppDatePicker, AppDropdown, AppFileUpload, AppInput, AppInputWithDropdown, AppMultiSelectDropdown, AppSuggestionInput, RenewalTag } from '../../../../../../components/base';
 import { toastError } from '../../../../../../components/base/toast';
 import { Layout } from '../../../../../../components/layout';
@@ -4278,13 +4279,7 @@ const ServicesSteps = ({ initialDraftValues, draftApplicationId }) => {
                           )}
                         </div>
                         <label className="form-check-label mb-0">
-                          I declare that all information provided in this application is true and accurate to the best of my knowledge. I understand that if any information is found to be false or
-                          misleading:
-                          <ul>
-                            <li>My application may be rejected</li>
-                            <li>Any rating or certification granted may be cancelled</li>
-                            <li> Appropriate action may be taken by DRDO or QCI</li>
-                          </ul>
+                          <DeclarationAccuracyText />
                         </label>
                       </div>
                       {formik.touched.informationTrueAgreement && formik.errors.informationTrueAgreement && <div className="error-text">{formik.errors.informationTrueAgreement}</div>}
@@ -4300,7 +4295,9 @@ const ServicesSteps = ({ initialDraftValues, draftApplicationId }) => {
                             <img src={Icons.squareUncheck} alt="checkbox" className="icon-22" />
                           )}
                         </div>
-                        <label className="form-check-label mb-0">I understand that the acceptance of my application is at the sole discretion of DRDO and QCI.</label>
+                        <label className="form-check-label mb-0">
+                          <DeclarationDiscretionText />
+                        </label>
                       </div>
                       {formik.touched.applicationAcceptanceAgreement && formik.errors.applicationAcceptanceAgreement && (
                         <div className="error-text">{formik.errors.applicationAcceptanceAgreement}</div>

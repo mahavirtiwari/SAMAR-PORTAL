@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import AppButton from '../../components/base/AppButton';
 import { PublicHeader } from '../../components/layout';
 import Icons from '../../constants/Icons';
+import useContentBlocks from '../../hooks/useContentBlocks';
 
 const PasswordResetLink = () => {
   const navigate = useNavigate();
+  // Notice text is editable in Settings → Content & Disclaimers.
+  const blocks = useContentBlocks(['password_reset_notice']);
   return (
     <section className="forgotPasswordSection">
       <PublicHeader />
@@ -17,8 +20,8 @@ const PasswordResetLink = () => {
               <div className="margin-top-40">
                 <h2 className="fs-24 fw-600 heading-color mb-0">Password Reset Link Sent</h2>
                 <p className="fs-14 fw-500 mb-0 text-2-color margin-top-8">
-                  If this is a registered account, reset instructions will be sent to your email address. Please check your junk folder if you do not see it in your inbox. If you still do not receive
-                  it, try resending the reset instructions. If you do not know your registered email, please contact our Support Team.
+                  {blocks.password_reset_notice?.body ||
+                    'If this is a registered account, reset instructions will be sent to your email address. Please check your junk folder if you do not see it in your inbox. If you still do not receive it, try resending the reset instructions. If you do not know your registered email, please contact our Support Team.'}
                 </p>
                 <div className="margin-top-50">
                   <AppButton

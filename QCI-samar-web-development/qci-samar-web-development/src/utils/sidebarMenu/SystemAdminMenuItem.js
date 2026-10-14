@@ -112,6 +112,8 @@ const SystemAdminMenuItem = [
     submenu: [
       { key: 'feedbackConfiguration', label: 'Feedback Configuration', path: '/feedback-configuration' },
       { key: 'systemSettings', label: 'System Settings', path: '/system-settings' },
+      { key: 'emailTemplates', label: 'Email Templates', path: '/email-templates' },
+      { key: 'contentBlocks', label: 'Content & Disclaimers', path: '/content-blocks' },
       { key: 'userGuides', label: 'User Guides', path: '/user-guides' },
       { key: 'auditLog', label: 'Audit Logs', path: '/audit-logs' },
       { key: 'integrationFailures', label: 'Error Logs', path: '/integration-failures' },
