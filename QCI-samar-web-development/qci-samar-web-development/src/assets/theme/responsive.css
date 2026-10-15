@@ -1248,7 +1248,7 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
   }
 
   .login-onepage .samarLogo {
-    height: clamp(64px, 14vh, 140px);
+    height: clamp(64px, 12vh, 140px);
   }
 
   .login-onepage .publicFormTopMainContainer h2 {
@@ -1260,11 +1260,11 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
   }
 
   .login-onepage .publicFormTopMainContainer .margin-top-20 {
-    margin-top: clamp(10px, 2vh, 20px) !important;
+    margin-top: clamp(8px, 1.6vh, 20px) !important;
   }
 
   .login-onepage .publicFormTopMainContainer .margin-top-40 {
-    margin-top: clamp(14px, 3vh, 40px) !important;
+    margin-top: clamp(12px, 2.6vh, 40px) !important;
   }
 
   .login-onepage .publicFormTopMainContainer .margin-top-24 {
@@ -1414,5 +1414,13 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
 @media (min-width: 992px) and (min-height: 420px) and (max-height: 520px) {
   .login-onepage .publicFormTopMainContainer > h2 + p {
     display: none;
+  }
+}
+
+/* Breathing room under the last item of the login / sign-up form (the footer
+   line lives at the bottom left, so the form column needs its own margin). */
+@media (min-width: 992px) and (min-height: 420px) {
+  .login-onepage .publicFormMainContainer {
+    padding-bottom: clamp(16px, 3vh, 32px);
   }
 }
