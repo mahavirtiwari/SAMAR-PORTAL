@@ -277,6 +277,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('organizations')->middleware('role:system_admin,operations_admin,operations_manager,drdo_admin,drdo_lab')->group(function () {
             Route::get('/', [OrganizationController::class, 'index']);
             Route::get('/export', [OrganizationController::class, 'export'])->middleware('throttle:exports');
+            Route::get('/{id}/journey', [OrganizationController::class, 'journey'])->where('id', '[0-9]+');
 
             // Organization status management (System Admin, Operations Admin only)
             Route::post('/{id}/activate', [OrganizationController::class, 'activate'])

@@ -35,6 +35,7 @@ const Enterprises = () => {
 
   const [showActivateModal, setShowActivateModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [deactivateReason, setDeactivateReason] = useState('');
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -186,6 +187,7 @@ const Enterprises = () => {
 
   const handleDeactivate = useCallback(row => {
     setSelectedOrganization(row);
+    setDeactivateReason('');
     setShowDeactivateModal(true);
   }, []);
 
@@ -197,7 +199,7 @@ const Enterprises = () => {
 
   const confirmDeactivate = () => {
     if (selectedOrganization) {
-      dispatch(deactivateOrganizationAction(selectedOrganization.id));
+      dispatch(deactivateOrganizationAction({ id: selectedOrganization.id, reason: deactivateReason.trim() }));
     }
   };
   useEffect(() => {
@@ -431,10 +433,16 @@ const Enterprises = () => {
           setShowDeactivateModal(false);
           setSelectedOrganization(null);
         }}
+        textAreaLabel="Reason for deactivation"
+        textAreaPlaceholder="Why is this enterprise being deactivated?"
+        isRequiredTextArea
+        textAreaValue={deactivateReason}
+        onTextAreaChange={e => setDeactivateReason(e.target.value)}
+        textAreaHelperText="Kept in the history (at least 5 characters)."
         rightButton={deactivateLoading ? 'Deactivating' : 'Deactivate'}
         rightButtonClassName={'w-100 danger-primary'}
         rightButtonOnClick={confirmDeactivate}
-        rightButtonDisabled={deactivateLoading}
+        rightButtonDisabled={deactivateLoading || deactivateReason.trim().length < 5}
       />
 
       {/* Success Modal */}

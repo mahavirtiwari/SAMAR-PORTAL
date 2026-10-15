@@ -9,6 +9,7 @@ use App\Models\Application;
 use App\Models\Organization;
 use App\Rules\EntityName;
 use App\Rules\PersonName;
+use App\Services\EnterpriseJourneyService;
 use App\Services\StateFilterService;
 use App\Support\Csv;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -817,6 +819,70 @@ class OrganizationController extends Controller
      * @return array
      */
     /**
+     * The enterprise's full history (registration, accounts, applications,
+     * assessments, payments, certificates), oldest first.
+     */
+    #[OA\Get(
+        path: '/api/v1/organizations/{id}/journey',
+        summary: 'Enterprise journey',
+        description: 'Every recorded step of an enterprise, oldest first: registration, user accounts, activation/deactivation with reasons, application and assessment status changes, payments and certificates. Optional applicationId narrows it to one application.',
+        tags: ['Organizations', 'System Admin - Organizations'],
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'applicationId', in: 'query', required: false, schema: new OA\Schema(type: 'integer')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Journey retrieved successfully'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Organization not found'),
+        ],
+    )]
+    public function journey(int $id, Request $request, EnterpriseJourneyService $journey): JsonResponse
+    {
+        $validated = $request->validate([
+            'application_id' => 'nullable|integer|min:1',
+        ]);
+
+        $organization = Organization::find($id);
+        if (! $organization) {
+            return $this->errorResponse('Organization not found.', 404);
+        }
+        if (Gate::denies('view', $organization)) {
+            return $this->errorResponse('This action is unauthorized.', 403);
+        }
+
+        return $this->successResponse(
+            $journey->build($organization, isset($validated['application_id']) ? (int) $validated['application_id'] : null),
+            'Enterprise journey retrieved successfully'
+        );
+    }
+
+    /**
+     * Sets the enterprise's status and records the change, with the reason given,
+     * in its permanent status history (shown in the enterprise journey).
+     */
+    private function changeOrganizationStatus(Organization $organization, string $toStatus, ?string $reason): void
+    {
+        DB::transaction(function () use ($organization, $toStatus, $reason) {
+            $fromStatus = $organization->status;
+            $organization->update(['status' => $toStatus]);
+
+            $actor = auth()->user();
+            $organization->statusHistories()->create([
+                'from_status' => $fromStatus,
+                'to_status' => $toStatus,
+                'changed_by' => $actor?->id,
+                'changed_by_role' => $actor?->activeRoles()->value('slug'),
+                'remarks' => $reason !== null ? trim($reason) : null,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'changed_at' => now(),
+            ]);
+        });
+    }
+
+    /**
      * Apply standard eager loading for organization queries.
      * Reusable method to avoid duplicate code across index() and export().
      *
@@ -1399,8 +1465,12 @@ class OrganizationController extends Controller
             ),
         ],
     )]
-    public function activate(int $id): JsonResponse
+    public function activate(int $id, Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'reason' => 'nullable|string|max:1000',
+        ]);
+
         try {
             $organization = Organization::findOrFail($id);
 
@@ -1412,7 +1482,7 @@ class OrganizationController extends Controller
             }
 
             $previousStatus = $organization->status;
-            $organization->update(['status' => 'active']);
+            $this->changeOrganizationStatus($organization, 'active', $validated['reason'] ?? null);
 
             // Load relationships for response
             $organization->load([
@@ -1466,6 +1536,15 @@ class OrganizationController extends Controller
         description: 'Deactivates an organization by setting its status to \'inactive\'. Only System Admin and Operations Admin can deactivate organizations.',
         tags: ['Organizations', 'System Admin - Organizations'],
         security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['reason'],
+                properties: [
+                    new OA\Property(property: 'reason', type: 'string', minLength: 5, maxLength: 1000, example: 'Duplicate registration'),
+                ],
+            ),
+        ),
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -1572,8 +1651,16 @@ class OrganizationController extends Controller
             ),
         ],
     )]
-    public function deactivate(int $id): JsonResponse
+    public function deactivate(int $id, Request $request): JsonResponse
     {
+        // The reason is kept in the enterprise's journey (account_status_histories).
+        $validated = $request->validate([
+            'reason' => 'required|string|min:5|max:1000',
+        ], [
+            'reason.required' => 'Please give the reason for deactivating this enterprise.',
+            'reason.min' => 'The reason must be at least 5 characters.',
+        ]);
+
         try {
             $organization = Organization::findOrFail($id);
 
@@ -1585,7 +1672,7 @@ class OrganizationController extends Controller
             }
 
             $previousStatus = $organization->status;
-            $organization->update(['status' => 'inactive']);
+            $this->changeOrganizationStatus($organization, 'inactive', $validated['reason']);
 
             // Load relationships for response
             $organization->load([

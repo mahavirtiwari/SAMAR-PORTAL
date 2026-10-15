@@ -190,9 +190,9 @@ class UserService
     /**
      * Activate a user account (reactivate from inactive/suspended).
      */
-    public function activateUser(User $user, ?User $performedBy = null): User
+    public function activateUser(User $user, ?User $performedBy = null, ?string $reason = null): User
     {
-        $user->transitionTo(UserStateMachine::TRANSITION_REACTIVATE, [], $performedBy);
+        $user->transitionTo(UserStateMachine::TRANSITION_REACTIVATE, $this->reasonData($reason), $performedBy);
 
         return $user->load(['organization', 'activeRoles']);
     }
@@ -200,11 +200,24 @@ class UserService
     /**
      * Deactivate a user account.
      */
-    public function deactivateUser(User $user, ?User $performedBy = null): User
+    public function deactivateUser(User $user, ?User $performedBy = null, ?string $reason = null): User
     {
-        $user->transitionTo(UserStateMachine::TRANSITION_DEACTIVATE, [], $performedBy);
+        $user->transitionTo(UserStateMachine::TRANSITION_DEACTIVATE, $this->reasonData($reason), $performedBy);
 
         return $user->load(['organization', 'activeRoles']);
+    }
+
+    /**
+     * Transition data carrying the reason; the state machine stores it as the
+     * remarks of the account status history row.
+     *
+     * @return array{remarks?: string}
+     */
+    private function reasonData(?string $reason): array
+    {
+        $reason = $reason !== null ? trim($reason) : '';
+
+        return $reason === '' ? [] : ['remarks' => $reason];
     }
 
     /**

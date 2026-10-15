@@ -1,5 +1,4 @@
 import accessor from '../assets/icons/accessor.svg';
-import inactive from '../assets/icons/active.svg';
 import activeAccessor from '../assets/icons/activeAccessor.svg';
 import activeApplicantAccounts from '../assets/icons/activeApplicantAccounts.svg';
 import activeApplications from '../assets/icons/activeApplications.svg';
@@ -131,7 +130,6 @@ import greyAddUser from '../assets/icons/greyAddUser.svg';
 import greyProfilUser from '../assets/icons/greyProfileUser.svg';
 import greyRightArrow from '../assets/icons/greyRightArrow.svg';
 import importFile from '../assets/icons/importFile.svg';
-import active from '../assets/icons/inactive.svg';
 import info from '../assets/icons/info.svg';
 import infoGrey from '../assets/icons/info-grey.svg';
 import infoCircle from '../assets/icons/infoCircle.svg';
@@ -146,6 +144,8 @@ import loader from '../assets/icons/loader.svg';
 import location from '../assets/icons/location.png';
 import locationGrey from '../assets/icons/locationGrey.svg';
 import lock from '../assets/icons/lock.svg';
+// Row action shown on an active item: lock (deactivate).
+import active from '../assets/icons/lockAction.svg';
 import lockCircle from '../assets/icons/lockCircle.png';
 import logout from '../assets/icons/logout.png';
 import logoutCircle from '../assets/icons/logoutCircle.png';
@@ -256,6 +256,8 @@ import unavailableIcon from '../assets/icons/unavailableIcon.svg';
 import uncheck from '../assets/icons/uncheck.svg';
 import uncheckSquare from '../assets/icons/uncheckSquare.svg';
 import units from '../assets/icons/units.png';
+// Row action shown on an inactive item: unlock (activate).
+import inactive from '../assets/icons/unlockAction.svg';
 import user from '../assets/icons/user.svg';
 import userAdd from '../assets/icons/userAdd.svg';
 import userAdmin from '../assets/icons/userAdmin.svg';

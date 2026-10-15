@@ -7,6 +7,7 @@ import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { getOrganizationByIdAction } from '../../../../redux/action/systemAdmin/EnterprisesAction';
 import { getBadgeVariantByLabel, getStatusLabel } from '../../../../utils/getStatusColors';
+import EnterpriseJourney from './EnterpriseJourney';
 
 const EnterpriseDetails = () => {
   const params = useParams();
@@ -121,6 +122,7 @@ const EnterpriseDetails = () => {
                     </ul>
                   </div>
                 </div>
+                <EnterpriseJourney organizationId={params.id} />
               </div>
             </div>
           </div>

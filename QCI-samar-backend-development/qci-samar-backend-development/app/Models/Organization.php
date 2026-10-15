@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Organization extends Model
 {
@@ -53,6 +54,14 @@ class Organization extends Model
         'is_profile_completed' => 'boolean',
         'profile_completed_at' => 'datetime',
     ];
+
+    /**
+     * Account status changes (activation, deactivation with its reason, ...), newest first.
+     */
+    public function statusHistories(): MorphMany
+    {
+        return $this->morphMany(AccountStatusHistory::class, 'subject')->latest('changed_at')->latest('id');
+    }
 
     /**
      * Get the users for the organization.

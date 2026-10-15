@@ -1074,12 +1074,16 @@ class UserController extends Controller
     )]
     public function activate(int $id, Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'reason' => 'nullable|string|max:1000',
+        ]);
+
         try {
             $user = $this->userService->getUserById($id);
 
             Gate::authorize('changeStatus', $user);
 
-            $user = $this->userService->activateUser($user);
+            $user = $this->userService->activateUser($user, null, $validated['reason'] ?? null);
 
             return $this->successResponse(
                 new UserResource($user),
@@ -1106,6 +1110,15 @@ class UserController extends Controller
             'Enterprise Admin - User Management',
         ],
         security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['reason'],
+                properties: [
+                    new OA\Property(property: 'reason', type: 'string', minLength: 5, maxLength: 1000, example: 'Duplicate registration'),
+                ],
+            ),
+        ),
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -1201,12 +1214,20 @@ class UserController extends Controller
     )]
     public function deactivate(int $id, Request $request): JsonResponse
     {
+        // The reason is kept in the account's status history.
+        $validated = $request->validate([
+            'reason' => 'required|string|min:5|max:1000',
+        ], [
+            'reason.required' => 'Please give the reason for deactivating this user.',
+            'reason.min' => 'The reason must be at least 5 characters.',
+        ]);
+
         try {
             $user = $this->userService->getUserById($id);
 
             Gate::authorize('changeStatus', $user);
 
-            $user = $this->userService->deactivateUser($user);
+            $user = $this->userService->deactivateUser($user, null, $validated['reason']);
 
             return $this->successResponse(
                 new UserResource($user),

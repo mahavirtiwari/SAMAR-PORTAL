@@ -27,6 +27,7 @@ const DrdoLabs = () => {
   const [pageSize, setPageSize] = useState(10);
   const [showToggleConfirmModal, setShowToggleConfirmModal] = useState(false);
   const [userToToggle, setUserToToggle] = useState(null);
+  const [toggleReason, setToggleReason] = useState('');
   const [_serverError, setServerError] = useState('');
 
   const { user } = useSelector(state => state.Account);
@@ -108,6 +109,7 @@ const DrdoLabs = () => {
       isActive: isCurrentlyActive,
       name: userName,
     });
+    setToggleReason('');
     setShowToggleConfirmModal(true);
   }, []);
 
@@ -119,7 +121,7 @@ const DrdoLabs = () => {
     const { id, isActive } = userToToggle;
 
     if (isActive) {
-      dispatch(deactivateUserAccountAction(id))
+      dispatch(deactivateUserAccountAction({ id, reason: toggleReason.trim() }))
         .then(() => {
           setShowToggleConfirmModal(false);
         })
@@ -297,9 +299,15 @@ const DrdoLabs = () => {
         }}
         rightButton={userToToggle?.isActive ? 'Deactivate' : 'Activate'}
         rightButtonClassName={`w-100 ${userToToggle?.isActive ? 'danger-primary' : 'primary'}`}
+        textAreaLabel={userToToggle?.isActive ? 'Reason for deactivation' : undefined}
+        textAreaPlaceholder="Why is this DRDO lab account being deactivated?"
+        isRequiredTextArea
+        textAreaValue={toggleReason}
+        onTextAreaChange={e => setToggleReason(e.target.value)}
+        textAreaHelperText="Kept in the history (at least 5 characters)."
         rightButtonOnClick={confirmToggleUser}
         rightButtonLoading={userAccountActivateLoading || userAccountDeactivateLoading}
-        rightButtonDisabled={userAccountActivateLoading || userAccountDeactivateLoading}
+        rightButtonDisabled={userAccountActivateLoading || userAccountDeactivateLoading || (userToToggle?.isActive && toggleReason.trim().length < 5)}
         onExited={() => setUserToToggle(null)}
       />
     </Layout>

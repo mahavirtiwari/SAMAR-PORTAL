@@ -28,6 +28,18 @@ const SystemAdminEnterprisesService = () => {
     }
   };
 
+  // Enterprise journey: every recorded step, oldest first; optionally one application only
+  const getOrganizationJourney = async (id, applicationId) => {
+    try {
+      const query = applicationId ? `?applicationId=${encodeURIComponent(applicationId)}` : '';
+      const response = await userClient.get(`/organizations/${id}/journey${query}`);
+      return response.data?.data ?? response.data;
+    } catch (error) {
+      Logger.error('Error in EnterprisesService.getOrganizationJourney:', error.message);
+      throw error;
+    }
+  };
+
   // Export organizations
   const exportOrganizations = async () => {
     try {
@@ -53,9 +65,10 @@ const SystemAdminEnterprisesService = () => {
   };
 
   // Deactivate organization
-  const deactivateOrganization = async id => {
+  // The reason is required by the API and kept in the enterprise journey.
+  const deactivateOrganization = async (id, reason) => {
     try {
-      const response = await userClient.post(`/organizations/${id}/deactivate`);
+      const response = await userClient.post(`/organizations/${id}/deactivate`, { reason });
       Logger.info('Response in EnterprisesService.deactivateOrganization:', response);
       return response.data;
     } catch (error) {
@@ -70,6 +83,7 @@ const SystemAdminEnterprisesService = () => {
     exportOrganizations,
     activateOrganization,
     deactivateOrganization,
+    getOrganizationJourney,
   };
 };
 

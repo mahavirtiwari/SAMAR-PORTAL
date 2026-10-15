@@ -53,9 +53,9 @@ export const activateOrganizationAction = createAsyncThunk('enterprises/activate
 });
 
 // Deactivate organization
-export const deactivateOrganizationAction = createAsyncThunk('enterprises/deactivate', async (id, { rejectWithValue }) => {
+export const deactivateOrganizationAction = createAsyncThunk('enterprises/deactivate', async ({ id, reason }, { rejectWithValue }) => {
   try {
-    const response = await service.deactivateOrganization(id);
+    const response = await service.deactivateOrganization(id, reason);
     Logger.info('Deactivate organization successful:', response);
     return { id, response };
   } catch (error) {

@@ -23034,6 +23034,51 @@
                 ]
             }
         },
+        "/api/v1/organizations/{id}/journey": {
+            "get": {
+                "tags": [
+                    "Organizations",
+                    "System Admin - Organizations"
+                ],
+                "summary": "Enterprise journey",
+                "description": "Every recorded step of an enterprise, oldest first: registration, user accounts, activation/deactivation with reasons, application and assessment status changes, payments and certificates. Optional applicationId narrows it to one application.",
+                "operationId": "5e73002c20deae47ea5a215607614fb7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "applicationId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Journey retrieved successfully"
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Organization not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/organizations/export": {
             "get": {
                 "tags": [
@@ -23386,6 +23431,27 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Duplicate registration",
+                                        "maxLength": 1000,
+                                        "minLength": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Organization deactivated successfully",
@@ -29545,6 +29611,27 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Duplicate registration",
+                                        "maxLength": 1000,
+                                        "minLength": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "User deactivated successfully",

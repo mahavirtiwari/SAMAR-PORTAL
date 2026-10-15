@@ -79,10 +79,10 @@ export const activateUserAccountAction = createAsyncThunk('activateUserAccount',
 });
 
 // deactivate user account
-export const deactivateUserAccountAction = createAsyncThunk('deactivateUserAccount', async (userId, { rejectWithValue }) => {
+export const deactivateUserAccountAction = createAsyncThunk('deactivateUserAccount', async ({ id: userId, reason }, { rejectWithValue }) => {
   try {
     Logger.info('Deactivate user account attempt:', { userId });
-    const response = await service.deactivateUserAccount(userId);
+    const response = await service.deactivateUserAccount(userId, reason);
     Logger.info('Deactivate user account successful:', response);
     return response;
   } catch (error) {

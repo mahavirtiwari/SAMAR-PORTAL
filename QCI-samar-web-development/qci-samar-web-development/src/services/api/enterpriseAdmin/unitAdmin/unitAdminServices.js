@@ -64,9 +64,10 @@ const unitAdminServices = userClient => {
   };
 
   // deactivate user account
-  const deactivateUserAccount = async userId => {
+  // The reason is required by the API and kept in the account's status history.
+  const deactivateUserAccount = async (userId, reason) => {
     try {
-      const response = await userClient.post(`/users/${userId}/deactivate`);
+      const response = await userClient.post(`/users/${userId}/deactivate`, { reason });
       Logger.info('Response in UserManagementServices.deactivateUserAccount:', response);
       return response.data;
     } catch (error) {

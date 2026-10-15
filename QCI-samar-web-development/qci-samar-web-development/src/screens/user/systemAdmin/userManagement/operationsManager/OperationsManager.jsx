@@ -28,6 +28,7 @@ const OperationsManager = () => {
   const [_serverError, setServerError] = useState('');
   const [showToggleConfirmModal, setShowToggleConfirmModal] = useState(false);
   const [userToToggle, setUserToToggle] = useState(null);
+  const [toggleReason, setToggleReason] = useState('');
 
   const { user } = useSelector(state => state.Account);
   const { userList, userListLoading, userDetails, userAccountActivateLoading, userAccountDeactivateLoading, userAccountActivate, userAccountDeactivate } = useSelector(state => state.UnitAdmin);
@@ -107,6 +108,7 @@ const OperationsManager = () => {
       isActive: isCurrentlyActive,
       name: userName,
     });
+    setToggleReason('');
     setShowToggleConfirmModal(true);
   }, []);
 
@@ -119,7 +121,7 @@ const OperationsManager = () => {
 
     if (isActive) {
       // User is active, so deactivate
-      dispatch(deactivateUserAccountAction(id))
+      dispatch(deactivateUserAccountAction({ id, reason: toggleReason.trim() }))
         .then(() => {
           // Close modal on success - useEffect will handle refresh
           setShowToggleConfirmModal(false);
@@ -325,9 +327,15 @@ const OperationsManager = () => {
         }}
         rightButton={userToToggle?.isActive ? 'Deactivate' : 'Activate'}
         rightButtonClassName={`w-100 ${userToToggle?.isActive ? 'danger-primary' : 'primary'}`}
+        textAreaLabel={userToToggle?.isActive ? 'Reason for deactivation' : undefined}
+        textAreaPlaceholder="Why is this operations manager being deactivated?"
+        isRequiredTextArea
+        textAreaValue={toggleReason}
+        onTextAreaChange={e => setToggleReason(e.target.value)}
+        textAreaHelperText="Kept in the history (at least 5 characters)."
         rightButtonOnClick={confirmToggleUser}
         rightButtonLoading={userAccountActivateLoading || userAccountDeactivateLoading}
-        rightButtonDisabled={userAccountActivateLoading || userAccountDeactivateLoading}
+        rightButtonDisabled={userAccountActivateLoading || userAccountDeactivateLoading || (userToToggle?.isActive && toggleReason.trim().length < 5)}
         onExited={() => setUserToToggle(null)}
       />
     </Layout>
