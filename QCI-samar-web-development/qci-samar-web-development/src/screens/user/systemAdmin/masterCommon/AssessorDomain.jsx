@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppBadge, AppButton, AppDataGrid, AppModal, AppToolTip } from '../../../../components/base';
+import ListSearchBox from '../../../../components/base/ListSearchBox';
 import { toastError } from '../../../../components/base/toast';
 import { Layout } from '../../../../components/layout';
 import { AddAssessorDomainModal, EditAssessorDomainModal } from '../../../../components/modals';
@@ -36,7 +37,7 @@ const AssessorDomain = () => {
   const [showAddAssessorModal, setShowAddAssessorModal] = useState(false);
   const [showEditUnitAdminModal, setShowEditUnitAdminModal] = useState(false);
   const [selectedUnitAdmin, setSelectedUnitAdmin] = useState(null);
-  const [filters, _setFilters] = useState({
+  const [filters, setFilters] = useState({
     search: '',
     User: '',
     unitStatus: '',
@@ -230,6 +231,16 @@ const AssessorDomain = () => {
                 <div className="table-header">
                   <div className="table-header-left">
                     <h1 className="page-heading">Assessor Domains</h1>
+                    <div className="input-search-document">
+                      <ListSearchBox
+                        value={filters.search}
+                        placeholder="Search assessor domains"
+                        onSearch={value => {
+                          setFilters(prev => ({ ...prev, search: value }));
+                          setPage(1);
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="table-header-right">
                     <AppButton variant="primary" size="small" title={'Add New'} onClick={() => setShowAddAssessorModal(true)} />

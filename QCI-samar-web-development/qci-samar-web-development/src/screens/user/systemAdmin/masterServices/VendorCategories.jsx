@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppBadge, AppButton, AppDataGrid, AppDropdown, AppModal, AppToolTip } from '../../../../components/base';
+import ListSearchBox from '../../../../components/base/ListSearchBox';
 import { toastError } from '../../../../components/base/toast';
 import { Layout } from '../../../../components/layout';
 import { AddServicesVendorCategoriesModal } from '../../../../components/modals';
@@ -218,6 +219,16 @@ const ServicesVendorCategories = () => {
                 <div className="table-header">
                   <div className="table-header-left">
                     <h1 className="page-heading">Service Categories</h1>
+                    <div className="input-search-document">
+                      <ListSearchBox
+                        value={filters.search}
+                        placeholder="Search service categories"
+                        onSearch={value => {
+                          setFilters(prev => ({ ...prev, search: value }));
+                          setPage(1);
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="table-header-right">
                     <AppButton

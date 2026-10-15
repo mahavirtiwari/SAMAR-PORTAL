@@ -375,7 +375,7 @@ padding-right: 8px;
   padding: 30px 20px;
   max-width: 100%;
   margin: 0 auto;
-  background-color: var(--background);
+  background-color: var(--page-background);
 }
 
 .main-content.sidebar-open {

@@ -14,6 +14,7 @@ const rateOf = (certified, registered) => (registered > 0 ? Math.round((certifie
  */
 const StateWiseEnterpriseTable = ({ rows = [], title = 'State-wise Enterprises' }) => {
   const [showAll, setShowAll] = useState(false);
+  const [query, setQuery] = useState('');
 
   const states = useMemo(
     () =>
@@ -33,8 +34,12 @@ const StateWiseEnterpriseTable = ({ rows = [], title = 'State-wise Enterprises' 
     [states],
   );
   const maxRegistered = states[0]?.registered || 0;
-  const visible = showAll ? states : states.slice(0, TOP_COUNT);
-  const hiddenCount = states.length - visible.length;
+  // Searching shows every matching state; ranks stay the state's place in the full list.
+  const needle = query.trim().toLowerCase();
+  const ranked = states.map((s, index) => ({ ...s, rank: index + 1 }));
+  const matches = needle ? ranked.filter(s => s.state.toLowerCase().includes(needle)) : ranked;
+  const visible = needle || showAll ? matches : matches.slice(0, TOP_COUNT);
+  const hiddenCount = matches.length - visible.length;
 
   return (
     <section className="state-table-card" aria-labelledby="state-table-title">
@@ -67,8 +72,21 @@ const StateWiseEnterpriseTable = ({ rows = [], title = 'State-wise Enterprises' 
         </dl>
       </div>
 
+      {states.length > 0 && (
+        <div className="state-table-search">
+          <input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search state / UT" aria-label="Search state or UT" />
+          {needle ? (
+            <span>
+              {matches.length} of {states.length} shown
+            </span>
+          ) : null}
+        </div>
+      )}
+
       {states.length === 0 ? (
         <p className="state-table-empty">No state-wise data yet.</p>
+      ) : matches.length === 0 ? (
+        <p className="state-table-empty">No state or UT matches "{query.trim()}".</p>
       ) : (
         <div className="state-table-scroll">
           <table className="state-table">
@@ -93,12 +111,12 @@ const StateWiseEnterpriseTable = ({ rows = [], title = 'State-wise Enterprises' 
               </tr>
             </thead>
             <tbody>
-              {visible.map((s, index) => {
+              {visible.map(s => {
                 const share = maxRegistered > 0 ? (s.registered / maxRegistered) * 100 : 0;
                 const rate = rateOf(s.certified, s.registered);
                 return (
                   <tr key={s.state}>
-                    <td className="col-rank">{index + 1}</td>
+                    <td className="col-rank">{s.rank}</td>
                     <th scope="row" className="col-state">
                       {s.state}
                     </th>
@@ -142,7 +160,7 @@ const StateWiseEnterpriseTable = ({ rows = [], title = 'State-wise Enterprises' 
         </div>
       )}
 
-      {states.length > TOP_COUNT && (
+      {!needle && states.length > TOP_COUNT && (
         <div className="state-table-more">
           <button type="button" onClick={() => setShowAll(v => !v)} aria-expanded={showAll}>
             {showAll ? `Show top ${TOP_COUNT} only` : `Show all ${states.length} (${hiddenCount} more)`}

@@ -38,6 +38,12 @@ body {
 
   /* Background Colors */
   --background: #f5f6fa;
+  /* Page canvas behind the cards (light blue); --background stays the neutral tint used inside cards. */
+  --page-background: #edf4fd;
+  /* Column-heading band of tables, with its text and divider colours. */
+  --table-head-bg: #e3eefc;
+  --table-head-text: #1f4e8c;
+  --table-head-border: #c9dcf6;
 
   /* white Colors */
   --white: #ffffff;

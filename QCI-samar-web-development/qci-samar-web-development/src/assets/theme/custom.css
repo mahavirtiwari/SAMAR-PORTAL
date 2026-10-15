@@ -1,5 +1,5 @@
 body {
-  background-color: #f5f6fa !important;
+  background-color: var(--page-background) !important;
 }
 
 /* Dot separator between an assessor's name and phone in rich dropdown options. */
@@ -759,7 +759,7 @@ LAYOUT STYLES - Header, Sidebar, Layout
 
 /* Layout Styles */
 .layout {
-  background-color: #f5f6fa;
+  background-color: var(--page-background);
 }
 
 .main-content {

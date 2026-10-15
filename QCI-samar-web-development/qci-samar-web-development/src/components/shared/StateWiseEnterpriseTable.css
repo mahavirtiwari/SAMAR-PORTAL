@@ -73,12 +73,12 @@
   position: sticky;
   top: 0;
   padding: 10px 12px;
-  background: var(--white);
-  border-bottom: 1px solid var(--outline);
+  background: var(--table-head-bg);
+  border-bottom: 1px solid var(--table-head-border);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--text-3);
+  color: var(--table-head-text);
   text-align: left;
   white-space: nowrap;
 }
@@ -221,4 +221,33 @@
   .share-bar {
     display: none;
   }
+}
+
+.state-table-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.state-table-search input {
+  width: 280px;
+  max-width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  background: var(--white);
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.state-table-search input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 0;
+}
+
+.state-table-search span {
+  font-size: 12px;
+  color: var(--text-3);
 }
