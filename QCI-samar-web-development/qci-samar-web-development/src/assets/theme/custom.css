@@ -366,6 +366,36 @@ LAYOUT STYLES - Header, Sidebar, Layout
   z-index: 10;
 }
 
+/* Application name next to the menu button. */
+.header-left {
+  min-width: 0;
+}
+
+.header-app-title {
+  margin: 0;
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-app-title-short {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .header-app-title-full {
+    display: none;
+  }
+
+  .header-app-title-short {
+    display: inline;
+  }
+}
+
 .header-logo {
   display: flex;
   align-items: center;

@@ -82,10 +82,11 @@ const Header = ({ onToggleSidebar, isSidebarOpen = false }) => {
             <span />
             <span />
           </button>
-          <Navbar.Brand className="brand-title">
-            {/* <img src={Images.defaultProfile} alt="SAMAR Logo" className="brand-logo" />
-            <span className="brand-text">SAMAR</span> */}
-          </Navbar.Brand>
+          {/* Application name; phones show the short form so the header still fits. */}
+          <p className="header-app-title" title="System for Advanced Maturity Assessment and Rating (SAMAR)">
+            <span className="header-app-title-full">System for Advanced Maturity Assessment and Rating</span>
+            <span className="header-app-title-short">SAMAR</span>
+          </p>
         </div>
 
         <div className="header-right">
