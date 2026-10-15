@@ -119,7 +119,7 @@ const Login = () => {
       .max(20, 'Password cannot exceed 20 characters')
 
       .required('Password is required'),
-    captcha: Yup.string().required('Captcha is required'),
+    captcha: Yup.string().required('Enter the security code'),
   });
 
   useEffect(() => {
@@ -247,6 +247,7 @@ const Login = () => {
                     <Form className="w-100">
                       <div className="margin-top-32">
                         <AppInput
+                          labelAbove
                           name="samarId"
                           value={values.samarId}
                           upperCase={true}
@@ -263,6 +264,7 @@ const Login = () => {
                       </div>
                       <div className="margin-top-20">
                         <AppInput
+                          labelAbove
                           name="password"
                           value={values.password}
                           onChange={handleChange}
@@ -303,12 +305,18 @@ const Login = () => {
                     </Form>
                   )}
                 </Formik>
-                <div className="d-flex align-items-center gap-10 margin-top-24">
-                  <p className="fs-14 fw-500 text-1-color mb-0">New user?</p>
-                  <Link className="text-decoration-none" onClick={() => setShowManualModal(true)}>
-                    <p className="fs-16 fw-600 primary-color mb-0">Sign up</p>
-                  </Link>
-                </div>
+                {/* Highlighted entry point for first-time users (opens the registration instructions). */}
+                <section className="new-user-panel margin-top-24" aria-labelledby="new-user-title">
+                  <div>
+                    <h3 id="new-user-title" className="new-user-title">
+                      New user?
+                    </h3>
+                    <p className="new-user-text">First time here? Register your enterprise to apply for SAMAR certification.</p>
+                  </div>
+                  <button type="button" className="new-user-button" onClick={() => setShowManualModal(true)}>
+                    Register now
+                  </button>
+                </section>
                 {/* Below lg the picture column is hidden; keep the quick links reachable. */}
                 <LoginQuickLinks compact className="d-lg-none margin-top-16" />
               </div>

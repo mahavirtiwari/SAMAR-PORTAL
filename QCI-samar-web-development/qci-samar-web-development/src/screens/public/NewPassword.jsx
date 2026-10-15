@@ -95,7 +95,7 @@ const NewPassword = () => {
     password_confirmation: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords must match')
       .required('Confirm password is required'),
-    captcha: Yup.string().required('Captcha is required'),
+    captcha: Yup.string().required('Enter the security code'),
   });
 
   useEffect(() => {
@@ -255,6 +255,7 @@ const NewPassword = () => {
 
                         <div className="margin-top-30 text-start">
                           <AppInput
+                            labelAbove
                             name="password"
                             value={values.password}
                             onChange={handleChange}
@@ -271,6 +272,7 @@ const NewPassword = () => {
                         </div>
                         <div className="margin-top-20 text-start">
                           <AppInput
+                            labelAbove
                             name="password_confirmation"
                             value={values.password_confirmation}
                             onChange={handleChange}

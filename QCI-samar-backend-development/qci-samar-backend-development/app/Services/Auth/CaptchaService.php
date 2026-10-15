@@ -2,8 +2,6 @@
 
 namespace App\Services\Auth;
 
-use Gregwar\Captcha\CaptchaBuilder;
-use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -31,36 +29,88 @@ class CaptchaService
      */
     public function generate(): array
     {
-        $phraseBuilder = new PhraseBuilder(
-            (int) config('captcha.length'),
-            (string) config('captcha.charset')
-        );
-
-        $builder = new CaptchaBuilder(null, $phraseBuilder);
-
-        // Pin the palette. Left to itself the library picks both colours at
-        // random per render, which regularly lands on low-contrast pairings
-        // (saturated glyphs on a dark background) — unreadable for some users
-        // and visibly inconsistent between one form and the next. Distortion,
-        // interpolation and the noise lines are untouched, so pinning the
-        // colours costs nothing in resistance to automated reading.
-        $background = config('captcha.background_rgb');
-        $text = config('captcha.text_rgb');
-        $builder->setBackgroundColor($background[0], $background[1], $background[2]);
-        $builder->setTextColor($text[0], $text[1], $text[2]);
-
-        $builder->build((int) config('captcha.width'), (int) config('captcha.height'));
+        $phrase = $this->randomPhrase((int) config('captcha.length'), (string) config('captcha.charset'));
 
         $id = (string) Str::uuid();
         $ttl = (int) config('captcha.ttl');
 
-        Cache::put(self::CACHE_PREFIX.$id, strtolower($builder->getPhrase()), $ttl);
+        Cache::put(self::CACHE_PREFIX.$id, strtolower($phrase), $ttl);
 
         return [
             'captcha_id' => $id,
-            'image' => $builder->inline(),
+            'image' => $this->render($phrase),
             'expires_in' => $ttl,
         ];
+    }
+
+    private function randomPhrase(int $length, string $charset): string
+    {
+        $phrase = '';
+        for ($i = 0; $i < $length; $i++) {
+            $phrase .= $charset[random_int(0, strlen($charset) - 1)];
+        }
+
+        return $phrase;
+    }
+
+    /**
+     * Draws the code as clear, bold capitals and digits in alternating colours on
+     * a light hatched background, each glyph slightly tilted and offset, with one
+     * strike-through line. Readable at a glance (no look-alike characters, no
+     * handwriting fonts or warping), while still an image rather than text.
+     */
+    private function render(string $phrase): string
+    {
+        $width = (int) config('captcha.width');
+        $height = (int) config('captcha.height');
+        $img = imagecreatetruecolor($width, $height);
+
+        [$r, $g, $b] = config('captcha.background_rgb');
+        imagefill($img, 0, 0, imagecolorallocate($img, $r, $g, $b));
+
+        // Faint diagonal hatching across the background.
+        $hatch = imagecolorallocate($img, max(0, $r - 18), max(0, $g - 12), max(0, $b - 18));
+        for ($x = -$height; $x < $width; $x += 6) {
+            imageline($img, $x, $height, $x + $height, 0, $hatch);
+        }
+
+        $palette = array_map(fn (array $rgb) => imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]), config('captcha.text_palette'));
+        $font = $this->fontPath();
+        $size = (int) round($height * 0.46);
+        $slot = ($width - 16) / max(1, strlen($phrase));
+
+        foreach (str_split($phrase) as $i => $char) {
+            // Centre each glyph in its own slot so narrow letters (J, T) leave no gaps.
+            $box = imagettfbbox($size, 0, $font, $char);
+            $glyphWidth = $box[2] - $box[0];
+            $angle = random_int(-10, 10);
+            $x = (int) (8 + $i * $slot + ($slot - $glyphWidth) / 2 + random_int(-2, 2));
+            $y = (int) ($height * 0.72 + random_int(-3, 3));
+            imagettftext($img, $size, $angle, $x, $y, $palette[$i % count($palette)], $font, $char);
+        }
+
+        // One thin strike-through line, slightly sloped.
+        $line = imagecolorallocate($img, 110, 120, 130);
+        imagesetthickness($img, 1);
+        imageline($img, 6, (int) ($height * (0.50 + random_int(-8, 8) / 100)), $width - 6, (int) ($height * (0.52 + random_int(-8, 8) / 100)), $line);
+
+        ob_start();
+        imagepng($img);
+        $png = (string) ob_get_clean();
+        imagedestroy($img);
+
+        return 'data:image/png;base64,'.base64_encode($png);
+    }
+
+    private function fontPath(): string
+    {
+        foreach ((array) config('captcha.fonts') as $path) {
+            if (is_file($path)) {
+                return $path;
+            }
+        }
+
+        throw new \RuntimeException('No captcha font found; check config/captcha.php "fonts".');
     }
 
     /**

@@ -23,19 +23,29 @@ return [
 
     'length' => (int) env('CAPTCHA_LENGTH', 5),
 
-    // Ambiguous glyphs (0/O, 1/l/I) are excluded so a correct answer is never
-    // rejected because the user read the image the only sensible way.
-    'charset' => 'abcdefghjkmnpqrstuvwxyz23456789',
+    // Capitals and digits only. Characters that are easily confused are left
+    // out (0 O Q D, 1 I L, 2 Z, 5 S, 8 B, G, U V) so the code reads one way
+    // only. The answer is checked case-insensitively.
+    'charset' => 'ACEFHJKMNPRTWXY34679',
 
-    'width' => 180,
+    'width' => 170,
 
-    'height' => 60,
+    'height' => 56,
 
-    // Fixed palette — the library otherwise randomises both per render and
-    // regularly produces low-contrast, unreadable combinations. Light neutral
-    // background, near-black glyphs, matching the auth forms.
-    'background_rgb' => [245, 245, 245],
+    // Light background; glyphs alternate between navy, green and charcoal,
+    // all dark enough to read clearly on it.
+    'background_rgb' => [238, 245, 240],
 
-    'text_rgb' => [31, 41, 55],
+    'text_palette' => [
+        [27, 58, 122],
+        [22, 120, 70],
+        [33, 37, 41],
+    ],
+
+    // Bold serif font for the code (first one found is used).
+    'fonts' => [
+        base_path('vendor/dompdf/dompdf/lib/fonts/DejaVuSerif-Bold.ttf'),
+        public_path('fonts/Inter-Bold.ttf'),
+    ],
 
 ];

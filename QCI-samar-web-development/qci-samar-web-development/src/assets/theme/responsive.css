@@ -1217,10 +1217,13 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
     margin: 0;
   }
 
-  /* Right: logos, form and footer share the screen height. */
+  /* Right: logos, form and footer share the screen height. If the form is
+     taller than the screen (sign-up with validation messages, very short
+     windows) this column scrolls on its own; the page and picture stay put. */
   .login-onepage > .container-fluid > .row > [class*="col-"]:last-child {
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
   }
 
   .login-onepage .publicMainContainer {
@@ -1338,5 +1341,78 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
 
   .login-onepage .publicFormTopMainContainer h2 {
     margin-top: 0 !important;
+  }
+}
+
+/* New-user panel on short screens: tighter on laptops at 125% zoom; at 150%
+   only the heading and the button remain. */
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 640px) {
+  .login-onepage .new-user-panel {
+    padding: 8px 14px;
+  }
+
+  .login-onepage .new-user-text {
+    font-size: 12px;
+  }
+
+  .login-onepage .new-user-button {
+    height: 36px;
+  }
+}
+
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 520px) {
+  .login-onepage .new-user-text {
+    display: none;
+  }
+}
+
+/* Login / sign-up on laptops and desktops: the footer line sits at the bottom
+   left, under the picture and its quick links, which move up to make room. */
+@media (min-width: 992px) and (min-height: 420px) {
+  .login-onepage {
+    position: relative;
+  }
+
+  /* The form container carries Bootstrap's .position-relative; release it here
+     so the footer is placed against the whole page, not the form column. */
+  .login-onepage .publicFormMainContainer.position-relative {
+    position: static !important;
+  }
+
+  .login-onepage .publicFormBottomMainContainer {
+    white-space: nowrap;
+    position: absolute;
+    left: 48px;
+    bottom: 12px;
+    margin: 0;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .login-onepage .quickLinksContainer {
+    bottom: clamp(44px, 7vh, 72px);
+  }
+}
+
+/* Labels above the fields on the one-screen login / sign-up: compact so the
+   extra line per field still fits the screen. */
+@media (min-width: 992px) and (min-height: 420px) {
+  .login-onepage .input-label-above {
+    margin-bottom: 3px;
+    font-size: 12.5px;
+    line-height: 1.25;
+  }
+}
+
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 640px) {
+  .login-onepage .publicFormTopMainContainer .margin-top-20 {
+    margin-top: 6px !important;
+  }
+}
+
+/* 150% zoom: the heading stays, its one-line subtitle goes. */
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 520px) {
+  .login-onepage .publicFormTopMainContainer > h2 + p {
+    display: none;
   }
 }

@@ -150,10 +150,10 @@ body {
 }
 
 .captchaImage {
-  /* 135x45 keeps the 3:1 ratio the server renders at (180x60), so the glyphs
-     are never squashed, and matches the input's 45px height. */
+  /* 137x45 keeps the ratio the server renders at (170x56), so the glyphs are
+     never squashed, and matches the input's 45px height. */
   height: 45px;
-  width: 135px;
+  width: 137px;
   flex: 0 0 auto;
   background-color: #fff;
   border: 1px solid var(--border-color, #d9d9d9);
@@ -5411,4 +5411,125 @@ textarea::-webkit-input-placeholder {
   flex-direction: column;
   font-size: 13px;
   line-height: 1.4;
+}
+
+/* Login: highlighted panel for first-time users (light blue tint, dotted texture). */
+.new-user-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 18px;
+  /* A shade darker than the light-blue page so the panel stands out. */
+  border: 1px solid #b6cdee;
+  border-radius: 12px;
+  background-color: #dbe8fb;
+  background-image: radial-gradient(rgba(31, 78, 140, 0.16) 1px, transparent 1px);
+  background-size: 14px 14px;
+  text-align: left;
+}
+
+.new-user-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--heading);
+}
+
+.new-user-text {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.new-user-button {
+  flex: 0 0 auto;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--table-head-text);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.new-user-button:hover {
+  background: #163a6b;
+}
+
+.new-user-button:focus-visible {
+  outline: 3px solid rgba(61, 139, 253, 0.45);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .new-user-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Public-page footer: copyright and Privacy Policy on one line (wrapping only
+   when the screen is too narrow for both). */
+.publicFormBottomMainContainer {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 12px;
+  row-gap: 2px;
+}
+
+.publicFormBottomMainContainer a {
+  margin-top: 0 !important;
+}
+
+/* Secondary call to action next to the main button (e.g. "Login" on sign-up):
+   outlined in the same dark blue as the "Register now" button. */
+.outline-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 20px;
+  border: 1.5px solid var(--table-head-text);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--table-head-text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.outline-action-button:hover {
+  background: var(--table-head-text);
+  color: #fff;
+}
+
+.outline-action-button:focus-visible {
+  outline: 3px solid rgba(61, 139, 253, 0.45);
+  outline-offset: 2px;
+}
+
+/* Label above the field (public sign-in / sign-up forms); the placeholder then
+   shows inside the box. */
+.input-label-above {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-family: "Inter-Medium", sans-serif;
+  color: var(--text-1);
+  text-align: left;
+}
+
+.input-label-above .asterics {
+  margin-left: 2px;
+  color: var(--danger-primary, #d92d20);
 }

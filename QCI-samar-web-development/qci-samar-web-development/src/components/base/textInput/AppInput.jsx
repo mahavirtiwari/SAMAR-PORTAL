@@ -14,6 +14,9 @@ const activateOnKey = (event, action) => {
 
 const AppInput = ({
   label,
+  // true: the label sits above the box and the placeholder shows inside it
+  // (public sign-in / sign-up forms); false: MUI's floating label (default).
+  labelAbove = false,
   placeholder,
   onChange = () => undefined,
   inputStyle = {},
@@ -352,18 +355,27 @@ const AppInput = ({
   return (
     <>
       <div className={`input-container ${inputType === 'search' ? 'search-Container' : ''} mb-0 position-relative${className ? ' ' + className : ''}`} style={{ width: customWidth }}>
+        {labelAbove && label ? (
+          <label htmlFor={`${name}-field`} className={`input-label-above ${disabled ? 'disabled-text' : ''}`}>
+            {label}
+            {additionalInfoLabel && <span className="text-3-color"> ({additionalInfoLabel})</span>}
+            {isRequired ? <span className="asterics">*</span> : null}
+          </label>
+        ) : null}
         <TextField
-          id="outlined-textarea"
+          id={labelAbove ? `${name}-field` : 'outlined-textarea'}
           type={type || 'text'}
           name={name}
           disabled={disabled}
           maxLength={maxLength}
           label={
-            <span className={`input-label ${disabled ? 'disabled-text' : ''}`}>
-              {label}
-              {additionalInfoLabel && <span className="text-3-color"> ({additionalInfoLabel})</span>}
-              <span className="asterics">{isRequired ? '*' : null}</span>
-            </span>
+            labelAbove ? undefined : (
+              <span className={`input-label ${disabled ? 'disabled-text' : ''}`}>
+                {label}
+                {additionalInfoLabel && <span className="text-3-color"> ({additionalInfoLabel})</span>}
+                <span className="asterics">{isRequired ? '*' : null}</span>
+              </span>
+            )
           }
           placeholder={placeholder}
           multiline={!!props.multiline}

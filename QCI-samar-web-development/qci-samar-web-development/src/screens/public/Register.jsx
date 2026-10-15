@@ -101,7 +101,7 @@ const Register = () => {
       .min(10, 'Mobile number must be 10 digits')
       .max(10, 'Mobile number must be 10 digits')
       .required('Mobile number is required'),
-    captcha: Yup.string().required('Captcha is required'),
+    captcha: Yup.string().required('Enter the security code'),
   });
 
   // Registration handler: maps frontend fields to backend API payload
@@ -146,7 +146,8 @@ const Register = () => {
     }
   };
   return (
-    <section className="login">
+    // Same one-screen layout as the login page (responsive.css .login-onepage).
+    <section className="login login-onepage">
       <Container fluid>
         <Row>
           <Col xl={5} lg={6} className="d-none d-lg-block position-relative">
@@ -171,6 +172,7 @@ const Register = () => {
                       <Row className="margin-top-32">
                         <Col xs={12} sm={6}>
                           <AppInput
+                            labelAbove
                             name="firstName"
                             value={values.firstName}
                             upperCase={true}
@@ -191,6 +193,7 @@ const Register = () => {
                         </Col>
                         <Col xs={12} sm={6}>
                           <AppInput
+                            labelAbove
                             name="lastName"
                             value={values.lastName}
                             upperCase={true}
@@ -212,6 +215,7 @@ const Register = () => {
                       </Row>
                       <div className="margin-top-20">
                         <AppInput
+                          labelAbove
                           name="organizationName"
                           value={values.organizationName}
                           upperCase={true}
@@ -234,6 +238,7 @@ const Register = () => {
                       <Row className="margin-top-20">
                         <Col xs={12} sm={6}>
                           <AppInput
+                            labelAbove
                             name="email"
                             value={values.email}
                             maxLength={320}
@@ -248,6 +253,7 @@ const Register = () => {
                         </Col>
                         <Col xs={12} sm={6}>
                           <AppInput
+                            labelAbove
                             name="mobileNumber"
                             value={values.mobileNumber}
                             onChange={e => setFieldValue('mobileNumber', e.target.value)}
@@ -280,15 +286,15 @@ const Register = () => {
                         />
                       </div>
                       <div className="margin-top-40">
-                        <AppButton title="Sign Up" customClass="w-100" size="large" type="submit" disabled={registerLoading} loading={registerLoading} />
+                        <AppButton title="Submit" customClass="w-100" size="large" type="submit" disabled={registerLoading} loading={registerLoading} />
                       </div>
                     </Form>
                   )}
                 </Formik>
-                <div className="d-flex align-items-center gap-10 margin-top-24">
+                <div className="d-flex align-items-center justify-content-center gap-10 margin-top-24">
                   <p className="fs-14 fw-500 text-1-color mb-0">Already have an account?</p>
-                  <Link to="/" className="text-decoration-none">
-                    <p className="fs-14 fw-600 primary-color mb-0">Login</p>
+                  <Link to="/" className="outline-action-button">
+                    Login
                   </Link>
                 </div>
               </div>

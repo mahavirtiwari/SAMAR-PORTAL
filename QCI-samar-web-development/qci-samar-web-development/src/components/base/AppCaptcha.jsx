@@ -35,26 +35,32 @@ const AppCaptcha = ({ value, onChange, onBlur, error, onCaptchaIdChange, reloadT
   }, [loadCaptcha, reloadToken]);
 
   return (
-    <div className="captchaRow">
-      <div className="captchaRow__field">
-        <AppInput
-          name={name}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder="Enter the characters shown"
-          label="Captcha"
-          isRequired
-          error={error}
-          maxLength={10}
-          autoComplete="off"
-          disableAutoCapitalize
-        />
+    <div>
+      {/* Label above the whole row, so the box, image and refresh button stay level. */}
+      <label htmlFor={`${name}-field`} className="input-label-above">
+        Security code<span className="asterics">*</span>
+      </label>
+      <div className="captchaRow">
+        <div className="captchaRow__field">
+          <AppInput
+            labelAbove
+            name={name}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            placeholder="Enter the code shown"
+            error={error}
+            maxLength={10}
+            autoComplete="off"
+            upperCase
+            disableAutoCapitalize
+          />
+        </div>
+        {image ? <img src={image} alt="Security code: type the letters and digits shown" className="captchaImage" /> : <div className="captchaImage captchaImage--empty" aria-hidden="true" />}
+        <button type="button" className="captchaRefresh" onClick={loadCaptcha} disabled={loading} aria-label="Get a new security code">
+          ⟳
+        </button>
       </div>
-      {image ? <img src={image} alt="Type the characters shown in this image" className="captchaImage" /> : <div className="captchaImage captchaImage--empty" aria-hidden="true" />}
-      <button type="button" className="captchaRefresh" onClick={loadCaptcha} disabled={loading} aria-label="Get a new captcha image">
-        ⟳
-      </button>
     </div>
   );
 };

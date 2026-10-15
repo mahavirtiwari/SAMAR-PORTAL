@@ -47,7 +47,7 @@ const ForgotPassword = () => {
       .test('samar-id-or-email', 'Enter a valid SAMAR ID (e.g., SAMAR-080125-123) or email address', value =>
         isEmail(value) ? Yup.string().email().isValidSync(value) : samarIdRegex.test(value || ''),
       ),
-    captcha: Yup.string().required('Captcha is required'),
+    captcha: Yup.string().required('Enter the security code'),
   });
 
   useEffect(() => {
@@ -96,6 +96,7 @@ const ForgotPassword = () => {
                     <Form>
                       <div className="margin-top-30 text-start">
                         <AppInput
+                          labelAbove
                           name="samarId"
                           value={values.samarId}
                           onChange={handleChange}
