@@ -36,7 +36,8 @@ const AppCommonModal = ({ open, onClose, modalHeader, modalContent, modalFooter,
       maxWidth={false}
       {...dialogProps}
       slotProps={{
-        paper: { sx: paperSx },
+        // Rounded card with a soft shadow; screens can still override through paperSx.
+        paper: { className: 'app-form-dialog', sx: { borderRadius: '12px', overflow: 'hidden', ...paperSx } },
       }}>
       {modalHeader && (
         <DialogTitle className="model-header">

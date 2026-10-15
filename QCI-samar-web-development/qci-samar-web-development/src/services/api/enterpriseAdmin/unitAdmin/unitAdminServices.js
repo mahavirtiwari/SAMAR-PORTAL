@@ -63,6 +63,17 @@ const unitAdminServices = userClient => {
     }
   };
 
+  // Email the user a new temporary password (Resend password)
+  const resendUserCredentials = async userId => {
+    try {
+      const response = await userClient.post(`/users/${userId}/resend-credentials`);
+      return response.data;
+    } catch (error) {
+      Logger.error('Error in UserManagementServices.resendUserCredentials:', error.message);
+      throw error;
+    }
+  };
+
   // deactivate user account
   // The reason is required by the API and kept in the account's status history.
   const deactivateUserAccount = async (userId, reason) => {
@@ -150,6 +161,7 @@ const unitAdminServices = userClient => {
   };
 
   return {
+    resendUserCredentials,
     getAllUsers,
     createUser,
     getUserDetails,

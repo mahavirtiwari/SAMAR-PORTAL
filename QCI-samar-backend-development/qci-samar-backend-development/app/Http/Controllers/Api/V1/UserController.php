@@ -1238,6 +1238,38 @@ class UserController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/v1/users/{id}/resend-credentials',
+        summary: 'Email the user a new temporary password',
+        description: 'Generates a new temporary password, signs the user out of every session and emails it with the role invitation. Allowed for active or invited accounts, by anyone allowed to change the user status.',
+        tags: ['Users', 'System Admin - User Management'],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))],
+        responses: [
+            new OA\Response(response: 200, description: 'A new password has been emailed'),
+            new OA\Response(response: 403, description: 'Unauthorized'),
+            new OA\Response(response: 422, description: 'Account is not active or invited'),
+        ],
+    )]
+    public function resendCredentials(int $id, Request $request): JsonResponse
+    {
+        $user = User::find($id);
+        if (! $user) {
+            return $this->errorResponse('User not found.', 404);
+        }
+        if (Gate::denies('changeStatus', $user)) {
+            return $this->errorResponse('This action is unauthorized.', 403);
+        }
+
+        // A BusinessException (account not active or invited) becomes a 422 with its message.
+        $this->userService->resendCredentials($user, $request->user());
+
+        return $this->successResponse(
+            ['email' => $user->email],
+            'A new password has been emailed to '.$user->email.'.'
+        );
+    }
+
     /**
      * Get assessor's assigned districts.
      */

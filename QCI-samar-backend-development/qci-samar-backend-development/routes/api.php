@@ -333,6 +333,9 @@ Route::prefix('v1')->group(function () {
                 ->middleware('role:system_admin,enterprise_admin,operations_manager,operations_admin');
             Route::post('/{id}/deactivate', [UserController::class, 'deactivate'])
                 ->middleware('role:system_admin,enterprise_admin,operations_manager,operations_admin');
+            Route::post('/{id}/resend-credentials', [UserController::class, 'resendCredentials'])
+                ->where('id', '[0-9]+')
+                ->middleware(['role:system_admin,operations_manager,operations_admin', 'throttle:10,1']);
 
             // Used by web: services/api/unitAdmin/unitAdmin/unitAdminServices.js (UnitAdmin UI - assessor districts)
             Route::get('/{id}/assessor-districts', [UserController::class, 'getAssessorDistricts']);

@@ -335,7 +335,7 @@ const AppSuggestionInput = ({
             backgroundColor:
               (textFieldProps && textFieldProps.inputProps && textFieldProps.inputProps.style && textFieldProps.inputProps.style.backgroundColor) ||
               (textFieldProps && textFieldProps.bgColor) ||
-              '#FCFCFC',
+              'var(--input-outline)',
             '&:focus-within input': {
               backgroundColor: '#ffffff',
             },
@@ -370,7 +370,7 @@ const AppSuggestionInput = ({
                   backgroundColor:
                     (textFieldProps && textFieldProps.inputProps && textFieldProps.inputProps.style && textFieldProps.inputProps.style.backgroundColor) ||
                     (textFieldProps && textFieldProps.bgColor) ||
-                    '#FCFCFC',
+                    'var(--input-outline)',
                 },
                 '&.Mui-focused input': {
                   backgroundColor: '#ffffff',

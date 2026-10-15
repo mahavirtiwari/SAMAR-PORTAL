@@ -6,6 +6,7 @@ import { AppBadge, AppButton, AppDataGrid, AppDropdown, AppInput, AppModal, AppT
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddAssessorsModal, EditAssessorsModal } from '../../../../../components/modals';
+import ResendPasswordButton from '../../../../../components/shared/ResendPasswordButton';
 import Icons from '../../../../../constants/Icons';
 import { useListFilters } from '../../../../../hooks';
 import { activateUserAccountAction, deactivateUserAccountAction, getAllUsersAction, getUserDetailsAction } from '../../../../../redux/action/common/UnitAdminAction';
@@ -216,6 +217,7 @@ const Assessors = () => {
                   )}
                 </div>
               )}
+              {params.row.status === 'invited' || isUserActive ? <ResendPasswordButton user={params.row} /> : null}
             </div>
           );
         },

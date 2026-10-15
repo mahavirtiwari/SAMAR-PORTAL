@@ -29919,6 +29919,43 @@
                 ]
             }
         },
+        "/api/v1/users/{id}/resend-credentials": {
+            "post": {
+                "tags": [
+                    "Users",
+                    "System Admin - User Management"
+                ],
+                "summary": "Email the user a new temporary password",
+                "description": "Generates a new temporary password, signs the user out of every session and emails it with the role invitation. Allowed for active or invited accounts, by anyone allowed to change the user status.",
+                "operationId": "3c1325780e248928611dab04dba05a15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A new password has been emailed"
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Account is not active or invited"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/users/{user}/assessor-districts": {
             "get": {
                 "tags": [

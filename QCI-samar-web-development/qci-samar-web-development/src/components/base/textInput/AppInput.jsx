@@ -386,14 +386,14 @@ const AppInput = ({
                 paddingLeft: showLeftIcon ? '20px' : '14px',
                 marginLeft: marginLeft || 0,
                 fontSize: inputType === 'search' ? '12px !important' : '14px !important',
-                backgroundColor: bgColor || '#FCFCFC',
+                backgroundColor: bgColor || 'var(--input-outline)',
                 ...(upperCase ? { textTransform: 'uppercase' } : {}),
               },
               '& input::placeholder': {
                 ...(upperCase ? { textTransform: 'none' } : {}),
               },
               '& textarea': {
-                backgroundColor: bgColor || '#FCFCFC',
+                backgroundColor: bgColor || 'var(--input-outline)',
               },
               '&.Mui-focused input': {
                 backgroundColor: '#ffffff',

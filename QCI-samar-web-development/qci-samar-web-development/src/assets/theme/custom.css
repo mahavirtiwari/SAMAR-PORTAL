@@ -5300,3 +5300,77 @@ textarea::-webkit-input-placeholder {
   flex: 1 1 auto;
   height: auto !important;
 }
+
+/* Add / Edit dialogs (AppCommonModal): light-blue title band, roomy fields, a
+   quiet footer with compact buttons. */
+.app-form-dialog {
+  box-shadow: 0 20px 48px rgba(16, 24, 40, 0.18) !important;
+}
+
+.app-form-dialog .model-header {
+  height: 64px;
+  padding: 0 16px 0 24px !important;
+  background: var(--table-head-bg);
+  border-bottom: 1px solid var(--table-head-border);
+  font-family: "Inter-SemiBold", "Inter-Regular", sans-serif !important;
+  font-size: 18px !important;
+  color: var(--heading);
+}
+
+.app-form-dialog .model-header button {
+  height: 36px;
+  width: 36px;
+  border-radius: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.app-form-dialog .model-header button:hover {
+  background: rgba(31, 78, 140, 0.1);
+}
+
+.app-form-dialog .model-header button img {
+  width: 20px;
+  height: 20px;
+}
+
+.app-form-dialog .model-content {
+  padding: 24px !important;
+}
+
+.app-form-dialog .model-footer {
+  gap: 12px;
+  padding: 14px 24px !important;
+  background: #f8fafd;
+  border-top: 1px solid var(--outline);
+}
+
+.app-form-dialog .model-footer > :not(:first-child) {
+  margin-left: 0;
+}
+
+.app-form-dialog .model-footer .app-button.medium,
+.app-form-dialog .model-footer .app-button.large {
+  height: 40px;
+  min-width: 110px;
+  font-size: 14px;
+}
+
+/* Form fields: a clearly visible edge so enabled fields never look disabled;
+   darker on hover, primary blue with a soft ring while typing. Disabled and
+   read-only fields keep their grey fill. */
+.MuiOutlinedInput-root:not(.Mui-disabled) .MuiOutlinedInput-notchedOutline {
+  border-color: var(--field-border);
+}
+
+.MuiInputBase-root.MuiOutlinedInput-root:not(.Mui-disabled):hover .MuiOutlinedInput-notchedOutline {
+  border: 1px solid var(--field-border-hover);
+}
+
+.MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border: 1px solid var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(61, 139, 253, 0.15);
+}
+
+.input-style.MuiSelect-root:not(.disabled) {
+  border: 1px solid var(--field-border);
+}

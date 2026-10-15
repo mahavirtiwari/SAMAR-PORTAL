@@ -5,6 +5,7 @@ import { AppBadge, AppButton, AppDataGrid, AppInput, AppModal, AppToolTip } from
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddDrdoLabsModal, EditDrdolabsModal } from '../../../../../components/modals';
+import ResendPasswordButton from '../../../../../components/shared/ResendPasswordButton';
 import Icons from '../../../../../constants/Icons';
 import { activateUserAccountAction, deactivateUserAccountAction, getAllUsersAction, getUserDetailsAction } from '../../../../../redux/action/common/UnitAdminAction';
 import { listAssessorDomainsAction } from '../../../../../redux/action/master/MasterAction';
@@ -167,6 +168,7 @@ const DrdoLabs = () => {
                   )}
                 </div>
               )}
+              {params.row.status === 'invited' || isUserActive ? <ResendPasswordButton user={params.row} /> : null}
             </div>
           );
         },

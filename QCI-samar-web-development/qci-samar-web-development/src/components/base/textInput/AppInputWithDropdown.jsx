@@ -160,7 +160,7 @@ const AppInputWithDropdown = ({
               '& input': {
                 padding: '10px 14px',
                 boxSizing: 'border-box',
-                backgroundColor: bgColor || '#FCFCFC',
+                backgroundColor: bgColor || 'var(--input-outline)',
               },
               '&.Mui-focused input': {
                 backgroundColor: '#ffffff',

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\BusinessException;
 use App\Models\Role;
 use App\Models\Session;
 use App\Models\Unit;
@@ -218,6 +219,36 @@ class UserService
         $reason = $reason !== null ? trim($reason) : '';
 
         return $reason === '' ? [] : ['remarks' => $reason];
+    }
+
+    /**
+     * Issue a new temporary password and email it with the user's role invitation
+     * (the same email sent when the account was created). Passwords are stored
+     * hashed, so the old one cannot be resent; it stops working, and every session
+     * of the user is signed out.
+     *
+     * @throws BusinessException when the account is not active or invited
+     */
+    public function resendCredentials(User $user, User $performedBy): User
+    {
+        if (! in_array($user->status, ['active', 'invited'], true)) {
+            throw new BusinessException('Credentials can only be sent to active or invited accounts. Activate this account first.');
+        }
+
+        $temporaryPassword = $this->generateTemporaryPassword();
+
+        DB::transaction(function () use ($user, $temporaryPassword) {
+            $user->forceFill(['password' => Hash::make($temporaryPassword)])->save();
+            $this->authService->terminateUserSessions($user, Session::TERMINATION_PASSWORD_RESET);
+        });
+
+        $user->load('activeRoles');
+        $this->sendUserInvitationEmail($user, $temporaryPassword, $performedBy);
+
+        $user->logAudit('credentials_resent', description: 'A new temporary password was emailed to the user.', actor: $performedBy);
+        Log::info('User credentials resent', ['user_id' => $user->id, 'by' => $performedBy->id]);
+
+        return $user;
     }
 
     /**

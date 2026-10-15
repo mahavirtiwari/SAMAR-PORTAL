@@ -34,7 +34,10 @@ body {
 
   /* Outline Colors */
   --outline: #ebedf3;
-  --input-outline: #fcfcfc;
+  /* Field background; white so enabled fields do not read as disabled. */
+  --input-outline: #ffffff;
+  --field-border: #cfd8e6;
+  --field-border-hover: #9fb3cf;
 
   /* Background Colors */
   --background: #f5f6fa;

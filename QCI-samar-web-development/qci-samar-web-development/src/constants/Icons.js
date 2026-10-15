@@ -206,6 +206,8 @@ import redCross from '../assets/icons/redCross.png';
 import redSquareTick from '../assets/icons/redSquare-Tick.svg';
 import rejectIcon from '../assets/icons/rejectIcon.svg';
 import renew from '../assets/icons/renew.svg';
+// Row action on user lists: email a new temporary password.
+import resendPasswordAction from '../assets/icons/resendPasswordAction.svg';
 import review from '../assets/icons/review.svg';
 import reviewActive from '../assets/icons/reviewActive.svg';
 import reviewDone from '../assets/icons/reviewDone.svg';
@@ -421,6 +423,7 @@ const Icons = {
   warningInfo,
   organisation,
   active,
+  resendPasswordAction,
   tickSuccess,
   danger,
   users,

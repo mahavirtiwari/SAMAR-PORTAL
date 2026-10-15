@@ -5,6 +5,7 @@ import { AppBadge, AppButton, AppDataGrid, AppInput, AppModal, AppToolTip } from
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddOperationsManagerModal, EditOperationsManagerModal } from '../../../../../components/modals';
+import ResendPasswordButton from '../../../../../components/shared/ResendPasswordButton';
 import Icons from '../../../../../constants/Icons';
 import { activateUserAccountAction, deactivateUserAccountAction, getAllUsersAction, getUserDetailsAction } from '../../../../../redux/action/common/UnitAdminAction';
 import { resetUserDetails } from '../../../../../redux/slices/common/UnitAdminSlice';
@@ -171,6 +172,7 @@ const OperationsManager = () => {
                   )}
                 </div>
               )}
+              {params.row.status === 'invited' || isUserActive ? <ResendPasswordButton user={params.row} /> : null}
             </div>
           );
         },
