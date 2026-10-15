@@ -61,7 +61,7 @@ const Layout = ({ children, subHeader, isSubHeaderWithButton }) => {
 
   return (
     <div className="layout">
-      <Header onToggleSidebar={toggleSidebar} />
+      <Header onToggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       {subHeader && <div className={`subHeader${isSidebarOpen ? ' sidebar-open' : ' sidebar-closed'}`}>{subHeader}</div>}
       <Sidebar isOpen={isSidebarOpen} isOverlay={isOverlay} onClose={closeSidebar} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
       {isSidebarOpen && <div className="sidebar-overlay" onClick={closeSidebar} aria-hidden="true" />}

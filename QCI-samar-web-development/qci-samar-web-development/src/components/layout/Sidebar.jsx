@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
 import AssessorMenuItem from '../../utils/sidebarMenu/AssessorMenuItem';
 import DRDOAdminMenuItem from '../../utils/sidebarMenu/DRDOAdminMenuItem';
@@ -126,9 +125,10 @@ const Sidebar = ({ isOpen, isOverlay = false, onClose, toggleSidebar }) => {
         <div className="sidebar-content">
           <div className="sidebar-logo">
             {isOpen ? (
-              <BrandLogo brandKey="sidebar_logo" fallback={Images.logo} alt="Logo" className="sidebarLogo" linked={false} />
+              // Emblem only (no "SAMAR" wordmark); a logo uploaded in Branding & Logos still replaces it.
+              <BrandLogo brandKey="sidebar_logo" fallback={Images.samarLogo} alt="SAMAR" className="sidebar-closed-logo" linked={false} />
             ) : (
-              <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="Logo" className="sidebar-closed-logo" linked={false} />
+              <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR" className="sidebar-closed-logo" linked={false} />
             )}
           </div>
           <Nav className="sidebar-nav custom-sidebar-nav">
@@ -165,19 +165,6 @@ const Sidebar = ({ isOpen, isOverlay = false, onClose, toggleSidebar }) => {
                 </Nav.Item>
               ),
             )}
-          </Nav>
-
-          <Nav className="sidebar-nav nav logout-nav">
-            <Nav.Item className="sidebar-nav-item">
-              <Nav.Link className={`sidebar-nav-link highlight-bg`} onClick={toggleSidebar} aria-label={isOpen ? 'Collapse menu' : 'Expand menu'}>
-                <div className="nav-link-content">
-                  <div className="sidebar-icon">
-                    <img src={Icons.sideBarArrow} alt="" className={`sideBarArrow ${!isOpen ? 'rotated' : ''} nav-icon`} />
-                  </div>
-                  <span className="nav-text">Collapse Menu</span>
-                </div>
-              </Nav.Link>
-            </Nav.Item>
           </Nav>
         </div>
       </div>

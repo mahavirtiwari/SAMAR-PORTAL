@@ -1,70 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { AppDataGrid } from '../../../components/base';
 // Imported from their files, not the base barrel, so the charting libraries stay in
 // this lazily loaded screen's chunks instead of the shared startup bundle.
 import AppPieChartCard from '../../../components/base/AppPieChartCard';
 import AppStackedBarChartCard from '../../../components/base/AppStackedBarChartCard';
 import { Layout } from '../../../components/layout';
+import StateWiseEnterpriseTable from '../../../components/shared/StateWiseEnterpriseTable';
 import Icons from '../../../constants/Icons';
 import { getDRDOAdminDashboardAction } from '../../../redux/action/drdoAdmin/DashboardAction';
 import { onActivateLink } from '../../../utils/a11y';
 
 // Chart color schemes
 const CHART_COLORS = ['#FF4C61', '#FFC93E', '#3B82F6', '#8B5CF6', '#22C55E'];
-
-// Table columns for state-wise vendors
-const columns = [
-  {
-    field: 'state',
-    headerName: 'State',
-    flex: 0.6,
-    minWidth: 80,
-    sortable: false,
-    renderCell: params => (
-      <div className="double-content">
-        <h4>{params.row.state}</h4>
-      </div>
-    ),
-  },
-  {
-    field: 'registered',
-    headerName: 'Registered Enterprise',
-    flex: 0.5,
-    minWidth: 90,
-    sortable: false,
-    renderCell: params => (
-      <div className="double-content">
-        <h4 className="text-3-color line-clamp">{params.row.registered}</h4>
-      </div>
-    ),
-  },
-  {
-    field: 'draft',
-    headerName: 'Draft Enterprise',
-    flex: 0.5,
-    minWidth: 90,
-    sortable: false,
-    renderCell: params => (
-      <div className="double-content">
-        <span className="text-3-color line-clamp">{params.row.draft}</span>
-      </div>
-    ),
-  },
-  {
-    field: 'certified',
-    headerName: 'Certified Enterprise',
-    flex: 1,
-    minWidth: 100,
-    sortable: false,
-    renderCell: params => (
-      <div className="double-content">
-        <span className="text-3-color line-clamp">{params.row.certified}</span>
-      </div>
-    ),
-  },
-];
 
 // Icon and color mappings for summary cards
 const CARD_CONFIG = {
@@ -78,8 +26,6 @@ const CARD_CONFIG = {
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
 
   // Get dashboard data from Redux
   const { dashboardError, summaryCards, enterpriseDistribution, certifiedVendorsByLevel, stateWiseVendors } = useSelector(state => state.DRDOAdminDashboard);
@@ -117,14 +63,6 @@ const Dashboard = () => {
     });
     return result;
   }, [certifiedVendorsByLevel]);
-
-  // Transform state-wise vendors for table (add id for DataGrid)
-  const tableRows = useMemo(() => {
-    return (stateWiseVendors || []).map((item, idx) => ({
-      id: idx + 1,
-      ...item,
-    }));
-  }, [stateWiseVendors]);
 
   // Get enterprise types for dropdown
   const enterpriseTypes = Object.keys(enterpriseDistribution || {});
@@ -192,11 +130,11 @@ const Dashboard = () => {
           {/* Charts Row 1: Pie Chart + Bar Chart */}
           <div className="row">
             <div className="col-xxl-5 col-xl-5 col-lg-12">
-              <div className="details-card" style={vendorTypes.length > 0 ? { height: '495px' } : undefined}>
+              <div className="details-card" style={vendorTypes.length > 0 ? { height: '380px' } : undefined}>
                 {vendorTypes.length > 0 ? (
                   <AppPieChartCard title="Certified" types={vendorTypes} data={vendorPieChartData} defaultType={vendorTypes[0]} />
                 ) : (
-                  <div style={{ height: '495px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ height: '380px', display: 'flex', flexDirection: 'column' }}>
                     <h2 className="fs-20 fw-600 heading-color mb-3">Certified</h2>
                     <div className="text-center fs-16 fw-500 text-3-color" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       No certified vendor data available
@@ -212,11 +150,11 @@ const Dashboard = () => {
                   categories={enterpriseTypes.slice(0, 2).map(type => ({ value: type, label: type }))}
                   chartData={enterpriseChartData}
                   defaultCategory={enterpriseTypes[0]}
-                  height={346}
+                  height={240}
                 />
               ) : (
                 <div className="details-card">
-                  <div style={{ height: '452px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ height: '338px', display: 'flex', flexDirection: 'column' }}>
                     <h2 className="fs-20 fw-600 heading-color mb-3">Enterprise Distribution</h2>
                     <div className="text-center fs-16 fw-500 text-3-color" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       No enterprise distribution data available
@@ -229,29 +167,7 @@ const Dashboard = () => {
 
           {/* State-Wise Vendors Table */}
           <div className="margin-bottom-20">
-            <div className="table-container">
-              <div className="table-header">
-                <div className="table-header-left">
-                  <h1 className="page-heading">State-Wise Enterprise</h1>
-                </div>
-              </div>
-              <div className="table-wrapper">
-                <AppDataGrid
-                  rows={tableRows}
-                  columns={columns}
-                  server={false}
-                  page={page}
-                  pageSize={pageSize}
-                  onPaginationChange={model => {
-                    setPage(model.page);
-                    setPageSize(model.pageSize);
-                  }}
-                  extraProps={{
-                    hideFooter: tableRows.length <= 10,
-                  }}
-                />
-              </div>
-            </div>
+            <StateWiseEnterpriseTable rows={stateWiseVendors} />
           </div>
         </div>
       </div>

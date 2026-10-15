@@ -326,8 +326,16 @@ LAYOUT STYLES - Header, Sidebar, Layout
 }
 
 .sidebar-open-header {
-  padding-left: 280px;
+  padding-left: 290px;
   transition: padding 0.3s ease;
+}
+
+/* Desktop with the rail collapsed: keep the menu button clear of the 73px rail. */
+@media (min-width: 993px) {
+  .custom-header:not(.sidebar-open-header) {
+    padding-left: 73px;
+    transition: padding 0.3s ease;
+  }
 }
 
 .sidebar-open-header .sidebar-nav-link {
@@ -364,10 +372,11 @@ LAYOUT STYLES - Header, Sidebar, Layout
   gap: 10px;
 }
 
-/* Shown only below 992px, where the sidebar is off-canvas and otherwise
-   unreachable — see responsive.css. */
+/* Menu (hamburger) button at the left of the header. It opens/closes the
+   off-canvas sidebar below 992px and collapses/expands the rail on desktop. */
 .mobile-menu-toggle {
-  display: none;
+  display: inline-flex;
+  cursor: pointer;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -377,6 +386,10 @@ LAYOUT STYLES - Header, Sidebar, Layout
   border: none;
   border-radius: 8px;
   background: transparent;
+}
+
+.mobile-menu-toggle:hover {
+  background: var(--info-light, #eef3fb);
 }
 
 .mobile-menu-toggle span {
@@ -565,7 +578,7 @@ LAYOUT STYLES - Header, Sidebar, Layout
 }
 
 .subHeader.sidebar-open {
-  padding-left: 300px;
+  padding-left: 290px;
 }
 
 .subHeaderLeft {
@@ -1982,16 +1995,34 @@ support section
   color: #252f4a;
 }
 
+/* The accent colour comes from an inline border-left-color on each card. A
+   real left border would bend with the 12px corners, so the border is 0 wide and
+   a straight bar (inheriting that colour) is drawn inside the card instead. */
 .statCard {
+  position: relative;
   background-color: var(--white);
   border-radius: 12px;
   padding: 18px;
+  border-left: 0 solid;
+}
+
+.statCard::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
   border-left: 3px solid;
+  border-left-color: inherit;
 }
 
 .payment-summary-tiles {
   margin: 0 30px 8px;
   border-bottom: 1px solid var(--outline);
+}
+
+.payment-summary-tiles .statCard::before {
+  content: none;
 }
 
 .payment-summary-tiles .statCard {

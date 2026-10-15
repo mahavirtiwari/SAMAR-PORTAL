@@ -12,7 +12,7 @@ import { formatDate } from '../../../../utils/formatters';
 // The built-in images shown here are the web app's bundled copies.
 const BUILT_IN = {
   samar_logo: Images.samarLogo,
-  sidebar_logo: Images.logo,
+  sidebar_logo: Images.samarLogo,
   drdo_logo: Images.defenceResearch,
   qci_logo: Images.qualityCouncil,
   favicon: '/favicon.ico',

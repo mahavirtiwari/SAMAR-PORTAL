@@ -9,7 +9,7 @@ import { Logger } from '../../utils/logger';
 import { hasRole } from '../../utils/roleUtils';
 import { AppBadge, AppModal } from '../base';
 
-const Header = ({ onToggleSidebar }) => {
+const Header = ({ onToggleSidebar, isSidebarOpen = false }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector(state => state.Account);
@@ -71,7 +71,13 @@ const Header = ({ onToggleSidebar }) => {
     <Navbar className="custom-header" expand="lg" fixed="top">
       <div className="header-content">
         <div className="header-left">
-          <button type="button" className="mobile-menu-toggle" onClick={onToggleSidebar} aria-label="Open navigation menu">
+          <button
+            type="button"
+            className="mobile-menu-toggle"
+            onClick={onToggleSidebar}
+            aria-label={isSidebarOpen ? 'Collapse navigation menu' : 'Expand navigation menu'}
+            aria-expanded={isSidebarOpen}
+            title={isSidebarOpen ? 'Collapse menu' : 'Expand menu'}>
             <span />
             <span />
             <span />

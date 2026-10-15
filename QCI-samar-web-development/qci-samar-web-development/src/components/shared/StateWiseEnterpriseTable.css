@@ -1,0 +1,224 @@
+/* State-wise enterprises table on the role dashboards. */
+.state-table-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px 24px 12px;
+}
+
+.state-table-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--outline);
+}
+
+.state-table-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.state-table-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.state-table-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.state-table-totals > div {
+  min-width: 104px;
+  padding: 8px 14px;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.state-table-totals dt {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.state-table-totals dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.state-table-scroll {
+  overflow-x: auto;
+}
+
+.state-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.state-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 10px 12px;
+  background: var(--white);
+  border-bottom: 1px solid var(--outline);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-3);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.state-table td,
+.state-table tbody th,
+.state-table tfoot th {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--outline);
+  text-align: left;
+  font-weight: 400;
+}
+
+.state-table tbody tr:hover {
+  background: var(--background);
+}
+
+.state-table .col-rank {
+  width: 40px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.state-table .col-state {
+  font-weight: 500;
+}
+
+.state-table .col-num {
+  width: 14%;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.state-table thead th.col-num {
+  text-align: right;
+}
+
+.state-table .is-certified {
+  color: var(--success-text, #15803d);
+  font-weight: 600;
+}
+
+.state-table .col-rate {
+  width: 24%;
+  min-width: 170px;
+}
+
+/* Registered count with a bar showing the state's share of the largest state. */
+.num-with-bar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.share-bar {
+  display: inline-block;
+  width: 72px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--outline);
+  overflow: hidden;
+}
+
+.share-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+.rate-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rate-bar {
+  flex: 1;
+  max-width: 140px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--outline);
+  overflow: hidden;
+}
+
+.rate-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--success-primary);
+}
+
+.rate-value {
+  min-width: 36px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  text-align: right;
+}
+
+.state-table tfoot th,
+.state-table tfoot td {
+  border-bottom: 0;
+  border-top: 2px solid var(--outline);
+  font-weight: 600;
+}
+
+.state-table-empty {
+  margin: 0;
+  padding: 24px 0;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.state-table-more {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 4px;
+}
+
+.state-table-more button {
+  border: 0;
+  background: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-text, #1b68dc);
+  cursor: pointer;
+}
+
+.state-table-more button:hover {
+  background: var(--background);
+}
+
+@media (max-width: 575px) {
+  .state-table-card {
+    padding: 16px 12px 8px;
+  }
+
+  .share-bar {
+    display: none;
+  }
+}

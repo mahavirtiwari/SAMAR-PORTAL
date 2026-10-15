@@ -13,7 +13,7 @@ import AppDropdown from './AppDropdown';
  * - data: object mapping type to array of { name, value, color }
  * - defaultType: string (initial selected type)
  */
-function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defaultType, height = 280 }) {
+function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defaultType, height = 220 }) {
   const [selectedType, setSelectedType] = useState(defaultType || (types && types[0]));
   const chartData = data[selectedType] || [];
 
@@ -37,7 +37,7 @@ function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defau
           />
         </FormControl>
       </Box>
-      <Box sx={{ width: '100%', height: { height } }}>
+      <Box sx={{ width: '100%', height }}>
         <PieChart
           series={[
             {
@@ -60,7 +60,7 @@ function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defau
               ),
             },
           ]}
-          height={280}
+          height={height}
           hideLegend={true}
         />
       </Box>

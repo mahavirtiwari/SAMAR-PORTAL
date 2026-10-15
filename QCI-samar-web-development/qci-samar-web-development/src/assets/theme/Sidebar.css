@@ -59,7 +59,7 @@
 }
 
 .nav-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.3px;
 }
@@ -121,7 +121,7 @@
 
 .header-sidebar-open {
   left: 0;
-  padding-left: 280px;
+  padding-left: 290px;
   transition: padding-left 0.1s ease;
 }
 
@@ -149,8 +149,9 @@
   flex-direction: column;
   gap: 5px;
   padding: 0 15px;
-  height: calc(100vh - 167px);
-  height: calc(100dvh - 167px);
+  /* Logo area only; the bottom "Collapse Menu" block moved to the header button. */
+  height: calc(100vh - 110px);
+  height: calc(100dvh - 110px);
   overflow-y: auto;
   flex-wrap: nowrap;
 }
@@ -195,7 +196,7 @@
 }
 
 .nav-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.3px;
   font-family: "Inter-SemiBold";
@@ -232,7 +233,10 @@
 
 /* Sidebar Mobile */
 .sidebar.sidebar-open {
-  width: 310px;
+  /* 290px since the menu labels went down to 13px (the longest, "Assessment
+     (Manufacturing)", is 191px). Header, content and sub-header offsets
+     (custom.css, responsive.css) match this width. */
+  width: 290px;
   transition: width 0.1s ease;
   z-index: 1030;
 }
@@ -358,7 +362,7 @@ padding-right: 8px;
 }
 
 .main-content.sidebar-open {
-  margin-left: 310px;
+  margin-left: 290px;
 }
 
 /* Mobile Responsive */
@@ -385,7 +389,7 @@ padding-right: 8px;
   }
 
   .nav-text {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .nav-icon {
