@@ -5267,3 +5267,36 @@ textarea::-webkit-input-placeholder {
   object-fit: cover;
   border-radius: 50%;
 }
+
+/* Cards share one look with the list pages: a thin outline ring and a soft
+   shadow. A ring (box-shadow) rather than a border, so it does not disturb the
+   stat cards' border-left colour that their straight accent bar inherits. */
+.statCard,
+.details-card,
+.state-table-card {
+  box-shadow:
+    0 0 0 1px var(--outline),
+    0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.statCard {
+  transition: box-shadow 0.15s ease;
+}
+
+.statCard[role="link"]:hover,
+.statCard[style*="pointer"]:hover {
+  box-shadow:
+    0 0 0 1px #d5dbe7,
+    0 4px 12px rgba(16, 24, 40, 0.08);
+}
+
+/* Dashboard chart cards side by side are the same height. */
+.dashboard-charts > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-charts > [class*="col-"] > .details-card {
+  flex: 1 1 auto;
+  height: auto !important;
+}

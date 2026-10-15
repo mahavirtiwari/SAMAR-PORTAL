@@ -103,7 +103,6 @@ const Dashboard = () => {
           {/* Summary Cards */}
           <div className="row margin-bottom-20 row-gap-20">
             {displaySummaryCards.map((card, idx) => {
-              console.log('Rendering card:', card); // Debugging log
               const config = CARD_CONFIG[card.label] || {};
               const label = config.label ?? card.label;
               // Prefer the local route mapping; fall back to any route the API supplies.
@@ -133,7 +132,7 @@ const Dashboard = () => {
           </div>
 
           {/* Charts Row 1: Pie Chart + Bar Chart */}
-          <div className="row">
+          <div className="row dashboard-charts">
             <div className="col-xxl-5 col-xl-5 col-lg-12">
               <div className="details-card" style={vendorTypes.length > 0 ? { height: '380px' } : undefined}>
                 {vendorTypes.length > 0 ? (

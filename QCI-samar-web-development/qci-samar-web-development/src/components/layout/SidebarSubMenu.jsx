@@ -63,7 +63,7 @@ const SidebarSubMenu = React.memo(({ label, icon, activeIcon, submenu, isActive,
           </AppToolTip>
           <span className="nav-text">{label}</span>
         </div>
-        <span style={{ transition: 'transform 0.2s', transform: isOpen ? 'rotate(-181deg)' : 'rotate(-2deg)' }} aria-hidden="true">
+        <span className="submenu-arrow" style={{ transition: 'transform 0.2s', transform: isOpen ? 'rotate(-181deg)' : 'rotate(-2deg)' }} aria-hidden="true">
           <img src={Icons.DownArrow} alt="" className="arrow-icon" />
         </span>
       </div>

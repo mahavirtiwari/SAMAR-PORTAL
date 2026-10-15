@@ -233,8 +233,8 @@
 
 /* Sidebar Mobile */
 .sidebar.sidebar-open {
-  /* 290px since the menu labels went down to 13px (the longest, "Assessment
-     (Manufacturing)", is 191px). Header, content and sub-header offsets
+  /* 290px since the menu labels went down to 13px and the sector names are
+     shortened ("Master (Mfg.)"). Header, content and sub-header offsets
      (custom.css, responsive.css) match this width. */
   width: 290px;
   transition: width 0.1s ease;
@@ -432,4 +432,34 @@ padding-right: 8px;
     width: 100vw;
     max-width: 320px;
   }
+}
+
+/* Items with a submenu: the label takes the room left after the arrow, so the
+   arrow stays inside the item (and its white highlight) even on the longest
+   label. ".sidebar-open .nav-link-content { width: 100% }" otherwise pushed the
+   arrow past the right edge. */
+.sidebar.sidebar-open .sidebar-submenu-parent > .sidebar-nav-link .nav-link-content {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+}
+
+.sidebar.sidebar-open .sidebar-submenu-parent > .sidebar-nav-link .nav-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar.sidebar-open .sidebar-submenu-parent > .sidebar-nav-link .submenu-arrow {
+  flex: 0 0 auto;
+  display: flex;
+  margin-right: 4px;
+}
+
+.sidebar.sidebar-open .sidebar-submenu-parent > .sidebar-nav-link .submenu-arrow .arrow-icon {
+  margin: 0;
+}
+
+/* Collapsed rail: icons only, no submenu arrow beside them. */
+.sidebar.sidebar-closed .sidebar-submenu-parent > .sidebar-nav-link .submenu-arrow {
+  display: none;
 }

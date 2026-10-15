@@ -32,6 +32,7 @@ class StoreDisciplineRequest extends FormRequest
                 new EntityName,
                 'unique:disciplines,name,NULL,id,sector,'.$this->input('sector'),
             ],
+            'description' => ['nullable', 'string', 'max:1000'],
             'sector' => ['required', 'string', 'in:manufacturing,service'],
         ];
     }
@@ -45,6 +46,7 @@ class StoreDisciplineRequest extends FormRequest
             'name.required' => 'Discipline name is required.',
             'name.max' => 'Discipline name cannot exceed 100 characters.',
             'name.unique' => 'A discipline with this name already exists in the selected sector.',
+            'description.max' => 'Description cannot exceed 1000 characters.',
             'sector.required' => 'Sector is required.',
             'sector.in' => 'Sector must be either manufacturing or service.',
         ];

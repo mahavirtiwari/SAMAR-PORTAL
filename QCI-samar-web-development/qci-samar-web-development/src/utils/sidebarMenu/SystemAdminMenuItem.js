@@ -39,7 +39,7 @@ const SystemAdminMenuItem = [
   },
   {
     key: 'masterManufacturing',
-    label: 'Master (Manufacturing)',
+    label: 'Master (Mfg.)',
     toolTipTitle: 'Master (Manufacturing)',
     icon: Icons.masterManufacturing,
     activeIcon: Icons.masterManufacturingActive,
@@ -81,7 +81,7 @@ const SystemAdminMenuItem = [
   },
   {
     key: 'assessmentManufacturing',
-    label: 'Assessment (Manufacturing)',
+    label: 'Assessment (Mfg.)',
     icon: Icons.settingsManufacturing,
     activeIcon: Icons.settingsManufacturingActive,
     toolTipTitle: 'Assessment (Manufacturing)',

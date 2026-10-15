@@ -207,6 +207,11 @@ const AssessmentDisciplines = () => {
         renderCell: params => (
           <div className="double-content">
             <h4 className="heading-color">{params.row.name}</h4>
+            {params.row.description ? (
+              <span className="line-clamp" title={params.row.description}>
+                {params.row.description}
+              </span>
+            ) : null}
           </div>
         ),
       },

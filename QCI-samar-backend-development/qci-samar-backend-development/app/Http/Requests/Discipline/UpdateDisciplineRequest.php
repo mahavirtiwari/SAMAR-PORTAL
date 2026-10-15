@@ -42,6 +42,7 @@ class UpdateDisciplineRequest extends FormRequest
                     ->ignore($disciplineId)
                     ->where('sector', $sector),
             ],
+            'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'sector' => ['sometimes', 'string', 'in:manufacturing,service'],
         ];
     }
@@ -54,6 +55,7 @@ class UpdateDisciplineRequest extends FormRequest
         return [
             'name.max' => 'Discipline name cannot exceed 100 characters.',
             'name.unique' => 'A discipline with this name already exists in the selected sector.',
+            'description.max' => 'Description cannot exceed 1000 characters.',
             'sector.in' => 'Sector must be either manufacturing or service.',
         ];
     }

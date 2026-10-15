@@ -8,8 +8,11 @@ import { resetDisciplinesCreateUpdateDelete } from '../../redux/slices/systemAdm
 import { AppButton, AppInput, AppModal } from '../base';
 import AppCommonModal from './AppCommonModal';
 
+const DESCRIPTION_MAX_LENGTH = 1000;
+
 const validationSchema = Yup.object().shape({
   name: Yup.string().trim().max(100, 'Discipline name cannot exceed 100 characters').required('Discipline name is required'),
+  description: Yup.string().trim().max(DESCRIPTION_MAX_LENGTH, `Description cannot exceed ${DESCRIPTION_MAX_LENGTH} characters`),
 });
 
 const EditDisciplineModal = ({ open, handleClose, data, sector = 'manufacturing', onGeneralError }) => {
@@ -22,6 +25,7 @@ const EditDisciplineModal = ({ open, handleClose, data, sector = 'manufacturing'
   const initialValues = useMemo(
     () => ({
       name: data?.name || '',
+      description: data?.description || '',
       sector,
     }),
     [data, sector],
@@ -70,6 +74,25 @@ const EditDisciplineModal = ({ open, handleClose, data, sector = 'manufacturing'
           isRequired={true}
           error={getFieldError('name')}
         />
+      </div>
+      <div className="col-md-12">
+        <AppInput
+          inputType="textarea"
+          label="Description"
+          name="description"
+          placeholder="What this discipline covers (optional)"
+          maxLength={DESCRIPTION_MAX_LENGTH}
+          multiline={true}
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={getFieldError('description')}
+        />
+        <div className="d-flex justify-content-end margin-top-4">
+          <span className="fs-12 fw-500 text-3-color">
+            {(formik.values.description || '').length}/{DESCRIPTION_MAX_LENGTH}
+          </span>
+        </div>
       </div>
     </div>
   );

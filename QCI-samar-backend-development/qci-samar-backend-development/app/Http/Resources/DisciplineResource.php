@@ -17,6 +17,7 @@ class DisciplineResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'description' => $this->description,
             'sector' => $this->sector,
             'is_active' => $this->is_active,
             'parameters_count' => $this->parameters_count ?? 0,

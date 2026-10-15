@@ -27,6 +27,7 @@ class Discipline extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'sector',
         'is_active',
         'created_by',

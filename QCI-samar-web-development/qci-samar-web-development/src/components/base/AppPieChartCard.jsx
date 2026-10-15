@@ -26,7 +26,8 @@ function AppPieChartCard({ title = 'Enterprise Distribution', types, data, defau
           alignItems: 'center',
           mb: 2,
         }}>
-        <h2 className="page-heading">{title}</h2>
+        {/* Same heading style as the other dashboard chart cards. */}
+        <h2 className="fs-20 fw-600 heading-color mb-0">{title}</h2>
         <FormControl sx={{ width: '160px' }}>
           <AppDropdown
             value={selectedType}
