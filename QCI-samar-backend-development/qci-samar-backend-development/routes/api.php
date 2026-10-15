@@ -169,6 +169,8 @@ Route::prefix('v1')->group(function () {
             ->middleware('throttle:auth.password');
         Route::post('/resend-password-otp', [PasswordController::class, 'resendOtp'])
             ->middleware('throttle:auth.resend.password');
+        Route::post('/verify-password-otp', [PasswordController::class, 'verifyResetOtp'])
+            ->middleware('throttle:auth.password');
         Route::post('/reset-password', [PasswordController::class, 'reset'])
             ->middleware('throttle:auth.password');
 

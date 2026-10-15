@@ -419,9 +419,19 @@ class User extends Authenticatable implements JWTSubject
      */
     public function generateOtp(int $length = 6, ?int $expiryMinutes = null): string
     {
-        $expiryMinutes ??= (int) config('auth.otp.expiry_minutes');
-
         $otp = str_pad((string) random_int(0, (10 ** $length) - 1), $length, '0', STR_PAD_LEFT);
+        $this->setOtp($otp, $expiryMinutes);
+
+        return $otp;
+    }
+
+    /**
+     * Store a given OTP for the user. Used directly when one code is shared by
+     * several accounts on the same email (forgot password by email).
+     */
+    public function setOtp(string $otp, ?int $expiryMinutes = null): void
+    {
+        $expiryMinutes ??= (int) config('auth.otp.expiry_minutes');
 
         // otp_attempts is deliberately not reset here: requesting a fresh code
         // must not hand out a fresh set of guesses, or the 5-attempt lock could
@@ -430,14 +440,13 @@ class User extends Authenticatable implements JWTSubject
             'otp_code' => Hash::make($otp),
             'otp_expires_at' => now()->addMinutes($expiryMinutes),
         ])->save();
-
-        return $otp;
     }
 
     /**
-     * Verify OTP.
+     * Check an OTP without using it up. A wrong code counts towards the
+     * 5-attempt lock exactly as in verifyOtp().
      */
-    public function verifyOtp(string $otp): bool
+    public function checkOtp(string $otp): bool
     {
         if ($this->otp_locked_until && now()->lt($this->otp_locked_until)) {
             return false;
@@ -459,6 +468,18 @@ class User extends Authenticatable implements JWTSubject
                 $this->forceFill(['otp_locked_until' => now()->addMinutes(30)])->save();
             }
 
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Verify OTP and use it up.
+     */
+    public function verifyOtp(string $otp): bool
+    {
+        if (! $this->checkOtp($otp)) {
             return false;
         }
 

@@ -142,13 +142,18 @@ class PasswordController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['samar_id'],
                 properties: [
                     new OA\Property(
                         property: 'samar_id',
                         type: 'string',
                         example: 'SAMAR-040226-1',
-                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID)',
+                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID). Give this or email.',
+                    ),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        description: 'Registered email, instead of samar_id. One OTP goes to it; confirm it with verify-password-otp to list the accounts on the email.',
                     ),
                 ],
             ),
@@ -190,11 +195,7 @@ class PasswordController extends Controller
         // Format only. Whether the account exists is deliberately NOT validated
         // here: a per-field "No account found with this SAMAR ID." reply turned
         // this endpoint into a user-enumeration oracle.
-        $validator = Validator::make($request->all(), [
-            'samar_id' => ['required', 'string', 'regex:/^SAMAR-\d{6}-\d+$/i'],
-        ], [
-            'samar_id.regex' => 'Please enter a valid SAMAR ID (format: SAMAR-DDMMYY-ID).',
-        ]);
+        $validator = Validator::make($request->all(), self::identifierRules(), self::identifierMessages());
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed.', 400, $validator->errors()->toArray());
@@ -212,21 +213,28 @@ class PasswordController extends Controller
 
         $otpExpiryMinutes = (int) config('auth.otp.expiry_minutes');
 
+        $byEmail = ! $request->filled('samar_id');
+
         try {
-            $this->authService->forgotPassword($request->samar_id);
+            $byEmail
+                ? $this->authService->forgotPasswordByEmail((string) $request->email)
+                : $this->authService->forgotPassword($request->samar_id);
         } catch (\Exception $e) {
             // Unknown account, inactive organization, OTP lockout — every one of
             // these is answered identically below. Surfacing the reason would
             // reveal whether the account exists and what state it is in, so it
             // is recorded server-side only.
             Log::info('Password reset request not fulfilled.', [
-                'samar_id' => strtoupper((string) $request->samar_id),
+                'samar_id' => $byEmail ? null : strtoupper((string) $request->samar_id),
+                'by_email' => $byEmail,
                 'reason' => $e->getMessage(),
                 'ip' => $request->ip(),
             ]);
         }
 
-        return $this->successResponse(null, "If an account exists for that SAMAR ID, a password reset OTP has been sent to the registered email. Valid for {$otpExpiryMinutes} minutes.");
+        return $this->successResponse(null, $byEmail
+            ? "If an account is registered with that email, a password reset OTP has been sent to it. Valid for {$otpExpiryMinutes} minutes."
+            : "If an account exists for that SAMAR ID, a password reset OTP has been sent to the registered email. Valid for {$otpExpiryMinutes} minutes.");
     }
 
     /**
@@ -240,13 +248,18 @@ class PasswordController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['samar_id'],
                 properties: [
                     new OA\Property(
                         property: 'samar_id',
                         type: 'string',
                         example: 'SAMAR-040226-1',
-                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID)',
+                        description: 'SAMAR ID (format: SAMAR-DDMMYY-ID). Give this or email.',
+                    ),
+                    new OA\Property(
+                        property: 'email',
+                        type: 'string',
+                        format: 'email',
+                        description: 'Registered email, instead of samar_id. One OTP goes to it; confirm it with verify-password-otp to list the accounts on the email.',
                     ),
                 ],
             ),
@@ -271,11 +284,7 @@ class PasswordController extends Controller
     public function resendOtp(Request $request): JsonResponse
     {
         // Mirror forgot-password: format only, no existence check — see forgot().
-        $validator = Validator::make($request->all(), [
-            'samar_id' => ['required', 'string', 'regex:/^SAMAR-\d{6}-\d+$/i'],
-        ], [
-            'samar_id.regex' => 'Please enter a valid SAMAR ID (format: SAMAR-DDMMYY-ID).',
-        ]);
+        $validator = Validator::make($request->all(), self::identifierRules(), self::identifierMessages());
 
         if ($validator->fails()) {
             return $this->errorResponse('Validation failed.', 400, $validator->errors()->toArray());
@@ -283,17 +292,97 @@ class PasswordController extends Controller
 
         $otpExpiryMinutes = (int) config('auth.otp.expiry_minutes');
 
+        $byEmail = ! $request->filled('samar_id');
+
         try {
-            $this->authService->forgotPassword($request->samar_id);
+            $byEmail
+                ? $this->authService->forgotPasswordByEmail((string) $request->email)
+                : $this->authService->forgotPassword($request->samar_id);
         } catch (\Exception $e) {
             Log::info('Password reset OTP resend not fulfilled.', [
-                'samar_id' => strtoupper((string) $request->samar_id),
+                'samar_id' => $byEmail ? null : strtoupper((string) $request->samar_id),
+                'by_email' => $byEmail,
                 'reason' => $e->getMessage(),
                 'ip' => $request->ip(),
             ]);
         }
 
-        return $this->successResponse(null, "If an account exists for that SAMAR ID, a new password reset OTP has been sent to the registered email. Valid for {$otpExpiryMinutes} minutes.");
+        return $this->successResponse(null, $byEmail
+            ? "If an account is registered with that email, a new password reset OTP has been sent to it. Valid for {$otpExpiryMinutes} minutes."
+            : "If an account exists for that SAMAR ID, a new password reset OTP has been sent to the registered email. Valid for {$otpExpiryMinutes} minutes.");
+    }
+
+    /**
+     * Forgot password by email, step 2: confirm the emailed OTP and list the
+     * accounts on that email, so the user can choose which one to reset. The OTP
+     * is not used up here; the reset step does that for the chosen account.
+     */
+    #[OA\Post(
+        path: '/api/v1/auth/verify-password-otp',
+        summary: 'Confirm a password reset OTP sent by email and list its accounts',
+        description: 'For a reset started with an email: returns the accounts (SAMAR ID, name, role) whose OTP matches, without using the OTP up. Then call reset-password with the chosen samarId and the same OTP.',
+        tags: ['Authentication'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['email', 'otp'],
+                properties: [
+                    new OA\Property(property: 'email', type: 'string', format: 'email'),
+                    new OA\Property(property: 'otp', type: 'string', example: '123456'),
+                ],
+            ),
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'OTP confirmed; accounts listed'),
+            new OA\Response(response: 400, description: 'Invalid or expired OTP'),
+        ],
+    )]
+    public function verifyResetOtp(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255',
+            'otp' => 'required|string|digits:6',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed.', 400, $validator->errors()->toArray());
+        }
+
+        try {
+            $accounts = $this->authService->accountsForPasswordOtp((string) $request->email, (string) $request->otp);
+        } catch (\Exception $e) {
+            Log::info('Password reset OTP (email) not confirmed.', ['reason' => $e->getMessage(), 'ip' => $request->ip()]);
+
+            return $this->errorResponse('The email or OTP is invalid, or the OTP has expired.', 400);
+        }
+
+        return $this->successResponse(['accounts' => $accounts], 'OTP confirmed.');
+    }
+
+    /**
+     * A SAMAR ID or a registered email, one of the two.
+     *
+     * @return array<string, mixed>
+     */
+    private static function identifierRules(): array
+    {
+        return [
+            'samar_id' => ['nullable', 'required_without:email', 'string', 'regex:/^SAMAR-\d{6}-\d+$/i'],
+            'email' => ['nullable', 'required_without:samar_id', 'string', 'email', 'max:255'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function identifierMessages(): array
+    {
+        return [
+            'samar_id.regex' => 'Please enter a valid SAMAR ID (format: SAMAR-DDMMYY-ID).',
+            'samar_id.required_without' => 'Enter your SAMAR ID or registered email.',
+            'email.required_without' => 'Enter your SAMAR ID or registered email.',
+            'email.email' => 'Please enter a valid email address.',
+        ];
     }
 
     /**

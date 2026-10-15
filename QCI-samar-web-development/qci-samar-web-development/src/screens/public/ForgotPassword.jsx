@@ -17,7 +17,8 @@ import { Logger } from '../../utils/logger';
 const ForgotPassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [samarId, setSamarId] = useState('');
+  // What the reset was started with: { samarId } or { email }.
+  const [identifier, setIdentifier] = useState(null);
   const [errorModal, setErrorModal] = useState(false);
 
   // Kept outside Formik: the challenge id is part of the payload, not a field
@@ -31,23 +32,31 @@ const ForgotPassword = () => {
   const { forgotPasswordData, forgotPasswordLoading, forgotPasswordError } = useSelector(state => state.Account);
 
   // Derive error message from Redux state instead of copying to local state
-  const apiErrors = forgotPasswordError?.samarId?.[0] || forgotPasswordError?.message || '';
+  const apiErrors = forgotPasswordError?.samarId?.[0] || forgotPasswordError?.email?.[0] || forgotPasswordError?.message || '';
 
   // SAMAR ID format: SAMAR-DDMMYY-ID (e.g., SAMAR-080125-123)
   const samarIdRegex = /^SAMAR-\d{6}-\d+$/i;
 
+  // Either a SAMAR ID or the email registered on the account(s).
+  const isEmail = value => (value || '').includes('@');
   const validationSchema = Yup.object({
-    samarId: Yup.string().max(320, 'SAMAR ID cannot exceed 320 characters').required('SAMAR ID is required').matches(samarIdRegex, 'SAMAR ID must be valid (e.g., SAMAR-080125-123)'),
+    samarId: Yup.string()
+      .trim()
+      .max(320, 'This cannot exceed 320 characters')
+      .required('SAMAR ID or registered email is required')
+      .test('samar-id-or-email', 'Enter a valid SAMAR ID (e.g., SAMAR-080125-123) or email address', value =>
+        isEmail(value) ? Yup.string().email().isValidSync(value) : samarIdRegex.test(value || ''),
+      ),
     captcha: Yup.string().required('Captcha is required'),
   });
 
   useEffect(() => {
-    if (forgotPasswordData?.status === 200 && samarId) {
-      // Pass samarId to next screen using location state
-      navigate('/new-password', { state: { samarId } });
+    if (forgotPasswordData?.status === 200 && identifier) {
+      // The next screen resends to, and resets by, the same SAMAR ID or email.
+      navigate('/new-password', { state: identifier });
       dispatch(resetForgotPasswordData());
     }
-  }, [forgotPasswordData, samarId, navigate, dispatch]);
+  }, [forgotPasswordData, identifier, navigate, dispatch]);
 
   useEffect(() => {
     if (forgotPasswordError) {
@@ -63,9 +72,11 @@ const ForgotPassword = () => {
   }, [forgotPasswordError]);
 
   const handleSubmit = values => {
-    setSamarId(values.samarId);
+    const value = values.samarId.trim();
+    const target = isEmail(value) ? { email: value } : { samarId: value.toUpperCase() };
+    setIdentifier(target);
     setCaptchaServerError('');
-    dispatch(forgotPasswordStartAction({ samarId: values.samarId, captchaId, captcha: values.captcha }));
+    dispatch(forgotPasswordStartAction({ ...target, captchaId, captcha: values.captcha }));
   };
 
   return (
@@ -79,7 +90,7 @@ const ForgotPassword = () => {
               <div className="margin-top-40">
                 <h2 className="fs-24 fw-600 heading-color mb-0">Forgot Password?</h2>
                 <p className="fs-14 fw-500 mb-0 text-2-color margin-top-8">We will help you reset your password securely.</p>
-                <p className="fs-14 fw-500 mb-0 text-2-color">Please enter the SAMAR ID associated with your account.</p>
+                <p className="fs-14 fw-500 mb-0 text-2-color">Enter your SAMAR ID or the email registered with your account.</p>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                   {({ values, errors, touched, handleChange, handleBlur }) => (
                     <Form>
@@ -88,12 +99,11 @@ const ForgotPassword = () => {
                           name="samarId"
                           value={values.samarId}
                           onChange={handleChange}
-                          upperCase={true}
                           stripWhitespace={true}
                           onBlur={handleBlur}
                           maxLength={320}
-                          label="SAMAR ID"
-                          placeholder="Enter your SAMAR ID"
+                          label="SAMAR ID or registered email"
+                          placeholder="SAMAR-080125-123 or name@example.com"
                           error={touched.samarId && errors.samarId ? errors.samarId : ''}
                           isRequired
                           autoComplete="off"

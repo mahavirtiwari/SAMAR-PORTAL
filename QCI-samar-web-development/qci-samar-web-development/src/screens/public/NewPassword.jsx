@@ -13,6 +13,7 @@ import { PublicHeader } from '../../components/layout';
 import Icons from '../../constants/Icons';
 import { resendPasswordOtpAction, resetPasswordAction } from '../../redux/action/common/AccountAction';
 import { resetForgotPasswordData } from '../../redux/slices/common/AccountSlice';
+import Api from '../../services/api';
 import { Logger } from '../../utils/logger';
 
 const OTP_LENGTH = 6;
@@ -30,10 +31,41 @@ const NewPassword = () => {
   const location = useLocation();
   const [_apiErrors, setApiErrors] = useState('');
   const { resetPasswordLoading, resetPasswordError, resetPasswordData } = useSelector(state => state.Account);
-  // Get samarId from location state passed from ForgotPassword
-  const samarId = location.state?.samarId || '';
+  // ForgotPassword passes { samarId } or { email }. A reset started with an
+  // email lists that email's accounts once the OTP is confirmed, and the user
+  // picks which one to reset (picked automatically when there is only one).
+  const startSamarId = location.state?.samarId || '';
+  const email = location.state?.email || '';
+  const [accounts, setAccounts] = useState(null);
+  const [chosenSamarId, setChosenSamarId] = useState('');
+  const [checkingOtp, setCheckingOtp] = useState(false);
+  const [otpCheckError, setOtpCheckError] = useState('');
+  const samarId = email ? chosenSamarId : startSamarId;
 
-  Logger.info('SAMAR ID received from ForgotPassword:', samarId);
+  const checkEmailOtp = useCallback(
+    async code => {
+      setAccounts(null);
+      setChosenSamarId('');
+      setOtpCheckError('');
+      if (!email || code.length !== OTP_LENGTH) {
+        return;
+      }
+      setCheckingOtp(true);
+      try {
+        const data = await Api.Account.verifyPasswordOtp({ email, otp: code });
+        const list = Array.isArray(data?.accounts) ? data.accounts : [];
+        setAccounts(list);
+        if (list.length === 1) {
+          setChosenSamarId(list[0].samarId);
+        }
+      } catch (error) {
+        setOtpCheckError(error?.response?.data?.message || 'The OTP is invalid or has expired.');
+      } finally {
+        setCheckingOtp(false);
+      }
+    },
+    [email],
+  );
 
   // Kept outside Formik: the challenge id is part of the payload, not a field
   // the user edits. Each challenge is single-use, so a failed attempt reloads it.
@@ -112,15 +144,19 @@ const NewPassword = () => {
     setTimeLeft(RESEND_INTERVAL);
     Logger.info('Resend OTP requested');
     try {
-      dispatch(resendPasswordOtpAction({ samarId }));
+      dispatch(resendPasswordOtpAction(email ? { email } : { samarId: startSamarId }));
     } catch (error) {
       Logger.error('Resend OTP failed:', error);
       setErrorModal(true);
     }
     // Optionally re-trigger OTP send logic
-  }, [dispatch, samarId]);
+  }, [dispatch, email, startSamarId]);
 
   const handleSubmit = async values => {
+    if (email && !chosenSamarId) {
+      toastError(accounts?.length > 1 ? 'Choose the account whose password you want to reset.' : 'Enter the OTP sent to your email first.');
+      return;
+    }
     const payload = {
       samarId,
       otp: values.otp,
@@ -155,6 +191,9 @@ const NewPassword = () => {
                             onChange={value => {
                               const sanitized = String(value).replace(/[^0-9]/g, '');
                               setFieldValue('otp', sanitized);
+                              if (email) {
+                                checkEmailOtp(sanitized);
+                              }
                             }}
                             containerClassName="otp-container"
                             render={({ slots }) => (
@@ -186,6 +225,33 @@ const NewPassword = () => {
                           />
                           {touched.otp && errors.otp && <div className="error-text mt-2">{errors.otp}</div>}
                         </div>
+
+                        {email ? (
+                          <div className="reset-account-choice text-start margin-top-20">
+                            {checkingOtp ? <p className="fs-13 text-3-color mb-0">Checking the code…</p> : null}
+                            {otpCheckError ? <div className="error-text">{otpCheckError}</div> : null}
+                            {accounts?.length === 1 ? (
+                              <p className="fs-14 text-2-color mb-0">
+                                Resetting the password for <strong>{accounts[0].samarId}</strong>
+                                {accounts[0].role ? ` (${accounts[0].role})` : ''}
+                              </p>
+                            ) : null}
+                            {accounts?.length > 1 ? (
+                              <fieldset>
+                                <legend className="fs-14 fw-600 heading-color">This email has {accounts.length} accounts. Choose the one to reset:</legend>
+                                {accounts.map(account => (
+                                  <label key={account.samarId} className={`reset-account-option${chosenSamarId === account.samarId ? ' selected' : ''}`}>
+                                    <input type="radio" name="resetAccount" value={account.samarId} checked={chosenSamarId === account.samarId} onChange={() => setChosenSamarId(account.samarId)} />
+                                    <span>
+                                      <strong>{account.samarId}</strong>
+                                      <span className="text-3-color">{[account.name, account.role].filter(Boolean).join(' · ')}</span>
+                                    </span>
+                                  </label>
+                                ))}
+                              </fieldset>
+                            ) : null}
+                          </div>
+                        ) : null}
 
                         <div className="margin-top-30 text-start">
                           <AppInput

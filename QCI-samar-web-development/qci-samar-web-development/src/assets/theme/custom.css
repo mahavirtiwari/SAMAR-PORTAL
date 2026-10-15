@@ -5374,3 +5374,41 @@ textarea::-webkit-input-placeholder {
 .input-style.MuiSelect-root:not(.disabled) {
   border: 1px solid var(--field-border);
 }
+
+/* Forgot password by email: choose which account on the email to reset. */
+.reset-account-choice fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.reset-account-choice legend {
+  margin-bottom: 4px;
+}
+
+.reset-account-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--field-border);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+}
+
+.reset-account-option.selected {
+  border-color: var(--primary);
+  background: #f2f7ff;
+}
+
+.reset-account-option > span {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  line-height: 1.4;
+}

@@ -12598,14 +12598,16 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "samar_id"
-                                ],
                                 "properties": {
                                     "samar_id": {
-                                        "description": "SAMAR ID (format: SAMAR-DDMMYY-ID)",
+                                        "description": "SAMAR ID (format: SAMAR-DDMMYY-ID). Give this or email.",
                                         "type": "string",
                                         "example": "SAMAR-040226-1"
+                                    },
+                                    "email": {
+                                        "description": "Registered email, instead of samar_id. One OTP goes to it; confirm it with verify-password-otp to list the accounts on the email.",
+                                        "type": "string",
+                                        "format": "email"
                                     }
                                 },
                                 "type": "object"
@@ -12673,14 +12675,16 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "samar_id"
-                                ],
                                 "properties": {
                                     "samar_id": {
-                                        "description": "SAMAR ID (format: SAMAR-DDMMYY-ID)",
+                                        "description": "SAMAR ID (format: SAMAR-DDMMYY-ID). Give this or email.",
                                         "type": "string",
                                         "example": "SAMAR-040226-1"
+                                    },
+                                    "email": {
+                                        "description": "Registered email, instead of samar_id. One OTP goes to it; confirm it with verify-password-otp to list the accounts on the email.",
+                                        "type": "string",
+                                        "format": "email"
                                     }
                                 },
                                 "type": "object"
@@ -12708,6 +12712,48 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/verify-password-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Confirm a password reset OTP sent by email and list its accounts",
+                "description": "For a reset started with an email: returns the accounts (SAMAR ID, name, role) whose OTP matches, without using the OTP up. Then call reset-password with the chosen samarId and the same OTP.",
+                "operationId": "99e5a982548d27ae54aa310f14b947a3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "otp"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP confirmed; accounts listed"
+                    },
+                    "400": {
+                        "description": "Invalid or expired OTP"
                     }
                 }
             }

@@ -104,6 +104,17 @@ const AccountService = () => {
     }
   };
 
+  // Forgot password by email: confirm the OTP and get the accounts on that email.
+  const verifyPasswordOtp = async data => {
+    try {
+      const response = await PublicClient.post('/auth/verify-password-otp', data);
+      return response.data?.data ?? response.data;
+    } catch (error) {
+      Logger.error('Error in AccountService.verifyPasswordOtp', error.message);
+      throw error;
+    }
+  };
+
   const resetPassword = async data => {
     try {
       const response = await PublicClient.post('/auth/reset-password', data);
@@ -196,6 +207,7 @@ const AccountService = () => {
     forgotPasswordStart,
     resendPasswordOtp,
     resetPassword,
+    verifyPasswordOtp,
     register,
     verifyOtp,
     resendOtp,
