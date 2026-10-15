@@ -54,6 +54,7 @@ use App\Http\Controllers\Api\V1\OrganizationController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PaymentWebhookController;
 use App\Http\Controllers\Api\V1\PincodeController;
+use App\Http\Controllers\Api\V1\QuickLinkController;
 use App\Http\Controllers\Api\V1\ServiceKeyProcessesController;
 use App\Http\Controllers\Api\V1\ServiceKeyResourcesController;
 use App\Http\Controllers\Api\V1\ServiceOutsourcedComponentsController;
@@ -133,6 +134,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/content-blocks/{key}', [ContentBlockController::class, 'show']);
         Route::get('/branding', [BrandAssetController::class, 'index']);
         Route::get('/branding/{key}/image', [BrandAssetController::class, 'image']);
+        Route::get('/quick-links', [QuickLinkController::class, 'index']);
+        Route::get('/quick-links/{id}/file', [QuickLinkController::class, 'file'])->where('id', '[0-9]+');
     });
 
     // Public routes (no authentication required)
@@ -254,6 +257,14 @@ Route::prefix('v1')->group(function () {
                 Route::get('/', [BrandAssetController::class, 'adminIndex']);
                 Route::post('/{key}', [BrandAssetController::class, 'update']);
                 Route::post('/{key}/reset', [BrandAssetController::class, 'reset']);
+            });
+
+            // Settings → Quick Links (login page)
+            Route::prefix('quick-links')->middleware('role:system_admin')->group(function () {
+                Route::get('/', [QuickLinkController::class, 'adminIndex']);
+                Route::post('/', [QuickLinkController::class, 'store']);
+                Route::post('/{id}', [QuickLinkController::class, 'update'])->where('id', '[0-9]+');
+                Route::delete('/{id}', [QuickLinkController::class, 'destroy'])->where('id', '[0-9]+');
             });
 
             // Settings → Content & Disclaimers

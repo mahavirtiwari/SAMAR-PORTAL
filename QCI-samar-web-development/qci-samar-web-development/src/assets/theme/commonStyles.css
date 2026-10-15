@@ -1476,3 +1476,125 @@ background-color: #c65d0d
 .app-button.secondary:disabled img {
   filter: grayscale(1);
 }
+
+/* =============================================================================
+LIST PAGES (shared by every .table-container screen)
+Card with a visible edge, a clear title row, a tinted column-header band,
+readable 13px cells with row dividers, and a separated pagination footer.
+Straight lines only: no rounded accents inside the card.
+============================================================================= */
+.table-container {
+  border: 1px solid var(--outline);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  overflow: hidden;
+}
+
+.table-container .table-header {
+  align-items: center;
+  padding: 18px 24px;
+  background: var(--white);
+}
+
+.table-container .page-heading {
+  font-family: "Inter-SemiBold", "Inter-Medium", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--heading);
+  margin-right: 8px;
+}
+
+.table-container .filter-section {
+  padding: 20px 24px 4px;
+  background: var(--background);
+  border-bottom: 1px solid var(--outline);
+}
+
+.table-container .table-wrapper {
+  padding: 0;
+}
+
+/* Column headers: tinted band, darker and slightly larger than before. */
+.table-container .MuiDataGrid-root {
+  border: 0;
+}
+
+.table-container .MuiDataGrid-columnHeaders,
+.table-container .MuiDataGrid-columnHeader,
+.table-container .MuiDataGrid-filler,
+.table-container .MuiDataGrid-scrollbarFiller--header {
+  background-color: #f7f8fb !important;
+}
+
+.table-container .MuiDataGrid-columnHeaders {
+  border-bottom: 1px solid var(--outline) !important;
+}
+
+.table-container .MuiDataGrid-columnHeader {
+  padding: 0 12px;
+}
+
+.table-container .MuiDataGrid-columnHeaderTitle {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+
+/* Cells: 13px, main text in the dark text colour, a divider under each row. */
+.table-container .MuiDataGrid-cell {
+  padding: 10px 12px;
+  min-height: 54px;
+  font-size: 13px;
+  color: var(--text-1);
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--outline) !important;
+}
+
+.table-container .double-content h4 {
+  font-size: 13px;
+  color: var(--text-1);
+}
+
+.table-container .double-content span {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.table-container .MuiDataGrid-row {
+  border-left: 0;
+}
+
+.table-container .MuiDataGrid-row:hover {
+  background-color: #f7faff !important;
+}
+
+/* Pagination footer separated from the rows. */
+.table-container .MuiDataGrid-footerContainer {
+  min-height: 52px;
+  padding: 0 12px;
+  border-top: 1px solid var(--outline) !important;
+}
+
+/* Row actions: same height for the text button and the icon buttons. */
+.table-container .toggle-btns img,
+.table-container .icon-28 {
+  transition: opacity 0.15s ease;
+}
+
+.table-container .toggle-btns img:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 767px) {
+  .table-container .table-header {
+    padding: 16px;
+  }
+
+  .table-container .filter-section {
+    padding: 16px 16px 4px;
+  }
+
+  .table-container .page-heading {
+    font-size: 18px;
+  }
+}

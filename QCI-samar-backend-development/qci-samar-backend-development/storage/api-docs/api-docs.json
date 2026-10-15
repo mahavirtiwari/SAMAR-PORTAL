@@ -13418,7 +13418,7 @@
                     "Branding"
                 ],
                 "summary": "Replace a logo and/or change its link (System Admin)",
-                "description": "multipart/form-data: image (PNG or JPG, up to 1 MB) and/or linkUrl (http/https; empty removes the link).",
+                "description": "multipart/form-data: image (PNG or JPG, up to 1 MB; 2 MB for login_picture) and/or linkUrl (http/https; empty removes the link).",
                 "operationId": "updateBranding",
                 "parameters": [
                     {
@@ -24750,6 +24750,147 @@
                 ]
             }
         },
+        "/api/v1/quick-links": {
+            "get": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "Active quick links for the login page (public)",
+                "operationId": "listQuickLinks",
+                "responses": {
+                    "200": {
+                        "description": "Quick links retrieved successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/quick-links/{id}/file": {
+            "get": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "Download the PDF of an active quick link (public)",
+                "operationId": "downloadQuickLinkFile",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PDF"
+                    },
+                    "404": {
+                        "description": "No such active link with a file"
+                    }
+                }
+            }
+        },
+        "/api/v1/admin/quick-links": {
+            "get": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "All quick links with editing details (System Admin)",
+                "operationId": "adminListQuickLinks",
+                "responses": {
+                    "200": {
+                        "description": "Quick links retrieved successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "Add a quick link (System Admin)",
+                "description": "multipart/form-data: label, and either url (http/https address or a path on this site such as /assets/...) or file (PDF up to 10 MB); optional sortOrder, isActive.",
+                "operationId": "createQuickLink",
+                "responses": {
+                    "201": {
+                        "description": "Quick link added"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/admin/quick-links/{id}": {
+            "post": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "Change a quick link (System Admin)",
+                "description": "multipart/form-data with the same fields as create; a new file replaces the old one, and a url clears the file.",
+                "operationId": "updateQuickLink",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Quick link updated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Quick Links"
+                ],
+                "summary": "Remove a quick link (System Admin)",
+                "operationId": "deleteQuickLink",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Quick link removed"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/v1/master-data/service/key-processes": {
             "get": {
                 "tags": [
@@ -30308,6 +30449,10 @@
         {
             "name": "Operations Admin - Payment",
             "description": "Operations Admin - Payment"
+        },
+        {
+            "name": "Quick Links",
+            "description": "Quick Links"
         },
         {
             "name": "System Admin - Support Tickets",

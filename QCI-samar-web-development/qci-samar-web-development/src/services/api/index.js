@@ -34,6 +34,7 @@ import SystemAdminFeeConfigService from './systemAdmin/FeeConfigService';
 import SystemAdminFeedbackService from './systemAdmin/FeedbackService';
 import SystemAdminIntegrationFailureService from './systemAdmin/IntegrationFailureService';
 import MailSettingsService from './systemAdmin/MailSettingsService';
+import QuickLinkAdminService from './systemAdmin/QuickLinkAdminService';
 import SystemSettingsService from './systemAdmin/SystemSettingsService';
 import UnitAdminApplicationServices from './unitAdmin/application/ApplicationService';
 import UnitAdminCertificateService from './unitAdmin/CertificateService';
@@ -75,6 +76,7 @@ const Api = {
   ContentBlockAdmin: ContentBlockAdminService(),
   MailSettings: MailSettingsService(),
   BrandingAdmin: BrandingAdminService(),
+  QuickLinkAdmin: QuickLinkAdminService(),
   SystemStatus: SystemStatusService(),
   CommitteeMeeting: CommitteeMeetingService(),
   CommitteeMember: CommitteeMemberService(),

@@ -116,6 +116,7 @@ const SystemAdminMenuItem = [
       { key: 'contentBlocks', label: 'Content & Disclaimers', path: '/content-blocks' },
       { key: 'emailServer', label: 'Email Server (SMTP)', path: '/email-server' },
       { key: 'branding', label: 'Branding & Logos', path: '/branding' },
+      { key: 'quickLinks', label: 'Quick Links', path: '/quick-links' },
       { key: 'userGuides', label: 'User Guides', path: '/user-guides' },
       { key: 'auditLog', label: 'Audit Logs', path: '/audit-logs' },
       { key: 'integrationFailures', label: 'Error Logs', path: '/integration-failures' },

@@ -4,18 +4,18 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import AppSettings from '../../appsettings';
 import { AppCaptcha, AppModal } from '../../components/base';
 import AppButton from '../../components/base/AppButton';
 import BrandLogo from '../../components/base/BrandLogo';
+import LoginQuickLinks from '../../components/base/LoginQuickLinks';
 import AppInput from '../../components/base/textInput/AppInput';
 import { toastError, toastSuccess } from '../../components/base/toast';
 import { OTPVerificationModal } from '../../components/modals';
 import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
+import useBranding from '../../hooks/useBranding';
 import { registerAction, resendOtpAction, verifyOtpAction } from '../../redux/action/common/AccountAction';
 import { resetRegisterData } from '../../redux/slices/common/AccountSlice';
-import { onActivate } from '../../utils/a11y';
 import { Logger } from '../../utils/logger';
 import { emailRegex } from '../../utils/Regex';
 import { getFirstServerError, normalizeServerErrors } from '../../utils/serverErrorUtils';
@@ -29,6 +29,7 @@ const Register = () => {
   const [apiErrors, setApiErrors] = useState({});
   const [successfulModal, setSuccessfulModal] = useState(false);
   const navigate = useNavigate();
+  const loginPicture = useBranding().login_picture?.image;
 
   const { registerStatus, registerError, registerLoading, verifyOtpLoading, verifyOtpError } = useSelector(state => {
     return state.Account;
@@ -40,19 +41,6 @@ const Register = () => {
   }, [verifyOtpError]);
   // Remove direct setBackendErrors from render to avoid infinite loop
   // const handleCloseManualModal = () => setShowManualModal(false);
-
-  const handleDownloadManual = () => {
-    // Create a link element and trigger download
-    const link = document.createElement('a');
-    // PDF must be in public folder to be accessible - place in public/assets/document/
-    link.href = '/assets/document/applicant-user-manual.pdf';
-
-    link.download = 'Applicant_User_Manual.pdf';
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   // Handle registerStatus changes in useEffect
   useEffect(() => {
@@ -163,16 +151,9 @@ const Register = () => {
         <Row>
           <Col xl={5} lg={6} className="d-none d-lg-block position-relative">
             <div className="login-bg-container">
-              <img src={Images.loginBg} alt="Login Background" className="login-bg" />
+              <img src={loginPicture || Images.loginBg} alt="" className={`login-bg${loginPicture ? ' login-bg--custom' : ''}`} />
             </div>
-            <div className="quickLinksContainer">
-              <p className="fs-18 fw-600 primary-color mb-0">Quick Link</p>
-              <div className="d-flex align-items-center gap-6 cursor-pointer" {...onActivate(handleDownloadManual)}>
-                <img src={Icons.fourDot} alt="" className="icon-12" />
-                <p className="mb-0 fs-16 fw-500 text-1-color">Applicant User Manual</p>
-                <img src={Icons.arrowDown} alt="" className="icon-12" />
-              </div>
-            </div>
+            <LoginQuickLinks />
           </Col>
           <Col xl={7} lg={6} xs={12}>
             <div className="publicMainContainer">
@@ -319,7 +300,6 @@ const Register = () => {
                   Privacy Policy
                   <span className="visually-hidden"> (opens in a new tab)</span>
                 </Link>
-                <p className="fs-12 fw-500 text-3-color mb-0 margin-top-16">Build Version - {AppSettings.VERSION}</p>
               </div>
             </div>
           </Col>

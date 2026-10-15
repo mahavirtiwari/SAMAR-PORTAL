@@ -16,8 +16,12 @@ const BUILT_IN = {
   drdo_logo: Images.defenceResearch,
   qci_logo: Images.qualityCouncil,
   favicon: '/favicon.ico',
+  login_picture: Images.loginBg,
 };
-const MAX_BYTES = 1024 * 1024;
+// Assets with no click-through link.
+const NO_LINK = new Set(['favicon', 'sidebar_logo', 'login_picture']);
+const maxBytes = asset => (asset.maxKb || 1024) * 1024;
+const sizeLabel = asset => `${Math.round((asset.maxKb || 1024) / 1024)} MB`;
 
 const errorMessage = (error, fallback) => {
   const data = error?.response?.data;
@@ -45,8 +49,8 @@ const LogoCard = ({ asset, onSaved, onReset }) => {
       toastError('Please choose a PNG or JPG image.');
       return;
     }
-    if (chosen.size > MAX_BYTES) {
-      toastError('The image must be 1 MB or smaller.');
+    if (chosen.size > maxBytes(asset)) {
+      toastError(`The image must be ${sizeLabel(asset)} or smaller.`);
       return;
     }
     setFile(chosen);
@@ -83,7 +87,15 @@ const LogoCard = ({ asset, onSaved, onReset }) => {
       <div
         className="d-flex align-items-center justify-content-center rounded margin-bottom-12"
         style={{ height: 120, background: darkBackground ? 'var(--primary-dark, #1b3a7a)' : '#f5f6fa', border: '1px solid var(--outline)' }}>
-        <img src={shown} alt={asset.title} style={{ maxHeight: 96, maxWidth: '90%', objectFit: 'contain' }} />
+        <img
+          src={shown}
+          alt={asset.title}
+          style={
+            asset.key === 'login_picture' && (previewUrl || asset.isCustom)
+              ? { height: 96, width: 96, objectFit: 'cover', borderRadius: '50%' }
+              : { maxHeight: 96, maxWidth: '90%', objectFit: 'contain' }
+          }
+        />
       </div>
       <input ref={inputRef} type="file" accept="image/png,image/jpeg" className="d-none" onChange={pick} />
       <div className="d-flex flex-wrap gap-2 margin-bottom-12">
@@ -100,8 +112,10 @@ const LogoCard = ({ asset, onSaved, onReset }) => {
           />
         )}
       </div>
-      <div className="fs-12 text-3-color margin-bottom-12">PNG or JPG, up to 1 MB. A transparent PNG works best.</div>
-      {asset.key !== 'favicon' && asset.key !== 'sidebar_logo' && (
+      <div className="fs-12 text-3-color margin-bottom-12">
+        PNG or JPG, up to {sizeLabel(asset)}. {asset.key === 'login_picture' ? 'A square photo works best.' : 'A transparent PNG works best.'}
+      </div>
+      {!NO_LINK.has(asset.key) && (
         <AppInput
           name={`link-${asset.key}`}
           label="Link URL (opens when the logo is clicked)"
@@ -154,7 +168,9 @@ const BrandingLogos = () => {
         <div className="container">
           <div className="margin-bottom-20">
             <h1 className="page-heading mb-1">Branding &amp; Logos</h1>
-            <div className="fs-14 text-3-color">Replace a logo once and it changes everywhere it appears: the portal, emails and committee PDFs.</div>
+            <div className="fs-14 text-3-color">
+              Replace a logo once and it changes everywhere it appears: the portal, emails and committee PDFs. The login page picture is here too; its quick links are under Settings → Quick Links.
+            </div>
           </div>
           {loading ? (
             <div className="fs-14 text-3-color">Loading…</div>

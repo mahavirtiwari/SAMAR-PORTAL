@@ -50,6 +50,29 @@ class BrandAsset extends Model
     }
 
     /**
+     * The custom image for the public branding list: a data: URI, or for large
+     * pictures (`inline` false in BrandAssetDefaults) a versioned URL to the
+     * image endpoint, so they are not sent on every page load. Null when none.
+     */
+    public function publicImage(): ?string
+    {
+        if (! $this->hasCustomImage()) {
+            return null;
+        }
+        if (BrandAssetDefaults::find($this->key)['inline'] ?? true) {
+            return $this->dataUri();
+        }
+
+        return url('/api/v1/branding/'.$this->key.'/image').'?v='.$this->updated_at?->timestamp;
+    }
+
+    /** Upload limit for this asset, in kilobytes. */
+    public function maxKilobytes(): int
+    {
+        return BrandAssetDefaults::find($this->key)['max_kb'] ?? 1024;
+    }
+
+    /**
      * All assets keyed by key, cached until one is saved.
      *
      * @return array<string, self>

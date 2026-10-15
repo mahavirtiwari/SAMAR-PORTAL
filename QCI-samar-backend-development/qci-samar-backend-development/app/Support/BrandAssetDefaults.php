@@ -8,11 +8,15 @@ namespace App\Support;
  * `email_image` / `pdf_image` are the files (under public/) the emails and
  * committee PDFs use until an admin uploads a replacement; the web app has
  * its own bundled copies. One upload replaces the logo everywhere it is used.
+ *
+ * `inline` false: the public branding list gives the image as a URL instead of
+ * a data: URI, for pictures too large to send on every page load. `max_kb` is
+ * the upload limit (1 MB unless set).
  */
 class BrandAssetDefaults
 {
     /**
-     * @return array<int, array{key: string, title: string, description: string, link_url: ?string, email_image: ?string, pdf_image: ?string}>
+     * @return array<int, array{key: string, title: string, description: string, link_url: ?string, email_image: ?string, pdf_image: ?string, inline?: bool, max_kb?: int}>
      */
     public static function all(): array
     {
@@ -48,6 +52,16 @@ class BrandAssetDefaults
                 'link_url' => 'https://www.qcin.org',
                 'email_image' => 'images/emails/footer-right.png',
                 'pdf_image' => 'pdf/qci_logo.png',
+            ],
+            [
+                'key' => 'login_picture',
+                'title' => 'Login Page Picture',
+                'description' => 'The round picture on the left of the login and registration pages. Shown cropped to a circle, so a square image (at least 1000 × 1000 px) with the subject in the middle works best.',
+                'link_url' => null,
+                'email_image' => null,
+                'pdf_image' => null,
+                'inline' => false,
+                'max_kb' => 2048,
             ],
             [
                 'key' => 'favicon',

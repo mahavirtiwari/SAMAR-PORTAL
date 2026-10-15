@@ -5241,3 +5241,29 @@ textarea::-webkit-input-placeholder {
   color: var(--text-2);
   cursor: pointer;
 }
+
+/* Login quick links (Settings → Quick Links). */
+.login-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.login-quick-links a:hover span {
+  text-decoration: underline;
+}
+
+.login-quick-links-compact .login-quick-links {
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* An uploaded login picture is cropped to the same circle as the built-in art. */
+.login-bg.login-bg--custom {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+}

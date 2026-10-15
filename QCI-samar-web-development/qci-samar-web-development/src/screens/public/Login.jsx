@@ -4,15 +4,16 @@ import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import AppSettings from '../../appsettings';
 import { AppCaptcha, AppModal } from '../../components/base';
 import AppButton from '../../components/base/AppButton';
 import BrandLogo from '../../components/base/BrandLogo';
+import LoginQuickLinks from '../../components/base/LoginQuickLinks';
 import AppInput from '../../components/base/textInput/AppInput';
 import { toastError, toastSuccess } from '../../components/base/toast';
 import { InstructionModal, OTPVerificationModal } from '../../components/modals';
 import Icons from '../../constants/Icons';
 import Images from '../../constants/Images';
+import useBranding from '../../hooks/useBranding';
 import { checkActiveSessionAction, loginUserAction, loginVerifyOTPUserAction, resendLoginOtpAction } from '../../redux/action/common/AccountAction';
 import { Logger } from '../../utils/logger';
 
@@ -50,6 +51,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loginPicture = useBranding().login_picture?.image;
   const location = useLocation();
   // Snapshot the URL the user actually requested (a logged-out deep link renders
   // Login in place without changing the address bar), so we can return them there
@@ -163,18 +165,6 @@ const Login = () => {
     }
   };
 
-  const handleDownloadManual = () => {
-    // Create a link element and trigger download
-    const link = document.createElement('a');
-    // PDF must be in public folder to be accessible - place in public/assets/document/
-    link.href = '/assets/document/applicant-user-manual.pdf';
-
-    link.download = 'Applicant_User_Manual.pdf';
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
   const doLogin = async creds => {
     await dispatch(loginUserAction({ samarId: creds.samarId, password: creds.password })).unwrap();
   };
@@ -229,26 +219,16 @@ const Login = () => {
   }, [loginData, isUserLoggedIn]);
 
   return (
-    <section className="login">
+    // login-onepage: fits the whole page in one screen on desktop (responsive.css).
+    <section className="login login-onepage">
       <Container fluid>
         <Row>
           <Col xl={5} lg={6} className="d-none d-lg-block position-relative">
             <div className="login-bg-container">
-              <img src={Images.loginBg} alt="" className="login-bg" />
+              {/* Settings → Branding & Logos → Login Page Picture; an uploaded one is cropped to the circle. */}
+              <img src={loginPicture || Images.loginBg} alt="" className={`login-bg${loginPicture ? ' login-bg--custom' : ''}`} />
             </div>
-            <div className="quickLinksContainer">
-              <p className="fs-18 fw-600 primary-color mb-0">Quick Link</p>
-              <button
-                type="button"
-                className="d-flex align-items-center gap-6 cursor-pointer"
-                style={{ background: 'none', border: 0, padding: 0, textAlign: 'left' }}
-                onClick={() => handleDownloadManual()}>
-                {/* Applicant User Manual Modal */}
-                <img src={Icons.fourDot} alt="" className="icon-12" />
-                <span className="mb-0 fs-16 fw-500 text-1-color">Applicant User Manual</span>
-                <img src={Icons.arrowDown} alt="" className="icon-12" />
-              </button>
-            </div>
+            <LoginQuickLinks />
           </Col>
           <Col xl={7} lg={6} xs={12}>
             <div className="publicMainContainer">
@@ -329,16 +309,8 @@ const Login = () => {
                     <p className="fs-16 fw-600 primary-color mb-0">Sign up</p>
                   </Link>
                 </div>
-                {/* Below lg the quick-links column is hidden; keep the manual reachable. */}
-                <button
-                  type="button"
-                  className="d-lg-none d-flex align-items-center gap-6 margin-top-16 cursor-pointer"
-                  style={{ background: 'none', border: 0, padding: 0, textAlign: 'left' }}
-                  onClick={() => handleDownloadManual()}>
-                  <img src={Icons.fourDot} alt="" className="icon-12" />
-                  <span className="fs-14 fw-500 text-1-color">Applicant User Manual</span>
-                  <img src={Icons.arrowDown} alt="" className="icon-12" />
-                </button>
+                {/* Below lg the picture column is hidden; keep the quick links reachable. */}
+                <LoginQuickLinks compact className="d-lg-none margin-top-16" />
               </div>
               <div className="publicFormBottomMainContainer">
                 <p className="fs-12 fw-500 text-2-color mb-0">
@@ -348,7 +320,6 @@ const Login = () => {
                   Privacy Policy
                   <span className="visually-hidden"> (opens in a new tab)</span>
                 </Link>
-                <p className="fs-12 fw-500 text-3-color mb-0 margin-top-16">Build Version - {AppSettings.VERSION}</p>
               </div>
             </div>
           </Col>

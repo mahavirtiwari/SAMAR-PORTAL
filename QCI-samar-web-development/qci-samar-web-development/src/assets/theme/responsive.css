@@ -1170,3 +1170,110 @@
     font-size: 14px;
   }
 }
+
+/* =============================================================================
+LOGIN: one screen, no scrolling, on laptops and desktops (>= 992px wide and
+>= 600px tall). The picture, logos and form spacing scale with the screen
+height; the quick links and footer sit in the page flow instead of being pinned
+over the form. Shorter or narrower screens keep the normal scrolling layout.
+============================================================================= */
+@media (min-width: 992px) and (min-height: 600px) {
+  .login-onepage {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .login-onepage > .container-fluid,
+  .login-onepage > .container-fluid > .row {
+    height: 100%;
+  }
+
+  .login-onepage > .container-fluid > .row > [class*="col-"] {
+    height: 100%;
+  }
+
+  /* Left: the round picture sized by the screen height, quick links below it. */
+  .login-onepage .login-bg-container {
+    position: absolute;
+    margin: 0;
+    left: -6%;
+    top: -16vh;
+    width: min(110%, 96vh);
+  }
+
+  .login-onepage .login-bg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .login-onepage .quickLinksContainer {
+    position: absolute;
+    left: 48px;
+    right: 24px;
+    bottom: clamp(16px, 4vh, 48px);
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  /* Right: logos, form and footer share the screen height. */
+  .login-onepage > .container-fluid > .row > [class*="col-"]:last-child {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .login-onepage .publicMainContainer {
+    flex: 0 0 auto;
+    padding: clamp(10px, 2.5vh, 30px) 8px clamp(4px, 1vh, 12px) 40px;
+  }
+
+  .login-onepage .logo50 {
+    height: clamp(44px, 8vh, 70px);
+  }
+
+  .login-onepage .publicFormMainContainer {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0 10px clamp(8px, 1.5vh, 16px);
+    justify-content: space-between;
+  }
+
+  .login-onepage .publicFormTopMainContainer {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .login-onepage .samarLogo {
+    height: clamp(64px, 14vh, 140px);
+  }
+
+  .login-onepage .publicFormTopMainContainer h2 {
+    margin-top: clamp(8px, 2.5vh, 40px) !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-32 {
+    margin-top: clamp(12px, 3vh, 32px) !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-20 {
+    margin-top: clamp(10px, 2vh, 20px) !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-40 {
+    margin-top: clamp(14px, 3vh, 40px) !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-24 {
+    margin-top: clamp(8px, 2vh, 24px) !important;
+  }
+
+  .login-onepage .publicFormBottomMainContainer {
+    position: static;
+    margin-top: clamp(8px, 1.5vh, 24px);
+  }
+
+  .login-onepage .publicFormBottomMainContainer .margin-top-16 {
+    margin-top: 4px !important;
+  }
+}

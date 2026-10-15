@@ -144,7 +144,7 @@ class MailAndBrandingSettingsTest extends TestCase
     {
         $response = $this->getJson('/api/v1/branding')->assertOk();
 
-        $this->assertCount(5, $response->json('data'));
+        $this->assertCount(6, $response->json('data'));
         $drdo = collect($response->json('data'))->firstWhere('key', 'drdo_logo');
         $this->assertSame('https://www.drdo.gov.in', $drdo['linkUrl']);
         $this->assertNull($drdo['image']);

@@ -31,7 +31,7 @@ class BrandAssetController extends Controller
             'key' => $a->key,
             'title' => $a->title,
             'link_url' => $a->link_url,
-            'image' => $a->dataUri(),
+            'image' => $a->publicImage(),
             'updated_at' => $a->updated_at,
         ])->values();
 
@@ -83,7 +83,7 @@ class BrandAssetController extends Controller
         operationId: 'updateBranding',
         tags: ['Branding'],
         summary: 'Replace a logo and/or change its link (System Admin)',
-        description: 'multipart/form-data: image (PNG or JPG, up to 1 MB) and/or linkUrl (http/https; empty removes the link).',
+        description: 'multipart/form-data: image (PNG or JPG, up to 1 MB; 2 MB for login_picture) and/or linkUrl (http/https; empty removes the link).',
         security: [['bearerAuth' => []]],
         parameters: [new OA\Parameter(name: 'key', in: 'path', required: true, schema: new OA\Schema(type: 'string'))],
         responses: [
@@ -95,7 +95,7 @@ class BrandAssetController extends Controller
     {
         $asset = BrandAsset::where('key', $key)->firstOrFail();
         $request->validate([
-            'image' => ['nullable', 'file', 'mimes:png,jpg,jpeg', 'mimetypes:image/png,image/jpeg', 'max:1024', 'dimensions:min_width=16,min_height=16,max_width=4000,max_height=4000'],
+            'image' => ['nullable', 'file', 'mimes:png,jpg,jpeg', 'mimetypes:image/png,image/jpeg', 'max:'.$asset->maxKilobytes(), 'dimensions:min_width=16,min_height=16,max_width=4000,max_height=4000'],
             'link_url' => ['nullable', 'string', 'max:500', 'url:http,https'],
         ]);
 
@@ -156,6 +156,7 @@ class BrandAssetController extends Controller
             'default_link_url' => $default['link_url'] ?? null,
             'image' => $asset->dataUri(),
             'is_custom' => $asset->hasCustomImage(),
+            'max_kb' => $asset->maxKilobytes(),
             'updated_by_name' => $asset->updater ? trim($asset->updater->first_name.' '.$asset->updater->last_name) : null,
             'updated_at' => $asset->updated_at,
         ];

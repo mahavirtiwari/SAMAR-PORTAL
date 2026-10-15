@@ -223,6 +223,7 @@ import {
   SystemAdminOperationsManager,
   SystemAdminPaymentHistory,
   SystemAdminPaymentPendingApplications,
+  SystemAdminQuickLinks,
   SystemAdminSystemSettings,
   SystemAdminUserGuides,
   UnitAdminManufacturingDraftSteps,
@@ -1500,6 +1501,7 @@ export default function UserNavigator() {
       <Route path="/content-blocks" element={getElementByRole(role, { system_admin: <SystemAdminContentBlocks /> }, 'Content & Disclaimers')} />
       <Route path="/email-server" element={getElementByRole(role, { system_admin: <SystemAdminEmailServerSettings /> }, 'Email Server')} />
       <Route path="/branding" element={getElementByRole(role, { system_admin: <SystemAdminBrandingLogos /> }, 'Branding & Logos')} />
+      <Route path="/quick-links" element={getElementByRole(role, { system_admin: <SystemAdminQuickLinks /> }, 'Quick Links')} />
       <Route
         path="/audit-logs"
         element={getElementByRole(
