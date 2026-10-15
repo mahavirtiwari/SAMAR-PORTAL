@@ -276,6 +276,23 @@ padding-right: 8px;
   height: 52.2px !important;
 }
 
+/* Expanded sidebar: the emblem alone (no wordmark) is shown larger; the menu
+   below gives up the extra height. */
+.sidebar.sidebar-open .sidebar-logo {
+  height: 96px;
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+.sidebar.sidebar-open .sidebar-closed-logo {
+  height: 96px !important;
+}
+
+.sidebar.sidebar-open .sidebar-nav {
+  height: calc(100vh - 136px);
+  height: calc(100dvh - 136px);
+}
+
 /* When sidebar is open show full logo and hide collapsed icon */
 .sidebar.sidebar-open .full-logo {
   opacity: 1;
