@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasAuditLog;
+use App\Traits\HasLgdLocation;
 use App\Traits\TracksUserActions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Organization extends Model
 {
-    use HasAuditLog, HasFactory, TracksUserActions;
+    use HasAuditLog, HasFactory, HasLgdLocation, TracksUserActions;
 
     /**
      * The attributes that are mass assignable.

@@ -64,18 +64,20 @@ class PincodeController extends Controller
 
             $pincodes = $query->orderBy('pincode')->limit(100)->get();
 
-            // Look up district codes and add to response
-            $pincodesWithCodes = $pincodes->map(function ($pincode) {
-                $district = District::whereRaw('LOWER(name) = ?', [strtolower($pincode->getRawOriginal('district'))])->first();
+            // District master rows by LGD code, in one query rather than one per pincode.
+            $districts = District::whereIn('lgd_code', $pincodes->pluck('district_lgd_code')->filter()->unique())
+                ->get(['code', 'lgd_code'])
+                ->keyBy('lgd_code');
 
-                return [
-                    'id' => $pincode->id,
-                    'pincode' => $pincode->pincode,
-                    'district' => $pincode->district,
-                    'district_code' => $district?->code ?? null,
-                    'state' => $pincode->state,
-                ];
-            });
+            $pincodesWithCodes = $pincodes->map(fn ($pincode) => [
+                'id' => $pincode->id,
+                'pincode' => $pincode->pincode,
+                'district' => $pincode->district,
+                'district_code' => $districts->get($pincode->district_lgd_code)?->code,
+                'district_lgd_code' => $pincode->district_lgd_code,
+                'state' => $pincode->state,
+                'state_lgd_code' => $pincode->state_lgd_code,
+            ]);
 
             return $this->successResponse($pincodesWithCodes, 'Pincodes retrieved successfully');
         } catch (\Exception $e) {

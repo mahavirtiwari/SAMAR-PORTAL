@@ -144,6 +144,12 @@ class DistrictController extends Controller
     {
         $query = District::query()->with('state.country');
 
+        // Districts no longer in LGD stay in the table (old records and assessor
+        // assignments point at them) but are not offered unless asked for.
+        if (! $request->boolean('include_inactive')) {
+            $query->where('is_active', true);
+        }
+
         // Filter by state ID or state name
         if ($request->has('state_id')) {
             $query->where('state_id', $request->state_id);

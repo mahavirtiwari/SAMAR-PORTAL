@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StatesSeeder::class);
         $this->call(DistrictsSeeder::class);
         $this->call(PincodeSeeder::class);
+        $this->call(LgdDirectorySeeder::class);
 
         // Configuration & System data
         $this->call(SystemAdminSeeder::class);

@@ -16,10 +16,12 @@ class State extends Model
         'country_id',
         'name',
         'code',
+        'lgd_code',
     ];
 
     protected $casts = [
         'country_id' => 'integer',
+        'lgd_code' => 'integer',
     ];
 
     /**

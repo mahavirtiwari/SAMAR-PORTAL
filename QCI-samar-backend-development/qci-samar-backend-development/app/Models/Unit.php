@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasAuditLog;
+use App\Traits\HasLgdLocation;
 use App\Traits\HasOrganizationScope;
 use App\Traits\TracksUserActions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
-    use HasAuditLog, HasFactory, HasOrganizationScope, SoftDeletes, TracksUserActions;
+    use HasAuditLog, HasFactory, HasLgdLocation, HasOrganizationScope, SoftDeletes, TracksUserActions;
 
     /**
      * The attributes that are mass assignable.

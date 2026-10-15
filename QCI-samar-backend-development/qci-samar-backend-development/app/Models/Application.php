@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\StateMachine\ApplicationStateMachine;
 use App\Traits\HasAuditLog;
+use App\Traits\HasLgdLocation;
 use App\Traits\HasOrganizationScope;
 use App\Traits\HasStateMachine;
 use App\Traits\HasUnitScope;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class Application extends Model
 {
-    use HasAuditLog, HasFactory, HasOrganizationScope, HasStateMachine, HasUnitScope, SoftDeletes, TracksUserActions;
+    use HasAuditLog, HasFactory, HasLgdLocation, HasOrganizationScope, HasStateMachine, HasUnitScope, SoftDeletes, TracksUserActions;
 
     /**
      * The attributes that should be hidden for serialization.
