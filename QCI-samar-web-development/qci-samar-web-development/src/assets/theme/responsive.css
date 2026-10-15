@@ -1173,11 +1173,11 @@
 
 /* =============================================================================
 LOGIN: one screen, no scrolling, on laptops and desktops (>= 992px wide and
->= 600px tall). The picture, logos and form spacing scale with the screen
+>= 420px tall, which covers 1920x1080 at 125-150% browser/Windows zoom). The picture, logos and form spacing scale with the screen
 height; the quick links and footer sit in the page flow instead of being pinned
 over the form. Shorter or narrower screens keep the normal scrolling layout.
 ============================================================================= */
-@media (min-width: 992px) and (min-height: 600px) {
+@media (min-width: 992px) and (min-height: 420px) {
   .login-onepage {
     height: 100vh;
     height: 100dvh;
@@ -1275,5 +1275,68 @@ over the form. Shorter or narrower screens keep the normal scrolling layout.
 
   .login-onepage .publicFormBottomMainContainer .margin-top-16 {
     margin-top: 4px !important;
+  }
+}
+
+/* Short screens (e.g. 125% zoom on a laptop): compact fields, button and
+   spacing so the login still fits without scrolling. */
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 640px) {
+  .login-onepage .publicMainContainer {
+    padding-top: 8px;
+    padding-bottom: 0;
+  }
+
+  .login-onepage .logo50 {
+    height: 40px;
+  }
+
+  .login-onepage .samarLogo {
+    height: 56px;
+  }
+
+  .login-onepage .publicFormTopMainContainer h2 {
+    margin-top: 6px !important;
+    font-size: 20px;
+  }
+
+  .login-onepage .publicFormTopMainContainer .MuiOutlinedInput-root,
+  .login-onepage .publicFormTopMainContainer .captchaRefresh {
+    height: 40px !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-32 {
+    margin-top: 10px !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-20 {
+    margin-top: 8px !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-40 {
+    margin-top: 10px !important;
+  }
+
+  .login-onepage .publicFormTopMainContainer .app-button.large {
+    height: 44px;
+  }
+
+  .login-onepage .publicFormTopMainContainer .margin-top-24 {
+    margin-top: 6px !important;
+  }
+
+  .login-onepage .publicFormBottomMainContainer {
+    margin-top: 4px;
+  }
+}
+
+/* Very short screens (150% zoom): the DRDO / QCI logos and the welcome title
+   carry the branding, so the round SAMAR emblem above the form is dropped. */
+@media (min-width: 992px) and (min-height: 420px) and (max-height: 520px) {
+  .login-onepage .samarLogo {
+    display: none;
+  }
+
+  .login-onepage .publicFormTopMainContainer h2 {
+    margin-top: 0 !important;
   }
 }
