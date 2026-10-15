@@ -10,12 +10,8 @@
         <div class="subheading" style="text-align: center;margin-top: 30px;margin-bottom: 0px;">Methodology</div>
         <br />
         <div class="small-content" style="margin-top: 30px;">
-            <p>
-                To ensure transparency in the site assessment process, all site-assessment components are monitored electronically and the
-                entire process (documents, photographs, comments etc.) is captured on a secure mobile application by the assessors. The data
-                captured during site-assessment is not shared externally with anyone except the relevant stakeholders involved for award of
-                score/rating.
-            </p>
+            {{-- Editable in Settings → Content & Disclaimers ("assessment_report_methodology"); sanitised on save. --}}
+            {!! \App\Models\ContentBlock::bodyFor('assessment_report_methodology') !!}
         </div>
         <br />
 

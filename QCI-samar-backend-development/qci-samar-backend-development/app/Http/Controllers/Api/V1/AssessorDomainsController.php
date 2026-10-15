@@ -158,7 +158,7 @@ class AssessorDomainsController extends Controller
             Gate::authorize('create', AssessorDomain::class);
 
             $v = Validator::make($request->all(), [
-                'domain_name' => 'required|string|max:255|unique:assessor_domains,domain_name',
+                'domain_name' => 'required|string|max:1000|unique:assessor_domains,domain_name',
             ]);
 
             if ($v->fails()) {
@@ -254,7 +254,7 @@ class AssessorDomainsController extends Controller
             Gate::authorize('update', $assessorDomain);
 
             $v = Validator::make($request->all(), [
-                'domain_name' => 'required|string|max:255|unique:assessor_domains,domain_name,'.$assessorDomain->id,
+                'domain_name' => 'required|string|max:1000|unique:assessor_domains,domain_name,'.$assessorDomain->id,
             ]);
 
             if ($v->fails()) {

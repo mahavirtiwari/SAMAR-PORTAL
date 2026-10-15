@@ -1665,3 +1665,10 @@ Straight lines only: no rounded accents inside the card.
     row-gap: 8px;
   }
 }
+
+/* A lone heading in a list cell sits on the row's centre line (Bootstrap's
+   heading margin pushed it above the buttons in the next column). */
+.table-container .MuiDataGrid-cell > div > h4:only-child,
+.table-container .MuiDataGrid-cell > div > p:only-child {
+  margin-bottom: 0;
+}

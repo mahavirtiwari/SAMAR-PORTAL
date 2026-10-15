@@ -103,6 +103,8 @@ class Payment extends Model
 
     /**
      * Get the application that owns the payment.
+     *
+     * @return BelongsTo<Application, $this>
      */
     public function application(): BelongsTo
     {

@@ -1,6 +1,7 @@
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppBadge, AppButton, AppDataGrid, AppDropdown, AppInput } from '../../../../components/base';
+import { AppBadge, AppButton, AppDataGrid, AppDatePicker, AppDropdown, AppInput } from '../../../../components/base';
 import { Layout } from '../../../../components/layout';
 import PaymentDetailModal from '../../../../components/modals/PaymentDetailModal';
 import PaymentDocumentsCell from '../../../../components/shared/PaymentDocumentsCell';
@@ -54,7 +55,7 @@ const PaymentHistory = () => {
   // restores the list the user had filtered down to.
   // The search box commits on every keystroke; searchDebounceMs holds the fetch until typing pauses.
   const { filters, setFilters, appliedFilters, appliedQuery, setAppliedFilters, page, setPage, pageSize, setPageSize, resetFilters } = useListFilters(
-    { search: '', sector: '', classification: '' },
+    { search: '', sector: '', classification: '', fromDate: '', toDate: '' },
     { searchDebounceMs: 400 },
   );
   // Reopen the filter panel on return when a filter is active, so the restored list shows what it is filtered by.
@@ -68,6 +69,8 @@ const PaymentHistory = () => {
       search: appliedQuery.search || null,
       sector: appliedQuery.sector || null,
       classification: appliedQuery.classification || null,
+      fromDate: appliedQuery.fromDate || null,
+      toDate: appliedQuery.toDate || null,
     }),
     [appliedQuery],
   );
@@ -79,7 +82,7 @@ const PaymentHistory = () => {
 
   const handleSearch = () => {
     // Spread the committed state so the live search term survives an Apply of the dropdowns.
-    setAppliedFilters(prev => ({ ...prev, sector: filters.sector, classification: filters.classification }));
+    setAppliedFilters(prev => ({ ...prev, sector: filters.sector, classification: filters.classification, fromDate: filters.fromDate, toDate: filters.toDate }));
     setPage(1);
   };
 
@@ -96,6 +99,8 @@ const PaymentHistory = () => {
       perPage: pageSize,
       sector: appliedQuery.sector || null,
       classification: appliedQuery.classification || null,
+      fromDate: appliedQuery.fromDate || null,
+      toDate: appliedQuery.toDate || null,
     };
     // Abort on change so a slow earlier response cannot overwrite a newer one.
     const request = dispatch(getPaymentHistoryAction(filtersPayload));
@@ -219,7 +224,7 @@ const PaymentHistory = () => {
                       const { value } = e.target;
                       setAppliedFilters(prev => ({ ...prev, search: value }));
                     }}
-                    placeholder="Search by application number or unit name"
+                    placeholder="Application / order number or name"
                     customWidth="100%"
                     leftIcon={Icons.search}
                     marginLeft="6px"
@@ -253,6 +258,27 @@ const PaymentHistory = () => {
                       options={classificationOptions}
                       label="Enterprise Size"
                       resetKey={dropdownResetKey}
+                    />
+                  </div>
+                  <div className="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+                    <AppDatePicker
+                      name="fromDate"
+                      label="From Date"
+                      placeholder="Select date"
+                      value={filters.fromDate}
+                      maxDate={filters.toDate ? dayjs(filters.toDate) : dayjs()}
+                      onChange={value => handleFilterChange('fromDate', value || '')}
+                    />
+                  </div>
+                  <div className="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+                    <AppDatePicker
+                      name="toDate"
+                      label="To Date"
+                      placeholder="Select date"
+                      value={filters.toDate}
+                      minDate={filters.fromDate ? dayjs(filters.fromDate) : undefined}
+                      maxDate={dayjs()}
+                      onChange={value => handleFilterChange('toDate', value || '')}
                     />
                   </div>
                 </div>

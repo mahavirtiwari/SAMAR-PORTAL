@@ -95,7 +95,7 @@ class PaymentController extends Controller
         responses: [
             new OA\Response(
                 response: 200,
-                description: 'Payments retrieved successfully. Carries a summary object with successfulCount and failedCount for the whole filtered set, not just the current page.',
+                description: 'Payments retrieved successfully. Carries a summary object with successfulCount, failedCount and totalAmount (sum of successful payments) for the whole filtered set, not just the current page.',
                 content: new OA\JsonContent(
                     properties: [
                         new OA\Property(property: 'success', type: 'boolean', example: true),
@@ -217,10 +217,11 @@ class PaymentController extends Controller
         // describe the whole filtered set rather than the page, and cannot drift from the
         // rows the caller is looking at. toBase drops the eager loads, which an aggregate
         // does not need.
-        $countsByStatus = (clone $query)->toBase()
-            ->select('status', DB::raw('COUNT(*) as total'))
+        $byStatus = (clone $query)->toBase()
+            ->select('status', DB::raw('COUNT(*) as total'), DB::raw('COALESCE(SUM(amount), 0) as amount'))
             ->groupBy('status')
-            ->pluck('total', 'status');
+            ->get()
+            ->keyBy('status');
 
         $perPage = $this->resolvePerPage($request, 15);
         $payments = $query->latest()->paginate($perPage);
@@ -229,8 +230,10 @@ class PaymentController extends Controller
 
         return $this->paginatedResponse($payments, 'Payments retrieved successfully', null, [
             'summary' => [
-                'successful_count' => (int) ($countsByStatus['success'] ?? 0),
-                'failed_count' => (int) ($countsByStatus['failed'] ?? 0),
+                'successful_count' => (int) ($byStatus['success']->total ?? 0),
+                'failed_count' => (int) ($byStatus['failed']->total ?? 0),
+                // Money actually received: successful payments only.
+                'total_amount' => round((float) ($byStatus['success']->amount ?? 0), 2),
             ],
         ]);
     }
@@ -1255,14 +1258,13 @@ class PaymentController extends Controller
 
         // Apply search
         if ($request->filled('search')) {
-            $search = trim($request->input('search'));
-            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
-            $query->where(function ($q) use ($search) {
+            $rawSearch = trim($request->input('search'));
+            $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $rawSearch);
+            $query->where(function ($q) use ($search, $rawSearch) {
                 $q->where('order_id', 'LIKE', "%{$search}%")
                     ->orWhere('transaction_id', 'LIKE', "%{$search}%")
-                    ->orWhereHas('application', fn ($q) => $q->where('application_number', 'LIKE', "%{$search}%")
-                        ->orWhere('unit_name', 'LIKE', "%{$search}%")
-                    );
+                    // Application number, or the enterprise / unit name.
+                    ->orWhereHas('application', fn ($q) => $q->search($rawSearch));
             });
         }
 

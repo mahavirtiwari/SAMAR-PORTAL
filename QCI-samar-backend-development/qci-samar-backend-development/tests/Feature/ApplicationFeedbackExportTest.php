@@ -128,10 +128,10 @@ class ApplicationFeedbackExportTest extends TestCase
         $this->assertStringContainsString('text/csv', $response->headers->get('Content-Type'));
 
         $rows = $this->csvRows($response);
-        $this->assertSame(['Application Number', 'SAMAR ID', 'Feedback Date', 'Quality?'], $rows[0]);
+        $this->assertSame(['Application Number', 'Enterprise Name', 'Unit Name', 'SAMAR ID', 'Feedback Date', 'Quality?'], $rows[0]);
         $this->assertSame('SAMAR-APP-001', $rows[1][0]);
-        $this->assertSame('SAMAR-SUB-001', $rows[1][1]);
-        $this->assertSame('4/5', $rows[1][3]);
+        $this->assertSame('SAMAR-SUB-001', $rows[1][3]);
+        $this->assertSame('4/5', $rows[1][5]);
     }
 
     public function test_bulk_export_uses_dynamic_per_question_columns_with_blanks(): void
@@ -153,7 +153,7 @@ class ApplicationFeedbackExportTest extends TestCase
         $rows = $this->csvRows($response);
 
         // Columns ordered by display_order: Quality? then Timeliness?
-        $this->assertSame(['Application Number', 'SAMAR ID', 'Feedback Date', 'Quality?', 'Timeliness?'], $rows[0]);
+        $this->assertSame(['Application Number', 'Enterprise Name', 'Unit Name', 'SAMAR ID', 'Feedback Date', 'Quality?', 'Timeliness?'], $rows[0]);
 
         $byApp = [];
         foreach (array_slice($rows, 1) as $row) {
@@ -161,12 +161,12 @@ class ApplicationFeedbackExportTest extends TestCase
         }
 
         // App A answered Quality only → Timeliness blank
-        $this->assertSame('5/5', $byApp['SAMAR-APP-A'][3]);
-        $this->assertSame('', $byApp['SAMAR-APP-A'][4]);
+        $this->assertSame('5/5', $byApp['SAMAR-APP-A'][5]);
+        $this->assertSame('', $byApp['SAMAR-APP-A'][6]);
 
         // App B answered Timeliness only → Quality blank
-        $this->assertSame('', $byApp['SAMAR-APP-B'][3]);
-        $this->assertSame('Yes', $byApp['SAMAR-APP-B'][4]);
+        $this->assertSame('', $byApp['SAMAR-APP-B'][5]);
+        $this->assertSame('Yes', $byApp['SAMAR-APP-B'][6]);
     }
 
     public function test_bulk_export_is_allowed_for_operations_manager(): void

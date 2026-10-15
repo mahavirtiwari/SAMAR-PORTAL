@@ -9,25 +9,8 @@
             <div class="pdf-section-bar"></div>
             <div class="pdf-section-title">ABOUT</div>
             <div style="font-size: 25pt; font-weight: bold; color: #003d7a; margin-bottom: 5px;">SAMAR ASSESSMENT</div>
-            <p>
-                System for Advanced Maturity Assessment and Rating (SAMAR) Certification is a benchmark to measure the
-                maturity of defence Manufacturing and Service enterprises.
-            </p>
-            <p>
-                The certification framework has been developed by the Quality Council of India and is based on a
-                maturity
-                assessment framework and is applicable to all defence Manufacturing and Service enterprises, i.e.,
-                Start-Up, micro, small, medium and large enterprises.
-            </p>
-            <p>
-                SAMAR is an outcome of the collaboration between DRDO and QCI to strengthen the 'defence
-                Manufacturing and Service' ecosystem in the country with an objective to further the vision of making India
-                self-reliant in defence Sector.
-            </p>
-            <p>
-                SAMAR Certification framework recognizes 5 levels of enterprise maturity in terms of the defined
-                organizational attributes:
-            </p>
+            {{-- Editable in Settings → Content & Disclaimers ("assessment_report_about"); sanitised on save. --}}
+            {!! \App\Models\ContentBlock::bodyFor('assessment_report_about') !!}
             <br />
 
         </div>

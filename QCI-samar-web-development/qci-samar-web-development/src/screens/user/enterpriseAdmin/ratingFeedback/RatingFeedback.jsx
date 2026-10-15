@@ -155,7 +155,7 @@ const RatingFeedback = () => {
                         customInputClass={'search-input'}
                         value={searchQuery}
                         onChange={handleSearchChange}
-                        placeholder="Search by application number"
+                        placeholder="Application number or enterprise name"
                         customWidth="100%"
                         leftIcon={Icons.search}
                         marginLeft="6px"

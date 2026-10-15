@@ -67,7 +67,7 @@ export const EMAIL_MAX_LENGTH = 254;
 export const COMMENT_MAX_LENGTH = 5000;
 
 /** Maximum length for the assessor domain name field */
-export const DOMAIN_MAX_LENGTH = 255;
+export const DOMAIN_MAX_LENGTH = 1000;
 
 // =============================================================================
 // UI CONSTANTS

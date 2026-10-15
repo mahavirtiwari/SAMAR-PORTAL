@@ -408,10 +408,9 @@ class ApplicationController extends Controller
                 $query->where('enterprise_classification', $request->enterprise_classification);
             }
 
-            // Search
+            // Search by application number or enterprise / unit name
             if ($request->filled('q')) {
-                $search = $request->q;
-                $query->where('application_number', 'like', "%{$search}%");
+                $query->search((string) $request->q);
             }
 
             // Application date filter (submitted_at) - support both camelCase and snake_case
@@ -3179,11 +3178,9 @@ class ApplicationController extends Controller
             // Apply state-based filtering for Operations Manager
             $this->stateFilterService->applyToApplicationQuery($query, $user);
 
-            // Apply search filter
+            // Apply search filter (application number or enterprise / unit name)
             if ($request->filled('search')) {
-                $search = trim($request->input('search'));
-                $search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
-                $query->where('application_number', 'LIKE', "%{$search}%");
+                $query->search((string) $request->input('search'));
             }
 
             // Apply status filter

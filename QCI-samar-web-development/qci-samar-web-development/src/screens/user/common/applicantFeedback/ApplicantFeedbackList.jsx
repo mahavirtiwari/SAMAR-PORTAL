@@ -94,6 +94,23 @@ const ApplicantFeedbackList = () => {
         ),
       },
       {
+        field: 'enterpriseName',
+        headerName: 'Enterprise/Unit Name',
+        flex: 2.2,
+        minWidth: 240,
+        sortable: false,
+        renderCell: params => (
+          <div className="double-content">
+            <h4>{params.row.enterpriseName || '-'}</h4>
+            {params.row.unitName && params.row.unitName !== params.row.enterpriseName ? (
+              <span className="text-3-color fs-12" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                {params.row.unitName}
+              </span>
+            ) : null}
+          </div>
+        ),
+      },
+      {
         field: 'userId',
         headerName: 'Samar Id',
         flex: 1.5,
@@ -134,13 +151,13 @@ const ApplicantFeedbackList = () => {
                     <h1 className="page-heading">Applicant Feedback</h1>
                     <div className="input-search-document">
                       <AppInput
-                        label={'Application Number'}
+                        label={'Search'}
                         inputType="search"
                         name="applicationNumber"
                         customInputClass={'search-input'}
                         value={applicationNumber}
                         onChange={handleApplicationNumberChange}
-                        placeholder="Search by application number"
+                        placeholder="Application number or enterprise name"
                         customWidth="100%"
                         leftIcon={Icons.search}
                         marginLeft="6px"

@@ -133,11 +133,10 @@ const FeedbackConfigurations = () => {
       {
         field: 'action',
         headerName: 'Actions',
-        flex: 1,
-        minWidth: 150,
+        width: 130,
         sortable: false,
         renderCell: params => (
-          <div className="gap-8 d-flex align-items-center margin-left-8">
+          <div className="gap-8 d-flex align-items-center">
             <AppButton variant="secondary" title={'Edit'} size="extraSmall" onClick={() => handleEditItem(params.row)} />
             <div className="toggle-btns d-flex">
               {params.row.isActive ? (
@@ -157,26 +156,28 @@ const FeedbackConfigurations = () => {
       {
         field: 'questionText',
         headerName: 'Feedback Question',
-        flex: 1.2,
-        minWidth: 150,
+        flex: 3,
+        minWidth: 260,
         sortable: false,
 
         renderCell: params => (
-          <div>
-            <h4 className="fs-14 fw-500 text-2-color line-clamp">{params.row.questionText}</h4>
+          <div className="d-flex align-items-center">
+            <p className="fs-14 fw-500 text-2-color mb-0 line-clamp" title={params.row.questionText}>
+              {params.row.questionText}
+            </p>
           </div>
         ),
       },
       {
         field: 'type',
         headerName: 'Type',
-        flex: 1.2,
-        minWidth: 150,
+        flex: 0.8,
+        minWidth: 110,
         sortable: false,
 
         renderCell: params => (
-          <div>
-            <h4 className="fs-14 fw-500 text-2-color">{params.row.type === 'yes_no' ? 'Yes/No' : params.row.type?.charAt(0).toUpperCase() + params.row.type?.slice(1)}</h4>
+          <div className="d-flex align-items-center">
+            <span className="app-chip-type">{params.row.type === 'yes_no' ? 'Yes/No' : params.row.type?.charAt(0).toUpperCase() + params.row.type?.slice(1)}</span>
           </div>
         ),
       },
@@ -184,8 +185,8 @@ const FeedbackConfigurations = () => {
       {
         field: 'status',
         headerName: 'Status',
-        flex: 1,
-        minWidth: 120,
+        flex: 0.7,
+        minWidth: 110,
         sortable: false,
         renderCell: params => {
           return <AppBadge variant={getBadgeVariantByLabel(params.row?.isActive ? 'Active' : 'Inactive')} label={params.row?.isActive ? 'Active' : 'Inactive'} />;

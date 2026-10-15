@@ -112,6 +112,8 @@ class PaymentHistorySummaryTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('summary.successfulCount', 2);
         $response->assertJsonPath('summary.failedCount', 1);
+        // Only money received counts towards the total: 2 x 25,000, not the failed one.
+        $this->assertEquals(50000, $response->json('summary.totalAmount'));
     }
 
     public function test_a_date_range_narrows_the_totals_and_the_list_together(): void
@@ -125,6 +127,7 @@ class PaymentHistorySummaryTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('summary.successfulCount', 1);
         $response->assertJsonPath('summary.failedCount', 1);
+        $this->assertEquals(25000, $response->json('summary.totalAmount'), 'The amount follows the range too.');
         $this->assertCount(2, $response->json('data'), 'The list must be narrowed by the same range.');
     }
 

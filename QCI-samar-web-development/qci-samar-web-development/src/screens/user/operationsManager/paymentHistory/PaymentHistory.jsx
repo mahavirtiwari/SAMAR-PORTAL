@@ -248,7 +248,7 @@ const PaymentHistory = () => {
                       const { value } = e.target;
                       setAppliedFilters(prev => ({ ...prev, search: value }));
                     }}
-                    placeholder="Search by application number or unit name"
+                    placeholder="Application / order number or name"
                     customWidth="100%"
                     leftIcon={Icons.search}
                     marginLeft="6px"
@@ -290,7 +290,7 @@ const PaymentHistory = () => {
                       label="From Date"
                       placeholder="Select date"
                       value={filters.fromDate}
-                      maxDate={filters.toDate || dayjs()}
+                      maxDate={filters.toDate ? dayjs(filters.toDate) : dayjs()}
                       onChange={value => handleFilterChange('fromDate', value || '')}
                     />
                   </div>
@@ -300,7 +300,7 @@ const PaymentHistory = () => {
                       label="To Date"
                       placeholder="Select date"
                       value={filters.toDate}
-                      minDate={filters.fromDate || undefined}
+                      minDate={filters.fromDate ? dayjs(filters.fromDate) : undefined}
                       maxDate={dayjs()}
                       onChange={value => handleFilterChange('toDate', value || '')}
                     />

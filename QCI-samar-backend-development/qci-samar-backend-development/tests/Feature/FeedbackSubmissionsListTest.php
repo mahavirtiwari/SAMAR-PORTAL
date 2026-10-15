@@ -163,6 +163,30 @@ class FeedbackSubmissionsListTest extends TestCase
         $this->assertSame(['SAMAR-ALPHA-1'], $this->applicationNumbers($response));
     }
 
+    public function test_search_matches_the_enterprise_or_unit_name_and_lists_the_enterprise(): void
+    {
+        $submitter = User::factory()->create(['samar_id' => 'SAMAR-SUB-006']);
+        $brahmos = $this->makeApplication(['application_number' => 'SAMAR-NAME-1', 'unit_name' => 'BrahMos, Goa']);
+        $brahmos->organization->update(['name' => 'BrahMos Aerospace']);
+        $this->submitFeedback($brahmos, $submitter);
+        $this->submitFeedback($this->makeApplication(['application_number' => 'SAMAR-NAME-2', 'unit_name' => 'Other Works']), $submitter);
+
+        $token = $this->adminToken(Role::SYSTEM_ADMIN);
+
+        $byEnterprise = $this->withToken($token)->getJson('/api/v1/applications/feedback-submissions?q=aerospace');
+        $byEnterprise->assertOk();
+        $this->assertSame(['SAMAR-NAME-1'], $this->applicationNumbers($byEnterprise));
+        $byEnterprise->assertJsonPath('data.0.enterpriseName', 'BrahMos Aerospace');
+        $byEnterprise->assertJsonPath('data.0.unitName', 'BrahMos, Goa');
+
+        $byUnit = $this->withToken($token)->getJson('/api/v1/applications/feedback-submissions?q=goa');
+        $this->assertSame(['SAMAR-NAME-1'], $this->applicationNumbers($byUnit));
+
+        // LIKE wildcards are matched literally, not as "anything".
+        $wildcard = $this->withToken($token)->getJson('/api/v1/applications/feedback-submissions?q=%25');
+        $this->assertSame([], $this->applicationNumbers($wildcard));
+    }
+
     public function test_samar_id_filter_matches_the_submitter(): void
     {
         $alice = User::factory()->create(['samar_id' => 'SAMAR-ALICE-1']);

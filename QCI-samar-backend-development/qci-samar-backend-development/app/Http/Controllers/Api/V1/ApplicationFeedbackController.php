@@ -111,9 +111,9 @@ class ApplicationFeedbackController extends Controller
             $query->where('organization_id', $user->organization_id);
         }
 
-        // Search by application number
-        if ($request->has('q') && ! empty($request->q)) {
-            $query->where('application_number', 'like', '%'.$request->q.'%');
+        // Search by application number or enterprise / unit name
+        if ($request->filled('q')) {
+            $query->search((string) $request->q);
         }
 
         // Date filters. Query keys arrive snake_case (ConvertRequestToSnakeCase).
@@ -242,6 +242,8 @@ class ApplicationFeedbackController extends Controller
                                         type: 'string',
                                         example: 'SAMAR-030125-11111',
                                     ),
+                                    new OA\Property(property: 'enterprise_name', type: 'string', nullable: true, example: 'BrahMos Aerospace'),
+                                    new OA\Property(property: 'unit_name', type: 'string', nullable: true, example: 'BrahMos, Goa'),
                                     new OA\Property(
                                         property: 'user_samar_id',
                                         type: 'string',
@@ -268,12 +270,12 @@ class ApplicationFeedbackController extends Controller
     {
         $query = Application::query()
             ->whereHas('feedbacks')
-            ->with(['latestFeedback.creator:id,samar_id'])
+            ->with(['latestFeedback.creator:id,samar_id', 'organization:id,name'])
             ->withMax('feedbacks as feedback_date', 'created_at');
 
-        // Search by application number
+        // Search by application number or enterprise / unit name
         if ($request->filled('q')) {
-            $query->where('application_number', 'like', '%'.$request->q.'%');
+            $query->search((string) $request->q);
         }
 
         // Filter by the submitter's SAMAR ID. The web sends `samarId`, which
@@ -296,6 +298,8 @@ class ApplicationFeedbackController extends Controller
             return [
                 'id' => $app->id,
                 'application_number' => $app->application_number,
+                'enterprise_name' => $this->enterpriseName($app),
+                'unit_name' => $app->unit_name,
                 'user_samar_id' => $app->latestFeedback?->creator?->samar_id,
                 'feedback_date' => $app->feedback_date
                     ? Carbon::parse($app->feedback_date)->format('Y-m-d')
@@ -889,9 +893,9 @@ class ApplicationFeedbackController extends Controller
         try {
             $query = Application::query()->whereHas('feedbacks');
 
-            // Search by application number (mirrors submittedFeedback listing).
+            // Search by application number or name (mirrors submittedFeedback listing).
             if ($request->filled('q')) {
-                $query->where('application_number', 'like', '%'.$request->input('q').'%');
+                $query->search((string) $request->input('q'));
             }
 
             // Filter by the submitter's SAMAR ID. The web sends `samarId`, which
@@ -908,8 +912,8 @@ class ApplicationFeedbackController extends Controller
             // loaded into memory first).
             $scopedIds = (clone $query)->select('applications.id');
             $rows = $query
-                ->select('applications.id', 'applications.application_number')
-                ->with(['latestFeedback.creator:id,samar_id'])
+                ->select('applications.id', 'applications.application_number', 'applications.organization_id', 'applications.organization_name', 'applications.enterprise_name', 'applications.unit_name')
+                ->with(['latestFeedback.creator:id,samar_id', 'organization:id,name'])
                 ->withMax('feedbacks as feedback_date', 'created_at')
                 ->orderByDesc('feedback_date')
                 ->orderByDesc('applications.id');
@@ -954,7 +958,7 @@ class ApplicationFeedbackController extends Controller
                 fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
                 Csv::putRow($file, array_merge(
-                    ['Application Number', 'SAMAR ID', 'Feedback Date'],
+                    ['Application Number', 'Enterprise Name', 'Unit Name', 'SAMAR ID', 'Feedback Date'],
                     array_values($questionColumns)
                 ));
 
@@ -969,6 +973,8 @@ class ApplicationFeedbackController extends Controller
 
                         $row = [
                             $application->application_number,
+                            $this->enterpriseName($application),
+                            $application->unit_name,
                             $application->latestFeedback?->creator?->samar_id,
                             $application->feedback_date
                                 ? Carbon::parse($application->feedback_date)->format('Y-m-d')
@@ -1059,5 +1065,11 @@ class ApplicationFeedbackController extends Controller
 
             return $this->errorResponse('Failed to export application feedback.', 500);
         }
+    }
+
+    /** The enterprise's current name, falling back to the name saved on the application. */
+    private function enterpriseName(Application $application): ?string
+    {
+        return $application->organization->name ?? $application->organization_name ?? $application->enterprise_name;
     }
 }

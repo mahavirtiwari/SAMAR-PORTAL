@@ -105,4 +105,26 @@ class ContentBlockManagementTest extends TestCase
 
         $this->assertStringContainsString('Edited disclaimer', $html);
     }
+
+    public function test_the_report_about_and_methodology_pages_read_the_edited_blocks(): void
+    {
+        // Seeded with the text the report printed before it became editable.
+        $this->assertStringContainsString('benchmark to measure the maturity', ContentBlock::bodyFor('assessment_report_about'));
+        $this->assertStringContainsString('To ensure transparency', ContentBlock::bodyFor('assessment_report_methodology'));
+
+        ContentBlock::where('key', 'assessment_report_about')->update(['body' => '<p>Edited about text</p>']);
+        ContentBlock::where('key', 'assessment_report_methodology')->update(['body' => '<p>Edited methodology</p>']);
+
+        $about = view('pdfs.assessment.partials.about-us', ['footerData' => []])->render();
+        $this->assertStringContainsString('Edited about text', $about);
+        $this->assertStringNotContainsString('benchmark to measure the maturity', $about);
+
+        $findings = view('pdfs.assessment.partials.assessment-findings', [
+            'footerData' => [],
+            'photos' => [],
+            'photoLabels' => [],
+            'parameterScores' => [],
+        ])->render();
+        $this->assertStringContainsString('Edited methodology', $findings);
+    }
 }

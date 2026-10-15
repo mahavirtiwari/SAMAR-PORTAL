@@ -3183,9 +3183,12 @@ background-image: url('../icons/openDrowpDownArrow.svg') !important;
   border: 1px solid var(--outline);
 }
 
+/* Border only: the outline <fieldset> is absolutely positioned and painted over
+   the input, so a background here hides the value of every read-only field
+   (View Profile, fee "Estimated total"). The grey fill comes from the input. */
 .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
   border-color: #ebedf3 !important;
-  background-color: #fcfcfc !important;
+  background-color: transparent !important;
 }
 
 .css-iyc0xk-MuiFormControl-root-MuiTextField-root .MuiInputLabel-root {
@@ -3422,7 +3425,14 @@ background-image: url('../icons/openDrowpDownArrow.svg') !important;
 }
 
 .input-search-document {
-  width: 300px;
+  /* Wide enough for the longest search hint ("Application number or
+     enterprise name") to show in full; narrows on smaller screens. */
+  width: 340px;
+  max-width: 100%;
+}
+
+.input-search-document input::placeholder {
+  text-overflow: ellipsis;
 }
 
 .support-form-section {
@@ -5532,4 +5542,76 @@ textarea::-webkit-input-placeholder {
 .input-label-above .asterics {
   margin-left: 2px;
   color: var(--danger-primary, #d92d20);
+}
+
+/* Details page header (application / assessment details): a long unit name
+   wraps inside its column instead of pushing the buttons and the rating/date
+   boxes out of the card. When both no longer fit side by side, the right-hand
+   block moves below the name, aligned right. */
+.top-details-card-content,
+.top-right-details-card {
+  min-width: 0;
+}
+
+.top-right-details-card > .d-flex.justify-content-between {
+  flex-wrap: wrap;
+  gap: 16px 24px;
+}
+
+.top-right-details-card > .d-flex.justify-content-between > div:first-child {
+  flex: 1 1 380px;
+  min-width: 0;
+}
+
+.top-right-details-card > .d-flex.justify-content-between > div:last-child {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.top-right-details-card > .d-flex.justify-content-between > div:last-child > .d-flex {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 8px;
+}
+
+.top-right-details-card .unit-name-label {
+  font-size: 18px !important;
+  margin-top: 3px;
+}
+
+.top-right-details-card .unit-name-value {
+  font-size: 22px !important;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.top-right-details-card .date-commencement-container {
+  min-width: 104px;
+  background: #f7faff;
+  border-color: var(--table-head-border, #c9dcf6);
+}
+
+/* Small neutral chip for a value type in a list (e.g. Rating, Yes/No). */
+.app-chip-type {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--table-head-bg, #e3eefc);
+  color: var(--table-head-text, #1f4e8c);
+  font-size: 12px;
+  font-family: "Inter-Medium", sans-serif;
+  line-height: 18px;
+}
+
+/* Outlined fields with no floating label (label above the box, captcha code,
+   etc.): MUI still lifts the outline 5px to leave room for a label notch, so
+   the border floated above the white field. Without a label there is no notch,
+   so the outline sits on the field's own edge. */
+.MuiOutlinedInput-notchedOutline:has(> legend > span.notranslate) {
+  top: 0;
+}
+
+.MuiOutlinedInput-notchedOutline:has(> legend > span.notranslate) > legend {
+  display: none;
 }

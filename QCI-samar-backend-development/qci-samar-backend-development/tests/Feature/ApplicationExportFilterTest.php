@@ -111,4 +111,38 @@ class ApplicationExportFilterTest extends TestCase
         $this->assertStringNotContainsString($draft->application_number, $csv);
         $this->assertStringNotContainsString($rejected->application_number, $csv);
     }
+
+    public function test_search_matches_the_application_number_or_the_enterprise_or_unit_name(): void
+    {
+        $brahmos = $this->makeApplication(['unit_name' => 'BrahMos, Goa']);
+        $brahmos->organization->update(['name' => 'BrahMos Aerospace']);
+        $other = $this->makeApplication(['unit_name' => 'Nagpur Works']);
+
+        foreach (['search=aerospace', 'search=goa', 'search='.$brahmos->application_number] as $query) {
+            $csv = $this->export($query);
+            $this->assertStringContainsString($brahmos->application_number, $csv, $query);
+            $this->assertStringNotContainsString($other->application_number, $csv, $query);
+        }
+    }
+
+    public function test_the_list_search_matches_the_enterprise_or_unit_name(): void
+    {
+        $brahmos = $this->makeApplication(['unit_name' => 'BrahMos, Goa']);
+        $brahmos->organization->update(['name' => 'BrahMos Aerospace']);
+        $other = $this->makeApplication(['unit_name' => 'Nagpur Works']);
+
+        $admin = User::factory()->create();
+        $admin->roles()->attach(
+            Role::where('slug', Role::SYSTEM_ADMIN)->firstOrFail()->id,
+            ['is_active' => true, 'assigned_at' => now()],
+        );
+        $token = JWTAuth::fromUser($admin);
+
+        foreach (['aerospace', 'goa'] as $q) {
+            $response = $this->withToken($token)->getJson('/api/v1/applications?q='.$q);
+            $response->assertOk();
+            $this->assertStringContainsString($brahmos->application_number, $response->getContent(), $q);
+            $this->assertStringNotContainsString($other->application_number, $response->getContent(), $q);
+        }
+    }
 }

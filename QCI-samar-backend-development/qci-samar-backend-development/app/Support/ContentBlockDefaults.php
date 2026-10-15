@@ -102,6 +102,25 @@ class ContentBlockDefaults
                     .'</ol>',
             ],
             [
+                'key' => 'assessment_report_about',
+                'group' => 'policies',
+                'title' => 'Assessment Report – About SAMAR Assessment',
+                'description' => 'The text on the "ABOUT SAMAR ASSESSMENT" page of the assessment report PDF, above the maturity-level table. Keep it to about four short paragraphs so it fits beside the page artwork.',
+                'format' => 'html',
+                'body' => '<p>System for Advanced Maturity Assessment and Rating (SAMAR) Certification is a benchmark to measure the maturity of defence Manufacturing and Service enterprises.</p>'
+                    .'<p>The certification framework has been developed by the Quality Council of India and is based on a maturity assessment framework and is applicable to all defence Manufacturing and Service enterprises, i.e., Start-Up, micro, small, medium and large enterprises.</p>'
+                    .'<p>SAMAR is an outcome of the collaboration between DRDO and QCI to strengthen the &#039;defence Manufacturing and Service&#039; ecosystem in the country with an objective to further the vision of making India self-reliant in defence Sector.</p>'
+                    .'<p>SAMAR Certification framework recognizes 5 levels of enterprise maturity in terms of the defined organizational attributes:</p>',
+            ],
+            [
+                'key' => 'assessment_report_methodology',
+                'group' => 'policies',
+                'title' => 'Assessment Report – Methodology',
+                'description' => 'The "Methodology" text at the start of the ASSESSMENT FINDINGS section of the assessment report PDF.',
+                'format' => 'html',
+                'body' => '<p>To ensure transparency in the site assessment process, all site-assessment components are monitored electronically and the entire process (documents, photographs, comments etc.) is captured on a secure mobile application by the assessors. The data captured during site-assessment is not shared externally with anyone except the relevant stakeholders involved for award of score/rating.</p>',
+            ],
+            [
                 'key' => 'assessment_schedule_note',
                 'group' => 'assessment',
                 'title' => 'Assessment Scheduling Note',

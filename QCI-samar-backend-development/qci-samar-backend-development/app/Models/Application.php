@@ -488,6 +488,8 @@ class Application extends Model
 
     /**
      * Get the organization that owns the application.
+     *
+     * @return BelongsTo<Organization, $this>
      */
     public function organization(): BelongsTo
     {
@@ -808,14 +810,25 @@ class Application extends Model
     }
 
     /**
-     * Scope: Search applications by application number or enterprise name.
+     * Scope: Search applications by application number or by name: the unit,
+     * enterprise and organization names stored on the application, and the
+     * organization's current name. LIKE wildcards in the input match literally.
      */
     public function scopeSearch(Builder $query, string $search): Builder
     {
-        return $query->where(function ($q) use ($search) {
-            $q->where('application_number', 'LIKE', "%{$search}%")
-                ->orWhereHas('organization', function ($orgQuery) use ($search) {
-                    $orgQuery->where('name', 'LIKE', "%{$search}%");
+        $search = trim($search);
+        if ($search === '') {
+            return $query;
+        }
+        $like = '%'.str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search).'%';
+
+        return $query->where(function ($q) use ($like) {
+            $q->where('application_number', 'LIKE', $like)
+                ->orWhere('unit_name', 'LIKE', $like)
+                ->orWhere('enterprise_name', 'LIKE', $like)
+                ->orWhere('organization_name', 'LIKE', $like)
+                ->orWhereHas('organization', function ($orgQuery) use ($like) {
+                    $orgQuery->where('name', 'LIKE', $like);
                 });
         });
     }

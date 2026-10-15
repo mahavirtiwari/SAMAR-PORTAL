@@ -7206,6 +7206,16 @@
                                                         "type": "string",
                                                         "example": "SAMAR-030125-11111"
                                                     },
+                                                    "enterprise_name": {
+                                                        "type": "string",
+                                                        "example": "BrahMos Aerospace",
+                                                        "nullable": true
+                                                    },
+                                                    "unit_name": {
+                                                        "type": "string",
+                                                        "example": "BrahMos, Goa",
+                                                        "nullable": true
+                                                    },
                                                     "user_samar_id": {
                                                         "type": "string",
                                                         "example": "SAMAR-030125-22222",
@@ -23733,7 +23743,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Payments retrieved successfully. Carries a summary object with successfulCount and failedCount for the whole filtered set, not just the current page.",
+                        "description": "Payments retrieved successfully. Carries a summary object with successfulCount, failedCount and totalAmount (sum of successful payments) for the whole filtered set, not just the current page.",
                         "content": {
                             "application/json": {
                                 "schema": {
