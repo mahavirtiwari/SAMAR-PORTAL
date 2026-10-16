@@ -5563,13 +5563,15 @@ textarea::-webkit-input-placeholder {
   min-width: 0;
 }
 
-.top-right-details-card > .d-flex.justify-content-between > div:last-child {
+/* The right-hand block exists only when there is a second column (buttons,
+   rating / dates); a lone name block must stay left-aligned. */
+.top-right-details-card > .d-flex.justify-content-between > div:last-child:not(:first-child) {
   flex: 0 1 auto;
   min-width: 0;
   margin-left: auto;
 }
 
-.top-right-details-card > .d-flex.justify-content-between > div:last-child > .d-flex {
+.top-right-details-card > .d-flex.justify-content-between > div:last-child:not(:first-child) > .d-flex {
   flex-wrap: wrap;
   justify-content: flex-end;
   row-gap: 8px;
@@ -5614,4 +5616,116 @@ textarea::-webkit-input-placeholder {
 
 .MuiOutlinedInput-notchedOutline:has(> legend > span.notranslate) > legend {
   display: none;
+}
+
+/* ---- Details pages: Overview / tab sections -------------------------------
+   Section cards with a light-blue title band, boxed address columns, steady
+   label / value rows and a wrapping contact-person strip. */
+.card-bottom-tabs-content .accordion-item {
+  border: 1px solid #e3eaf5;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.card-bottom-tabs-content .accordion-header button {
+  font-size: 17px;
+  padding: 16px 24px;
+  background-color: #f5f9ff !important;
+  color: var(--table-head-text, #1f4e8c) !important;
+}
+
+.card-bottom-tabs-content .accordion-button:not(.collapsed) {
+  border-bottom: 1px solid #e3eaf5;
+}
+
+.card-bottom-tabs-content .accordion-body .details-card {
+  padding: 20px 24px 24px;
+}
+
+.card-bottom-tabs-content .accordion-body h5 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1, #071437);
+  margin-bottom: 12px;
+}
+
+.card-bottom-tabs-content .accordion-body h5::before {
+  content: "";
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--primary, #1b84ff);
+  flex: none;
+}
+
+.card-bottom-tabs-content .enterpriseInfoMainWrapper > .row {
+  row-gap: 16px;
+}
+
+.card-bottom-tabs-content .col-sm-6 > .enterpriseInfoWrapper {
+  height: 100%;
+  padding: 16px 18px;
+  border: 1px solid #e6edf7;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+
+.card-bottom-tabs-content .enterpriseInfoWrapper span {
+  margin: 4px 0 14px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.card-bottom-tabs-content .enterpriseInfoUl {
+  gap: 10px;
+}
+
+.card-bottom-tabs-content .enterpriseInfoUl li p {
+  font-size: 13px !important;
+}
+
+.card-bottom-tabs-content hr.divider-small {
+  margin: 22px 0;
+}
+
+/* Category & stores: label, then the value or tags, wrapping cleanly. */
+.card-bottom-tabs-content .cus-bx-1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 0;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.card-bottom-tabs-content .cus-bx-1 > span:first-child {
+  min-width: 80px;
+  font-size: 13px !important;
+}
+
+/* Contact person: an even grid of small tiles instead of a dotted line. */
+.card-bottom-tabs-content .enterpriseInfoHorizontalUl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px 16px;
+  width: 100%;
+}
+
+.card-bottom-tabs-content .enterpriseInfoHorizontalUl li {
+  margin-right: 0;
+  padding: 10px 12px;
+  border: 1px solid #e6edf7;
+  border-radius: 8px;
+  background: #fbfdff;
+  min-width: 0;
+}
+
+.card-bottom-tabs-content .enterpriseInfoHorizontalUl li:after {
+  display: none;
+}
+
+.card-bottom-tabs-content .enterpriseInfoHorizontalUl li p:last-child {
+  overflow-wrap: anywhere;
 }

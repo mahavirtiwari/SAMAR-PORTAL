@@ -132,7 +132,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                         <li>
                           <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
-                          <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.unitMobile}</p>
+                          <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.unitMobile)}</p>
                         </li>
                         <li>
                           <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
@@ -180,7 +180,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                         <li>
                           <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                           <p className="enterpriseInfoUlWidth fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
-                          <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.registeredOfficeMobile}</p>
+                          <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.registeredOfficeMobile)}</p>
                         </li>
                         <li>
                           <img src={Icons.landline} alt="" className="icon-20 margin-right-8" />
@@ -205,18 +205,19 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
               <hr className="divider-small" />
               <h5 className="heading-color">Category & Stores</h5>
               <div className="col-md-12 align-items-center">
-                <div className="cus-bx-1 ">
+                <div className="cus-bx-1">
                   <span className="fs-12 fw-400 text-2-color">Category:</span>
 
                   <span className="fs-14 fw-500 heading-color margin-left-8">{applicationDetails?.vendorCategoryName}</span>
                 </div>
-                <div className="cus-bx-1 ">
+                <div className="cus-bx-1">
                   <span className="fs-12 fw-400 text-2-color">Stores:</span>
                   {(applicationDetails?.mfgDrdoVendorStores || applicationDetails?.mfgKeyProcesses || [])?.map((item, idx) => (
                     <span key={idx} className="margin-left-8 cusTags">
                       {typeof item === 'object' ? item.storeName || item.processName || item.name : item}
                     </span>
                   ))}
+                  {!(applicationDetails?.mfgDrdoVendorStores || applicationDetails?.mfgKeyProcesses || []).length && <span className="fs-14 fw-500 heading-color margin-left-8">-</span>}
                 </div>
               </div>
               <hr className="divider-small" />
@@ -239,7 +240,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                   <li>
                     <img src={Icons.receiver} alt="" className="icon-20 margin-right-8" />
                     <p className="fs-12 fw-400 mb-0 text-3-color">Mobile Number:</p>
-                    <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{applicationDetails?.contactPersonMobile}</p>
+                    <p className="fs-12 fw-500 mb-0 heading-color margin-left-12">{formatDisplayValue(applicationDetails?.contactPersonMobile)}</p>
                   </li>
                   <li>
                     <img src={Icons.email} alt="" className="icon-20 margin-right-8" />
@@ -405,7 +406,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                   <div className="enterpriseInfoMainWrapper">
                     <div className="row align-items-center">
                       <div className="col-md-12 align-items-cente">
-                        <div className="cus-bx-1 ">
+                        <div className="cus-bx-1">
                           <span className="fs-12 fw-400 text-2-color">Key Processes:</span>
                           {keyProcessesList.map((p, i) => (
                             <span key={`kp-${i}`} className="margin-left-8 cusTags">
@@ -486,7 +487,7 @@ const OverviewManufacturingTab = ({ applicationDetails, edit }) => {
                   <div className="enterpriseInfoMainWrapper">
                     <div className="row align-items-center">
                       <div className="col-md-12 align-items-cente">
-                        <div className="cus-bx-1 ">
+                        <div className="cus-bx-1">
                           <img src={Icons.tickSuccess} alt="key-process" className="icon-16 margin-right-8" />
                           <span className="fs-12 fw-400 text-2-color">Third Party Certifications:</span>
                           {(applicationDetails?.thirdPartyCertificationNames || []).map((certification, idx) => (
