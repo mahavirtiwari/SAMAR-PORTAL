@@ -10,6 +10,7 @@ use App\Models\Unit;
 use App\Models\User;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
@@ -203,6 +204,26 @@ class FeedbackSubmissionsListTest extends TestCase
             ->getJson('/api/v1/applications/feedback-submissions')
             ->assertOk()
             ->assertJsonPath('data.0.userSamarId', 'SAMAR-ENT-ADMIN');
+    }
+
+    public function test_a_submitter_whose_account_was_deleted_is_shown_as_such(): void
+    {
+        $gone = User::factory()->create();
+        $application = $this->makeApplication(['application_number' => 'SAMAR-GONE', 'created_by' => null]);
+        ApplicationFeedback::create([
+            'application_id' => $application->id,
+            'feedback_question_id' => 1,
+            'question_text' => 'How satisfied are you with the assessment?',
+            'question_type' => ApplicationFeedback::TYPE_RATING,
+            'rating' => 4,
+            'created_by' => $gone->id,
+        ]);
+        DB::table('users')->where('id', $gone->id)->delete();
+
+        $this->withToken($this->adminToken(Role::SYSTEM_ADMIN))
+            ->getJson('/api/v1/applications/feedback-submissions')
+            ->assertOk()
+            ->assertJsonPath('data.0.userSamarId', 'Account deleted');
     }
 
     public function test_search_matches_the_enterprise_or_unit_name_and_lists_the_enterprise(): void

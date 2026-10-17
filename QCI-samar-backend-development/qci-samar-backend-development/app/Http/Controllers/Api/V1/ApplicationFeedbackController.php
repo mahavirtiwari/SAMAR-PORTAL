@@ -1085,9 +1085,17 @@ class ApplicationFeedbackController extends Controller
      */
     private function submitterSamarId(Application $application): ?string
     {
-        return $application->latestFeedback->creator->samar_id
+        $samarId = $application->latestFeedback->creator->samar_id
             ?? $application->creator->samar_id
             ?? $application->organization?->users->first()?->samar_id;
+
+        // The submitter was recorded but that account no longer exists: say so
+        // rather than leave the column blank.
+        if ($samarId === null && ($application->latestFeedback->created_by ?? null) !== null) {
+            return 'Account deleted';
+        }
+
+        return $samarId;
     }
 
     /**
