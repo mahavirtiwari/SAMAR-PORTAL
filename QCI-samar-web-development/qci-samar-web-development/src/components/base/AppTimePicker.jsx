@@ -1,126 +1,125 @@
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+import { Button, ClickAwayListener, Paper, Popper } from '@mui/material';
+import { MultiSectionDigitalClock } from '@mui/x-date-pickers/MultiSectionDigitalClock';
 import dayjs from 'dayjs';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Icons from '../../constants/Icons';
 import { formatTime } from '../../utils/formatters';
 import AppInput from './textInput/AppInput';
 
-const AppTimePicker = ({ label, value, onChange, placeholder, error, name, isRequired, minTime, maxTime, subLabel, ...props }) => {
-  const idRef = useRef(null);
-  const [open, setOpen] = useState(false);
-
-  // keep ref for potential future uniqueness, no impure calls during render
-  useEffect(() => {
-    if (!idRef.current) {
-      idRef.current = `apptimepicker-${Date.now()}`;
-    }
-  }, []);
-
-  const handleTimeChange = newTime => {
-    // Emit time in 24-hour `HH:mm` format (string) so form values match validation schemas
-    try {
-      onChange?.(newTime && newTime.isValid ? dayjs(newTime).format('HH:mm') : '');
-    } catch (_e) {
-      onChange?.(newTime ? newTime.toDate() : null);
-    }
-  };
-
-  // helper: accept various value shapes and return a dayjs instance or null
-  const parseToDayjs = v => {
-    if (!v && v !== 0) {
-      return null;
-    }
-    if (dayjs.isDayjs(v)) {
-      return v;
-    }
-    if (typeof v === 'string') {
-      // try common formats (HH:mm, HH:mm:ss, ISO)
-      const d = dayjs(v, ['HH:mm', 'HH:mm:ss', dayjs.ISO_8601]);
-      if (d.isValid()) {
-        return d;
-      }
-      // fallback: if string like '14:30' but parsing failed, construct from parts
-      const m = v.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
-      if (m) {
-        const now = dayjs();
-        return now
-          .hour(parseInt(m[1], 10))
-          .minute(parseInt(m[2], 10))
-          .second(m[3] ? parseInt(m[3], 10) : 0);
-      }
-      const iso = dayjs(v);
-      return iso.isValid() ? iso : null;
-    }
-    if (v instanceof Date) {
-      return dayjs(v);
-    }
+// Accepts the shapes callers pass ('HH:mm', 'HH:mm:ss', ISO string, Date, dayjs)
+// and returns a dayjs on today's date, or null.
+const parseToDayjs = v => {
+  if (!v && v !== 0) {
     return null;
-  };
+  }
+  if (dayjs.isDayjs(v)) {
+    return v;
+  }
+  if (v instanceof Date) {
+    return dayjs(v);
+  }
+  if (typeof v === 'string') {
+    const m = v.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (m) {
+      return dayjs()
+        .hour(Number.parseInt(m[1], 10))
+        .minute(Number.parseInt(m[2], 10))
+        .second(m[3] ? Number.parseInt(m[3], 10) : 0)
+        .millisecond(0);
+    }
+    const iso = dayjs(v);
+    return iso.isValid() ? iso : null;
+  }
+  return null;
+};
 
+/**
+ * Time field: a read-only box that opens an hours / minutes / AM-PM picker
+ * underneath, the same way AppDatePicker opens its calendar. Emits the time as
+ * 24-hour `HH:mm`, which is what the forms validate and send.
+ *
+ * (MUI X v9 dropped the plain-input field that the previous version plugged
+ * AppInput into, which made every page using it crash on open.)
+ */
+const AppTimePicker = ({ label, value, onChange, placeholder, error, name, isRequired, minTime, maxTime, subLabel, ...props }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const triggerRef = useRef(null);
   const parsedValue = parseToDayjs(value);
 
+  const handleOpen = event => {
+    triggerRef.current = event.currentTarget;
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => setAnchorEl(null);
+
+  const closeAndRefocus = () => {
+    handleClose();
+    triggerRef.current?.focus?.();
+  };
+
+  const handleFieldKeyDown = event => {
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      handleOpen(event);
+    }
+  };
+
+  const handleTimeChange = newTime => {
+    onChange?.(newTime && newTime.isValid() ? newTime.format('HH:mm') : '');
+  };
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="timePicker-container">
-        <TimePicker
-          enableAccessibleFieldDOMStructure={false}
-          open={open}
-          onOpen={() => setOpen(true)}
-          onClose={() => setOpen(false)}
-          value={parsedValue || dayjs()}
-          onChange={handleTimeChange}
-          viewRenderers={{
-            hours: renderTimeViewClock,
-            minutes: renderTimeViewClock,
-            seconds: renderTimeViewClock,
-          }}
-          minTime={minTime ? dayjs(minTime) : undefined}
-          maxTime={maxTime ? dayjs(maxTime) : undefined}
-          className={`input-container ${(props && props.className) || ''}`}
-          slotProps={{
-            layout: {
-              sx: {
-                '& .MuiClock-clock': {
-                  backgroundColor: 'rgb(246, 246, 246)',
-                },
-                '& .MuiClockPointer-thumb': {
-                  border: '16px solid #3e8bfd',
-                  backgroundColor: '#3e8bfd',
-                },
-                '& .MuiButton-root': {
-                  color: '#3e8bfd',
-                },
-              },
-            },
-          }}
-          slots={{
-            textField: params => (
-              <AppInput
-                {...params}
-                label={label}
-                placeholder={placeholder}
-                name={name}
-                // display in 12-hour format with AM/PM for readability, or empty if no value
-                value={value ? formatTime(value) : ''}
-                readOnly={true}
-                error={error || params.error}
-                isRequired={isRequired}
-                passwordIcon={Icons.calendar}
-                passwordIconOnClick={() => setOpen(true)}
-                subLabel={subLabel}
-                className={(props && props.className) || ''}
-                inputProps={{ ...(params.inputProps || {}), autoComplete: 'off', style: { cursor: 'pointer' }, onClick: () => setOpen(true) }}
-                onClick={() => setOpen(true)}
-                {...props}
-              />
-            ),
-          }}
-        />
-      </div>
-    </LocalizationProvider>
+    <div className="timePicker-container">
+      <AppInput
+        label={label}
+        placeholder={placeholder}
+        name={name}
+        // Shown in 12-hour format with AM / PM for readability.
+        value={value ? formatTime(value) : ''}
+        readOnly
+        error={error}
+        isRequired={isRequired}
+        subLabel={subLabel}
+        onClick={handleOpen}
+        onKeyDown={handleFieldKeyDown}
+        passwordIcon={Icons.calendar}
+        passwordIconOnClick={handleOpen}
+        passwordToggleLabel={label ? `Choose ${label}` : 'Choose time'}
+        autoComplete="off"
+        inputProps={{ autoComplete: 'off', style: { cursor: 'pointer' } }}
+        {...props}
+      />
+
+      <Popper open={Boolean(anchorEl)} anchorEl={anchorEl} placement="bottom-start" disablePortal sx={{ zIndex: 1300 }}>
+        <ClickAwayListener onClickAway={handleClose}>
+          <Paper
+            elevation={3}
+            sx={{ mt: 1, borderRadius: 2, overflow: 'hidden' }}
+            onKeyDown={event => {
+              if (event.key === 'Escape') {
+                event.stopPropagation();
+                closeAndRefocus();
+              }
+            }}>
+            <MultiSectionDigitalClock
+              autoFocus
+              ampm
+              value={parsedValue}
+              onChange={handleTimeChange}
+              minTime={minTime ? dayjs(minTime) : undefined}
+              maxTime={maxTime ? dayjs(maxTime) : undefined}
+              timeSteps={{ minutes: 5 }}
+            />
+            <div className="d-flex justify-content-end" style={{ padding: '6px 8px', borderTop: '1px solid var(--outline)' }}>
+              <Button size="small" onClick={closeAndRefocus}>
+                Done
+              </Button>
+            </div>
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
+    </div>
   );
 };
 
