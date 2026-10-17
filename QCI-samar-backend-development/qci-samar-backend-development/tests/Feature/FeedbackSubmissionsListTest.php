@@ -185,6 +185,26 @@ class FeedbackSubmissionsListTest extends TestCase
         $response->assertJsonPath('data.0.enterpriseClassification', 'micro');
     }
 
+    public function test_without_any_recorded_user_the_enterprise_admin_samar_id_is_shown(): void
+    {
+        $application = $this->makeApplication(['application_number' => 'SAMAR-NO-USER', 'created_by' => null]);
+        $admin = User::factory()->create(['samar_id' => 'SAMAR-ENT-ADMIN', 'organization_id' => $application->organization_id]);
+        $this->assignRole($admin, Role::ENTERPRISE_ADMIN);
+        ApplicationFeedback::create([
+            'application_id' => $application->id,
+            'feedback_question_id' => 1,
+            'question_text' => 'How satisfied are you with the assessment?',
+            'question_type' => ApplicationFeedback::TYPE_RATING,
+            'rating' => 4,
+        ]);
+        ApplicationFeedback::query()->update(['created_by' => null]);
+
+        $this->withToken($this->adminToken(Role::SYSTEM_ADMIN))
+            ->getJson('/api/v1/applications/feedback-submissions')
+            ->assertOk()
+            ->assertJsonPath('data.0.userSamarId', 'SAMAR-ENT-ADMIN');
+    }
+
     public function test_search_matches_the_enterprise_or_unit_name_and_lists_the_enterprise(): void
     {
         $submitter = User::factory()->create(['samar_id' => 'SAMAR-SUB-006']);

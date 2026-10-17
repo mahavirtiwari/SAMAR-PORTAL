@@ -65,6 +65,8 @@ class Organization extends Model
 
     /**
      * Get the users for the organization.
+     *
+     * @return HasMany<User, $this>
      */
     public function users(): HasMany
     {

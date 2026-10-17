@@ -1441,12 +1441,6 @@ parameters:
 			path: app/Http/Controllers/Api/V1/InvoiceController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$first_name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/V1/OrganizationController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$grade\.$#'
 			identifier: property.notFound
 			count: 2
@@ -1462,18 +1456,6 @@ parameters:
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$issue_date\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Http/Controllers/Api/V1/OrganizationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$last_name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/V1/OrganizationController.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$samar_id\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Http/Controllers/Api/V1/OrganizationController.php
 
 		-

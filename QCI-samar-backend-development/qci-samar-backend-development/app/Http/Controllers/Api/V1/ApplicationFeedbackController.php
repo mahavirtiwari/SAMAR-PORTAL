@@ -11,8 +11,12 @@ use App\Models\Application;
 use App\Models\ApplicationFeedback;
 use App\Models\Assessment;
 use App\Models\FeedbackQuestion;
+use App\Models\Organization;
+use App\Models\Role;
+use App\Models\User;
 use App\Support\Csv;
 use App\Support\DateRange;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -272,7 +276,7 @@ class ApplicationFeedbackController extends Controller
     {
         $query = Application::query()
             ->whereHas('feedbacks')
-            ->with(['latestFeedback.creator:id,samar_id', 'creator:id,samar_id', 'organization:id,name'])
+            ->with(['latestFeedback.creator:id,samar_id', 'creator:id,samar_id', 'organization:id,name', 'organization.users' => fn ($q) => $this->enterpriseAdminsOnly($q)])
             ->withMax('feedbacks as feedback_date', 'created_at');
 
         // Search by application number or enterprise / unit name
@@ -919,7 +923,7 @@ class ApplicationFeedbackController extends Controller
             $scopedIds = (clone $query)->select('applications.id');
             $rows = $query
                 ->select('applications.id', 'applications.application_number', 'applications.organization_id', 'applications.organization_name', 'applications.enterprise_name', 'applications.unit_name', 'applications.enterprise_classification', 'applications.sector', 'applications.created_by')
-                ->with(['latestFeedback.creator:id,samar_id', 'creator:id,samar_id', 'organization:id,name'])
+                ->with(['latestFeedback.creator:id,samar_id', 'creator:id,samar_id', 'organization:id,name', 'organization.users' => fn ($q) => $this->enterpriseAdminsOnly($q)])
                 ->withMax('feedbacks as feedback_date', 'created_at')
                 ->orderByDesc('feedback_date')
                 ->orderByDesc('applications.id');
@@ -1081,7 +1085,22 @@ class ApplicationFeedbackController extends Controller
      */
     private function submitterSamarId(Application $application): ?string
     {
-        return $application->latestFeedback->creator->samar_id ?? $application->creator->samar_id ?? null;
+        return $application->latestFeedback->creator->samar_id
+            ?? $application->creator->samar_id
+            ?? $application->organization?->users->first()?->samar_id;
+    }
+
+    /**
+     * The enterprise's admin account(s): the last fallback for whose feedback it
+     * is when neither the feedback nor the application recorded a user.
+     *
+     * @param  HasMany<User, Organization>  $query
+     */
+    private function enterpriseAdminsOnly($query): void
+    {
+        $query->select('id', 'organization_id', 'samar_id')
+            ->whereHas('roles', fn ($r) => $r->where('slug', Role::ENTERPRISE_ADMIN))
+            ->orderBy('id');
     }
 
     /** The enterprise's current name, falling back to the name saved on the application. */
