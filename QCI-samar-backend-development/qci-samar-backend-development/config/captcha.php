@@ -21,14 +21,16 @@ return [
     // Seconds a challenge stays solvable before it expires.
     'ttl' => (int) env('CAPTCHA_TTL', 300),
 
-    'length' => (int) env('CAPTCHA_LENGTH', 5),
+    // Six characters, always a mix of letters and digits (see
+    // CaptchaService::randomPhrase).
+    'length' => 6,
 
     // Capitals and digits only. Characters that are easily confused are left
     // out (0 O Q D, 1 I L, 2 Z, 5 S, 8 B, G, U V) so the code reads one way
     // only. The answer is checked case-insensitively.
     'charset' => 'ACEFHJKMNPRTWXY34679',
 
-    'width' => 170,
+    'width' => 196,
 
     'height' => 56,
 

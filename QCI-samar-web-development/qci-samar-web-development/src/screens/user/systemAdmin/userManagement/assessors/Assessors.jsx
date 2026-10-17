@@ -6,6 +6,7 @@ import { AppBadge, AppButton, AppDataGrid, AppDropdown, AppInput, AppModal, AppT
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddAssessorsModal, EditAssessorsModal } from '../../../../../components/modals';
+import ContactDetailsCell from '../../../../../components/shared/ContactDetailsCell';
 import ResendPasswordButton from '../../../../../components/shared/ResendPasswordButton';
 import Icons from '../../../../../constants/Icons';
 import { useListFilters } from '../../../../../hooks';
@@ -249,26 +250,12 @@ const Assessors = () => {
       },
 
       {
-        field: 'email',
-        headerName: 'Email',
+        field: 'contact',
+        headerName: 'Contact Details',
         flex: 2,
-        minWidth: 200,
+        minWidth: 220,
         sortable: false,
-        renderCell: params => (
-          <AppToolTip title={params.row.email || '-'}>
-            <span className="text-2-color fs-12 fw-500 double-content line-clamp-1" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
-              {params.row.email || '-'}
-            </span>
-          </AppToolTip>
-        ),
-      },
-      {
-        field: 'mobile',
-        headerName: 'Mobile',
-        flex: 1,
-        minWidth: 100,
-        sortable: false,
-        renderCell: params => <h4 className="fs-12 fw-500 text-2-color mb-0">{params.row.mobileNumber || '-'}</h4>,
+        renderCell: params => <ContactDetailsCell email={params.row.email} mobile={params.row.mobileNumber} />,
       },
       {
         field: 'assignedStates',
@@ -323,7 +310,7 @@ const Assessors = () => {
                     customInputClass={'search-input'}
                     value={filters.search}
                     onChange={e => handleFilterChange('search', e.target.value)}
-                    placeholder="Search by name, email, or mobile"
+                    placeholder="SAMAR ID, name, email or mobile"
                     customWidth="100%"
                     leftIcon={Icons.search}
                     marginLeft="6px"

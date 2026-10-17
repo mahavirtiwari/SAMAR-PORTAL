@@ -43,6 +43,12 @@ class CaptchaController extends Controller
                                     example: 'data:image/jpeg;base64,...',
                                 ),
                                 new OA\Property(property: 'expires_in', type: 'integer', example: 300),
+                                new OA\Property(
+                                    property: 'enabled',
+                                    type: 'boolean',
+                                    example: true,
+                                    description: 'False when the security code is switched off in System Settings; captcha_id and image are then null.',
+                                ),
                             ],
                         ),
                     ],
@@ -52,8 +58,16 @@ class CaptchaController extends Controller
     )]
     public function show(): JsonResponse
     {
+        // Switched off in System Settings: no challenge, and the forms hide the field.
+        if (! $this->captchaService->isEnabled()) {
+            return $this->successResponse(
+                ['enabled' => false, 'captcha_id' => null, 'image' => null, 'expires_in' => 0],
+                'Captcha is switched off.'
+            );
+        }
+
         return $this->successResponse(
-            $this->captchaService->generate(),
+            ['enabled' => true] + $this->captchaService->generate(),
             'Captcha generated successfully.'
         );
     }

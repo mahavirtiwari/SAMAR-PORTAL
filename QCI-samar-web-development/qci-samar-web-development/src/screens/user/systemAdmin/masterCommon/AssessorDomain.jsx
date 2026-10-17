@@ -179,13 +179,14 @@ const AssessorDomain = () => {
       field: 'domainNo',
       headerName: 'Domain No.',
       sortable: false,
-      flex: isXs ? 0.5 : 1,
-      minWidth: 90,
+      width: 120,
+      headerAlign: 'center',
+      align: 'center',
       renderCell: params => {
         const rows = assessorDomains?.data || [];
         const indexOnPage = rows.findIndex(row => (row.id || row.user_id) === params.id);
         return (
-          <Typography variant="body2" className="heading-color">
+          <Typography variant="body2" className="heading-color w-100 text-center">
             {(page - 1) * pageSize + indexOnPage + 1}
           </Typography>
         );
@@ -199,7 +200,8 @@ const AssessorDomain = () => {
       flex: isXs ? 2 : isSm ? 3 : 6,
       minWidth: 280,
       renderCell: params => (
-        <Typography variant="body2" className="heading-color line-clamp" sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+        // Full name, wrapping over as many lines as it needs (up to 1000 characters).
+        <Typography variant="body2" className="heading-color py-1" sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
           {params.row.domainName}
         </Typography>
       ),

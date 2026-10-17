@@ -424,9 +424,9 @@ const AssessmentParameters = () => {
       {
         field: 'totalQuestion',
         sortable: false,
-        headerName: 'Questions/Weightage',
+        headerName: 'Questions / Weightage',
         flex: 0.6,
-        minWidth: 100,
+        minWidth: 120,
         renderCell: params => {
           const weightage = params.row.questionsSumWeightage || 0;
           const isComplete = weightage === 100;

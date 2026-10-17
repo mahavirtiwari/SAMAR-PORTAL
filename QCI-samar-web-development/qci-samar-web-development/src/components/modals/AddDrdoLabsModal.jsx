@@ -145,7 +145,7 @@ const AddDrdoLabsModal = ({ open, handleClose, organizationId, onGeneralError })
     <AppCommonModal
       open={open}
       onClose={handleClose}
-      modalHeader={<>ADD DRDO Lab</>}
+      modalHeader={<>Add DRDO Lab</>}
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{

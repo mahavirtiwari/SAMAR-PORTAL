@@ -11660,6 +11660,11 @@
                                                 "expires_in": {
                                                     "type": "integer",
                                                     "example": 300
+                                                },
+                                                "enabled": {
+                                                    "description": "False when the security code is switched off in System Settings; captcha_id and image are then null.",
+                                                    "type": "boolean",
+                                                    "example": true
                                                 }
                                             },
                                             "type": "object"

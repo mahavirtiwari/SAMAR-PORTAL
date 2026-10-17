@@ -11,14 +11,20 @@ import AppInput from './textInput/AppInput';
  * A challenge is single-use server-side, so the image is refreshed whenever the
  * parent reports a failed submit via `reloadToken`.
  */
-const AppCaptcha = ({ value, onChange, onBlur, error, onCaptchaIdChange, reloadToken = 0, name = 'captcha' }) => {
+const AppCaptcha = ({ value, onChange, onBlur, error, onCaptchaIdChange, onEnabledChange, reloadToken = 0, name = 'captcha' }) => {
   const [image, setImage] = useState('');
+  // The System Admin can switch the security code off (System Settings); the
+  // server then says enabled=false and the field is not shown or required.
+  const [enabled, setEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const loadCaptcha = useCallback(async () => {
     setLoading(true);
     try {
       const response = await AccountService().getCaptcha();
+      const isEnabled = response?.data?.enabled !== false;
+      setEnabled(isEnabled);
+      onEnabledChange?.(isEnabled);
       setImage(response?.data?.image ?? '');
       onCaptchaIdChange(response?.data?.captchaId ?? '');
     } catch (err) {
@@ -28,11 +34,15 @@ const AppCaptcha = ({ value, onChange, onBlur, error, onCaptchaIdChange, reloadT
     } finally {
       setLoading(false);
     }
-  }, [onCaptchaIdChange]);
+  }, [onCaptchaIdChange, onEnabledChange]);
 
   useEffect(() => {
     loadCaptcha();
   }, [loadCaptcha, reloadToken]);
+
+  if (!enabled) {
+    return null;
+  }
 
   return (
     <div>
@@ -50,7 +60,7 @@ const AppCaptcha = ({ value, onChange, onBlur, error, onCaptchaIdChange, reloadT
             onBlur={onBlur}
             placeholder="Enter the code shown"
             error={error}
-            maxLength={10}
+            maxLength={6}
             autoComplete="off"
             upperCase
             disableAutoCapitalize

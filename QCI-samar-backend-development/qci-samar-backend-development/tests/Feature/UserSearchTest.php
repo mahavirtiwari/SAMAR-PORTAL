@@ -28,4 +28,13 @@ class UserSearchTest extends TestCase
         $this->assertSame(1, User::searchUsers('98765')->count());
         $this->assertSame(2, User::searchUsers('  ')->count());
     }
+
+    public function test_samar_id_search_matches_the_user(): void
+    {
+        User::factory()->create(['samar_id' => 'SAMAR-131026-423', 'email' => 'tony@example.com']);
+        User::factory()->create(['samar_id' => 'SAMAR-091026-415', 'email' => 'qa@example.com']);
+
+        $this->assertSame(['tony@example.com'], User::searchUsers('SAMAR-131026-423')->pluck('email')->all());
+        $this->assertSame(['tony@example.com'], User::searchUsers('samar-1310')->pluck('email')->all());
+    }
 }

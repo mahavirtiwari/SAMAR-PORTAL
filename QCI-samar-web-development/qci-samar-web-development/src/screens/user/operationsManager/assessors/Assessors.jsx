@@ -154,7 +154,7 @@ const Assessors = () => {
         sortable: false,
         renderCell: params => (
           <AppToolTip title={params.row.email || '-'}>
-            <span className="text-2-color fs-12 fw-500 double-content line-clamp-1" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+            <span className="text-2-color fs-12 fw-500 double-content" style={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>
               {params.row.email || '-'}
             </span>
           </AppToolTip>
@@ -222,7 +222,7 @@ const Assessors = () => {
                     customInputClass={'search-input'}
                     value={filters.search}
                     onChange={e => handleFilterChange('search', e.target.value)}
-                    placeholder="Search by name, email"
+                    placeholder="SAMAR ID, name, email or mobile"
                     customWidth="100%"
                     leftIcon={Icons.search}
                     marginLeft="6px"

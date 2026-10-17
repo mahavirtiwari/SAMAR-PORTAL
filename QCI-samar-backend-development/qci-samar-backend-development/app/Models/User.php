@@ -575,7 +575,8 @@ class User extends Authenticatable implements JWTSubject
                 ->orWhere('last_name', 'like', "%{$search}%")
                 ->orWhereRaw("CONCAT_WS(' ', first_name, last_name) LIKE ?", ["%{$search}%"])
                 ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('mobile_number', 'like', "%{$search}%");
+                ->orWhere('mobile_number', 'like', "%{$search}%")
+                ->orWhere('samar_id', 'like', "%{$search}%");
         });
     }
 

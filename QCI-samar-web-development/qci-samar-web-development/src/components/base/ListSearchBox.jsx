@@ -37,6 +37,9 @@ const ListSearchBox = ({ value = '', onSearch, placeholder = 'Search', name = 's
       customWidth="100%"
       leftIcon={Icons.search}
       marginLeft="6px"
+      // Keep the "Search" label raised so the hint (e.g. "Search assessor domains")
+      // is visible before the box is clicked.
+      slotProps={{ inputLabel: { shrink: true } }}
     />
   );
 };

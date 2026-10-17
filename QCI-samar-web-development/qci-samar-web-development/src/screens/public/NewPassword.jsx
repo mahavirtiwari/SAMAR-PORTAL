@@ -79,6 +79,8 @@ const NewPassword = () => {
     password_confirmation: '',
     captcha: '',
   };
+  // Off when the System Admin has switched the security code off.
+  const [captchaEnabled, setCaptchaEnabled] = useState(true);
   const validationSchema = Yup.object({
     otp: Yup.string()
       .required('OTP is required')
@@ -95,7 +97,7 @@ const NewPassword = () => {
     password_confirmation: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords must match')
       .required('Confirm password is required'),
-    captcha: Yup.string().required('Enter the security code'),
+    captcha: captchaEnabled ? Yup.string().required('Enter the security code') : Yup.string(),
   });
 
   useEffect(() => {
@@ -289,6 +291,7 @@ const NewPassword = () => {
                         </div>
                         <div className="margin-top-20 text-start">
                           <AppCaptcha
+                            onEnabledChange={setCaptchaEnabled}
                             value={values.captcha}
                             onChange={handleChange}
                             onBlur={handleBlur}

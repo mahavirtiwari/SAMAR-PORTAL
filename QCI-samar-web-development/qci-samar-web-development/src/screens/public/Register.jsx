@@ -91,6 +91,10 @@ const Register = () => {
     captcha: '',
   };
 
+  // Off when the System Admin has switched the security code off.
+
+  const [captchaEnabled, setCaptchaEnabled] = useState(true);
+
   const validationSchema = Yup.object({
     organizationName: Yup.string().trim().max(150, 'Enterprise name cannot exceed 150 characters').required('Enterprise name is required'),
     firstName: Yup.string().trim().max(50, 'First name cannot exceed 50 characters').required('First name is required'),
@@ -101,7 +105,7 @@ const Register = () => {
       .min(10, 'Mobile number must be 10 digits')
       .max(10, 'Mobile number must be 10 digits')
       .required('Mobile number is required'),
-    captcha: Yup.string().required('Enter the security code'),
+    captcha: captchaEnabled ? Yup.string().required('Enter the security code') : Yup.string(),
   });
 
   // Registration handler: maps frontend fields to backend API payload
@@ -277,6 +281,7 @@ const Register = () => {
 
                       <div className="margin-top-20">
                         <AppCaptcha
+                          onEnabledChange={setCaptchaEnabled}
                           value={values.captcha}
                           onChange={handleChange}
                           onBlur={handleBlur}

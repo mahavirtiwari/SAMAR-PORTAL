@@ -33,6 +33,7 @@ const ContentBlocks = () => {
   const [draft, setDraft] = useState({ title: '', body: '' });
   const [saving, setSaving] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [filter, setFilter] = useState('');
 
   const selected = useMemo(() => blocks.find(b => b.key === selectedKey) || null, [blocks, selectedKey]);
 
@@ -87,12 +88,16 @@ const ContentBlocks = () => {
   };
 
   const grouped = useMemo(() => {
+    const term = filter.trim().toLowerCase();
     const map = {};
     for (const block of blocks) {
+      if (term && !`${block.title} ${GROUP_LABELS[block.group] || block.group}`.toLowerCase().includes(term)) {
+        continue;
+      }
       (map[block.group] ||= []).push(block);
     }
     return Object.entries(map);
-  }, [blocks]);
+  }, [blocks, filter]);
 
   return (
     <Layout>
@@ -105,71 +110,102 @@ const ContentBlocks = () => {
           {loading ? (
             <div className="fs-14 text-3-color">Loading…</div>
           ) : (
-            <div className="row g-4">
-              <div className="col-xl-3 col-lg-4 col-12">
-                <div className="settings-editor-panel">
+            <div className="content-blocks-layout">
+              <aside className="content-blocks-nav" aria-label="Content items">
+                <div className="content-blocks-nav__search">
+                  <img src={Icons.search} alt="" />
+                  <input type="search" value={filter} onChange={e => setFilter(e.target.value)} placeholder="Find content" aria-label="Find content" />
+                </div>
+                <div className="content-blocks-nav__list">
+                  {grouped.length === 0 && <div className="fs-13 text-3-color px-2 py-3">No content matches “{filter}”.</div>}
                   {grouped.map(([group, items]) => (
-                    <div key={group} className="margin-bottom-16">
-                      <div className="fs-12 fw-600 text-3-color text-uppercase margin-bottom-8">{GROUP_LABELS[group] || group}</div>
+                    <div key={group} className="content-blocks-nav__group">
+                      <div className="content-blocks-nav__group-title">
+                        <span>{GROUP_LABELS[group] || group}</span>
+                        <span className="content-blocks-nav__count">{items.length}</span>
+                      </div>
                       {items.map(block => (
                         <button
                           key={block.key}
                           type="button"
                           onClick={() => select(block)}
-                          className={`d-block w-100 text-start border-0 rounded px-2 py-2 margin-bottom-4 fs-14 ${block.key === selectedKey ? 'primary-color fw-600' : 'text-2-color'}`}
-                          style={{ background: block.key === selectedKey ? 'var(--primary-20, #eef4ff)' : 'transparent' }}>
-                          {block.title}
-                          {!block.isDefault && <span className="fs-11 text-3-color"> • edited</span>}
+                          aria-current={block.key === selectedKey ? 'true' : undefined}
+                          className={`content-blocks-nav__item${block.key === selectedKey ? ' is-active' : ''}`}>
+                          <span className="content-blocks-nav__item-title">{block.title}</span>
+                          <span className={`content-blocks-nav__dot${block.isDefault ? '' : ' is-edited'}`} title={block.isDefault ? 'Original text' : 'Edited'} />
                         </button>
                       ))}
                     </div>
                   ))}
                 </div>
-              </div>
+                <div className="content-blocks-nav__legend">
+                  <span>
+                    <span className="content-blocks-nav__dot" /> Original
+                  </span>
+                  <span>
+                    <span className="content-blocks-nav__dot is-edited" /> Edited
+                  </span>
+                </div>
+              </aside>
+
               {selected && (
-                <div className="col-xl-9 col-lg-8 col-12">
-                  <div className="settings-editor-panel">
-                    <div className="d-flex flex-wrap justify-content-between gap-2 margin-bottom-12">
-                      <div>
-                        <div className="fs-18 fw-600 text-1-color">{selected.title}</div>
-                        <div className="fs-13 text-3-color">{selected.description}</div>
-                      </div>
-                      <div className="d-flex align-items-center gap-2">
-                        {selected.isDefault ? <AppBadge label="Original text" variant="grey" /> : <AppBadge label="Edited" variant="purple" />}
-                        <AppBadge label={selected.format === 'html' ? 'Rich text (HTML)' : 'Plain text'} variant="lightBlue" />
+                <section className="content-blocks-editor">
+                  <header className="content-blocks-editor__head">
+                    <div className="min-w-0">
+                      <div className="content-blocks-editor__group">{GROUP_LABELS[selected.group] || selected.group}</div>
+                      <h2 className="content-blocks-editor__title">{selected.title}</h2>
+                      {selected.updatedByName && (
+                        <div className="fs-12 text-3-color">
+                          Last edited by {selected.updatedByName} on {formatDate(selected.updatedAt)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="d-flex align-items-center gap-2 flex-wrap">
+                      {selected.isDefault ? <AppBadge label="Original text" variant="grey" /> : <AppBadge label="Edited" variant="purple" />}
+                      <AppBadge label={selected.format === 'html' ? 'Rich text' : 'Plain text'} variant="lightBlue" />
+                    </div>
+                  </header>
+
+                  {selected.description && (
+                    <div className="content-blocks-editor__where">
+                      <img src={Icons.info} alt="" />
+                      <span>
+                        <strong>Where it appears: </strong>
+                        {selected.description}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="content-blocks-editor__body">
+                    <div className="content-blocks-editor__pane">
+                      <div className="content-blocks-editor__pane-title">Edit</div>
+                      <AppInput name="title" label="Title" value={draft.title} onChange={e => setDraft(d => ({ ...d, title: e.target.value }))} />
+                      <div className="margin-top-16">
+                        {selected.format === 'html' ? (
+                          <HtmlTemplateEditor label="Content" value={draft.body} onChange={value => setDraft(d => ({ ...d, body: value }))} rows={16} />
+                        ) : (
+                          <>
+                            <div className="fs-14 fw-500 text-1-color margin-bottom-8">Content</div>
+                            <textarea className="html-editor-textarea" rows={6} value={draft.body} onChange={e => setDraft(d => ({ ...d, body: e.target.value }))} />
+                          </>
+                        )}
                       </div>
                     </div>
-                    {selected.updatedByName && (
-                      <div className="fs-12 text-3-color margin-bottom-12">
-                        Last edited by {selected.updatedByName} on {formatDate(selected.updatedAt)}
-                      </div>
-                    )}
-                    <div className="row g-4">
-                      <div className="col-xxl-6 col-12">
-                        <AppInput name="title" label="Title" value={draft.title} onChange={e => setDraft(d => ({ ...d, title: e.target.value }))} />
-                        <div className="margin-top-16">
-                          {selected.format === 'html' ? (
-                            <HtmlTemplateEditor label="Content (HTML)" value={draft.body} onChange={value => setDraft(d => ({ ...d, body: value }))} rows={18} />
-                          ) : (
-                            <>
-                              <div className="fs-14 fw-500 text-1-color margin-bottom-8">Content (plain text)</div>
-                              <textarea className="html-editor-textarea" rows={6} value={draft.body} onChange={e => setDraft(d => ({ ...d, body: e.target.value }))} />
-                            </>
-                          )}
-                        </div>
-                        <div className="d-flex flex-wrap gap-2 margin-top-20">
-                          <AppButton title="Save" loading={saving} disabled={saving || !dirty} onClick={save} />
-                          <AppButton title="Discard changes" variant="secondary" disabled={!dirty} onClick={() => select(selected)} />
-                          <AppButton title="Reset to original" variant="tertiary" disabled={selected.isDefault} onClick={() => setShowReset(true)} />
-                        </div>
-                      </div>
-                      <div className="col-xxl-6 col-12">
-                        <div className="fs-14 fw-500 text-1-color margin-bottom-8">Preview</div>
-                        <HtmlPreviewFrame html={contentPreviewDocument(draft.body, selected.format)} height={selected.format === 'html' ? 520 : 200} title="Content preview" />
-                      </div>
+                    <div className="content-blocks-editor__pane">
+                      <div className="content-blocks-editor__pane-title">Preview</div>
+                      <HtmlPreviewFrame html={contentPreviewDocument(draft.body, selected.format)} height={selected.format === 'html' ? 480 : 200} title="Content preview" />
                     </div>
                   </div>
-                </div>
+
+                  <footer className={`content-blocks-editor__actions${dirty ? ' is-dirty' : ''}`}>
+                    <span className="fs-13 text-3-color">{dirty ? 'You have unsaved changes.' : 'All changes saved.'}</span>
+                    <div className="d-flex flex-wrap gap-2">
+                      <AppButton title="Reset to original" variant="tertiary" disabled={selected.isDefault} onClick={() => setShowReset(true)} />
+                      <AppButton title="Discard changes" variant="secondary" disabled={!dirty} onClick={() => select(selected)} />
+                      <AppButton title="Save" loading={saving} disabled={saving || !dirty} onClick={save} />
+                    </div>
+                  </footer>
+                </section>
               )}
             </div>
           )}

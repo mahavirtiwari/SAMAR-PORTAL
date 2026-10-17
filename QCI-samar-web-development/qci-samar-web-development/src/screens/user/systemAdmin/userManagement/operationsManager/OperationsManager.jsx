@@ -5,6 +5,7 @@ import { AppBadge, AppButton, AppDataGrid, AppInput, AppModal, AppToolTip } from
 import { toastError } from '../../../../../components/base/toast';
 import { Layout } from '../../../../../components/layout';
 import { AddOperationsManagerModal, EditOperationsManagerModal } from '../../../../../components/modals';
+import ContactDetailsCell from '../../../../../components/shared/ContactDetailsCell';
 import ResendPasswordButton from '../../../../../components/shared/ResendPasswordButton';
 import Icons from '../../../../../constants/Icons';
 import { activateUserAccountAction, deactivateUserAccountAction, getAllUsersAction, getUserDetailsAction } from '../../../../../redux/action/common/UnitAdminAction';
@@ -149,7 +150,7 @@ const OperationsManager = () => {
         field: 'action',
         headerName: 'Actions',
         flex: 1,
-        minWidth: 130,
+        minWidth: 200,
         sortable: false,
         renderCell: params => {
           const rowId = params.row?.id || params.row?.user_id;
@@ -193,7 +194,7 @@ const OperationsManager = () => {
         field: 'name',
         headerName: 'Name',
         flex: 1.2,
-        minWidth: 200,
+        minWidth: 150,
         sortable: false,
         renderCell: params => (
           <div className="double-content">
@@ -203,33 +204,18 @@ const OperationsManager = () => {
         ),
       },
       {
-        field: 'email',
-        headerName: 'Email',
-        flex: 1.8,
-        minWidth: 200,
+        field: 'contact',
+        headerName: 'Contact Details',
+        flex: 2,
+        minWidth: 220,
         sortable: false,
-        renderCell: params => (
-          <AppToolTip title={params.row.email || '-'}>
-            <span className="text-2-color fs-12 fw-500 double-content line-clamp-1" style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
-              {params.row.email || '-'}
-            </span>
-          </AppToolTip>
-        ),
-      },
-
-      {
-        field: 'mobile',
-        headerName: 'Mobile',
-        flex: 1,
-        minWidth: 180,
-        sortable: false,
-        renderCell: params => <h4 className="fs-12 fw-500 text-2-color">{params.row.mobileNumber || '-'}</h4>,
+        renderCell: params => <ContactDetailsCell email={params.row.email} mobile={params.row.mobileNumber} />,
       },
       {
         field: 'assignedStates',
         headerName: 'Assigned States',
         flex: 2,
-        minWidth: 250,
+        minWidth: 200,
         sortable: false,
         renderCell: params => {
           const assignedStates = params.row.assignedStates;
@@ -278,7 +264,7 @@ const OperationsManager = () => {
                     customInputClass={'search-input'}
                     value={filters.search}
                     onChange={e => handleFilterChange('search', e.target.value)}
-                    placeholder="search by email or mobile number"
+                    placeholder="SAMAR ID, name, email or mobile"
                     customWidth="100%"
                     leftIcon={Icons.search}
                     marginLeft="6px"

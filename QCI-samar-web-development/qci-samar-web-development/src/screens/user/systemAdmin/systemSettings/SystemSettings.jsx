@@ -18,12 +18,15 @@ import {
   updateMaintenanceModeSettingAction,
   updateRecertificationWindowSettingAction,
 } from '../../../../redux/action/common/SystemSettingAction';
+import Api from '../../../../services/api';
 import { Logger } from '../../../../utils/logger';
 
 const SystemSettings = () => {
   const [drdoApproval, setDrdoApproval] = useState(false);
   const [acceptNew, setAcceptNew] = useState(false);
   const [maintenance, setMaintenance] = useState(false);
+  // Security code (CAPTCHA) on login, sign-up and password reset; on unless switched off.
+  const [captchaOn, setCaptchaOn] = useState(true);
 
   // modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -89,6 +92,27 @@ const SystemSettings = () => {
       setModalOpen(true);
     }
 
+    if (key === 'captcha') {
+      setModalConfig({
+        title: currentValue ? 'Turn Off Security Code?' : 'Turn On Security Code?',
+        subtitle: currentValue
+          ? 'Login, sign-up and password reset will no longer ask for the security code (CAPTCHA). Login still needs the OTP, and repeated failures are still blocked.'
+          : 'Login, sign-up and password reset will ask for a 6-character security code (CAPTCHA) again.',
+        onConfirm: async () => {
+          try {
+            const newValue = !captchaOn;
+            await Api.SystemSettingsService.update({ key: 'captcha_enabled', value: newValue ? '1' : '0' });
+            setCaptchaOn(newValue);
+          } catch (err) {
+            Logger.error('Error updating security code setting:', err);
+          }
+          setModalOpen(false);
+        },
+        confirmLabel: currentValue ? 'Turn Off' : 'Turn On',
+      });
+      setModalOpen(true);
+    }
+
     if (key === 'maintenance') {
       setModalConfig({
         title: currentValue ? 'Disable Maintenance Mode?' : 'Enable Maintenance Mode?',
@@ -136,6 +160,12 @@ const SystemSettings = () => {
       ]);
     };
     loadAll();
+    Api.SystemSettingsService.get('captcha_enabled')
+      .then(setting => {
+        const val = setting?.value;
+        setCaptchaOn(!(String(val) === '0' || String(val) === 'false'));
+      })
+      .catch(err => Logger.error('Error loading security code setting:', err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -408,6 +438,25 @@ const SystemSettings = () => {
                           ariaLabel="Maintenance Toggle"
                           onChange={() => openConfirm('maintenance', maintenance)}
                         />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-sm-6">
+                  <div className="settings-row">
+                    <div className="maintenance-card" style={{ width: '100%' }}>
+                      <div className="seeting-left settings-card">
+                        <div className="icon-bk">
+                          <img src={Icons.active} alt="" className="img-fluid" />
+                        </div>
+                        <div>
+                          <h4>Security Code (CAPTCHA)</h4>
+                          <p>Asks for a 6-character code (letters and digits) on login, sign-up and password reset.</p>
+                        </div>
+                      </div>
+                      <div className="seeting-right">
+                        <AppSwitch id="captcha-switch" checked={captchaOn} labels={{ on: 'On', off: 'Off' }} ariaLabel="Security Code Toggle" onChange={() => openConfirm('captcha', captchaOn)} />
                       </div>
                     </div>
                   </div>

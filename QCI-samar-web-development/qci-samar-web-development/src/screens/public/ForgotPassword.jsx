@@ -39,6 +39,8 @@ const ForgotPassword = () => {
 
   // Either a SAMAR ID or the email registered on the account(s).
   const isEmail = value => (value || '').includes('@');
+  // Off when the System Admin has switched the security code off.
+  const [captchaEnabled, setCaptchaEnabled] = useState(true);
   const validationSchema = Yup.object({
     samarId: Yup.string()
       .trim()
@@ -47,7 +49,7 @@ const ForgotPassword = () => {
       .test('samar-id-or-email', 'Enter a valid SAMAR ID (e.g., SAMAR-080125-123) or email address', value =>
         isEmail(value) ? Yup.string().email().isValidSync(value) : samarIdRegex.test(value || ''),
       ),
-    captcha: Yup.string().required('Enter the security code'),
+    captcha: captchaEnabled ? Yup.string().required('Enter the security code') : Yup.string(),
   });
 
   useEffect(() => {
@@ -112,6 +114,7 @@ const ForgotPassword = () => {
                       </div>
                       <div className="margin-top-20 text-start">
                         <AppCaptcha
+                          onEnabledChange={setCaptchaEnabled}
                           value={values.captcha}
                           onChange={e => {
                             setCaptchaServerError('');

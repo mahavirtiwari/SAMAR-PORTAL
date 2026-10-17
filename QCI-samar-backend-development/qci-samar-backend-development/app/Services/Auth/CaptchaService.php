@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\SystemSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -43,12 +44,22 @@ class CaptchaService
         ];
     }
 
+    /**
+     * A random code from the charset that always holds at least one letter and
+     * one digit, so it reads as alphanumeric rather than all-letters.
+     */
     private function randomPhrase(int $length, string $charset): string
     {
-        $phrase = '';
-        for ($i = 0; $i < $length; $i++) {
-            $phrase .= $charset[random_int(0, strlen($charset) - 1)];
-        }
+        $letters = preg_replace('/[^A-Z]/', '', $charset);
+        $digits = preg_replace('/[^0-9]/', '', $charset);
+
+        do {
+            $phrase = '';
+            for ($i = 0; $i < $length; $i++) {
+                $phrase .= $charset[random_int(0, strlen($charset) - 1)];
+            }
+        } while ($length >= 2 && $letters !== '' && $digits !== ''
+            && (strpbrk($phrase, $letters) === false || strpbrk($phrase, $digits) === false));
 
         return $phrase;
     }
@@ -171,7 +182,7 @@ class CaptchaService
      */
     public function isRequiredFor(Request $request): bool
     {
-        if (! config('captcha.enabled')) {
+        if (! $this->isEnabled()) {
             return false;
         }
 
@@ -182,5 +193,15 @@ class CaptchaService
         }
 
         return in_array($origin, config('cors.allowed_origins', []), true);
+    }
+
+    /**
+     * Whether the security code is switched on: the deployment switch
+     * (CAPTCHA_ENABLED) and the System Admin's switch in System Settings
+     * ("captcha_enabled") must both be on.
+     */
+    public function isEnabled(): bool
+    {
+        return (bool) config('captcha.enabled') && SystemSetting::isCaptchaEnabled();
     }
 }

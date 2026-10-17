@@ -114,6 +114,15 @@ class SystemSetting extends Model
     }
 
     /**
+     * Whether the security code (CAPTCHA) is shown on the login, sign-up and
+     * password-reset forms. On unless the System Admin switches it off.
+     */
+    public static function isCaptchaEnabled(): bool
+    {
+        return filter_var(self::getValue('captcha_enabled', 'true'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
      * Check if application submission is open
      */
     public static function isApplicationSubmissionOpen(): bool

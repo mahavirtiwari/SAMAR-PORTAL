@@ -121,7 +121,7 @@ const EditServicesVendorLabModal = ({ open, handleClose, data, onGeneralError })
     <AppCommonModal
       open={open}
       onClose={handleClose}
-      modalHeader={<>Edit Service Services</>}
+      modalHeader={<>Edit Service</>}
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{

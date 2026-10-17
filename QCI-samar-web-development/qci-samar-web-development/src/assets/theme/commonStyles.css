@@ -1672,3 +1672,9 @@ Straight lines only: no rounded accents inside the card.
 .table-container .MuiDataGrid-cell > div > p:only-child {
   margin-bottom: 0;
 }
+
+/* Same for a heading rendered straight into a cell (e.g. Mobile on user lists). */
+.table-container .MuiDataGrid-cell > h4:only-child,
+.table-container .MuiDataGrid-cell > p:only-child {
+  margin-bottom: 0;
+}

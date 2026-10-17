@@ -128,7 +128,7 @@ const AddServicesVendorLabModal = ({ open, handleClose, onGeneralError }) => {
     <AppCommonModal
       open={open}
       onClose={handleClose}
-      modalHeader={<>Add Service Services</>}
+      modalHeader={<>Add Service</>}
       modalContent={modalContent}
       modalFooter={modalFooter}
       paperSx={{

@@ -112,6 +112,10 @@ const Login = () => {
   // SAMAR ID format: SAMAR-DDMMYY-ID (e.g., SAMAR-080125-123)
   const samarIdRegex = /^SAMAR-\d{6}-\d+$/i;
 
+  // Off when the System Admin has switched the security code off.
+
+  const [captchaEnabled, setCaptchaEnabled] = useState(true);
+
   const validationSchema = Yup.object({
     samarId: Yup.string().max(320, 'SAMAR ID cannot exceed 320 characters').required('SAMAR ID is required').matches(samarIdRegex, 'SAMAR ID must be valid (e.g., SAMAR-080125-123)'),
     password: Yup.string()
@@ -119,7 +123,7 @@ const Login = () => {
       .max(20, 'Password cannot exceed 20 characters')
 
       .required('Password is required'),
-    captcha: Yup.string().required('Enter the security code'),
+    captcha: captchaEnabled ? Yup.string().required('Enter the security code') : Yup.string(),
   });
 
   useEffect(() => {
@@ -282,6 +286,7 @@ const Login = () => {
                       </div>
                       <div className="margin-top-20">
                         <AppCaptcha
+                          onEnabledChange={setCaptchaEnabled}
                           value={values.captcha}
                           onChange={e => {
                             setCaptchaServerError('');

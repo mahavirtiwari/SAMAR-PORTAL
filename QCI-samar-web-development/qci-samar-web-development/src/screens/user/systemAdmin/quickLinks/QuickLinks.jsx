@@ -135,7 +135,7 @@ const QuickLinks = () => {
       {
         field: 'action',
         headerName: 'Actions',
-        minWidth: 170,
+        minWidth: 210,
         flex: 0.9,
         sortable: false,
         renderCell: params => (
