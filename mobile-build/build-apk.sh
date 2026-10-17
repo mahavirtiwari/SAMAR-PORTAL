@@ -94,9 +94,20 @@ for app in "${APPS[@]}"; do
     chmod +x gradlew
     # Small heap and two workers to fit a ~4 GB server; low CPU priority so the web
     # app on the same machine stays responsive.
-    nice -n 15 ./gradlew "$task" --no-daemon --max-workers=2 \
-        -Dorg.gradle.jvmargs="-Xmx$HEAP -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8" \
-        -PreactNativeArchitectures="$ABIS"
+    gradle_args=(--no-daemon --max-workers=2
+        -Dorg.gradle.jvmargs="-Xmx$HEAP -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8"
+        -PreactNativeArchitectures="$ABIS")
+    # Generate every library's codegen sources first. Gradle does not order the app's
+    # CMake configure after them, so in one run it can configure while some are still
+    # missing, skip them, and fail with "'rnclipboard.h' file not found".
+    echo "== $app: gradlew generateCodegenArtifactsFromSchema"
+    nice -n 15 ./gradlew generateCodegenArtifactsFromSchema "${gradle_args[@]}"
+    # A CMake cache configured before those sources existed keeps skipping them.
+    if [ -d app/.cxx ] && [ -n "$(find ../node_modules -path '*/build/generated/source/codegen/jni' -type d -newer app/.cxx -print -quit)" ]; then
+        echo "== $app: codegen sources are newer than the CMake cache; clearing app/.cxx"
+        rm -rf app/.cxx
+    fi
+    nice -n 15 ./gradlew "$task" "${gradle_args[@]}"
     cd ..
 
     flavor=$(echo "$ENVIRONMENT" | tr '[:upper:]' '[:lower:]')
