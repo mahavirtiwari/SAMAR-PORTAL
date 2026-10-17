@@ -1,12 +1,13 @@
 import { CircularProgress } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppButton, AppDataGrid } from '../../../../components/base';
 import AppIconButton from '../../../../components/base/AppIconButton';
 import { Layout } from '../../../../components/layout';
 import Icons from '../../../../constants/Icons';
 import { exportApplicationFeedbacksAction, getFeedbacksAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
+import { formatDate } from '../../../../utils/formatters';
 
 const StarRating = ({ filled, total = 5 }) => (
   <>
@@ -57,6 +58,8 @@ const ApplicantFeedbackDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
+  // The list passes the row it came from, so the page can say whose feedback it is.
+  const summary = useLocation().state?.row || null;
 
   const { feedbacks, feedbacksLoading, feedbacksError } = useSelector(state => state.ApplicationFeedback);
 
@@ -169,6 +172,23 @@ const ApplicantFeedbackDetails = () => {
                     </div>
                   )}
                 </div>
+
+                {summary ? (
+                  <div className="feedback-summary">
+                    {[
+                      ['Application Number', summary.applicationNumber],
+                      ['Enterprise / Unit', [summary.enterpriseName, summary.unitName && summary.unitName !== summary.enterpriseName ? summary.unitName : null].filter(Boolean).join(' · ')],
+                      ['Size / Sector', [summary.enterpriseClassification === 'startup' ? 'Start-Up' : summary.enterpriseClassification, summary.sector].filter(Boolean).join(' · ')],
+                      ['Submitted by', summary.userSamarId],
+                      ['Feedback Date', summary.feedbackDate ? formatDate(summary.feedbackDate) : null],
+                    ].map(([label, value]) => (
+                      <div key={label} className="feedback-summary__item">
+                        <span className="feedback-summary__label">{label}</span>
+                        <span className="feedback-summary__value">{value || '-'}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
 
                 <div className="table-wrapper">
                   <AppDataGrid rows={rows} columns={columns} server={false} pageSize={100} extraProps={{ hideFooter: true }} />

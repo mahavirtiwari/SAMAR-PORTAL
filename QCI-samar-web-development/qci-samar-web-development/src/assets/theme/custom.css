@@ -6213,3 +6213,150 @@ textarea::-webkit-input-placeholder {
   font-size: 11.5px;
   color: var(--text-3);
 }
+
+/* Applicant Feedback details: whose feedback this is, above the answers. */
+.feedback-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px 20px;
+  margin: 0 24px 18px;
+  padding: 14px 18px;
+  border: 1px solid #e3eaf5;
+  border-radius: 10px;
+  background: #f7faff;
+}
+
+.feedback-summary__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.feedback-summary__label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+
+.feedback-summary__value {
+  font-size: 13.5px;
+  font-family: "Inter-Medium", sans-serif;
+  color: var(--text-1);
+  overflow-wrap: anywhere;
+  text-transform: capitalize;
+}
+
+/* ---- Assessment / application details: visual polish (layout unchanged) ---- */
+
+/* Header: the registration / dates strip as soft tiles instead of divider lines. */
+.details-card-with-tabs .bottom-details-card {
+  gap: 10px;
+}
+
+.details-card-with-tabs .bottom-details-card > .vertical-divider {
+  display: none;
+}
+
+.details-card-with-tabs .bottom-details-card > .each-details-box {
+  flex: 1 1 200px;
+  max-width: none;
+  padding: 10px 14px;
+  border: 1px solid #e3eaf5;
+  border-radius: 10px;
+  background: #f7faff;
+}
+
+/* Score / date boxes in the header. */
+.details-card-with-tabs .date-commencement-container {
+  min-width: 92px;
+  padding: 8px 14px;
+  border: 1px solid #d6e6fb;
+  border-radius: 10px;
+  background: #f5f9ff;
+}
+
+.details-card-with-tabs .date-commencement-container > p:first-child {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: var(--table-head-text, #1f4e8c) !important;
+}
+
+/* Tabs under the header. */
+.details-card-with-tabs .card-bottom-tabs {
+  border-top: 1px solid #eef2f8;
+}
+
+.details-card-with-tabs .card-tabs-link span {
+  color: var(--text-2);
+  transition: color 0.15s ease;
+}
+
+.details-card-with-tabs .card-tabs-link span:hover {
+  color: var(--primary, #1b84ff);
+}
+
+.details-card-with-tabs .card-tabs-link span.active {
+  color: var(--primary, #1b84ff);
+  font-weight: 600;
+}
+
+/* Assessment tab: step list on the left. */
+.assessment-tab-sidebar .nav-pills .nav-link {
+  border-radius: 10px;
+  color: var(--text-2);
+  transition: background-color 0.15s ease;
+}
+
+.assessment-tab-sidebar .nav-pills .nav-link:hover {
+  background: #f5f9ff;
+}
+
+.assessment-tab-sidebar .nav-pills .nav-link.active {
+  background: #eaf2ff;
+  color: var(--table-head-text, #1f4e8c);
+  font-weight: 600;
+}
+
+/* Assessment parameter cards. */
+.card-bottom-tabs-content .payment-allocation-container {
+  border: 1px solid #e3eaf5;
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-bottom-tabs-content .payment-allocation-container:hover {
+  border-color: #c9dcf6;
+  box-shadow: 0 2px 8px rgba(31, 78, 140, 0.06);
+}
+
+/* Schedule tab: date / site / contact block. */
+.card-bottom-tabs-content .assessment-header-section {
+  padding: 14px 18px;
+  border: 1px solid #e3eaf5;
+  border-radius: 12px;
+  background: #f7faff;
+}
+
+/* SA / RC score boxes in the header. */
+.details-card-with-tabs .details-level-box {
+  min-width: 96px;
+  padding: 10px 16px;
+  border: 1px solid #d6e6fb;
+  border-radius: 10px;
+  background: #f5f9ff;
+  text-align: center;
+}
+
+.details-card-with-tabs .details-level-box > *:first-child {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: var(--table-head-text, #1f4e8c) !important;
+}
+
+.details-card-with-tabs .details-level-box > *:last-child {
+  font-size: 11.5px !important;
+  color: var(--text-3) !important;
+}

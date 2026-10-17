@@ -56,7 +56,7 @@ const PaymentDetailModal = ({ open, handleClose, paymentData }) => {
         {date && <span className="fs-12 fw-500 text-2-color">Date: {formatDate(date)}</span>}
       </div>
       <div className="row">
-        <div className="col-12 col-md-6">
+        <div className="col-12">
           <div className="rowBetween margin-bottom-10">
             <span className="fs-12 fw-500 text-2-color">Base Certification Fee</span>
             <span className="fs-12 fw-500 text-1-color">{formatCurrency(baseCertificationFee)}</span>
@@ -72,7 +72,7 @@ const PaymentDetailModal = ({ open, handleClose, paymentData }) => {
       {/* Payment Breakdown */}
       <div className="sub-Total-Container padding-top-10 margin-bottom-10">
         <div className="row">
-          <div className="col-12 col-md-6">
+          <div className="col-12">
             <div className="rowBetween margin-bottom-10">
               <span className="fs-12 fw-500 heading-color">Subtotal</span>
               <span className="fs-12 fw-600 heading-color">{formatCurrency(amountPayable)}</span>
@@ -81,7 +81,7 @@ const PaymentDetailModal = ({ open, handleClose, paymentData }) => {
         </div>
       </div>
       <div className="row">
-        <div className="col-12 col-md-6">
+        <div className="col-12">
           <div className="rowBetween margin-bottom-10">
             <span className="fs-12 fw-500 text-2-color">GST ({(gstRate * 100).toFixed(0)}%)</span>
             <span className="fs-12 fw-500 text-1-color">{formatCurrency(gstAmount)}</span>
@@ -96,7 +96,7 @@ const PaymentDetailModal = ({ open, handleClose, paymentData }) => {
       </div>
       <div className="total-payable-Container padding-top-10 margin-bottom-32">
         <div className="row">
-          <div className="col-12 col-md-6">
+          <div className="col-12">
             <div className="rowBetween margin-bottom-10">
               <span className="fs-14 fw-600 heading-color">Total Payable</span>
               <span className="fs-14 fw-600 heading-color">{formatCurrency(totalPayable)}</span>
