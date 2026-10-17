@@ -437,6 +437,9 @@ Route::prefix('v1')->group(function () {
             // Assessment workflow actions (role-restricted)
             Route::post('/{id}/schedule', [AssessmentController::class, 'allocate'])
                 ->middleware('role:operations_manager');
+            // Used by web: OperationScheduleAssessmentModal (greys out assessors on leave / already booked)
+            Route::get('/{id}/assessor-availability', [AssessmentController::class, 'assessorAvailability'])
+                ->middleware('role:operations_manager,operations_admin');
             Route::post('/{id}/start', [AssessmentController::class, 'start'])
                 ->middleware('role:assessor');
             Route::post('/{id}/submit-for-qc', [AssessmentController::class, 'submitForQc'])

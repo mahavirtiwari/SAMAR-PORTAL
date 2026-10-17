@@ -271,8 +271,12 @@ const AppDropdown = ({
           )}
           {filteredOptions.length > 0 ? (
             filteredOptions.map(option => (
-              <MenuItem key={option.value} value={option.value} sx={{ minHeight: OPTION_ROW_HEIGHT, paddingTop: 1, paddingBottom: 1, whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4 }}>
-                {richOptions && (option.phone || option.description) ? (
+              <MenuItem
+                key={option.value}
+                value={option.value}
+                disabled={!!option.disabled}
+                sx={{ minHeight: OPTION_ROW_HEIGHT, paddingTop: 1, paddingBottom: 1, whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: 1.4 }}>
+                {richOptions && (option.phone || option.description || option.unavailableReason) ? (
                   <span style={ITEM_TEXT_WRAP_SX}>
                     <span style={ITEM_LABEL_SX}>
                       {option.label}
@@ -283,6 +287,7 @@ const AppDropdown = ({
                       ) : null}
                     </span>
                     {option.description ? <span style={ITEM_DESC_SX}>{option.description}</span> : null}
+                    {option.unavailableReason ? <span className="option-unavailable-reason">Unavailable · {option.unavailableReason}</span> : null}
                   </span>
                 ) : (
                   option.label

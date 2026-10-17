@@ -97,8 +97,11 @@ const AssessmentParameter = ({
           const flaggedCount = questions.filter(q => String(q.reviewStatus) === 'flagged').length;
           const clarifiedCount = questions.filter(q => String(q.reviewStatus) === 'clarified').length;
 
-          // In progress the parameter is not an accordion — its View opens the questions modal.
-          const isOpen = !inProgress && openParamId === param.id;
+          // Assessors in progress open a parameter straight into its questions modal.
+          // Everyone else (Operations / DRDO viewers) gets the expandable question list
+          // at every stage, like Quality Check, with a View per question.
+          const expandable = !inProgress || isScoreVisible;
+          const isOpen = expandable && openParamId === param.id;
           const openQuestionsModal = () => {
             if (typeof onClick === 'function' && questions.length > 0) {
               onClick(param, questions, 0);
@@ -112,8 +115,8 @@ const AssessmentParameter = ({
               {/* HEADER */}
               <div
                 className="d-flex justify-content-between cursor-pointer"
-                {...onActivate(() => (inProgress ? openQuestionsModal() : handleToggle(param.id)))}
-                aria-expanded={inProgress ? undefined : isOpen}>
+                {...onActivate(() => (expandable ? handleToggle(param.id) : openQuestionsModal()))}
+                aria-expanded={expandable ? isOpen : undefined}>
                 <div className="d-flex align-items-start">
                   {inProgress && (
                     <div
@@ -275,7 +278,7 @@ const AssessmentParameter = ({
                     </div>
                     {/* In progress, a parameter opens straight into its questions modal (Next steps
                         through them); the other stages keep the expand/collapse question list. */}
-                    {inProgress ? (
+                    {!expandable ? (
                       <AppButton
                         variant="link"
                         title="View"
@@ -298,7 +301,7 @@ const AssessmentParameter = ({
                   {questions.map((qn, index) => (
                     <div key={qn.id || index} className={`question-container ${index !== questions.length - 1 ? 'margin-bottom-20' : ''}`}>
                       <div className="d-flex gap-10 align-items-start">
-                        {inProgress && <img src={qn?.response !== null ? Icons.greenTickCircle : Icons.yellowClock} className="icon-20 padding-top-2" alt="status" />}
+                        {inProgress && <img src={qn?.response ? Icons.greenTickCircle : Icons.yellowClock} className="icon-20 padding-top-2" alt={qn?.response ? 'Answered' : 'Not answered yet'} />}
                         {(readyforcommitteereview || certified) && <img src={Icons.documentGrey} className="icon-20 padding-top-2" alt="status" />}
                         {(committeeReviewFeedback || qualitycheckfeedback || qualityCheck) &&
                           (() => {

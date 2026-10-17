@@ -936,7 +936,32 @@ const AppSingleParameterQuestionsModal = ({
   // parameters may always (re)select; otherwise read-only mode, an existing
   // selected option, or a non-'pending' status locks the choice.
   const optionsDisabled = canAnswer ? false : Boolean(data) || Boolean(currentQuestion?.response?.selectedOption) || currentQuestionStatus !== 'pending';
-  const modalTitle = <div>Question {currentQuestionIndex + 1}</div>;
+  // Read-only viewers (Operations / DRDO, all stages) move between the
+  // parameter's questions with Previous / Next; assessors answering keep the
+  // existing save flow, which closes the modal itself.
+  const totalQuestions = Array.isArray(questionsSource) ? questionsSource.length : 0;
+  const isLastQuestion = currentQuestionIndex >= totalQuestions - 1;
+  const showNavigation = !canAnswer && totalQuestions > 1;
+  const modalTitle = (
+    <div>
+      Question {currentQuestionIndex + 1}
+      {totalQuestions > 1 ? <span className="text-3-color">/{totalQuestions}</span> : null}
+    </div>
+  );
+  const navigationFooter = showNavigation ? (
+    <div className="d-flex justify-content-between align-items-center w-100 gap-2">
+      {currentQuestionIndex === 0 ? (
+        <AppButton variant="tertiary" title="Close" onClick={onClose} />
+      ) : (
+        <AppButton variant="secondary" title="Previous" onClick={() => setCurrentQuestionIndex(index => Math.max(0, index - 1))} />
+      )}
+      {isLastQuestion ? (
+        <AppButton title="Close" onClick={onClose} />
+      ) : (
+        <AppButton title="Next" rightIcon={Icons.rightWhiteArrow} rightIconStyle="icon-16" onClick={() => setCurrentQuestionIndex(index => Math.min(totalQuestions - 1, index + 1))} />
+      )}
+    </div>
+  ) : null;
   const isAssessor = hasRole(user, 'assessor');
   const isScoreVisible = !isAssessor;
   const rcScoreApplicable = committeeReviewFeedback || certified;
@@ -1649,6 +1674,7 @@ const AppSingleParameterQuestionsModal = ({
       onClose={onClose}
       modalHeader={modalTitle}
       modalContent={modalContent}
+      modalFooter={navigationFooter}
       paperSx={{
         width: { xs: 'calc(100% - 16px)', sm: '90%', md: '800px', lg: '1100px' },
         maxWidth: '98vw',

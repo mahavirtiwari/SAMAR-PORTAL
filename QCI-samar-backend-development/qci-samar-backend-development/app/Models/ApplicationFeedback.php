@@ -64,6 +64,8 @@ class ApplicationFeedback extends Model
 
     /**
      * Get the user who submitted this feedback.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function creator(): BelongsTo
     {

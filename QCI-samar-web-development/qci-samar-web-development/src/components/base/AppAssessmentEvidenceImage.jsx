@@ -35,6 +35,9 @@ const AppAssessmentEvidenceImage = ({ evidence }) => {
   // eviction, so nothing is revoked here.
   const evidencePics = Array.isArray(evidence) ? evidence : evidence ? [evidence] : [];
   const evidenceKey = evidencePics.map(pic => pic?.id ?? pic?.downloadUrl ?? '').join('|');
+  // Which evidence set has finished loading: an image the server could not
+  // supply then shows the placeholder instead of its bare alt text.
+  const [loadedKey, setLoadedKey] = useState(null);
 
   useEffect(() => {
     const pics = Array.isArray(evidence) ? evidence : evidence ? [evidence] : [];
@@ -50,6 +53,7 @@ const AppAssessmentEvidenceImage = ({ evidence }) => {
     ).then(entries => {
       if (!cancelled) {
         setImageUrls(Object.fromEntries(entries.filter(Boolean)));
+        setLoadedKey(evidenceKey);
       }
     });
     return () => {
@@ -91,7 +95,8 @@ const AppAssessmentEvidenceImage = ({ evidence }) => {
             const pics = Array.isArray(evidence) ? evidence : evidence ? [evidence] : [];
             const first = pics[0];
             const thumb = first ? imageUrls[first.id] : null;
-            return <img src={thumb} loading="lazy" alt="Site Interior" className="evidence-site-image" onError={e => (e.target.src = Images.dummySite)} />;
+            const src = thumb || (loadedKey === evidenceKey ? Images.dummySite : undefined);
+            return <img src={src} loading="lazy" alt="Evidence" title={thumb ? undefined : 'Image not available'} className="evidence-site-image" onError={e => (e.target.src = Images.dummySite)} />;
           })()}
           <div className="site-overlay">
             {formatCoordinates(evidence?.latitude, evidence?.longitude) && <div className="overlay-text">{formatCoordinates(evidence?.latitude, evidence?.longitude)}</div>}

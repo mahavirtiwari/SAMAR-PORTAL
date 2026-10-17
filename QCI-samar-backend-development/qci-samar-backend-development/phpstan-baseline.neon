@@ -691,12 +691,6 @@ parameters:
 			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$creator\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Api/V1/ApplicationFeedbackController.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
 			identifier: property.notFound
 			count: 1
@@ -2209,12 +2203,6 @@ parameters:
 			path: app/Http/Resources/UserResource.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/ApplicationStatusChangedListener.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -2225,12 +2213,6 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 2
 			path: app/Listeners/ApplicationStatusChangedListener.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$full_name\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Listeners/AssessmentStatusChangedListener.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -3609,7 +3591,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
 			identifier: property.notFound
-			count: 16
+			count: 15
 			path: app/Services/StateMachine/AssessmentStateMachine.php
 
 		-

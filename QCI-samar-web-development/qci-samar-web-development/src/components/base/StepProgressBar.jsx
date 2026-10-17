@@ -5,56 +5,33 @@ const StepProgressBar = ({ steps = [], loading = false, error = null, title = 'A
 
   return (
     <div className="details-card" style={{ height: height }}>
-      <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px', color: '#1E293B' }}>{title}</h3>
+      <div className="d-flex align-items-baseline justify-content-between flex-wrap gap-2 margin-bottom-16">
+        <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: 0, color: '#1E293B' }}>{title}</h3>
+        {!loading && !error && total > 0 ? <span className="fs-13 text-3-color">{total} assessments across all stages</span> : null}
+      </div>
       {loading ? (
         <div style={{ textAlign: 'center', padding: '32px 0', color: '#64748B', fontSize: '16px' }}>Loading status...</div>
       ) : error ? (
         <div style={{ textAlign: 'center', padding: '32px 0', color: '#EF4444', fontSize: '16px' }}>{error}</div>
       ) : (
-        <>
-          <div className="stepProgressBarTrack">
-            {steps.map(step => {
-              const percent = total > 0 ? (step.count / total) * 100 : 0;
-              return (
-                <div
-                  key={step.label}
-                  style={{
-                    background: step.color,
-                    color: '#fff',
-                    width: `${percent}%`,
-                    minWidth: percent < 8 ? '60px' : undefined,
-                    padding: '9px 5px',
-                    boxSizing: 'border-box',
-                    borderRadius: 4,
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    fontSize: '12px',
-                    letterSpacing: '0.5px',
-                    position: 'relative',
-                    transition: 'transform 0.2s',
-                    // borderRight: '2px solid #fff',
-                    boxShadow: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  aria-label={step.label}>
-                  {step.count}
-                  {/* <div style={{ fontSize: '13px', fontWeight: 500, marginTop: '6px', color: 'rgba(255,255,255,0.92)' }}>{step.label}</div> */}
-                </div>
-              );
-            })}
-          </div>
-          <div className="progressBarLabels">
-            {steps.map(step => (
-              <div key={step.label + '-legend'} style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '180px' }}>
-                <span className="label-color-box" style={{ background: step.color }}></span>
-                <span style={{ color: '#4B5675', fontSize: '14px', fontWeight: 500 }}>{step.label}</span>
+        // Each stage as a tile in flow order: step number, count and name side by
+        // side, coloured like the stage. Total and share shown under the count.
+        <div className="status-flow-grid">
+          {steps.map((step, index) => {
+            const share = total > 0 ? Math.round(((step.count || 0) / total) * 100) : 0;
+            return (
+              <div key={step.label} className="status-flow-tile" style={{ '--status-color': step.color }}>
+                <span className="status-flow-tile__step">{String(index + 1).padStart(2, '0')}</span>
+                <span className="status-flow-tile__count">{step.count ?? 0}</span>
+                <span className="status-flow-tile__label">{step.label}</span>
+                <span className="status-flow-tile__bar" aria-hidden="true">
+                  <span style={{ width: `${share}%` }} />
+                </span>
+                <span className="status-flow-tile__share">{share}% of assessments</span>
               </div>
-            ))}
-          </div>
-        </>
+            );
+          })}
+        </div>
       )}
     </div>
   );

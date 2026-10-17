@@ -161,6 +161,7 @@ const AssessmentTab = ({ assessment }) => {
         assessmentId={assessment?.id || assessment?.assessment?.id || assessment?.data?.assessment?.id}
         initialQuestionIndex={singleParameterInitialQuestionIndex}
         Data={true}
+        data={true}
         inProgress={false}
       />
     </div>

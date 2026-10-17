@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { FullScreenLoader } from '../components/base';
 import Page from '../components/base/Page';
 import {
   ApplicantFeedbackDetails,
@@ -240,14 +241,37 @@ import {
   VerifyCertificate,
 } from '../screens';
 
+// Shown when the account has no role that can use the portal.
+const NoPortalAccess = () => (
+  <div className="d-flex flex-column align-items-center justify-content-center text-center" style={{ minHeight: '100vh', padding: 24 }}>
+    <h1 className="fs-20 fw-600 heading-color">No access</h1>
+    <p className="fs-14 text-2-color mb-0">Your account does not have access to this part of the portal. Please contact the SAMAR administrator.</p>
+  </div>
+);
+
 function getElementByRole(role, options, title) {
   const element = options?.[role] ?? options?.['default'];
-  return <Page title={title}>{element}</Page>;
+  if (element) {
+    return <Page title={title}>{element}</Page>;
+  }
+  // A page this role can't use (e.g. a link left in the address bar by the previous
+  // user, kept through login) used to render nothing — a blank screen. Send the user
+  // to their own home page instead; the home page itself can't redirect to itself.
+  return title === 'Dashboard' ? <NoPortalAccess /> : <Navigate to="/" replace />;
 }
 export default function UserNavigator() {
   const { user } = useSelector(state => state.Account);
   const role = Array.isArray(user?.roles) && user.roles.length > 0 ? user.roles[0].slug : undefined;
   // const role = 'operations_manager';
+
+  // Roles not loaded yet: wait rather than render an empty page. Loaded but
+  // none active: say so instead of a blank screen.
+  if (!Array.isArray(user?.roles)) {
+    return <FullScreenLoader loading={true} />;
+  }
+  if (!role) {
+    return <NoPortalAccess />;
+  }
 
   // Dynamic title mapping
 
@@ -1532,7 +1556,8 @@ export default function UserNavigator() {
         }
       />
       {/* Fallback: redirect drdo_lab users to their primary view on unmatched routes */}
-      <Route path="*" element={role === 'drdo_lab' ? <Navigate to="/certified-vendors" replace /> : null} />
+      {/* Unknown address: back to the user's home page rather than a blank screen. */}
+      <Route path="*" element={<Navigate to={role === 'drdo_lab' ? '/certified-vendors' : '/'} replace />} />
     </Routes>
   );
 }

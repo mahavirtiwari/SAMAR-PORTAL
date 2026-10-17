@@ -7216,6 +7216,16 @@
                                                         "example": "BrahMos, Goa",
                                                         "nullable": true
                                                     },
+                                                    "enterprise_classification": {
+                                                        "type": "string",
+                                                        "example": "large",
+                                                        "nullable": true
+                                                    },
+                                                    "sector": {
+                                                        "type": "string",
+                                                        "example": "manufacturing",
+                                                        "nullable": true
+                                                    },
                                                     "user_samar_id": {
                                                         "type": "string",
                                                         "example": "SAMAR-030125-22222",
@@ -8155,6 +8165,68 @@
                     },
                     "404": {
                         "description": "Assessment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/assessments/{id}/assessor-availability": {
+            "get": {
+                "tags": [
+                    "Assessments"
+                ],
+                "summary": "Which assessors are free for the chosen schedule dates",
+                "description": "For each assessor: is_available and, when not, unavailable_reason (on leave, or already assigned to another scheduled / in-progress assessment). The assessment itself is excluded so its own team does not clash with itself.",
+                "operationId": "assessorAvailability",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "userIds[]",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Availability per assessor"
+                    },
+                    "422": {
+                        "description": "Validation failed"
                     }
                 },
                 "security": [
@@ -30191,6 +30263,10 @@
         {
             "name": "Application Feedbacks",
             "description": "Application feedback management endpoints"
+        },
+        {
+            "name": "Assessments",
+            "description": "Assessment management endpoints"
         },
         {
             "name": "Assessment Parameters",

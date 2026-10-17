@@ -16,6 +16,7 @@ use App\Models\CommitteeMeeting;
 use App\Models\CommitteeMeetingAssessment;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\AssessorAvailabilityService;
 use App\Services\Email\EmailNotificationService;
 use App\Services\MeetingSummarySheetService;
 use App\Services\StateFilterService;
@@ -499,6 +500,54 @@ class AssessmentController extends Controller
     /**
      * Allocate assessors to an assessment.
      */
+    #[OA\Get(
+        path: '/api/v1/assessments/{id}/assessor-availability',
+        operationId: 'assessorAvailability',
+        tags: ['Assessments'],
+        summary: 'Which assessors are free for the chosen schedule dates',
+        description: 'For each assessor: is_available and, when not, unavailable_reason (on leave, or already assigned to another scheduled / in-progress assessment). The assessment itself is excluded so its own team does not clash with itself.',
+        security: [['bearerAuth' => []]],
+        parameters: [
+            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+            new OA\Parameter(name: 'startDate', in: 'query', required: true, schema: new OA\Schema(type: 'string', format: 'date')),
+            new OA\Parameter(name: 'endDate', in: 'query', required: true, schema: new OA\Schema(type: 'string', format: 'date')),
+            new OA\Parameter(name: 'userIds[]', in: 'query', required: true, schema: new OA\Schema(type: 'array', items: new OA\Items(type: 'integer'))),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Availability per assessor'),
+            new OA\Response(response: 422, description: 'Validation failed'),
+        ],
+    )]
+    public function assessorAvailability(Request $request, int $id): JsonResponse
+    {
+        Gate::authorize('allocate', Assessment::class);
+        $assessment = Assessment::findOrFail($id);
+
+        $userIds = $request->input('user_ids', []);
+        if (is_string($userIds)) {
+            $userIds = array_filter(explode(',', $userIds), fn ($v) => $v !== '');
+        }
+
+        $validator = Validator::make(['user_ids' => $userIds] + $request->only(['start_date', 'end_date']), [
+            'user_ids' => ['required', 'array', 'min:1', 'max:200'],
+            'user_ids.*' => ['integer'],
+            'start_date' => ['required', 'date_format:Y-m-d'],
+            'end_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:start_date'],
+        ]);
+        if ($validator->fails()) {
+            return $this->errorResponse('Validation failed.', 422, $validator->errors()->toArray());
+        }
+
+        $availability = app(AssessorAvailabilityService::class)->forRange(
+            array_values(array_unique(array_map('intval', $userIds))),
+            $request->input('start_date'),
+            $request->input('end_date'),
+            $assessment->id
+        );
+
+        return $this->successResponse(['availability' => $availability], 'Assessor availability retrieved successfully');
+    }
+
     #[OA\Post(
         path: '/api/v1/assessments/{id}/schedule',
         summary: 'Allocate or update assessors for assessment',
@@ -701,19 +750,13 @@ class AssessmentController extends Controller
         // only the planned calendar so one person isn't booked to two sites for
         // the same day. Only live commitments count (scheduled / in_progress);
         // boundary days are treated as a conflict (inclusive overlap).
-        $conflictingAssessments = Assessment::query()
-            ->where('id', '!=', $assessment->id)
-            ->whereIn('status', [Assessment::STATUS_SCHEDULED, Assessment::STATUS_IN_PROGRESS])
-            ->whereNotNull('scheduled_start_date')
-            ->whereNotNull('scheduled_end_date')
-            ->whereDate('scheduled_start_date', '<=', $request->scheduled_end_date)
-            ->whereDate('scheduled_end_date', '>=', $request->scheduled_start_date)
-            ->whereHas('teamMembers', fn ($q) => $q->whereIn('user_id', $allAssessorIds))
-            ->with([
-                'application:id,application_number',
-                'teamMembers' => fn ($q) => $q->whereIn('user_id', $allAssessorIds),
-            ])
-            ->get();
+        $availability = app(AssessorAvailabilityService::class);
+        $conflictingAssessments = $availability->bookings(
+            $allAssessorIds,
+            $request->scheduled_start_date,
+            $request->scheduled_end_date,
+            $assessment->id
+        );
 
         if ($conflictingAssessments->isNotEmpty()) {
             $assessorsById = User::whereIn('id', $allAssessorIds)->get()->keyBy('id');
@@ -734,6 +777,25 @@ class AssessmentController extends Controller
                 'One or more assessors have a scheduling conflict on these dates.',
                 422,
                 ['scheduling_conflicts' => array_values(array_unique($conflicts))]
+            );
+        }
+
+        // An assessor who has marked these dates as unavailable (off-time / leave)
+        // cannot be scheduled either; the web dropdown shows them as unavailable,
+        // and this stops a direct request getting round it.
+        $offTimes = $availability->offTimes($allAssessorIds, $request->scheduled_start_date, $request->scheduled_end_date);
+        if ($offTimes->isNotEmpty()) {
+            $assessorsById = User::whereIn('id', $offTimes->pluck('user_id'))->get()->keyBy('id');
+            $conflicts = $offTimes->map(function ($offTime) use ($assessorsById) {
+                $name = $assessorsById[$offTime->user_id]->full_name ?? "User #{$offTime->user_id}";
+
+                return "{$name} is unavailable from {$offTime->from_date->format('d M Y')} to {$offTime->to_date->format('d M Y')}.";
+            })->unique()->values()->all();
+
+            return $this->errorResponse(
+                'One or more assessors are unavailable on these dates.',
+                422,
+                ['off_time_conflicts' => $conflicts]
             );
         }
 

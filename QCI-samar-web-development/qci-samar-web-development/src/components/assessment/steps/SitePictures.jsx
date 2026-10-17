@@ -62,6 +62,9 @@ const SitePictures = () => {
   const [modalImageSrc, setModalImageSrc] = useState(null);
   const [modalImageLoading, setModalImageLoading] = useState(false);
   const [imageUrls, setImageUrls] = useState({});
+  // Set once the thumbnails have been requested, so a picture the server could not
+  // supply shows the placeholder instead of its bare alt text.
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   // Load image URLs for all pictures
   useEffect(() => {
@@ -80,6 +83,7 @@ const SitePictures = () => {
     ).then(entries => {
       if (!cancelled) {
         setImageUrls(Object.fromEntries(entries.filter(Boolean)));
+        setImagesLoaded(true);
       }
     });
     return () => {
@@ -119,7 +123,7 @@ const SitePictures = () => {
     if (!picture?.id) {
       return Images.dummySite;
     }
-    return imageUrls[picture.id];
+    return imageUrls[picture.id] || (imagesLoaded ? Images.dummySite : undefined);
   };
 
   if (sitePicturesLoading) {

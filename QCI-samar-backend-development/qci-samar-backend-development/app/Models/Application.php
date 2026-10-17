@@ -506,6 +506,8 @@ class Application extends Model
 
     /**
      * Get the user who created the application.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function creator(): BelongsTo
     {
@@ -571,6 +573,8 @@ class Application extends Model
      * All feedback rows for an application share the same submitter, so this
      * is the row used to surface the submitter and the submission date on the
      * admin feedback listing.
+     *
+     * @return HasOne<ApplicationFeedback, $this>
      */
     public function latestFeedback(): HasOne
     {

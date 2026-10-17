@@ -6044,3 +6044,172 @@ textarea::-webkit-input-placeholder {
 .content-blocks-editor__actions.is-dirty {
   background: #fff8eb;
 }
+
+/* Public pages (forgot / reset password, certificate check): the SAMAR logo
+   alone, centred in the bar. */
+.publicHeader {
+  min-height: 68px;
+  border-bottom: 1px solid #e3eaf5;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.publicheader-content {
+  padding: 8px 32px;
+}
+
+.publicHeader .publicHeaderLogo {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.publicHeader .logo {
+  height: 52px;
+  width: auto;
+  display: block;
+}
+
+@media (max-width: 575px) {
+  .publicheader-content {
+    padding: 8px 16px;
+  }
+}
+
+/* Close (×) button on the OTP verification dialog. */
+.otp-modal .MuiDialog-paper {
+  position: relative;
+}
+
+.otp-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: #f2f5fa;
+  color: var(--text-2);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.otp-modal-close:hover {
+  background: #e3eaf5;
+  color: var(--text-1);
+}
+
+.otp-modal-close:focus-visible {
+  outline: 2px solid var(--primary, #1b84ff);
+  outline-offset: 2px;
+}
+
+/* Dropdown option that cannot be chosen (e.g. assessor on leave / booked). */
+.option-unavailable-reason {
+  display: block;
+  padding-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #c0392b;
+  white-space: normal;
+}
+
+/* Dashboard → Assessment Status Flow: one tile per stage (number, count, name). */
+.status-flow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 991px) {
+  .status-flow-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575px) {
+  .status-flow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.status-flow-tile {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "step label count"
+    "bar bar bar"
+    "share share share";
+  align-items: center;
+  gap: 4px 10px;
+  padding: 14px 16px 12px 18px;
+  border: 1px solid #e3eaf5;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.status-flow-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--status-color);
+}
+
+.status-flow-tile__step {
+  grid-area: step;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--status-color) 15%, #fff);
+  color: var(--status-color);
+  font-size: 11px;
+  font-family: "Inter-SemiBold", sans-serif;
+}
+
+.status-flow-tile__label {
+  grid-area: label;
+  font-size: 13px;
+  font-family: "Inter-Medium", sans-serif;
+  color: var(--text-2);
+  line-height: 1.3;
+}
+
+.status-flow-tile__count {
+  grid-area: count;
+  font-size: 24px;
+  font-family: "Inter-SemiBold", sans-serif;
+  color: var(--text-1);
+  line-height: 1.1;
+}
+
+.status-flow-tile__bar {
+  grid-area: bar;
+  display: block;
+  margin-top: 8px;
+  height: 5px;
+  border-radius: 3px;
+  background: #eef2f8;
+  overflow: hidden;
+}
+
+.status-flow-tile__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--status-color);
+}
+
+.status-flow-tile__share {
+  grid-area: share;
+  font-size: 11.5px;
+  color: var(--text-3);
+}

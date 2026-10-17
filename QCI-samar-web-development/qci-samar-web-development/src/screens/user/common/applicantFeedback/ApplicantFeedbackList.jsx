@@ -8,6 +8,9 @@ import useDebouncedValue from '../../../../hooks/useDebouncedValue';
 import { exportSubmittedFeedbackAction, getSubmittedFeedbackAction } from '../../../../redux/action/common/ApplicationFeedbackAction';
 import { formatDate } from '../../../../utils/formatters';
 
+// Enterprise size as the Applications list shows it ("Start-Up", "Micro", ...).
+const formatSize = size => (size === 'startup' ? 'Start-Up' : size || '-');
+
 const ApplicantFeedbackList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -82,10 +85,18 @@ const ApplicantFeedbackList = () => {
         ),
       },
       {
+        field: 'userId',
+        headerName: 'SAMAR ID',
+        flex: 1.3,
+        minWidth: 170,
+        sortable: false,
+        renderCell: params => params.row.userSamarId || '-',
+      },
+      {
         field: 'applicationNumber',
         headerName: 'Application Number',
-        flex: 1.5,
-        minWidth: 180,
+        flex: 1.3,
+        minWidth: 170,
         sortable: false,
         renderCell: params => (
           <div className="double-content">
@@ -111,18 +122,26 @@ const ApplicantFeedbackList = () => {
         ),
       },
       {
-        field: 'userId',
-        headerName: 'Samar Id',
-        flex: 1.5,
-        minWidth: 180,
+        field: 'enterpriseClassification',
+        headerName: 'Size',
+        flex: 0.8,
+        minWidth: 100,
         sortable: false,
-        renderCell: params => params.row.userSamarId || '-',
+        renderCell: params => <span className="text-capitalize">{formatSize(params.row.enterpriseClassification)}</span>,
+      },
+      {
+        field: 'sector',
+        headerName: 'Sector',
+        flex: 0.9,
+        minWidth: 120,
+        sortable: false,
+        renderCell: params => <span className="text-capitalize">{params.row.sector || '-'}</span>,
       },
       {
         field: 'feedbackDate',
         headerName: 'Feedback Date',
-        flex: 1.2,
-        minWidth: 150,
+        flex: 1.1,
+        minWidth: 140,
         sortable: false,
         renderCell: params => formatDate(params.row.feedbackDate) || '-',
       },

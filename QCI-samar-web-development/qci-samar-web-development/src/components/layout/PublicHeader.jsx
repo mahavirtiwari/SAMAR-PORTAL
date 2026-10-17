@@ -145,8 +145,7 @@ const PublicHeader = () => {
       <div className="publicheader-content">
         <div className="header-left">
           <Navbar.Brand className="publicHeaderLogo">
-            <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="Logo" className="logo" linked={false} />
-            <p className="fs-20 fw-600 text-1-color mb-0">SAMAR</p>
+            <BrandLogo brandKey="samar_logo" fallback={Images.samarLogo} alt="SAMAR" className="logo" linked={false} />
           </Navbar.Brand>
         </div>
 

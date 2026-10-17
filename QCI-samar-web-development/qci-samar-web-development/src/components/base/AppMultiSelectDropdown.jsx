@@ -253,9 +253,10 @@ const AppMultiSelectDropdown = ({
         <MenuItem
           key={option.value}
           value={option.value}
+          disabled={!!option.disabled}
           style={{ fontWeight: isSelected ? theme.typography.fontWeightMedium : theme.typography.fontWeightRegular, minHeight: OPTION_ROW_HEIGHT, paddingTop: 8, paddingBottom: 8 }}>
           <Box sx={ITEM_ROW_SX}>
-            {richOptions && (option.phone || option.description) ? (
+            {richOptions && (option.phone || option.description || option.unavailableReason) ? (
               <span style={ITEM_TEXT_WRAP_SX}>
                 <span style={ITEM_LABEL_SX}>
                   {option.label}
@@ -266,6 +267,7 @@ const AppMultiSelectDropdown = ({
                   ) : null}
                 </span>
                 {option.description ? <span style={ITEM_DESC_SX}>{option.description}</span> : null}
+                {option.unavailableReason ? <span className="option-unavailable-reason">Unavailable · {option.unavailableReason}</span> : null}
               </span>
             ) : (
               <span style={ITEM_LABEL_SX}>{option.label}</span>

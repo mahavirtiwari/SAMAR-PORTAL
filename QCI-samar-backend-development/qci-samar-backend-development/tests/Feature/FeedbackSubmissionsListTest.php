@@ -163,6 +163,28 @@ class FeedbackSubmissionsListTest extends TestCase
         $this->assertSame(['SAMAR-ALPHA-1'], $this->applicationNumbers($response));
     }
 
+    public function test_feedback_saved_without_a_submitter_shows_the_applicant_samar_id(): void
+    {
+        $applicant = User::factory()->create(['samar_id' => 'SAMAR-APPLICANT-1']);
+        $application = $this->makeApplication(['application_number' => 'SAMAR-OLD-FB', 'created_by' => $applicant->id, 'sector' => 'manufacturing', 'enterprise_classification' => 'micro']);
+        ApplicationFeedback::create([
+            'application_id' => $application->id,
+            'feedback_question_id' => 1,
+            'question_text' => 'How satisfied are you with the assessment?',
+            'question_type' => ApplicationFeedback::TYPE_RATING,
+            'rating' => 4,
+        ]);
+        ApplicationFeedback::query()->update(['created_by' => null]);
+
+        $response = $this->withToken($this->adminToken(Role::SYSTEM_ADMIN))
+            ->getJson('/api/v1/applications/feedback-submissions');
+
+        $response->assertOk();
+        $response->assertJsonPath('data.0.userSamarId', 'SAMAR-APPLICANT-1');
+        $response->assertJsonPath('data.0.sector', 'manufacturing');
+        $response->assertJsonPath('data.0.enterpriseClassification', 'micro');
+    }
+
     public function test_search_matches_the_enterprise_or_unit_name_and_lists_the_enterprise(): void
     {
         $submitter = User::factory()->create(['samar_id' => 'SAMAR-SUB-006']);

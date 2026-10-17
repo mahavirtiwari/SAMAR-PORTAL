@@ -51,6 +51,23 @@ const AssessorOffTimeService = () => {
     }
   };
 
+  // Whether each assessor is free for the chosen schedule dates: not on leave and not
+  // already booked on another scheduled / in-progress assessment. Returns a map keyed
+  // by assessor id: { isAvailable, unavailableReason }.
+  const getAvailability = async (assessmentId, { startDate, endDate, assessorIds }) => {
+    const ids = [...new Set((assessorIds ?? []).filter(id => id !== null && id !== undefined))];
+    if (!assessmentId || !startDate || !endDate || ids.length === 0) {
+      return {};
+    }
+    const params = new URLSearchParams({ startDate, endDate });
+    for (const id of ids) {
+      params.append('userIds[]', id);
+    }
+    const response = await userClient.get(`/assessments/${assessmentId}/assessor-availability?${params.toString()}`);
+    const rows = response.data?.data?.availability ?? [];
+    return Object.fromEntries(rows.map(row => [String(row.userId), { isAvailable: row.isAvailable, unavailableReason: row.unavailableReason }]));
+  };
+
   // Off-time for several assessors in one call, for screens that need a whole
   // list at once. Asking per assessor exhausted the caller's request allowance on
   // a large list, which then refused their unrelated requests too. Returns a map
@@ -88,6 +105,7 @@ const AssessorOffTimeService = () => {
   };
 
   return {
+    getAvailability,
     getMyOffTimes,
     createOffTime,
     deleteOffTime,

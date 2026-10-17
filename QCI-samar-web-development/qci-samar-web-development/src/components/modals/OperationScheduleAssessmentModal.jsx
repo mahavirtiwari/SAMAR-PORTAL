@@ -41,11 +41,9 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
   // Form states will be managed by formik
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Off-time (unavailability) ranges keyed by assessor id. Temporary client-side
-  // availability filter: the backend assessor list does not yet exclude off-time
-  // assessors for the selected dates, so we cross-reference /off-times here.
-  // Remove once the backend /users assessor query filters by scheduledStartDate/End.
-  const [offTimesByAssessor, setOffTimesByAssessor] = useState({});
+  // Availability for the chosen dates, keyed by assessor id: { isAvailable,
+  // unavailableReason } — on leave, or already booked on another assessment.
+  const [availabilityById, setAvailabilityById] = useState({});
 
   // Fetch assessors when modal opens — filter by the application's unit state
   useEffect(() => {
@@ -53,6 +51,8 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
       const queryParams = {
         role: 'assessor',
         status: 'active',
+        // The list is not paged in the dropdown; without this only the first 15 show.
+        perPage: 100,
       };
       if (applicationData?.unitState) {
         queryParams.assignedState = applicationData.unitState;
@@ -60,44 +60,6 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
       dispatch(getAssessorsAction(queryParams));
     }
   }, [open, dispatch, applicationData?.unitState]);
-
-  // Fetch the in-scope assessors' off-times once when the list loads, so the
-  // selected date range can be cross-referenced locally without refetching per change.
-  // One batched call, not one per assessor: the per-assessor version exhausted the
-  // user's request allowance on a large list and the server then refused their
-  // unrelated requests for the rest of the minute. [BUG-08860]
-  useEffect(() => {
-    if (!open) {
-      setOffTimesByAssessor({});
-      return undefined;
-    }
-    const list = assessors || [];
-    if (!list.length) {
-      return undefined;
-    }
-    let cancelled = false;
-    (async () => {
-      try {
-        const byAssessor = await Api.AssessorOffTime.getOffTimesForAssessors(list.map(user => user.id));
-        if (!cancelled) {
-          setOffTimesByAssessor(byAssessor);
-        }
-      } catch {
-        // An unavailable off-time list must not block scheduling, so everyone stays
-        // selectable. But say so: with one batched call a single failure blanks the
-        // whole list, where the old per-assessor version lost only the assessor whose
-        // own call failed. Silently implying every assessor is free is the one thing
-        // this availability check exists to prevent.
-        if (!cancelled) {
-          setOffTimesByAssessor({});
-          toastError('Could not load assessor availability. Please check off-time manually before scheduling.');
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [open, assessors]);
 
   // Normalized selected lead assessor id for comparisons in options and submission
   // Normalized selected lead assessor id for comparisons in options and submission
@@ -275,25 +237,55 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
     }
   }, [open, dispatch]);
 
-  // Assessors whose off-time overlaps the selected date range (inclusive).
-  // Empty until both dates are chosen — availability can't be judged without them.
-  const unavailableAssessorIds = useMemo(() => {
-    const start = parseToDate(formik.values.startDate);
-    const end = parseToDate(formik.values.endDate);
-    if (!start || !end) {
-      return new Set();
+  // Ask the server who is free once both dates are chosen (and again when they or
+  // the list change). Unavailable assessors stay in the dropdowns, greyed out with
+  // the reason, rather than disappearing.
+  const startIso = formik.values.startDate ? dayjs(parseToDate(formik.values.startDate)).format('YYYY-MM-DD') : '';
+  const endIso = formik.values.endDate ? dayjs(parseToDate(formik.values.endDate)).format('YYYY-MM-DD') : '';
+  useEffect(() => {
+    const list = assessors || [];
+    if (!open || !assessmentId || !startIso || !endIso || !list.length) {
+      setAvailabilityById({});
+      return undefined;
     }
-    const selStart = dayjs(start);
-    const selEnd = dayjs(end);
-    const ids = new Set();
-    Object.entries(offTimesByAssessor).forEach(([assessorId, ranges]) => {
-      const conflict = (ranges || []).some(r => !dayjs(r.toDate).isBefore(selStart, 'day') && !dayjs(r.fromDate).isAfter(selEnd, 'day'));
-      if (conflict) {
-        ids.add(String(assessorId));
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      try {
+        const byId = await Api.AssessorOffTime.getAvailability(assessmentId, { startDate: startIso, endDate: endIso, assessorIds: list.map(user => user.id) });
+        if (!cancelled) {
+          setAvailabilityById(byId);
+        }
+      } catch {
+        // Scheduling must not be blocked by this check; the server still refuses
+        // anyone on leave or double-booked when the form is submitted.
+        if (!cancelled) {
+          setAvailabilityById({});
+          toastError('Could not check assessor availability for these dates.');
+        }
       }
-    });
-    return ids;
-  }, [offTimesByAssessor, formik.values.startDate, formik.values.endDate]);
+    }, 250);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [open, assessmentId, startIso, endIso, assessors]);
+
+  const unavailableAssessorIds = useMemo(
+    () =>
+      new Set(
+        Object.entries(availabilityById)
+          .filter(([, a]) => a && a.isAvailable === false)
+          .map(([id]) => String(id)),
+      ),
+    [availabilityById],
+  );
+
+  // Marks an option unavailable (greyed, not selectable) with the reason shown under it.
+  const withAvailability = (option, id) => {
+    const availability = availabilityById[String(id)];
+    return availability && availability.isAvailable === false ? { ...option, disabled: true, unavailableReason: availability.unavailableReason } : option;
+  };
+  const availableFirst = (a, b) => Number(!!a.disabled) - Number(!!b.disabled);
 
   // Drop any already-selected assessor that becomes unavailable for the chosen
   // dates, so an off-time assessor can't be submitted.
@@ -500,8 +492,9 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
             richOptions
             options={
               assessorOptions
-                ?.filter(assessor => !(formik.values.coAssessors || []).map(String).includes(String(assessor.id)) && !unavailableAssessorIds.has(String(assessor.id)))
-                .map(assessor => ({ value: assessor.id, label: assessor.name, phone: assessor.phone, description: assessor.description })) || []
+                ?.filter(assessor => !(formik.values.coAssessors || []).map(String).includes(String(assessor.id)))
+                .map(assessor => withAvailability({ value: assessor.id, label: assessor.name, phone: assessor.phone, description: assessor.description }, assessor.id))
+                .sort(availableFirst) || []
             }
             placeholder={assessorsLoading ? 'Loading assessors...' : 'Select Lead Assessor'}
             disabled={assessorsLoading}
@@ -541,8 +534,8 @@ function OperationScheduleAssessmentModal({ open, onClose, assessmentId = null, 
           // Use co-assessor names as option values so they match Formik's coAssessors (which store names for display)
           options={coOptions
             .filter(opt => String(opt.id) !== String(formik.values.leadAssessor))
-            .filter(opt => !unavailableAssessorIds.has(String(opt.id)))
-            .map(opt => ({ value: opt.value, label: opt.label, id: opt.id, phone: opt.phone, description: opt.description }))}
+            .map(opt => withAvailability({ value: opt.value, label: opt.label, id: opt.id, phone: opt.phone, description: opt.description }, opt.id))
+            .sort(availableFirst)}
           value={Array.isArray(formik.values.coAssessors) ? formik.values.coAssessors.map(String) : []}
           chipMode={true}
           onChange={value => {

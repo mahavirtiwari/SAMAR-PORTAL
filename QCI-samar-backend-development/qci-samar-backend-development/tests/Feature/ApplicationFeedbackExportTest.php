@@ -128,10 +128,10 @@ class ApplicationFeedbackExportTest extends TestCase
         $this->assertStringContainsString('text/csv', $response->headers->get('Content-Type'));
 
         $rows = $this->csvRows($response);
-        $this->assertSame(['Application Number', 'Enterprise Name', 'Unit Name', 'SAMAR ID', 'Feedback Date', 'Quality?'], $rows[0]);
-        $this->assertSame('SAMAR-APP-001', $rows[1][0]);
-        $this->assertSame('SAMAR-SUB-001', $rows[1][3]);
-        $this->assertSame('4/5', $rows[1][5]);
+        $this->assertSame(['SAMAR ID', 'Application Number', 'Enterprise Name', 'Unit Name', 'Size', 'Sector', 'Feedback Date', 'Quality?'], $rows[0]);
+        $this->assertSame('SAMAR-APP-001', $rows[1][1]);
+        $this->assertSame('SAMAR-SUB-001', $rows[1][0]);
+        $this->assertSame('4/5', $rows[1][7]);
     }
 
     public function test_bulk_export_uses_dynamic_per_question_columns_with_blanks(): void
@@ -153,20 +153,20 @@ class ApplicationFeedbackExportTest extends TestCase
         $rows = $this->csvRows($response);
 
         // Columns ordered by display_order: Quality? then Timeliness?
-        $this->assertSame(['Application Number', 'Enterprise Name', 'Unit Name', 'SAMAR ID', 'Feedback Date', 'Quality?', 'Timeliness?'], $rows[0]);
+        $this->assertSame(['SAMAR ID', 'Application Number', 'Enterprise Name', 'Unit Name', 'Size', 'Sector', 'Feedback Date', 'Quality?', 'Timeliness?'], $rows[0]);
 
         $byApp = [];
         foreach (array_slice($rows, 1) as $row) {
-            $byApp[$row[0]] = $row;
+            $byApp[$row[1]] = $row;
         }
 
         // App A answered Quality only → Timeliness blank
-        $this->assertSame('5/5', $byApp['SAMAR-APP-A'][5]);
-        $this->assertSame('', $byApp['SAMAR-APP-A'][6]);
+        $this->assertSame('5/5', $byApp['SAMAR-APP-A'][7]);
+        $this->assertSame('', $byApp['SAMAR-APP-A'][8]);
 
         // App B answered Timeliness only → Quality blank
-        $this->assertSame('', $byApp['SAMAR-APP-B'][5]);
-        $this->assertSame('Yes', $byApp['SAMAR-APP-B'][6]);
+        $this->assertSame('', $byApp['SAMAR-APP-B'][7]);
+        $this->assertSame('Yes', $byApp['SAMAR-APP-B'][8]);
     }
 
     public function test_bulk_export_is_allowed_for_operations_manager(): void

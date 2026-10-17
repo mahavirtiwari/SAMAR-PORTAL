@@ -71,6 +71,10 @@ const OTPVerificationModal = ({ show, handleClose, length = 6, resendSeconds = 1
           },
         },
       }}>
+      {/* Lets the user dismiss the dialog, e.g. once the code has expired. */}
+      <button type="button" className="otp-modal-close" onClick={handleClose} aria-label="Close">
+        ×
+      </button>
       <DialogContent>
         <h4 className="fs-24 fw-600 heading-color mb-0 text-center">OTP Verification</h4>
         <p className="fs-14 fw-500 mb-0 text-2-color margin-top-8 text-center">Enter the verification code sent to your registered email address.</p>
